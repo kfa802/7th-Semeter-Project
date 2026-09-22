@@ -1,26 +1,43 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 public class Interactable : MonoBehaviour
 {
     [Header("Interaction")]
     [SerializeField] private float interactionDistance = 3f;
 
-    [Header("Interaction Camera")]
-    [SerializeField] private Camera interactionCamera;
+    [Header("Cameras")]
+    [SerializeField] private CinemachineCamera playerCamera;
+    [SerializeField] private CinemachineCamera interactionCamera;
 
     [Header("Choice UI")]
     [SerializeField] private GameObject choicePanel;
 
+    [Header("Camera Priority")]
+    [SerializeField] private int normalPriority = 10;
+    [SerializeField] private int interactionPriority = 20;
+
     private Transform player;
-    private Camera playerCamera;
+    private Camera mainCamera;
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        playerCamera = Camera.main;
+        GameObject playerObject =
+            GameObject.FindGameObjectWithTag("Player");
 
+        if (playerObject != null)
+            player = playerObject.transform;
+
+        mainCamera = Camera.main;
+
+        // Make sure the normal player camera starts active
+        if (playerCamera != null)
+            playerCamera.Priority = normalPriority;
+
+        // Interaction camera starts inactive
         if (interactionCamera != null)
-            interactionCamera.gameObject.SetActive(false);
+            interactionCamera.Priority = 0;
 
         if (choicePanel != null)
             choicePanel.SetActive(false);
@@ -28,25 +45,25 @@ public class Interactable : MonoBehaviour
 
     private void Update()
     {
-        if (player == null)
-            return;
-
-        float distance = Vector3.Distance(player.position, transform.position);
-
-        if (distance <= interactionDistance)
+        if (Mouse.current != null &&
+            Mouse.current.leftButton.wasPressedThisFrame)
         {
-            CheckForInteraction();
+            Debug.Log("MOUSE CLICK DETECTED");
+
+            TryInteract(Mouse.current.position.ReadValue());
         }
     }
 
     private void CheckForInteraction()
     {
+        // PC
         if (Mouse.current != null &&
             Mouse.current.leftButton.wasPressedThisFrame)
         {
             TryInteract(Mouse.current.position.ReadValue());
         }
 
+        // iPad
         if (Touchscreen.current != null &&
             Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
         {
@@ -59,11 +76,18 @@ public class Interactable : MonoBehaviour
 
     private void TryInteract(Vector2 screenPosition)
     {
-        Ray ray = playerCamera.ScreenPointToRay(screenPosition);
+        if (mainCamera == null)
+            return;
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        Ray ray =
+            mainCamera.ScreenPointToRay(screenPosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            if (hit.collider.GetComponentInParent<Interactable>() == this)
+            Interactable interactable =
+                hit.collider.GetComponentInParent<Interactable>();
+
+            if (interactable == this)
             {
                 OpenInteraction();
             }
@@ -72,24 +96,45 @@ public class Interactable : MonoBehaviour
 
     private void OpenInteraction()
     {
+        // Switch to interaction camera
         if (interactionCamera != null)
-            interactionCamera.gameObject.SetActive(true);
+        {
+            interactionCamera.Priority = interactionPriority;
+        }
 
+        // Show choices
         if (choicePanel != null)
+        {
             choicePanel.SetActive(true);
+        }
     }
 
     public void ChooseStayHome()
     {
         Debug.Log("Choice: Stay Home");
-
-        // Branching narrative can be added here later.
     }
 
     public void ChooseGoToWork()
     {
         Debug.Log("Choice: Go to Work");
+    }
 
-        // Branching narrative can be added here later.
+    public void CloseInteraction()
+    {
+        // Return to player camera
+        if (interactionCamera != null)
+        {
+            interactionCamera.Priority = 0;
+        }
+
+        if (playerCamera != null)
+        {
+            playerCamera.Priority = normalPriority;
+        }
+
+        if (choicePanel != null)
+        {
+            choicePanel.SetActive(false);
+        }
     }
 }
