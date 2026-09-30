@@ -1085,10 +1085,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0c0b87f01fe366d49ba93f7d55339b07, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1561886790}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c0b87f01fe366d49ba93f7d55339b07, type: 3}
 --- !u!4 &761176887 stripped
 Transform:
@@ -1718,7 +1715,7 @@ GameObject:
   - component: {fileID: 1262749805}
   - component: {fileID: 1262749804}
   m_Layer: 5
-  m_Name: Bamboo
+  m_Name: BambooText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1855,7 +1852,7 @@ GameObject:
   - component: {fileID: 1279251139}
   - component: {fileID: 1279251138}
   m_Layer: 5
-  m_Name: Water
+  m_Name: WaterText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2115,34 +2112,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1561886788 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0c0b87f01fe366d49ba93f7d55339b07, type: 3}
-  m_PrefabInstance: {fileID: 761176886}
-  m_PrefabAsset: {fileID: 0}
---- !u!136 &1561886790
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1561886788}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1645302055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2618,7 +2587,6 @@ MonoBehaviour:
   pandaHealthText: {fileID: 2072902922}
   waterSliderSpeed: 15
   bambooSliderSpeed: 5
-  pandaHealthSliderSpeed: 5
 --- !u!114 &1927953434
 MonoBehaviour:
   m_ObjectHideFlags: 0

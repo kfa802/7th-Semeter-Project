@@ -8,13 +8,11 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private EnvironmentSystem environment;
     [SerializeField] private PandaSystem panda;
 
-
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
     [SerializeField] private Slider waterSlider;
     [SerializeField] private Slider bambooSlider;
     [SerializeField] private Slider pandaHealthSlider;
-
 
     [Header("Text")]
     [SerializeField] private TMP_Text temperatureText;
@@ -22,11 +20,9 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text bambooText;
     [SerializeField] private TMP_Text pandaHealthText;
 
-
     [Header("Visual Slider Speeds")]
     [SerializeField] private float waterSliderSpeed = 15f;
     [SerializeField] private float bambooSliderSpeed = 4f;
-    [SerializeField] private float pandaHealthSliderSpeed = 2f;
 
 
     private void Start()
@@ -39,7 +35,6 @@ public class EnvironmentUI : MonoBehaviour
 
             return;
         }
-
 
         if (panda == null)
         {
@@ -57,16 +52,12 @@ public class EnvironmentUI : MonoBehaviour
 
         temperatureSlider.minValue = 5f;
         temperatureSlider.maxValue = 40f;
-
         temperatureSlider.wholeNumbers = false;
-
         temperatureSlider.interactable = true;
-
 
         temperatureSlider.SetValueWithoutNotify(
             environment.Temperature
         );
-
 
         temperatureSlider.onValueChanged.AddListener(
             OnTemperatureChanged
@@ -79,11 +70,10 @@ public class EnvironmentUI : MonoBehaviour
 
         waterSlider.minValue = 0f;
         waterSlider.maxValue = 100f;
-
         waterSlider.interactable = false;
 
         waterSlider.SetValueWithoutNotify(
-            100f
+            environment.Water
         );
 
 
@@ -93,11 +83,10 @@ public class EnvironmentUI : MonoBehaviour
 
         bambooSlider.minValue = 0f;
         bambooSlider.maxValue = 100f;
-
         bambooSlider.interactable = false;
 
         bambooSlider.SetValueWithoutNotify(
-            100f
+            environment.Bamboo
         );
 
 
@@ -107,11 +96,10 @@ public class EnvironmentUI : MonoBehaviour
 
         pandaHealthSlider.minValue = 0f;
         pandaHealthSlider.maxValue = 100f;
-
         pandaHealthSlider.interactable = false;
 
         pandaHealthSlider.SetValueWithoutNotify(
-            100f
+            panda.Health
         );
 
 
@@ -151,10 +139,11 @@ public class EnvironmentUI : MonoBehaviour
         // PANDA HEALTH
         // =====================================================
 
-        pandaHealthSlider.value = Mathf.MoveTowards(
-            pandaHealthSlider.value,
-            panda.Health,
-            pandaHealthSliderSpeed * Time.deltaTime
+        // The panda system already controls how quickly
+        // health changes, so the UI should directly follow it.
+
+        pandaHealthSlider.SetValueWithoutNotify(
+            panda.Health
         );
 
 
@@ -170,7 +159,6 @@ public class EnvironmentUI : MonoBehaviour
     {
         if (environment == null)
             return;
-
 
         environment.SetTemperature(value);
     }
