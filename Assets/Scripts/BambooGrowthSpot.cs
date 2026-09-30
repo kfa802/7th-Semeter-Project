@@ -9,6 +9,8 @@ public class BambooGrowthSpot : MonoBehaviour
 
     [Header("Bamboo")]
     [SerializeField] private GameObject bambooPrefab;
+    [SerializeField] private float minSize = 1.5f;   // 1 = prefab's normal size
+    [SerializeField] private float maxSize = 2.5f;
 
     [Header("Timing")]
     [SerializeField] private float poopToBambooDelay = 5f;
@@ -17,15 +19,17 @@ public class BambooGrowthSpot : MonoBehaviour
 
     public bool IsAvailable => !occupied;
 
-    public void GrowBamboo()
+    // Call GrowBamboo() for a random size, or GrowBamboo(2f) for an exact one
+    public void GrowBamboo(float? size = null)
     {
         if (occupied)
             return;
 
-        StartCoroutine(GrowthSequence());
+        float finalSize = size ?? Random.Range(minSize, maxSize);
+        StartCoroutine(GrowthSequence(finalSize));
     }
 
-    private IEnumerator GrowthSequence()
+    private IEnumerator GrowthSequence(float size)
     {
         occupied = true;
 
@@ -53,24 +57,18 @@ public class BambooGrowthSpot : MonoBehaviour
         // Spawn bamboo
         if (bambooPrefab != null)
         {
-            GameObject bamboo = Instantiate(
-                bambooPrefab,
+            // Empty parent that carries the size (the Animator can't override this)
+            GameObject holder = new GameObject("BambooHolder");
+            holder.transform.SetPositionAndRotation(
                 transform.position,
                 bambooPrefab.transform.rotation
             );
+            holder.transform.localScale = Vector3.one * size;
 
-            // Explicitly copy the prefab's scale
-            bamboo.transform.localScale =
-                bambooPrefab.transform.localScale;
-
-            // Start growth
-            BambooPlant bambooPlant =
-                bamboo.GetComponent<BambooPlant>();
-
-            if (bambooPlant != null)
-            {
-                bambooPlant.Grow();
-            }
+            // Bamboo keeps its own prefab scale, and the Animator plays as normal
+            GameObject bamboo = Instantiate(bambooPrefab, holder.transform);
+            bamboo.transform.localPosition = Vector3.zero;
+            bamboo.transform.localRotation = Quaternion.identity;
         }
     }
 }

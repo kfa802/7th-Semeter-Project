@@ -553,7 +553,7 @@ GameObject:
   - component: {fileID: 117600466}
   - component: {fileID: 117600467}
   m_Layer: 0
-  m_Name: BambooSpot
+  m_Name: Spot1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -567,12 +567,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 117600465}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.18, y: -1.72532, z: -5.23}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.29206, y: -0.103189945, z: -1.5120301}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 141310566}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &117600467
 MonoBehaviour:
@@ -589,7 +589,42 @@ MonoBehaviour:
   poopPoint: {fileID: 117600466}
   poopPrefab: {fileID: 114160893382771280, guid: d8561ad169a7d464f93d6944c5177421, type: 3}
   bambooPrefab: {fileID: 5251407223849588736, guid: a6f2bb4057319bb4484e168f22af115a, type: 3}
+  minSize: 1.5
+  maxSize: 2.5
   poopToBambooDelay: 5
+--- !u!1 &141310565
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 141310566}
+  m_Layer: 0
+  m_Name: BambooGrowthSpots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &141310566
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141310565}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.88794, y: -1.62213, z: -3.71797}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 117600466}
+  - {fileID: 202475819}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &141853300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -915,6 +950,56 @@ RectTransform:
   m_AnchoredPosition: {x: 339, y: -7.9}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &202475818
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 202475819}
+  - component: {fileID: 202475820}
+  m_Layer: 0
+  m_Name: Spot2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &202475819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202475818}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.67, y: -0.103189945, z: 0.66}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 141310566}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &202475820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202475818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5438d77f5db348b4aa8f89c4dd496db0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooGrowthSpot
+  poopPoint: {fileID: 202475819}
+  poopPrefab: {fileID: 114160893382771280, guid: d8561ad169a7d464f93d6944c5177421, type: 3}
+  bambooPrefab: {fileID: 5251407223849588736, guid: a6f2bb4057319bb4484e168f22af115a, type: 3}
+  minSize: 1.5
+  maxSize: 2.5
+  poopToBambooDelay: 5
 --- !u!1 &207939588
 GameObject:
   m_ObjectHideFlags: 0
@@ -11120,7 +11205,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BambooGrowthManager
   growthSpots:
   - {fileID: 117600467}
-  - {fileID: 0}
+  - {fileID: 202475820}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -11158,4 +11243,4 @@ SceneRoots:
   - {fileID: 755028009}
   - {fileID: 1581204893}
   - {fileID: 2136257945}
-  - {fileID: 117600466}
+  - {fileID: 141310566}
