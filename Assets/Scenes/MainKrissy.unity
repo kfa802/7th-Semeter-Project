@@ -187,6 +187,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (28)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -316,6 +320,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -393,6 +401,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -472,6 +484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (18)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -518,6 +534,11 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &85606156 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 311091112}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &87479943
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +690,7 @@ Transform:
   m_GameObject: {fileID: 141310565}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.88794, y: -1.62213, z: -3.71797}
+  m_LocalPosition: {x: -2.36, y: 0.42, z: -3.71797}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -747,6 +768,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -826,6 +851,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (22)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -903,6 +932,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1131,6 +1164,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207939588}
   m_CullTransparentMesh: 1
+--- !u!1 &213847787 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 1044487478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &246701395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1234,6 +1272,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1405,6 +1447,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1624,6 +1670,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1633,6 +1683,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
   m_PrefabInstance: {fileID: 365266825}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &369781595 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 995689144}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &403772337
 GameObject:
@@ -1771,6 +1826,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403772337}
   m_CullTransparentMesh: 1
+--- !u!1 &417410924 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 626103668}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &433553463
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1838,6 +1898,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1992,6 +2056,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2114,6 +2182,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (31)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2228,6 +2300,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (27)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2237,6 +2313,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
   m_PrefabInstance: {fileID: 567782682}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &574889357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 10645457}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &600747280
 GameObject:
@@ -2356,6 +2437,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2509,6 +2594,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2697,6 +2786,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d5cb5363f2af542bb2f39adb803edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BambooManager
+  growthSpots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  autoFindSpots: 1
+  autoFindBamboo: 1
+  bambooTag: Bamboo
+  startingBamboo:
+  - {fileID: 948758252}
+  - {fileID: 1776052987}
+  - {fileID: 369781595}
+  - {fileID: 85606156}
+  - {fileID: 213847787}
+  - {fileID: 574889357}
+  - {fileID: 417410924}
+  environment: {fileID: 1431297040}
+  pollution: 0
+  rotStartsAbovePollution: 0.3
+  slowestRotInterval: 20
+  fastestRotInterval: 4
+  rotDuration: 8
+  shrinkDuration: 1.5
+  rottenColor: {r: 0.35, g: 0.25, b: 0.1, a: 1}
+  showDebugText: 1
 --- !u!4 &755028009
 Transform:
   m_ObjectHideFlags: 0
@@ -2937,6 +3055,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3015,6 +3137,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (30)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3092,6 +3218,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (26)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3218,6 +3348,11 @@ MonoBehaviour:
   maxSize: 2.5
   poopToBambooDelay: 5
   growTime: 10
+--- !u!1 &948758252 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 445427452}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &995689144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3285,6 +3420,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3363,6 +3502,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (25)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3516,6 +3659,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3780,6 +3927,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (32)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3932,6 +4083,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4487,6 +4642,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5040,6 +5199,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (21)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5122,6 +5285,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10037,6 +10204,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10114,6 +10285,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (29)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10553,6 +10728,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1776052987 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+  m_PrefabInstance: {fileID: 672542437}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1793357201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10620,6 +10800,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (24)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11128,6 +11312,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (23)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11470,6 +11658,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BambooGrow3 (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11547,6 +11739,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_Name
       value: BambooGrow3 (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
+      propertyPath: m_TagString
+      value: Bamboo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

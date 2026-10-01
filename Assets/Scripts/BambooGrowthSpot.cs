@@ -28,6 +28,12 @@ public class BambooGrowthSpot : MonoBehaviour
         StartCoroutine(GrowthSequence());
     }
 
+    // Called by BambooManager when this spot's bamboo is removed (rotted, etc.)
+    public void Free()
+    {
+        occupied = false;
+    }
+
     private IEnumerator GrowthSequence()
     {
         occupied = true;
@@ -53,22 +59,30 @@ public class BambooGrowthSpot : MonoBehaviour
         if (poop != null)
             Destroy(poop);
 
-        if (bambooPrefab != null)
+        if (bambooPrefab == null)
         {
-            float size = Random.Range(minSize, maxSize);
-
-            GameObject holder = new GameObject("BambooHolder");
-            holder.transform.SetPositionAndRotation(
-                transform.position,
-                bambooPrefab.transform.rotation
-            );
-            holder.transform.localScale = Vector3.one * size;
-
-            GameObject bamboo = Instantiate(bambooPrefab, holder.transform);
-            bamboo.transform.localPosition = Vector3.zero;
-            bamboo.transform.localRotation = Quaternion.identity;
-
-            holder.AddComponent<BambooPlant>().Init(growTime);
+            // Nothing to grow, so don't block the spot forever
+            occupied = false;
+            yield break;
         }
+
+        float size = Random.Range(minSize, maxSize);
+
+        GameObject holder = new GameObject("BambooHolder");
+        holder.transform.SetPositionAndRotation(
+            transform.position,
+            bambooPrefab.transform.rotation
+        );
+        holder.transform.localScale = Vector3.one * size;
+
+        GameObject bamboo = Instantiate(bambooPrefab, holder.transform);
+        bamboo.transform.localPosition = Vector3.zero;
+        bamboo.transform.localRotation = Quaternion.identity;
+
+        holder.AddComponent<BambooPlant>().Init(growTime);
+
+        // Tell the manager this bamboo exists (the holder, so removing it removes everything)
+        if (BambooManager.Instance != null)
+            BambooManager.Instance.RegisterBamboo(holder, this);
     }
 }
