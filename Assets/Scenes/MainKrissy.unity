@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.86661744, g: 0.99371064, b: 0.7655946, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.013
+  m_FogDensity: 0.009
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -247,6 +247,7 @@ MonoBehaviour:
   minSize: 1.5
   maxSize: 2.5
   poopToBambooDelay: 5
+  growTime: 10
 --- !u!1001 &10645457
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -642,6 +643,7 @@ MonoBehaviour:
   minSize: 1.5
   maxSize: 2.5
   poopToBambooDelay: 5
+  growTime: 10
 --- !u!1 &141310565
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,6 +1055,7 @@ MonoBehaviour:
   minSize: 1.5
   maxSize: 2.5
   poopToBambooDelay: 5
+  growTime: 10
 --- !u!1 &207939588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2285,6 +2288,7 @@ MonoBehaviour:
   minSize: 1.5
   maxSize: 2.5
   poopToBambooDelay: 5
+  growTime: 10
 --- !u!1001 &626103668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3213,6 +3217,7 @@ MonoBehaviour:
   minSize: 1.5
   maxSize: 2.5
   poopToBambooDelay: 5
+  growTime: 10
 --- !u!1001 &995689144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4660,6 +4665,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1431297041}
   - component: {fileID: 1431297040}
+  - component: {fileID: 1431297042}
   m_Layer: 0
   m_Name: Envoironment
   m_TagString: Untagged
@@ -4684,6 +4690,7 @@ MonoBehaviour:
   temperatureThreshold: 3
   freezingPoint: 0
   coldSlowdownPower: 3
+  minGrowthWhenCold: 0.05
   minGrowthWhenHot: 0.2
   water: 100
   waterReactionSpeed: 5
@@ -4705,6 +4712,44 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1431297042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431297039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc92a23a0a6e31c45b2265bbaa5e7f0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemperatureVisuals
+  environment: {fileID: 1431297040}
+  sunLight: {fileID: 2082669484}
+  snow: {fileID: 0}
+  coldStartTemperature: 15
+  hotStartTemperature: 25
+  smoothSpeed: 2
+  fogMode: 3
+  coldFogColor: {r: 0.92, g: 0.96, b: 1, a: 1}
+  hotFogColor: {r: 1, g: 0.82, b: 0.55, a: 1}
+  coldFogDensity: 0.06
+  hotFogDensity: 0.02
+  coldFogStart: 0
+  coldFogEnd: 40
+  hotFogStart: 10
+  hotFogEnd: 120
+  coldLightColor: {r: 0.75, g: 0.85, b: 1, a: 1}
+  coldLightIntensityMultiplier: 0.8
+  hotLightColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  hotLightIntensityMultiplier: 1.2
+  coldAmbientColor: {r: 0.8, g: 0.88, b: 1, a: 1}
+  hotAmbientColor: {r: 1, g: 0.9, b: 0.75, a: 1}
+  coldSkyTint: {r: 0.85, g: 0.9, b: 1, a: 1}
+  hotSkyTint: {r: 1, g: 0.8, b: 0.6, a: 1}
+  maxSnowRate: 200
+  coldVolume: {fileID: 0}
+  hotVolume: {fileID: 0}
 --- !u!1 &1454069732
 GameObject:
   m_ObjectHideFlags: 0
