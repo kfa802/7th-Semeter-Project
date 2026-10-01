@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BambooGrowthSpot : MonoBehaviour
@@ -16,9 +17,75 @@ public class BambooGrowthSpot : MonoBehaviour
     [SerializeField] private float poopToBambooDelay = 5f;
     [SerializeField] private float growTime = 10f;   // length of your grow animation (seconds)
 
+    [Header("Bamboo already here at the start")]
+    // Drag the bamboo from the scene that stands on this spot (optional)
+    [SerializeField] private GameObject existingBamboo;
+    // If the slot above is empty, use the nearest bamboo within this distance (0 = off)
+    [SerializeField] private float autoDetectRadius = 1.5f;
+
     private bool occupied;
 
+    // Bamboo that another spot already took, so two spots don't share one
+    private static readonly HashSet<GameObject> claimed = new HashSet<GameObject>();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        claimed.Clear();
+    }
+
     public bool IsAvailable => !occupied;
+
+
+    private void Start()
+    {
+        if (existingBamboo == null && autoDetectRadius > 0f)
+            existingBamboo = FindNearbyBamboo();
+
+        // A bamboo already stands here, so the spot is taken until it disappears
+        if (existingBamboo != null)
+        {
+            occupied = true;
+            claimed.Add(existingBamboo);
+
+            if (BambooManager.Instance != null)
+                BambooManager.Instance.RegisterBamboo(existingBamboo, this);
+        }
+    }
+
+    private GameObject FindNearbyBamboo()
+    {
+        List<GameObject> candidates = new List<GameObject>();
+
+        if (BambooManager.Instance != null)
+            candidates.AddRange(BambooManager.Instance.StartingBamboo);
+
+        foreach (BambooPlant plant in FindObjectsOfType<BambooPlant>())
+            candidates.Add(plant.gameObject);
+
+        GameObject best = null;
+        float bestDistance = autoDetectRadius;
+
+        foreach (GameObject candidate in candidates)
+        {
+            if (candidate == null || claimed.Contains(candidate))
+                continue;
+
+            float distance = Vector3.Distance(
+                candidate.transform.position,
+                transform.position
+            );
+
+            if (distance <= bestDistance)
+            {
+                best = candidate;
+                bestDistance = distance;
+            }
+        }
+
+        return best;
+    }
+
 
     public void GrowBamboo()
     {
@@ -28,9 +95,13 @@ public class BambooGrowthSpot : MonoBehaviour
         StartCoroutine(GrowthSequence());
     }
 
-    // Called by BambooManager when this spot's bamboo is removed (rotted, etc.)
+    // Called by BambooManager when this spot's bamboo is gone (rotted, removed, destroyed)
     public void Free()
     {
+        if (existingBamboo != null)
+            claimed.Remove(existingBamboo);
+
+        existingBamboo = null;
         occupied = false;
     }
 
@@ -81,8 +152,21 @@ public class BambooGrowthSpot : MonoBehaviour
 
         holder.AddComponent<BambooPlant>().Init(growTime);
 
-        // Tell the manager this bamboo exists (the holder, so removing it removes everything)
+        // Remember it, so Free() can release it later
+        existingBamboo = holder;
+        claimed.Add(holder);
+
         if (BambooManager.Instance != null)
             BambooManager.Instance.RegisterBamboo(holder, this);
+    }
+
+    // Shows the detection radius when you select the spot
+    private void OnDrawGizmosSelected()
+    {
+        if (autoDetectRadius <= 0f)
+            return;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, autoDetectRadius);
     }
 }

@@ -52,6 +52,8 @@ public class BambooManager : MonoBehaviour
     private readonly List<GameObject> activeBamboo = new List<GameObject>();
     private readonly Dictionary<GameObject, BambooGrowthSpot> spotOf =
         new Dictionary<GameObject, BambooGrowthSpot>();
+    private readonly List<KeyValuePair<GameObject, BambooGrowthSpot>> keptSpots =
+        new List<KeyValuePair<GameObject, BambooGrowthSpot>>();
     private readonly List<RotState> rotting = new List<RotState>();
     private readonly HashSet<GameObject> rottingSet = new HashSet<GameObject>();
 
@@ -70,6 +72,9 @@ public class BambooManager : MonoBehaviour
     public int TotalRotted { get; private set; }
 
     public IReadOnlyList<BambooGrowthSpot> GrowthSpots => growthSpots;
+
+    // Bamboo placed by hand (spots use this to find the bamboo standing on them)
+    public IReadOnlyList<GameObject> StartingBamboo => startingBamboo;
 
     public IReadOnlyList<GameObject> ActiveBamboo
     {
@@ -164,14 +169,18 @@ public class BambooManager : MonoBehaviour
     // Call this when a bamboo is spawned (pass the spot so it can be freed later)
     public void RegisterBamboo(GameObject bamboo, BambooGrowthSpot spot = null)
     {
-        if (bamboo == null || activeBamboo.Contains(bamboo))
+        if (bamboo == null)
+            return;
+
+        // Always remember which spot the bamboo belongs to
+        if (spot != null)
+            spotOf[bamboo] = spot;
+
+        if (activeBamboo.Contains(bamboo))
             return;
 
         activeBamboo.Add(bamboo);
         TotalSpawned++;
-
-        if (spot != null)
-            spotOf[bamboo] = spot;
     }
 
     // Registers bamboo that exists in the scene but wasn't reported by a spot
@@ -251,6 +260,36 @@ public class BambooManager : MonoBehaviour
 
             activeBamboo.RemoveAt(i);
             TotalRemoved++;
+        }
+
+        // Free the spots of bamboo that no longer exists
+        if (spotOf.Count == 0)
+            return;
+
+        bool anyGone = false;
+        keptSpots.Clear();
+
+        foreach (KeyValuePair<GameObject, BambooGrowthSpot> pair in spotOf)
+        {
+            if (pair.Key == null)
+            {
+                if (pair.Value != null)
+                    pair.Value.Free();
+
+                anyGone = true;
+            }
+            else
+            {
+                keptSpots.Add(pair);
+            }
+        }
+
+        if (anyGone)
+        {
+            spotOf.Clear();
+
+            foreach (KeyValuePair<GameObject, BambooGrowthSpot> pair in keptSpots)
+                spotOf.Add(pair.Key, pair.Value);
         }
     }
 
@@ -403,6 +442,7 @@ public class BambooManager : MonoBehaviour
                 rotting.RemoveAt(i);
                 rottingSet.Remove(bamboo);
 
+                // Frees the spot, so new bamboo can grow there
                 Forget(bamboo);
                 TotalRotted++;
 
@@ -454,6 +494,7 @@ public class BambooManager : MonoBehaviour
         GUI.Label(
             new Rect(10, 10, 700, 100),
             "Bamboo in scene: " + ActiveCount + "   possible spots: " + Capacity +
+            "   free spots: " + GetFreeSpots().Count +
             "   rotting: " + RottingCount +
             "\nspawned: " + TotalSpawned +
             "   removed: " + TotalRemoved +
