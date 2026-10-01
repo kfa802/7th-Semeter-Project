@@ -1,81 +1,40 @@
-using System.Collections;
 using UnityEngine;
 
 public class BambooPlant : MonoBehaviour
 {
-    [Header("Growth")]
-    [SerializeField] private float growthDuration = 2f;
+    private Animator animator;
+    private float growTime = 10f;
+    private float progress;
+    private bool fullyGrown;
 
-    [Header("Bamboo Size")]
-    [SerializeField] private float minSize = 1.5f;
-    [SerializeField] private float maxSize = 2.5f;
-
-    private Vector3 targetScale;
-    private bool growing;
-
-    private void Awake()
+    public void Init(float time)
     {
-        // Remember the scale the prefab actually has
-        Vector3 originalScale = transform.localScale;
-
-        // Pick a random size
-        float randomSize = Random.Range(minSize, maxSize);
-
-        // This is the final size this bamboo will grow to
-        targetScale = originalScale * randomSize;
-
-        Debug.Log(
-            "Bamboo target scale: " + targetScale +
-            " | Random size: " + randomSize
-        );
+        growTime = Mathf.Max(0.1f, time);
+        animator = GetComponentInChildren<Animator>();
     }
 
-    public void Grow()
+    private void Update()
     {
-        if (growing)
+        if (fullyGrown)
             return;
 
-        StartCoroutine(GrowAnimation());
-    }
+        // 1 = normal speed, small number = very slow
+        float factor = EnvironmentSystem.Instance != null
+            ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+            : 1f;
 
-    private IEnumerator GrowAnimation()
-    {
-        growing = true;
+        progress += Time.deltaTime * factor / growTime;
 
-        // Start tiny
-        transform.localScale = Vector3.zero;
+        // Slows the grow animation
+        if (animator != null)
+            animator.speed = factor;
 
-        float timer = 0f;
-
-        while (timer < growthDuration)
+        if (progress >= 1f)
         {
-            timer += Time.deltaTime;
+            fullyGrown = true;
 
-            float progress =
-                Mathf.Clamp01(timer / growthDuration);
-
-            float smoothProgress =
-                Mathf.SmoothStep(0f, 1f, progress);
-
-            transform.localScale =
-                Vector3.Lerp(
-                    Vector3.zero,
-                    targetScale,
-                    smoothProgress
-                );
-
-            yield return null;
+            if (animator != null)
+                animator.speed = 1f;
         }
-
-        // IMPORTANT:
-        // Force the final size
-        transform.localScale = targetScale;
-
-        Debug.Log(
-            "Bamboo finished growing at scale: " +
-            transform.localScale
-        );
-
-        growing = false;
     }
 }

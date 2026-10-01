@@ -197,6 +197,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
   m_PrefabInstance: {fileID: 3816524}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &10625396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10625397}
+  - component: {fileID: 10625398}
+  m_Layer: 0
+  m_Name: Spot3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &10625397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10625396}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.89, y: -0.103189945, z: 3.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 141310566}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &10625398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10625396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5438d77f5db348b4aa8f89c4dd496db0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooGrowthSpot
+  poopPoint: {fileID: 10625397}
+  poopPrefab: {fileID: 114160893382771280, guid: d8561ad169a7d464f93d6944c5177421, type: 3}
+  bambooPrefab: {fileID: 5251407223849588736, guid: a6f2bb4057319bb4484e168f22af115a, type: 3}
+  minSize: 1.5
+  maxSize: 2.5
+  poopToBambooDelay: 5
 --- !u!1001 &10645457
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -623,6 +673,9 @@ Transform:
   m_Children:
   - {fileID: 117600466}
   - {fileID: 202475819}
+  - {fileID: 10625397}
+  - {fileID: 896528257}
+  - {fileID: 600747281}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &141853300
@@ -920,8 +973,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 1756282798}
   m_HandleRect: {fileID: 1678148489}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 40
+  m_MinValue: -15
+  m_MaxValue: 42
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -1312,7 +1365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.36
+      value: 2.14
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2182,6 +2235,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ade7557b8083944ff928405be56d9fe7, type: 3}
   m_PrefabInstance: {fileID: 567782682}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &600747280
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 600747281}
+  - component: {fileID: 600747282}
+  m_Layer: 0
+  m_Name: Spot5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &600747281
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600747280}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 7.47, y: -0.103189945, z: 4.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 141310566}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &600747282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600747280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5438d77f5db348b4aa8f89c4dd496db0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooGrowthSpot
+  poopPoint: {fileID: 600747281}
+  poopPrefab: {fileID: 114160893382771280, guid: d8561ad169a7d464f93d6944c5177421, type: 3}
+  bambooPrefab: {fileID: 5251407223849588736, guid: a6f2bb4057319bb4484e168f22af115a, type: 3}
+  minSize: 1.5
+  maxSize: 2.5
+  poopToBambooDelay: 5
 --- !u!1001 &626103668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3060,6 +3163,56 @@ Transform:
   - {fileID: 1139039830}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &896528256
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 896528257}
+  - component: {fileID: 896528258}
+  m_Layer: 0
+  m_Name: Spot4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &896528257
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896528256}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.36, y: -0.103189945, z: 4.22}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 141310566}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &896528258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896528256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5438d77f5db348b4aa8f89c4dd496db0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooGrowthSpot
+  poopPoint: {fileID: 896528257}
+  poopPrefab: {fileID: 114160893382771280, guid: d8561ad169a7d464f93d6944c5177421, type: 3}
+  bambooPrefab: {fileID: 5251407223849588736, guid: a6f2bb4057319bb4484e168f22af115a, type: 3}
+  minSize: 1.5
+  maxSize: 2.5
+  poopToBambooDelay: 5
 --- !u!1001 &995689144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4446,8 +4599,8 @@ Transform:
   m_GameObject: {fileID: 1335071176}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.75, y: -1.86, z: -3.18}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 13.7988, y: -1.86, z: -3.18}
+  m_LocalScale: {x: 2.5031092, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4527,15 +4680,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentSystem
   temperature: 20
-  minTemperature: 0
-  maxTemperature: 40
   idealTemperature: 20
   temperatureThreshold: 3
+  freezingPoint: 0
+  coldSlowdownPower: 3
+  minGrowthWhenHot: 0.2
   water: 100
   waterReactionSpeed: 5
   bamboo: 100
   bambooGrowthSpeed: 4
-  bambooDecaySpeed: 3
+  bambooDecaySpeed: 4
 --- !u!4 &1431297041
 Transform:
   m_ObjectHideFlags: 0
@@ -11503,9 +11657,9 @@ MonoBehaviour:
   growthSpots:
   - {fileID: 117600467}
   - {fileID: 202475820}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 10625398}
+  - {fileID: 896528258}
+  - {fileID: 600747282}
 --- !u!4 &2136257945
 Transform:
   m_ObjectHideFlags: 0

@@ -14,50 +14,49 @@ public class BambooGrowthSpot : MonoBehaviour
 
     [Header("Timing")]
     [SerializeField] private float poopToBambooDelay = 5f;
+    [SerializeField] private float growTime = 10f;   // length of your grow animation (seconds)
 
     private bool occupied;
 
     public bool IsAvailable => !occupied;
 
-    // Call GrowBamboo() for a random size, or GrowBamboo(2f) for an exact one
-    public void GrowBamboo(float? size = null)
+    public void GrowBamboo()
     {
         if (occupied)
             return;
 
-        float finalSize = size ?? Random.Range(minSize, maxSize);
-        StartCoroutine(GrowthSequence(finalSize));
+        StartCoroutine(GrowthSequence());
     }
 
-    private IEnumerator GrowthSequence(float size)
+    private IEnumerator GrowthSequence()
     {
         occupied = true;
 
-        // Spawn poop
         GameObject poop = null;
 
         if (poopPrefab != null && poopPoint != null)
+            poop = Instantiate(poopPrefab, poopPoint.position, poopPoint.rotation);
+
+        // The wait also runs slower when it is cold
+        float waited = 0f;
+
+        while (waited < poopToBambooDelay)
         {
-            poop = Instantiate(
-                poopPrefab,
-                poopPoint.position,
-                poopPoint.rotation
-            );
+            float factor = EnvironmentSystem.Instance != null
+                ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+                : 1f;
+
+            waited += Time.deltaTime * factor;
+            yield return null;
         }
 
-        // Wait
-        yield return new WaitForSeconds(poopToBambooDelay);
-
-        // Remove poop
         if (poop != null)
-        {
             Destroy(poop);
-        }
 
-        // Spawn bamboo
         if (bambooPrefab != null)
         {
-            // Empty parent that carries the size (the Animator can't override this)
+            float size = Random.Range(minSize, maxSize);
+
             GameObject holder = new GameObject("BambooHolder");
             holder.transform.SetPositionAndRotation(
                 transform.position,
@@ -65,10 +64,11 @@ public class BambooGrowthSpot : MonoBehaviour
             );
             holder.transform.localScale = Vector3.one * size;
 
-            // Bamboo keeps its own prefab scale, and the Animator plays as normal
             GameObject bamboo = Instantiate(bambooPrefab, holder.transform);
             bamboo.transform.localPosition = Vector3.zero;
             bamboo.transform.localRotation = Quaternion.identity;
+
+            holder.AddComponent<BambooPlant>().Init(growTime);
         }
     }
 }

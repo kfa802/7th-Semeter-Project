@@ -50,8 +50,8 @@ public class EnvironmentUI : MonoBehaviour
         // TEMPERATURE
         // =====================================================
 
-        temperatureSlider.minValue = 5f;
-        temperatureSlider.maxValue = 40f;
+        temperatureSlider.minValue = environment.MinTemperature;
+        temperatureSlider.maxValue = environment.MaxTemperature;
         temperatureSlider.wholeNumbers = false;
         temperatureSlider.interactable = true;
 
