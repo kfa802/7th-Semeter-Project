@@ -4,7 +4,6 @@ public class PandaFeedingZone : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Animator pandaAnimator;
-    [SerializeField] private BambooGrowthManager bambooGrowthManager;
 
     public void FeedPanda()
     {
@@ -16,16 +15,16 @@ public class PandaFeedingZone : MonoBehaviour
             pandaAnimator.SetTrigger("Eat");
         }
 
-        // Tell bamboo system that panda pooped
-        if (bambooGrowthManager != null)
+        // Tell BambooManager that the panda pooped
+        if (BambooManager.Instance != null)
         {
-            Debug.Log("PandaFeedingZone: Calling BambooGrowthManager.");
-            bambooGrowthManager.PandaPooped();
+            Debug.Log("PandaFeedingZone: Calling BambooManager.");
+            BambooManager.Instance.PandaPooped();
         }
         else
         {
             Debug.LogError(
-                "PandaFeedingZone: BambooGrowthManager is NOT assigned!"
+                "PandaFeedingZone: BambooManager.Instance is NOT available!"
             );
         }
     }

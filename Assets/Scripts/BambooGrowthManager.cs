@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using UnityEngine;
 
 public class BambooGrowthManager : MonoBehaviour
@@ -34,4 +34,4 @@ public class BambooGrowthManager : MonoBehaviour
 
         selectedSpot.GrowBamboo();
     }
-}
+}*/
