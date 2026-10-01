@@ -5,51 +5,96 @@ public class BambooManager : MonoBehaviour
 {
     public static BambooManager Instance { get; private set; }
 
-    [Header("Possible bamboo (every spot that can grow one)")]
-    [SerializeField] private List<BambooGrowthSpot> growthSpots =
+    // =========================================================
+    // GROWTH SPOTS
+    // =========================================================
+
+    [Header("Possible Bamboo")]
+    [Tooltip("Every growth spot represents one possible bamboo.")]
+    [SerializeField]
+    private List<BambooGrowthSpot> growthSpots =
         new List<BambooGrowthSpot>();
 
-    [SerializeField] private bool autoFindSpots = true;
+    [SerializeField]
+    private bool autoFindSpots = true;
 
-    [Header("Active bamboo (finding it)")]
-    [SerializeField] private bool autoFindBamboo = true;
-    [SerializeField] private string bambooTag = "";
-    [SerializeField] private List<GameObject> startingBamboo =
+
+    // =========================================================
+    // STARTING BAMBOO
+    // =========================================================
+
+    [Header("Starting Bamboo")]
+    [Tooltip("Bamboo that already exists in the scene.")]
+    [SerializeField]
+    private bool autoFindBamboo = true;
+
+    [SerializeField]
+    private string bambooTag = "";
+
+    [SerializeField]
+    private List<GameObject> startingBamboo =
         new List<GameObject>();
 
-    [Header("Pollution")]
-    [SerializeField] private EnvironmentSystem environment;
 
-    [SerializeField, Range(0f, 1f)]
-    private float pollution = 0f;
+    // =========================================================
+    // POLLUTION
+    // =========================================================
+
+    [Header("Pollution")]
+    [SerializeField]
+    private EnvironmentSystem environment;
 
     [SerializeField, Range(0f, 1f)]
     private float rotStartsAbovePollution = 0.3f;
 
-    [SerializeField] private float slowestRotInterval = 20f;
-    [SerializeField] private float fastestRotInterval = 4f;
-
-    [Header("Rotting")]
-    [SerializeField] private float rotDuration = 8f;
-    [SerializeField] private float shrinkDuration = 1.5f;
+    [SerializeField]
+    private float slowestRotInterval = 20f;
 
     [SerializeField]
-    private Color rottenColor = new Color(0.35f, 0.25f, 0.1f);
+    private float fastestRotInterval = 4f;
 
-    [Header("Debug")]
-    [SerializeField] private bool showDebugText = true;
-    [SerializeField] private bool showShrinkDebug = true;
+
+    // =========================================================
+    // ROTTING
+    // =========================================================
+
+    [Header("Rotting")]
+    [SerializeField]
+    private float rotDuration = 8f;
+
+    [SerializeField]
+    private float shrinkDuration = 1.5f;
+
+    [SerializeField]
+    private Color rottenColor =
+        new Color(0.35f, 0.25f, 0.1f);
+
+
+    // =========================================================
+    // ROT STATE
+    // =========================================================
 
     private class RotState
     {
         public GameObject bamboo;
+
         public float timer;
+
         public bool shrinking;
+
         public Vector3 startScale;
+
         public Renderer[] renderers;
+
         public int[] colorIds;
+
         public Color[] originalColors;
     }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
 
     private readonly List<GameObject> activeBamboo =
         new List<GameObject>();
@@ -66,10 +111,11 @@ public class BambooManager : MonoBehaviour
     private readonly HashSet<GameObject> rottingSet =
         new HashSet<GameObject>();
 
+
     private MaterialPropertyBlock block;
 
     private float rotTimer;
-    private float scanTimer;
+
 
     private static readonly int BaseColorId =
         Shader.PropertyToID("_BaseColor");
@@ -83,67 +129,142 @@ public class BambooManager : MonoBehaviour
     // =========================================================
 
     public int TotalSpawned { get; private set; }
+
     public int TotalRemoved { get; private set; }
+
     public int TotalRotted { get; private set; }
+
 
     public IReadOnlyList<BambooGrowthSpot> GrowthSpots =>
         growthSpots;
 
+
     public IReadOnlyList<GameObject> StartingBamboo =>
         startingBamboo;
+
 
     public IReadOnlyList<GameObject> ActiveBamboo
     {
         get
         {
             Prune();
+
             return activeBamboo;
         }
     }
 
-    public int Capacity =>
-        growthSpots.Count;
 
+    // =========================================================
+    // CAPACITY
+    // =========================================================
+
+    // Every growth spot represents one possible bamboo.
+    //
+    // Example:
+    //
+    // 10 growth spots = maximum 10 bamboo
+    //
+    public int Capacity
+    {
+        get
+        {
+            return growthSpots.Count;
+        }
+    }
+
+
+    // =========================================================
+    // ACTIVE BAMBOO COUNT
+    // =========================================================
+
+    // The number of actual bamboo currently registered.
     public int ActiveCount
     {
         get
         {
             Prune();
+
             return activeBamboo.Count;
         }
     }
 
-    public int RottingCount =>
-        rotting.Count;
 
-    public int HealthyCount =>
-        Mathf.Max(0, ActiveCount - rotting.Count);
+    // =========================================================
+    // ROTTING COUNT
+    // =========================================================
 
-    public float Percent =>
-        Capacity == 0
-            ? 0f
-            : Mathf.Clamp01((float)HealthyCount / Capacity) * 100f;
+    public int RottingCount
+    {
+        get
+        {
+            return rotting.Count;
+        }
+    }
+
+
+    // =========================================================
+    // HEALTHY BAMBOO
+    // =========================================================
+
+    public int HealthyCount
+    {
+        get
+        {
+            return Mathf.Max(
+                0,
+                ActiveCount - rotting.Count
+            );
+        }
+    }
+
+
+    // =========================================================
+    // BAMBOO PERCENTAGE
+    // =========================================================
+
+    // This is now based on REAL bamboo.
+    //
+    // Example:
+    //
+    // 10 growth spots
+    // 10 bamboo = 100%
+    //
+    // 10 growth spots
+    // 5 bamboo = 50%
+    //
+    // 10 growth spots
+    // 0 bamboo = 0%
+    //
+    public float Percent
+    {
+        get
+        {
+            if (Capacity <= 0)
+                return 0f;
+
+            return Mathf.Clamp01(
+                (float)HealthyCount / Capacity
+            ) * 100f;
+        }
+    }
 
 
     // =========================================================
     // POLLUTION
     // =========================================================
 
+    // Pollution is now controlled by EnvironmentSystem.
+    //
+    // BambooManager only reads it.
     public float Pollution
     {
         get
         {
-            float fromWater = environment != null
-                ? Mathf.Clamp01(1f - environment.Water / 100f)
-                : 0f;
+            if (environment == null)
+                return 0f;
 
-            return Mathf.Max(pollution, fromWater);
+            return environment.Pollution;
         }
-    }
-
-    public void SetPollution(float value)
-    {
-        pollution = Mathf.Clamp01(value);
     }
 
 
@@ -153,19 +274,30 @@ public class BambooManager : MonoBehaviour
 
     private void Awake()
     {
-        block = new MaterialPropertyBlock();
-
         Instance = this;
 
-        growthSpots.RemoveAll(spot => spot == null);
+        block =
+            new MaterialPropertyBlock();
 
-        if (autoFindSpots && growthSpots.Count == 0)
+
+        // Remove null growth spots
+        growthSpots.RemoveAll(
+            spot => spot == null
+        );
+
+
+        // Automatically find all growth spots
+        if (autoFindSpots &&
+            growthSpots.Count == 0)
         {
             growthSpots.AddRange(
                 FindObjectsOfType<BambooGrowthSpot>()
             );
         }
 
+
+        // Register bamboo explicitly assigned
+        // in the Inspector.
         foreach (GameObject bamboo in startingBamboo)
         {
             RegisterBamboo(bamboo);
@@ -175,27 +307,21 @@ public class BambooManager : MonoBehaviour
 
     private void Start()
     {
+        // Find bamboo that already exists in the scene.
         ScanForBamboo();
     }
 
 
     private void Update()
     {
-        scanTimer += Time.deltaTime;
-
-        if (scanTimer >= 1f)
-        {
-            scanTimer = 0f;
-            ScanForBamboo();
-        }
-
-        UpdatePollution();
         UpdateRotting();
+
+        UpdatePollutionRotTimer();
     }
 
 
     // =========================================================
-    // PANDA POOP / BAMBOO GROWTH
+    // PANDA POOP
     // =========================================================
 
     public void PandaPooped()
@@ -203,94 +329,116 @@ public class BambooManager : MonoBehaviour
         List<BambooGrowthSpot> availableSpots =
             GetFreeSpots();
 
+
         if (availableSpots.Count == 0)
         {
-            Debug.Log(
-                "BambooManager: No available bamboo growth spots."
-            );
-
             return;
         }
 
+
         BambooGrowthSpot selectedSpot =
             availableSpots[
-                Random.Range(0, availableSpots.Count)
+                Random.Range(
+                    0,
+                    availableSpots.Count
+                )
             ];
 
-        Debug.Log(
-            "BambooManager: Panda pooped. Growing bamboo at " +
-            selectedSpot.name
-        );
 
         selectedSpot.GrowBamboo();
     }
 
 
     // =========================================================
-    // ACTIVE BAMBOO
+    // REGISTER BAMBOO
     // =========================================================
 
     public void RegisterBamboo(
         GameObject bamboo,
-        BambooGrowthSpot spot = null)
+        BambooGrowthSpot spot = null
+    )
     {
         if (bamboo == null)
             return;
 
+
+        // If this bamboo belongs to a growth spot,
+        // remember the connection.
         if (spot != null)
         {
             spotOf[bamboo] = spot;
         }
 
+
+        // Don't register the same bamboo twice.
         if (activeBamboo.Contains(bamboo))
             return;
+
 
         activeBamboo.Add(bamboo);
 
         TotalSpawned++;
-
-        Debug.Log(
-            "BambooManager: Registered bamboo: " +
-            bamboo.name
-        );
     }
 
+
+    // =========================================================
+    // FIND BAMBOO ALREADY IN SCENE
+    // =========================================================
 
     private void ScanForBamboo()
     {
         if (autoFindBamboo)
         {
-            foreach (BambooPlant plant in
-                     FindObjectsOfType<BambooPlant>())
+            BambooPlant[] plants =
+                FindObjectsOfType<BambooPlant>();
+
+
+            foreach (BambooPlant plant in plants)
             {
-                if (!rottingSet.Contains(plant.gameObject))
-                {
-                    RegisterBamboo(plant.gameObject);
-                }
+                if (plant == null)
+                    continue;
+
+
+                GameObject bamboo =
+                    plant.gameObject;
+
+
+                if (rottingSet.Contains(bamboo))
+                    continue;
+
+
+                RegisterBamboo(bamboo);
             }
         }
 
+
+        // Optional tag-based detection.
         if (!string.IsNullOrEmpty(bambooTag))
         {
             try
             {
-                foreach (GameObject bamboo in
-                         GameObject.FindGameObjectsWithTag(bambooTag))
+                GameObject[] taggedBamboo =
+                    GameObject.FindGameObjectsWithTag(
+                        bambooTag
+                    );
+
+
+                foreach (GameObject bamboo in taggedBamboo)
                 {
-                    if (!rottingSet.Contains(bamboo))
-                    {
-                        RegisterBamboo(bamboo);
-                    }
+                    if (bamboo == null)
+                        continue;
+
+
+                    if (rottingSet.Contains(bamboo))
+                        continue;
+
+
+                    RegisterBamboo(bamboo);
                 }
             }
             catch (UnityException)
             {
-                Debug.LogWarning(
-                    "BambooManager: the tag '" +
-                    bambooTag +
-                    "' does not exist."
-                );
-
+                // Invalid tag.
                 bambooTag = "";
             }
         }
@@ -301,17 +449,18 @@ public class BambooManager : MonoBehaviour
     // REMOVE BAMBOO
     // =========================================================
 
-    public void RemoveBamboo(GameObject bamboo)
+    public void RemoveBamboo(
+        GameObject bamboo
+    )
     {
         if (bamboo == null)
             return;
 
-        Debug.LogWarning(
-            "!!! REMOVE BAMBOO CALLED !!! " +
-            bamboo.name
-        );
 
-        for (int i = rotting.Count - 1; i >= 0; i--)
+        // Remove from rotting list if necessary.
+        for (int i = rotting.Count - 1;
+             i >= 0;
+             i--)
         {
             if (rotting[i].bamboo == bamboo)
             {
@@ -319,29 +468,46 @@ public class BambooManager : MonoBehaviour
             }
         }
 
+
         rottingSet.Remove(bamboo);
 
+
+        // Free its growth spot and forget it.
         Forget(bamboo);
+
 
         Destroy(bamboo);
     }
 
 
-    private void Forget(GameObject bamboo)
+    // =========================================================
+    // FORGET BAMBOO
+    // =========================================================
+
+    private void Forget(
+        GameObject bamboo
+    )
     {
+        if (bamboo == null)
+            return;
+
+
         if (activeBamboo.Remove(bamboo))
         {
             TotalRemoved++;
         }
 
+
         if (spotOf.TryGetValue(
-                bamboo,
-                out BambooGrowthSpot spot))
+            bamboo,
+            out BambooGrowthSpot spot
+        ))
         {
             if (spot != null)
             {
                 spot.Free();
             }
+
 
             spotOf.Remove(bamboo);
         }
@@ -354,6 +520,7 @@ public class BambooManager : MonoBehaviour
 
     private void Prune()
     {
+        // Remove destroyed bamboo from active list.
         for (int i = activeBamboo.Count - 1;
              i >= 0;
              i--)
@@ -361,10 +528,6 @@ public class BambooManager : MonoBehaviour
             if (activeBamboo[i] != null)
                 continue;
 
-            Debug.LogWarning(
-                "BambooManager: Bamboo disappeared/destroyed " +
-                "without going through RemoveBamboo()."
-            );
 
             activeBamboo.RemoveAt(i);
 
@@ -383,7 +546,8 @@ public class BambooManager : MonoBehaviour
 
         foreach (
             KeyValuePair<GameObject, BambooGrowthSpot> pair
-            in spotOf)
+            in spotOf
+        )
         {
             if (pair.Key == null)
             {
@@ -405,18 +569,23 @@ public class BambooManager : MonoBehaviour
         {
             spotOf.Clear();
 
+
             foreach (
                 KeyValuePair<GameObject, BambooGrowthSpot> pair
-                in keptSpots)
+                in keptSpots
+            )
             {
-                spotOf.Add(pair.Key, pair.Value);
+                spotOf.Add(
+                    pair.Key,
+                    pair.Value
+                );
             }
         }
     }
 
 
     // =========================================================
-    // POSSIBLE BAMBOO SPOTS
+    // FREE GROWTH SPOTS
     // =========================================================
 
     public List<BambooGrowthSpot> GetFreeSpots()
@@ -424,13 +593,19 @@ public class BambooManager : MonoBehaviour
         List<BambooGrowthSpot> free =
             new List<BambooGrowthSpot>();
 
+
         foreach (BambooGrowthSpot spot in growthSpots)
         {
-            if (spot != null && spot.IsAvailable)
+            if (spot == null)
+                continue;
+
+
+            if (spot.IsAvailable)
             {
                 free.Add(spot);
             }
         }
+
 
         return free;
     }
@@ -440,16 +615,22 @@ public class BambooManager : MonoBehaviour
     // POLLUTION -> ROTTING
     // =========================================================
 
-    private void UpdatePollution()
+    private void UpdatePollutionRotTimer()
     {
+        float pollution =
+            Pollution;
+
+
         float severity =
             Mathf.InverseLerp(
                 rotStartsAbovePollution,
                 1f,
-                Pollution
+                pollution
             );
 
 
+        // Pollution is below the threshold.
+        // No bamboo should start rotting.
         if (severity <= 0f)
         {
             rotTimer = 0f;
@@ -457,6 +638,7 @@ public class BambooManager : MonoBehaviour
         }
 
 
+        // Higher pollution = shorter interval.
         float interval =
             Mathf.Lerp(
                 slowestRotInterval,
@@ -465,7 +647,8 @@ public class BambooManager : MonoBehaviour
             );
 
 
-        rotTimer += Time.deltaTime;
+        rotTimer +=
+            Time.deltaTime;
 
 
         if (rotTimer >= interval)
@@ -486,65 +669,63 @@ public class BambooManager : MonoBehaviour
     {
         Prune();
 
+
         List<GameObject> healthy =
             new List<GameObject>();
 
 
         foreach (GameObject bamboo in activeBamboo)
         {
-            if (bamboo != null &&
-                !rottingSet.Contains(bamboo))
-            {
-                healthy.Add(bamboo);
-            }
+            if (bamboo == null)
+                continue;
+
+
+            if (rottingSet.Contains(bamboo))
+                continue;
+
+
+            healthy.Add(bamboo);
         }
 
 
         if (healthy.Count == 0)
-        {
-            Debug.Log(
-                "BambooManager: No healthy bamboo available."
-            );
-
             return;
-        }
 
 
         GameObject selected =
-            healthy[Random.Range(0, healthy.Count)];
-
-
-        Debug.Log(
-            "BambooManager: Starting rot on " +
-            selected.name
-        );
+            healthy[
+                Random.Range(
+                    0,
+                    healthy.Count
+                )
+            ];
 
 
         StartRotting(selected);
     }
 
 
-    public void StartRotting(GameObject bamboo)
+    public void StartRotting(
+        GameObject bamboo
+    )
     {
         if (bamboo == null)
             return;
+
 
         if (rottingSet.Contains(bamboo))
             return;
 
 
-        Debug.Log(
-            "BambooManager: StartRotting -> " +
-            bamboo.name
-        );
-
-
         Renderer[] renderers =
-            bamboo.GetComponentsInChildren<Renderer>();
+            bamboo.GetComponentsInChildren<Renderer>(
+                true
+            );
 
 
         int[] ids =
             new int[renderers.Length];
+
 
         Color[] originals =
             new Color[renderers.Length];
@@ -570,18 +751,22 @@ public class BambooManager : MonoBehaviour
 
             if (material.HasProperty(BaseColorId))
             {
-                ids[i] = BaseColorId;
+                ids[i] =
+                    BaseColorId;
             }
             else if (material.HasProperty(ColorId))
             {
-                ids[i] = ColorId;
+                ids[i] =
+                    ColorId;
             }
 
 
             if (ids[i] != -1)
             {
                 originals[i] =
-                    material.GetColor(ids[i]);
+                    material.GetColor(
+                        ids[i]
+                    );
             }
         }
 
@@ -590,11 +775,18 @@ public class BambooManager : MonoBehaviour
             new RotState
             {
                 bamboo = bamboo,
+
                 timer = 0f,
+
                 shrinking = false,
-                startScale = bamboo.transform.localScale,
+
+                startScale =
+                    bamboo.transform.localScale,
+
                 renderers = renderers,
+
                 colorIds = ids,
+
                 originalColors = originals
             }
         );
@@ -618,39 +810,36 @@ public class BambooManager : MonoBehaviour
                 rotting[i];
 
 
-            // -----------------------------------------
-            // Bamboo disappeared before shrinking
-            // -----------------------------------------
-
+            // Bamboo was destroyed externally.
             if (state.bamboo == null)
             {
-                Debug.LogWarning(
-                    "!!! ROTTING BAMBOO DISAPPEARED BEFORE " +
-                    "THE SHRINK ANIMATION FINISHED !!!"
-                );
-
                 rotting.RemoveAt(i);
 
                 continue;
             }
 
 
-            state.timer += Time.deltaTime;
+            state.timer +=
+                Time.deltaTime;
 
 
-            // -----------------------------------------
+            // -------------------------------------------------
             // PHASE 1 - TURN BROWN
-            // -----------------------------------------
+            // -------------------------------------------------
 
             if (!state.shrinking)
             {
                 float t =
                     Mathf.Clamp01(
-                        state.timer / rotDuration
+                        state.timer /
+                        rotDuration
                     );
 
 
-                ApplyTint(state, t);
+                ApplyTint(
+                    state,
+                    t
+                );
 
 
                 if (state.timer >= rotDuration)
@@ -659,16 +848,9 @@ public class BambooManager : MonoBehaviour
 
                     state.timer = 0f;
 
+
                     state.startScale =
                         state.bamboo.transform.localScale;
-
-
-                    Debug.Log(
-                        "!!! STARTING SHRINK ANIMATION !!! " +
-                        state.bamboo.name +
-                        " | Start scale = " +
-                        state.startScale
-                    );
                 }
 
 
@@ -676,17 +858,18 @@ public class BambooManager : MonoBehaviour
             }
 
 
-            // -----------------------------------------
+            // -------------------------------------------------
             // PHASE 2 - SHRINK
-            // -----------------------------------------
+            // -------------------------------------------------
 
             float shrink =
                 Mathf.Clamp01(
-                    state.timer / shrinkDuration
+                    state.timer /
+                    shrinkDuration
                 );
 
 
-            Vector3 newScale =
+            state.bamboo.transform.localScale =
                 Vector3.Lerp(
                     state.startScale,
                     Vector3.zero,
@@ -694,27 +877,9 @@ public class BambooManager : MonoBehaviour
                 );
 
 
-            state.bamboo.transform.localScale =
-                newScale;
-
-
-            // DEBUG THE ACTUAL SCALE EVERY FRAME
-            if (showShrinkDebug)
-            {
-                Debug.Log(
-                    "SHRINKING " +
-                    state.bamboo.name +
-                    " | progress = " +
-                    shrink.ToString("0.00") +
-                    " | scale = " +
-                    state.bamboo.transform.localScale
-                );
-            }
-
-
-            // -----------------------------------------
+            // -------------------------------------------------
             // FINISHED
-            // -----------------------------------------
+            // -------------------------------------------------
 
             if (shrink >= 1f)
             {
@@ -722,19 +887,15 @@ public class BambooManager : MonoBehaviour
                     state.bamboo;
 
 
-                Debug.Log(
-                    "!!! ROTTING FINISHED - " +
-                    "SHRINK COMPLETE !!! " +
-                    bamboo.name
+                rotting.RemoveAt(i);
+
+                rottingSet.Remove(
+                    bamboo
                 );
 
 
-                rotting.RemoveAt(i);
-
-                rottingSet.Remove(bamboo);
-
-
                 Forget(bamboo);
+
 
                 TotalRotted++;
 
@@ -751,7 +912,8 @@ public class BambooManager : MonoBehaviour
 
     private void ApplyTint(
         RotState state,
-        float amount)
+        float amount
+    )
     {
         for (int i = 0;
              i < state.renderers.Length;
@@ -760,11 +922,14 @@ public class BambooManager : MonoBehaviour
             if (state.renderers[i] == null)
                 continue;
 
+
             if (state.colorIds[i] == -1)
                 continue;
 
 
-            state.renderers[i].GetPropertyBlock(block);
+            state.renderers[i].GetPropertyBlock(
+                block
+            );
 
 
             block.SetColor(
@@ -777,91 +942,9 @@ public class BambooManager : MonoBehaviour
             );
 
 
-            state.renderers[i].SetPropertyBlock(block);
-        }
-    }
-
-
-    // =========================================================
-    // DEBUG GUI
-    // =========================================================
-
-    private void OnGUI()
-    {
-        if (!showDebugText)
-            return;
-
-
-        float severity =
-            Mathf.InverseLerp(
-                rotStartsAbovePollution,
-                1f,
-                Pollution
+            state.renderers[i].SetPropertyBlock(
+                block
             );
-
-
-        float interval =
-            Mathf.Lerp(
-                slowestRotInterval,
-                fastestRotInterval,
-                severity
-            );
-
-
-        string status;
-
-
-        if (ActiveCount == 0)
-        {
-            status =
-                "NO BAMBOO REGISTERED - nothing can rot";
         }
-        else if (severity <= 0f)
-        {
-            status =
-                "pollution too low, nothing rots";
-        }
-        else
-        {
-            status =
-                "next rot in " +
-                Mathf.Max(
-                    0f,
-                    interval - rotTimer
-                ).ToString("0.0") +
-                "s";
-        }
-
-
-        GUI.Label(
-            new Rect(10, 10, 700, 120),
-
-            "Bamboo in scene: " +
-            ActiveCount +
-
-            "   possible spots: " +
-            Capacity +
-
-            "   free spots: " +
-            GetFreeSpots().Count +
-
-            "   rotting: " +
-            RottingCount +
-
-            "\nspawned: " +
-            TotalSpawned +
-
-            "   removed: " +
-            TotalRemoved +
-
-            "   rotted: " +
-            TotalRotted +
-
-            "   pollution: " +
-            Pollution.ToString("0.00") +
-
-            "\n" +
-            status
-        );
     }
 }

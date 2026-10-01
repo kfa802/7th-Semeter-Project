@@ -8,11 +8,13 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private EnvironmentSystem environment;
     [SerializeField] private PandaSystem panda;
 
+
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
     [SerializeField] private Slider waterSlider;
     [SerializeField] private Slider bambooSlider;
     [SerializeField] private Slider pandaHealthSlider;
+
 
     [Header("Text")]
     [SerializeField] private TMP_Text temperatureText;
@@ -20,10 +22,15 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text bambooText;
     [SerializeField] private TMP_Text pandaHealthText;
 
+
     [Header("Visual Slider Speeds")]
     [SerializeField] private float waterSliderSpeed = 15f;
     [SerializeField] private float bambooSliderSpeed = 4f;
 
+
+    // =========================================================
+    // START
+    // =========================================================
 
     private void Start()
     {
@@ -35,6 +42,7 @@ public class EnvironmentUI : MonoBehaviour
 
             return;
         }
+
 
         if (panda == null)
         {
@@ -50,14 +58,23 @@ public class EnvironmentUI : MonoBehaviour
         // TEMPERATURE
         // =====================================================
 
-        temperatureSlider.minValue = environment.MinTemperature;
-        temperatureSlider.maxValue = environment.MaxTemperature;
-        temperatureSlider.wholeNumbers = false;
-        temperatureSlider.interactable = true;
+        temperatureSlider.minValue =
+            environment.MinTemperature;
+
+        temperatureSlider.maxValue =
+            environment.MaxTemperature;
+
+        temperatureSlider.wholeNumbers =
+            false;
+
+        temperatureSlider.interactable =
+            true;
+
 
         temperatureSlider.SetValueWithoutNotify(
             environment.Temperature
         );
+
 
         temperatureSlider.onValueChanged.AddListener(
             OnTemperatureChanged
@@ -68,9 +85,15 @@ public class EnvironmentUI : MonoBehaviour
         // WATER
         // =====================================================
 
-        waterSlider.minValue = 0f;
-        waterSlider.maxValue = 100f;
-        waterSlider.interactable = false;
+        waterSlider.minValue =
+            0f;
+
+        waterSlider.maxValue =
+            100f;
+
+        waterSlider.interactable =
+            false;
+
 
         waterSlider.SetValueWithoutNotify(
             environment.Water
@@ -81,9 +104,15 @@ public class EnvironmentUI : MonoBehaviour
         // BAMBOO
         // =====================================================
 
-        bambooSlider.minValue = 0f;
-        bambooSlider.maxValue = 100f;
-        bambooSlider.interactable = false;
+        bambooSlider.minValue =
+            0f;
+
+        bambooSlider.maxValue =
+            100f;
+
+        bambooSlider.interactable =
+            false;
+
 
         bambooSlider.SetValueWithoutNotify(
             environment.Bamboo
@@ -94,9 +123,15 @@ public class EnvironmentUI : MonoBehaviour
         // PANDA HEALTH
         // =====================================================
 
-        pandaHealthSlider.minValue = 0f;
-        pandaHealthSlider.maxValue = 100f;
-        pandaHealthSlider.interactable = false;
+        pandaHealthSlider.minValue =
+            0f;
+
+        pandaHealthSlider.maxValue =
+            100f;
+
+        pandaHealthSlider.interactable =
+            false;
+
 
         pandaHealthSlider.SetValueWithoutNotify(
             panda.Health
@@ -107,40 +142,48 @@ public class EnvironmentUI : MonoBehaviour
     }
 
 
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     private void Update()
     {
-        if (environment == null || panda == null)
+        if (environment == null ||
+            panda == null)
+        {
             return;
+        }
 
 
         // =====================================================
         // WATER
         // =====================================================
 
-        waterSlider.value = Mathf.MoveTowards(
-            waterSlider.value,
-            environment.Water,
-            waterSliderSpeed * Time.deltaTime
-        );
+        waterSlider.value =
+            Mathf.MoveTowards(
+                waterSlider.value,
+                environment.Water,
+                waterSliderSpeed *
+                Time.deltaTime
+            );
 
 
         // =====================================================
         // BAMBOO
         // =====================================================
 
-        bambooSlider.value = Mathf.MoveTowards(
-            bambooSlider.value,
-            environment.Bamboo,
-            bambooSliderSpeed * Time.deltaTime
-        );
+        bambooSlider.value =
+            Mathf.MoveTowards(
+                bambooSlider.value,
+                environment.Bamboo,
+                bambooSliderSpeed *
+                Time.deltaTime
+            );
 
 
         // =====================================================
         // PANDA HEALTH
         // =====================================================
-
-        // The panda system already controls how quickly
-        // health changes, so the UI should directly follow it.
 
         pandaHealthSlider.SetValueWithoutNotify(
             panda.Health
@@ -155,12 +198,17 @@ public class EnvironmentUI : MonoBehaviour
     // TEMPERATURE
     // =========================================================
 
-    private void OnTemperatureChanged(float value)
+    private void OnTemperatureChanged(
+        float value
+    )
     {
         if (environment == null)
             return;
 
-        environment.SetTemperature(value);
+
+        environment.SetTemperature(
+            value
+        );
     }
 
 
@@ -170,8 +218,11 @@ public class EnvironmentUI : MonoBehaviour
 
     private void UpdateText()
     {
-        if (environment == null || panda == null)
+        if (environment == null ||
+            panda == null)
+        {
             return;
+        }
 
 
         temperatureText.text =

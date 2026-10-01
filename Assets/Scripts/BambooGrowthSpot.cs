@@ -10,71 +10,130 @@ public class BambooGrowthSpot : MonoBehaviour
 
     [Header("Bamboo")]
     [SerializeField] private GameObject bambooPrefab;
-    [SerializeField] private float minSize = 1.5f;   // 1 = prefab's normal size
+    [SerializeField] private float minSize = 1.5f;
     [SerializeField] private float maxSize = 2.5f;
 
     [Header("Timing")]
     [SerializeField] private float poopToBambooDelay = 5f;
-    [SerializeField] private float growTime = 10f;   // length of your grow animation (seconds)
+    [SerializeField] private float growTime = 10f;
 
     [Header("Bamboo already here at the start")]
-    // Drag the bamboo from the scene that stands on this spot (optional)
     [SerializeField] private GameObject existingBamboo;
-    // If the slot above is empty, use the nearest bamboo within this distance (0 = off)
     [SerializeField] private float autoDetectRadius = 1.5f;
 
     private bool occupied;
 
-    // Bamboo that another spot already took, so two spots don't share one
-    private static readonly HashSet<GameObject> claimed = new HashSet<GameObject>();
+    private static readonly HashSet<GameObject> claimed =
+        new HashSet<GameObject>();
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    [RuntimeInitializeOnLoadMethod(
+        RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
         claimed.Clear();
     }
 
-    public bool IsAvailable => !occupied;
+    public bool IsAvailable
+    {
+        get
+        {
+            // If the bamboo assigned to this spot has been destroyed,
+            // the spot is available again.
+            if (occupied && existingBamboo == null)
+            {
+                occupied = false;
+            }
 
+            return !occupied;
+        }
+    }
 
     private void Start()
     {
-        if (existingBamboo == null && autoDetectRadius > 0f)
-            existingBamboo = FindNearbyBamboo();
+        // -----------------------------------------------------
+        // FIND EXISTING BAMBOO
+        // -----------------------------------------------------
 
-        // A bamboo already stands here, so the spot is taken until it disappears
+        if (existingBamboo == null &&
+            autoDetectRadius > 0f)
+        {
+            existingBamboo = FindNearbyBamboo();
+        }
+
+        // -----------------------------------------------------
+        // REGISTER EXISTING BAMBOO
+        // -----------------------------------------------------
+
         if (existingBamboo != null)
         {
             occupied = true;
+
             claimed.Add(existingBamboo);
 
             if (BambooManager.Instance != null)
-                BambooManager.Instance.RegisterBamboo(existingBamboo, this);
+            {
+                BambooManager.Instance.RegisterBamboo(
+                    existingBamboo,
+                    this
+                );
+            }
         }
     }
 
     private GameObject FindNearbyBamboo()
     {
-        List<GameObject> candidates = new List<GameObject>();
+        List<GameObject> candidates =
+            new List<GameObject>();
 
+        // Starting bamboo from BambooManager
         if (BambooManager.Instance != null)
-            candidates.AddRange(BambooManager.Instance.StartingBamboo);
+        {
+            foreach (
+                GameObject bamboo
+                in BambooManager.Instance.StartingBamboo
+            )
+            {
+                if (bamboo != null)
+                {
+                    candidates.Add(bamboo);
+                }
+            }
+        }
 
-        foreach (BambooPlant plant in FindObjectsOfType<BambooPlant>())
-            candidates.Add(plant.gameObject);
+        // BambooPlant objects already in the scene
+        BambooPlant[] plants =
+            FindObjectsOfType<BambooPlant>();
+
+        foreach (BambooPlant plant in plants)
+        {
+            if (plant == null)
+                continue;
+
+            if (!candidates.Contains(plant.gameObject))
+            {
+                candidates.Add(plant.gameObject);
+            }
+        }
 
         GameObject best = null;
-        float bestDistance = autoDetectRadius;
+
+        float bestDistance =
+            autoDetectRadius;
 
         foreach (GameObject candidate in candidates)
         {
-            if (candidate == null || claimed.Contains(candidate))
+            if (candidate == null)
                 continue;
 
-            float distance = Vector3.Distance(
-                candidate.transform.position,
-                transform.position
-            );
+            // Don't let two growth spots claim the same bamboo.
+            if (claimed.Contains(candidate))
+                continue;
+
+            float distance =
+                Vector3.Distance(
+                    candidate.transform.position,
+                    transform.position
+                );
 
             if (distance <= bestDistance)
             {
@@ -86,87 +145,158 @@ public class BambooGrowthSpot : MonoBehaviour
         return best;
     }
 
+    // =========================================================
+    // GROW BAMBOO
+    // =========================================================
 
     public void GrowBamboo()
     {
-        if (occupied)
+        if (!IsAvailable)
             return;
 
         StartCoroutine(GrowthSequence());
     }
 
-    // Called by BambooManager when this spot's bamboo is gone (rotted, removed, destroyed)
+    // =========================================================
+    // FREE SPOT
+    // =========================================================
+
     public void Free()
     {
         if (existingBamboo != null)
+        {
             claimed.Remove(existingBamboo);
+        }
 
         existingBamboo = null;
         occupied = false;
     }
 
+    // =========================================================
+    // GROWTH SEQUENCE
+    // =========================================================
+
     private IEnumerator GrowthSequence()
     {
+        // Reserve the spot immediately.
         occupied = true;
 
         GameObject poop = null;
 
-        if (poopPrefab != null && poopPoint != null)
-            poop = Instantiate(poopPrefab, poopPoint.position, poopPoint.rotation);
+        if (poopPrefab != null &&
+            poopPoint != null)
+        {
+            poop = Instantiate(
+                poopPrefab,
+                poopPoint.position,
+                poopPoint.rotation
+            );
+        }
 
-        // The wait also runs slower when it is cold
         float waited = 0f;
 
         while (waited < poopToBambooDelay)
         {
-            float factor = EnvironmentSystem.Instance != null
-                ? EnvironmentSystem.Instance.TemperatureGrowthFactor
-                : 1f;
+            float factor =
+                EnvironmentSystem.Instance != null
+                    ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+                    : 1f;
 
-            waited += Time.deltaTime * factor;
+            waited +=
+                Time.deltaTime * factor;
+
             yield return null;
         }
 
+        // Remove poop
         if (poop != null)
+        {
             Destroy(poop);
+        }
+
+        // -----------------------------------------------------
+        // SAFETY CHECK
+        // -----------------------------------------------------
 
         if (bambooPrefab == null)
         {
-            // Nothing to grow, so don't block the spot forever
             occupied = false;
             yield break;
         }
 
-        float size = Random.Range(minSize, maxSize);
+        // -----------------------------------------------------
+        // CREATE BAMBOO
+        // -----------------------------------------------------
 
-        GameObject holder = new GameObject("BambooHolder");
+        float size =
+            Random.Range(
+                minSize,
+                maxSize
+            );
+
+        GameObject holder =
+            new GameObject(
+                "BambooHolder"
+            );
+
         holder.transform.SetPositionAndRotation(
             transform.position,
             bambooPrefab.transform.rotation
         );
-        holder.transform.localScale = Vector3.one * size;
 
-        GameObject bamboo = Instantiate(bambooPrefab, holder.transform);
-        bamboo.transform.localPosition = Vector3.zero;
-        bamboo.transform.localRotation = Quaternion.identity;
+        holder.transform.localScale =
+            Vector3.one * size;
 
-        holder.AddComponent<BambooPlant>().Init(growTime);
+        GameObject bamboo =
+            Instantiate(
+                bambooPrefab,
+                holder.transform
+            );
 
-        // Remember it, so Free() can release it later
+        bamboo.transform.localPosition =
+            Vector3.zero;
+
+        bamboo.transform.localRotation =
+            Quaternion.identity;
+
+        // Add BambooPlant to the HOLDER,
+        // because the holder is what BambooManager tracks.
+        BambooPlant plant =
+            holder.AddComponent<BambooPlant>();
+
+        plant.Init(growTime);
+
+        // -----------------------------------------------------
+        // REGISTER THE NEW BAMBOO
+        // -----------------------------------------------------
+
         existingBamboo = holder;
+
         claimed.Add(holder);
 
         if (BambooManager.Instance != null)
-            BambooManager.Instance.RegisterBamboo(holder, this);
+        {
+            BambooManager.Instance.RegisterBamboo(
+                holder,
+                this
+            );
+        }
     }
 
-    // Shows the detection radius when you select the spot
+    // =========================================================
+    // DEBUG GIZMO
+    // =========================================================
+
     private void OnDrawGizmosSelected()
     {
         if (autoDetectRadius <= 0f)
             return;
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, autoDetectRadius);
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            autoDetectRadius
+        );
     }
 }

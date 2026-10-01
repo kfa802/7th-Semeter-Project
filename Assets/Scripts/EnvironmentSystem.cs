@@ -4,50 +4,115 @@ public class EnvironmentSystem : MonoBehaviour
 {
     public static EnvironmentSystem Instance { get; private set; }
 
-    // Not serialized on purpose: the values here are the real ones,
-    // so an old Inspector value can't override them.
+
+    // =========================================================
+    // TEMPERATURE
+    // =========================================================
+
     private float minTemperature = -15f;
     private float maxTemperature = 40f;
+
 
     [Header("Temperature")]
     [SerializeField] private float temperature = 20f;
 
+
     [Header("Ideal Temperature")]
     [SerializeField] private float idealTemperature = 20f;
+
 
     [Header("Temperature Threshold")]
     [SerializeField] private float temperatureThreshold = 3f;
 
+
     [Header("Freezing")]
     [SerializeField] private float freezingPoint = 0f;
 
-    // Higher = growth drops off faster when it gets cold
+
+    // Higher = growth drops off faster when cold
     [SerializeField] private float coldSlowdownPower = 1.5f;
 
-    // Slowest growth speed when freezing (0.2 = 5x slower than normal)
-    [SerializeField, Range(0.05f, 0.5f)] private float minGrowthWhenCold = 0.2f;
+
+    // Slowest growth speed when freezing
+    [SerializeField, Range(0.05f, 0.5f)]
+    private float minGrowthWhenCold = 0.2f;
+
 
     [Header("Heat")]
-    [SerializeField, Range(0f, 1f)] private float minGrowthWhenHot = 0.2f;
+    [SerializeField, Range(0f, 1f)]
+    private float minGrowthWhenHot = 0.2f;
+
+
+    // =========================================================
+    // WATER
+    // =========================================================
 
     [Header("Water")]
     [SerializeField] private float water = 100f;
+
     [SerializeField] private float waterReactionSpeed = 5f;
 
-    [Header("Bamboo")]
-    [SerializeField] private float bamboo = 100f;
-    [SerializeField] private float bambooGrowthSpeed = 4f;
-    [SerializeField] private float bambooDecaySpeed = 4f;
 
-    public float Temperature => temperature;
-    public float MinTemperature => minTemperature;
-    public float MaxTemperature => maxTemperature;
-    public float Water => water;
-    public float Bamboo => bamboo;
+    // =========================================================
+    // POLLUTION
+    // =========================================================
 
-    // 1 = normal growth, small number = very slow
-    public float TemperatureGrowthFactor { get; private set; } = 1f;
+    [Header("Pollution")]
+    [Tooltip("0 = no pollution, 1 = maximum pollution.")]
+    [SerializeField, Range(0f, 1f)]
+    private float pollution = 0f;
 
+
+    // =========================================================
+    // PUBLIC VALUES
+    // =========================================================
+
+    public float Temperature =>
+        temperature;
+
+
+    public float MinTemperature =>
+        minTemperature;
+
+
+    public float MaxTemperature =>
+        maxTemperature;
+
+
+    public float Water =>
+        water;
+
+
+    // Bamboo is now based on the actual bamboo
+    // existing in the scene.
+    public float Bamboo
+    {
+        get
+        {
+            if (BambooManager.Instance == null)
+                return 0f;
+
+            return BambooManager.Instance.Percent;
+        }
+    }
+
+
+    public float Pollution =>
+        pollution;
+
+
+    // 1 = normal growth
+    // smaller number = slower growth
+    public float TemperatureGrowthFactor
+    {
+        get;
+        private set;
+    } = 1f;
+
+
+    // =========================================================
+    // UNITY
+    // =========================================================
 
     private void Awake()
     {
@@ -58,14 +123,15 @@ public class EnvironmentSystem : MonoBehaviour
     private void Start()
     {
         water = 100f;
-        bamboo = 100f;
     }
 
 
     private void Update()
     {
         UpdateWater();
-        UpdateBamboo();
+
+        TemperatureGrowthFactor =
+            GetTemperatureGrowthFactor();
     }
 
 
@@ -73,58 +139,89 @@ public class EnvironmentSystem : MonoBehaviour
     // TEMPERATURE
     // =========================================================
 
-    public void SetTemperature(float newTemperature)
+    public void SetTemperature(
+        float newTemperature
+    )
     {
-        temperature = Mathf.Clamp(
-            newTemperature,
-            minTemperature,
-            maxTemperature
-        );
+        temperature =
+            Mathf.Clamp(
+                newTemperature,
+                minTemperature,
+                maxTemperature
+            );
     }
 
 
-    public void ChangeTemperature(float amount)
+    public void ChangeTemperature(
+        float amount
+    )
     {
-        SetTemperature(temperature + amount);
+        SetTemperature(
+            temperature + amount
+        );
     }
 
 
     private float GetTemperatureGrowthFactor()
     {
-        float comfortableMin = idealTemperature - temperatureThreshold;
-        float comfortableMax = idealTemperature + temperatureThreshold;
+        float comfortableMin =
+            idealTemperature -
+            temperatureThreshold;
 
-        // Cold side
+
+        float comfortableMax =
+            idealTemperature +
+            temperatureThreshold;
+
+
+        // -------------------------------------------------
+        // COLD SIDE
+        // -------------------------------------------------
+
         if (temperature < comfortableMin)
         {
-            // 0 at freezing (and below), 1 at the comfortable range
-            float t = Mathf.Clamp01(
-                Mathf.InverseLerp(
-                    freezingPoint,
-                    comfortableMin,
-                    temperature
-                )
-            );
+            float t =
+                Mathf.Clamp01(
+                    Mathf.InverseLerp(
+                        freezingPoint,
+                        comfortableMin,
+                        temperature
+                    )
+                );
 
-            // Gets steadily slower, but never fully stops
+
             return Mathf.Lerp(
                 minGrowthWhenCold,
                 1f,
-                Mathf.Pow(t, coldSlowdownPower)
+                Mathf.Pow(
+                    t,
+                    coldSlowdownPower
+                )
             );
         }
 
-        // Hot side: slower, but never fully stops
+
+        // -------------------------------------------------
+        // HOT SIDE
+        // -------------------------------------------------
+
         if (temperature > comfortableMax)
         {
-            float t = Mathf.InverseLerp(
-                comfortableMax,
-                maxTemperature,
-                temperature
-            );
+            float t =
+                Mathf.InverseLerp(
+                    comfortableMax,
+                    maxTemperature,
+                    temperature
+                );
 
-            return Mathf.Lerp(1f, minGrowthWhenHot, t);
+
+            return Mathf.Lerp(
+                1f,
+                minGrowthWhenHot,
+                t
+            );
         }
+
 
         return 1f;
     }
@@ -137,75 +234,81 @@ public class EnvironmentSystem : MonoBehaviour
     private void UpdateWater()
     {
         float temperatureDifference =
-            Mathf.Abs(temperature - idealTemperature);
-
-        if (temperatureDifference <= temperatureThreshold)
-        {
-            water = Mathf.MoveTowards(
-                water,
-                100f,
-                waterReactionSpeed * Time.deltaTime
+            Mathf.Abs(
+                temperature -
+                idealTemperature
             );
+
+
+        if (temperatureDifference <=
+            temperatureThreshold)
+        {
+            water =
+                Mathf.MoveTowards(
+                    water,
+                    100f,
+                    waterReactionSpeed *
+                    Time.deltaTime
+                );
 
             return;
         }
 
+
         float excessTemperature =
-            temperatureDifference - temperatureThreshold;
+            temperatureDifference -
+            temperatureThreshold;
+
 
         float maximumExcess =
             Mathf.Max(
-                idealTemperature - temperatureThreshold - minTemperature,
-                maxTemperature - idealTemperature - temperatureThreshold
+                idealTemperature -
+                temperatureThreshold -
+                minTemperature,
+
+                maxTemperature -
+                idealTemperature -
+                temperatureThreshold
             );
 
+
         float severity =
-            Mathf.Clamp01(excessTemperature / maximumExcess);
+            Mathf.Clamp01(
+                excessTemperature /
+                maximumExcess
+            );
 
-        float exponentialSeverity = severity * severity;
 
-        water -= exponentialSeverity * waterReactionSpeed * Time.deltaTime;
+        float exponentialSeverity =
+            severity * severity;
 
-        water = Mathf.Clamp(water, 0f, 100f);
+
+        water -=
+            exponentialSeverity *
+            waterReactionSpeed *
+            Time.deltaTime;
+
+
+        water =
+            Mathf.Clamp(
+                water,
+                0f,
+                100f
+            );
     }
 
 
     // =========================================================
-    // BAMBOO
+    // POLLUTION
     // =========================================================
 
-    private void UpdateBamboo()
+    // This is mainly here so other systems can change
+    // pollution later if needed.
+    public void SetPollution(
+        float value
+    )
     {
-        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
-
-        if (water >= 50f)
-        {
-            float waterQuality =
-                Mathf.InverseLerp(50f, 100f, water);
-
-            float growth =
-                bambooGrowthSpeed *
-                waterQuality *
-                TemperatureGrowthFactor *
-                Time.deltaTime;
-
-            bamboo += growth;
-        }
-        else
-        {
-            float waterStress =
-                Mathf.InverseLerp(50f, 0f, water);
-
-            float exponentialStress = waterStress * waterStress;
-
-            float decay =
-                bambooDecaySpeed *
-                exponentialStress *
-                Time.deltaTime;
-
-            bamboo -= decay;
-        }
-
-        bamboo = Mathf.Clamp(bamboo, 0f, 100f);
+        pollution =
+            Mathf.Clamp01(value);
     }
 }
