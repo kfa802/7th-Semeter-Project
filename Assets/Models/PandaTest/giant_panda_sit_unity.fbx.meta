@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6a4600416dc1f4b60b7b8fdd262dd82f
+guid: 2cb65292e05934041bac57e082186a82
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -31,38 +31,9 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: nurbsCircle31|Take 001_nurbsCircle31
-      takeName: nurbsCircle31|Take 001_nurbsCircle31
-      internalID: -7200661799922404230
-      firstFrame: 0
-      lastFrame: 119
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Object_32|Panda_SitBreathe
-      takeName: Object_32|Panda_SitBreathe
-      internalID: -1139523735665364892
+      name: PandaRig|Panda_SitBreathe
+      takeName: PandaRig|Panda_SitBreathe
+      internalID: -1113772203076626947
       firstFrame: 0
       lastFrame: 72
       wrapMode: 0
@@ -89,40 +60,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Object_32|Panda_SitDown
-      takeName: Object_32|Panda_SitDown
-      internalID: -4035056947040119806
+      name: PandaRig|Panda_SitDown
+      takeName: PandaRig|Panda_SitDown
+      internalID: 5146587933810190154
       firstFrame: 0
       lastFrame: 48
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Object_32|Take 001_nurbsCircle31
-      takeName: Object_32|Take 001_nurbsCircle31
-      internalID: -1170370037506943540
-      firstFrame: 0
-      lastFrame: 119
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
