@@ -13,7 +13,9 @@ public class Dilemma : ScriptableObject
 
     public float choiceA_Disturbance;
     public float choiceA_Temperature;
+    public float choiceA_Pollution;
 
     public float choiceB_Disturbance;
     public float choiceB_Temperature;
+    public float choiceB_Pollution;
 }

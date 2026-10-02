@@ -12,31 +12,29 @@ public class EnvironmentSystem : MonoBehaviour
     private float minTemperature = -15f;
     private float maxTemperature = 40f;
 
-
     [Header("Temperature")]
     [SerializeField] private float temperature = 20f;
-
 
     [Header("Ideal Temperature")]
     [SerializeField] private float idealTemperature = 20f;
 
-
     [Header("Temperature Threshold")]
     [SerializeField] private float temperatureThreshold = 3f;
-
 
     [Header("Freezing")]
     [SerializeField] private float freezingPoint = 0f;
 
-
     // Higher = growth drops off faster when cold
     [SerializeField] private float coldSlowdownPower = 1.5f;
-
 
     // Slowest growth speed when freezing
     [SerializeField, Range(0.05f, 0.5f)]
     private float minGrowthWhenCold = 0.2f;
 
+
+    // =========================================================
+    // HEAT
+    // =========================================================
 
     [Header("Heat")]
     [SerializeField, Range(0f, 1f)]
@@ -70,20 +68,17 @@ public class EnvironmentSystem : MonoBehaviour
     public float Temperature =>
         temperature;
 
-
     public float MinTemperature =>
         minTemperature;
 
-
     public float MaxTemperature =>
         maxTemperature;
-
 
     public float Water =>
         water;
 
 
-    // Bamboo is now based on the actual bamboo
+    // Bamboo is based on the actual bamboo
     // existing in the scene.
     public float Bamboo
     {
@@ -119,12 +114,10 @@ public class EnvironmentSystem : MonoBehaviour
         Instance = this;
     }
 
-
     private void Start()
     {
         water = 100f;
     }
-
 
     private void Update()
     {
@@ -139,9 +132,7 @@ public class EnvironmentSystem : MonoBehaviour
     // TEMPERATURE
     // =========================================================
 
-    public void SetTemperature(
-        float newTemperature
-    )
+    public void SetTemperature(float newTemperature)
     {
         temperature =
             Mathf.Clamp(
@@ -151,10 +142,7 @@ public class EnvironmentSystem : MonoBehaviour
             );
     }
 
-
-    public void ChangeTemperature(
-        float amount
-    )
+    public void ChangeTemperature(float amount)
     {
         SetTemperature(
             temperature + amount
@@ -167,7 +155,6 @@ public class EnvironmentSystem : MonoBehaviour
         float comfortableMin =
             idealTemperature -
             temperatureThreshold;
-
 
         float comfortableMax =
             idealTemperature +
@@ -188,7 +175,6 @@ public class EnvironmentSystem : MonoBehaviour
                         temperature
                     )
                 );
-
 
             return Mathf.Lerp(
                 minGrowthWhenCold,
@@ -213,7 +199,6 @@ public class EnvironmentSystem : MonoBehaviour
                     maxTemperature,
                     temperature
                 );
-
 
             return Mathf.Lerp(
                 1f,
@@ -302,13 +287,16 @@ public class EnvironmentSystem : MonoBehaviour
     // POLLUTION
     // =========================================================
 
-    // This is mainly here so other systems can change
-    // pollution later if needed.
-    public void SetPollution(
-        float value
-    )
+    public void SetPollution(float value)
     {
         pollution =
             Mathf.Clamp01(value);
+    }
+
+    public void ChangePollution(float amount)
+    {
+        SetPollution(
+            pollution + amount
+        );
     }
 }
