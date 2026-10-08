@@ -1,14 +1,69 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PandaSystem : MonoBehaviour
 {
+    // =========================================================
+    // HEALTH
+    // =========================================================
+
     [Header("Panda Health")]
     [SerializeField, Range(0f, 100f)]
     private float health = 100f;
 
+
+    // =========================================================
+    // FEEDING / HUNGER
+    // =========================================================
+
     [Header("Feeding")]
+    [Tooltip("Health gained from a normal feeding.")]
     [SerializeField]
     private float healthPerFeeding = 10f;
+
+    [Tooltip("Seconds without food before the panda becomes hungry.")]
+    [SerializeField]
+    private float timeUntilHungry = 30f;
+
+    [Tooltip("Seconds without food before the panda becomes very hungry.")]
+    [SerializeField]
+    private float timeUntilVeryHungry = 60f;
+
+    [Tooltip("Health lost per second while hungry.")]
+    [SerializeField]
+    private float hungryHealthLossPerSecond = 3f;
+
+    [Tooltip("Health lost per second while very hungry.")]
+    [SerializeField]
+    private float veryHungryHealthLossPerSecond = 6f;
+
+    private float hungerTimer;
+
+
+    // =========================================================
+    // OVERFEEDING
+    // =========================================================
+
+    [Header("Overfeeding")]
+    [Tooltip("Maximum number of recent feedings before the panda is considered overfed.")]
+    [SerializeField]
+    private int maximumFeedingsInWindow = 3;
+
+    [Tooltip("How long feeding history is remembered.")]
+    [SerializeField]
+    private float overfeedingWindow = 30f;
+
+    [Tooltip("Health lost when trying to feed an already overfed panda.")]
+    [SerializeField]
+    private float overfeedingDamage = 10f;
+
+    private List<float> feedingTimes =
+        new List<float>();
+
+
+    // =========================================================
+    // WATER
+    // =========================================================
 
     [Header("Water Threshold")]
     [SerializeField, Range(0f, 100f)]
@@ -36,11 +91,122 @@ public class PandaSystem : MonoBehaviour
     [SerializeField]
     private float waterDamagePower = 3f;
 
+
+    // =========================================================
+    // TEMPERATURE
+    // =========================================================
+
+    [Header("Temperature")]
+    [Tooltip("Temperature at which the panda becomes hot.")]
+    [SerializeField]
+    private float hotTemperature = 25f;
+
+    [Tooltip("Temperature at or below which the panda becomes cold.")]
+    [SerializeField]
+    private float coldTemperature = 0f;
+
+
+    // =========================================================
+    // STRESS
+    // =========================================================
+
+    [Header("Stress")]
+    [SerializeField, Range(0f, 100f)]
+    private float stress = 0f;
+
+    [SerializeField, Range(0f, 100f)]
+    private float stressedThreshold = 50f;
+
+
+    // =========================================================
+    // REFERENCES
+    // =========================================================
+
     [Header("References")]
     [SerializeField]
     private EnvironmentSystem environment;
 
+
+    // =========================================================
+    // PUBLIC VALUES
+    // =========================================================
+
     public float Health => health;
+
+    public float Stress => stress;
+
+    public float HungerTimer => hungerTimer;
+
+
+    // =========================================================
+    // CONDITION CHECKS
+    // =========================================================
+
+    public bool IsHungry
+    {
+        get
+        {
+            return hungerTimer >= timeUntilHungry;
+        }
+    }
+
+    public bool IsVeryHungry
+    {
+        get
+        {
+            return hungerTimer >= timeUntilVeryHungry;
+        }
+    }
+
+    public bool IsOverfed
+    {
+        get
+        {
+            return feedingTimes.Count >= maximumFeedingsInWindow;
+        }
+    }
+
+    public bool IsThirsty
+    {
+        get
+        {
+            if (environment == null)
+                return false;
+
+            return environment.Water < waterHealthThreshold;
+        }
+    }
+
+    public bool IsHot
+    {
+        get
+        {
+            if (environment == null)
+                return false;
+
+            return environment.Temperature >= hotTemperature;
+        }
+    }
+
+    public bool IsCold
+    {
+        get
+        {
+            if (environment == null)
+                return false;
+
+            return environment.Temperature <= coldTemperature;
+        }
+    }
+
+    public bool IsStressed
+    {
+        get
+        {
+            return stress >= stressedThreshold;
+        }
+    }
+
 
     // =========================================================
     // UPDATE
@@ -51,29 +217,64 @@ public class PandaSystem : MonoBehaviour
         if (environment == null)
             return;
 
+        UpdateHunger();
+
+        UpdateFeedingHistory();
+
         UpdateHealthFromWater();
+
+        UpdateHealthFromHunger();
+
+        ClampHealth();
     }
 
+
     // =========================================================
-    // WATER → HEALTH
+    // HUNGER TIMER
+    // =========================================================
+
+    private void UpdateHunger()
+    {
+        hungerTimer += Time.deltaTime;
+    }
+
+
+    // =========================================================
+    // FEEDING HISTORY
+    // =========================================================
+
+    private void UpdateFeedingHistory()
+    {
+        float currentTime =
+            Time.time;
+
+        for (int i = feedingTimes.Count - 1; i >= 0; i--)
+        {
+            if (currentTime - feedingTimes[i] > overfeedingWindow)
+            {
+                feedingTimes.RemoveAt(i);
+            }
+        }
+    }
+
+
+    // =========================================================
+    // WATER HEALTH
     // =========================================================
 
     private void UpdateHealthFromWater()
     {
-        float water = environment.Water;
+        float water =
+            environment.Water;
 
-        // =====================================================
-        // WATER ABOVE HEALTH THRESHOLD
-        // =====================================================
+        // -----------------------------------------------------
+        // WATER ABOVE THRESHOLD
+        // -----------------------------------------------------
 
         if (water > waterHealthThreshold)
         {
-            // Only allow water to recover the panda
-            // if health is below the water recovery limit.
             if (health < maximumHealthFromWater)
             {
-                // 30% water = 0 recovery
-                // 100% water = 1 recovery
                 float recoveryAmount =
                     Mathf.InverseLerp(
                         waterHealthThreshold,
@@ -81,8 +282,6 @@ public class PandaSystem : MonoBehaviour
                         water
                     );
 
-                // Exponential recovery.
-                // More water = increasingly faster recovery.
                 recoveryAmount =
                     Mathf.Pow(
                         recoveryAmount,
@@ -97,8 +296,6 @@ public class PandaSystem : MonoBehaviour
                     recoveryPerSecond *
                     Time.deltaTime;
 
-                // Water can NEVER recover health
-                // above the maximum water health.
                 health =
                     Mathf.Min(
                         health,
@@ -107,14 +304,12 @@ public class PandaSystem : MonoBehaviour
             }
         }
 
-        // =====================================================
-        // WATER BELOW HEALTH THRESHOLD
-        // =====================================================
+        // -----------------------------------------------------
+        // WATER BELOW THRESHOLD
+        // -----------------------------------------------------
 
         else if (water < waterHealthThreshold)
         {
-            // 30% water = 0 damage
-            // 0% water = 1 damage
             float damageAmount =
                 1f -
                 (water / waterHealthThreshold);
@@ -124,8 +319,6 @@ public class PandaSystem : MonoBehaviour
                     damageAmount
                 );
 
-            // Exponential damage.
-            // Less water = increasingly faster damage.
             damageAmount =
                 Mathf.Pow(
                     damageAmount,
@@ -140,38 +333,79 @@ public class PandaSystem : MonoBehaviour
                 damagePerSecond *
                 Time.deltaTime;
         }
-
-        // =====================================================
-        // CLAMP HEALTH
-        // =====================================================
-
-        health =
-            Mathf.Clamp(
-                health,
-                0f,
-                100f
-            );
     }
 
+
     // =========================================================
-    // FEEDING
+    // HUNGER HEALTH
+    // =========================================================
+
+    private void UpdateHealthFromHunger()
+    {
+        if (IsVeryHungry)
+        {
+            health -=
+                veryHungryHealthLossPerSecond *
+                Time.deltaTime;
+        }
+        else if (IsHungry)
+        {
+            health -=
+                hungryHealthLossPerSecond *
+                Time.deltaTime;
+        }
+    }
+
+
+    // =========================================================
+    // FEED PANDA
     // =========================================================
 
     public void FeedPanda()
     {
-        float oldHealth = health;
+        Debug.Log("PandaSystem: FeedPanda() called.");
 
-        // Feeding gives an immediate health increase.
-        health += healthPerFeeding;
+        // -----------------------------------------------------
+        // IF ALREADY OVERFED
+        // -----------------------------------------------------
 
-        // Feeding can take the panda above
-        // the water recovery limit.
-        health =
-            Mathf.Clamp(
-                health,
-                0f,
-                100f
+        if (IsOverfed)
+        {
+            health -=
+                overfeedingDamage;
+
+            ClampHealth();
+
+            Debug.Log(
+                "PANDA OVERFED! Feeding caused " +
+                overfeedingDamage.ToString("0.0") +
+                " damage."
             );
+
+            return;
+        }
+
+
+        // -----------------------------------------------------
+        // NORMAL FEEDING
+        // -----------------------------------------------------
+
+        float oldHealth =
+            health;
+
+        // Reset hunger.
+        hungerTimer = 0f;
+
+        // Remember this feeding.
+        feedingTimes.Add(
+            Time.time
+        );
+
+        // Give health.
+        health +=
+            healthPerFeeding;
+
+        ClampHealth();
 
         Debug.Log(
             "PANDA FED! " +
@@ -179,5 +413,47 @@ public class PandaSystem : MonoBehaviour
             " -> " +
             health.ToString("0.0")
         );
+
+        Debug.Log(
+            "Recent feedings: " +
+            feedingTimes.Count
+        );
+    }
+
+
+    // =========================================================
+    // STRESS
+    // =========================================================
+
+    public void SetStress(float value)
+    {
+        stress =
+            Mathf.Clamp(
+                value,
+                0f,
+                100f
+            );
+    }
+
+    public void ChangeStress(float amount)
+    {
+        SetStress(
+            stress + amount
+        );
+    }
+
+
+    // =========================================================
+    // HEALTH CLAMP
+    // =========================================================
+
+    private void ClampHealth()
+    {
+        health =
+            Mathf.Clamp(
+                health,
+                0f,
+                100f
+            );
     }
 }
