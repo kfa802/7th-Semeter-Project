@@ -35,6 +35,24 @@ public class BambooManager : MonoBehaviour
     private List<GameObject> startingBamboo =
         new List<GameObject>();
 
+    
+    // =========================================================
+// NATURAL BAMBOO GROWTH
+// =========================================================
+
+[Header("Natural Bamboo Growth")]
+[SerializeField, Range(0f, 100f)]
+private float naturalGrowthWaterThreshold = 80f;
+
+[SerializeField]
+private float minimumNaturalGrowthInterval = 10f;
+
+[SerializeField]
+private float maximumNaturalGrowthInterval = 20f;
+
+private float naturalGrowthTimer;
+private float naturalGrowthTargetTime;
+
 
     // =========================================================
     // POLLUTION
@@ -305,20 +323,24 @@ public class BambooManager : MonoBehaviour
     }
 
 
-    private void Start()
-    {
-        // Find bamboo that already exists in the scene.
-        ScanForBamboo();
-    }
+private void Start()
+{
+    // Find bamboo that already exists in the scene.
+    ScanForBamboo();
+
+    // Start the natural growth timer.
+    SetNaturalGrowthTimer();
+}
 
 
-    private void Update()
-    {
-        UpdateRotting();
+private void Update()
+{
+    UpdateRotting();
 
-        UpdatePollutionRotTimer();
-    }
+    UpdatePollutionRotTimer();
 
+    UpdateNaturalBambooGrowth();
+}
 
     // =========================================================
     // PANDA POOP
@@ -347,6 +369,46 @@ public class BambooManager : MonoBehaviour
 
         selectedSpot.GrowBamboo();
     }
+
+    private void UpdateNaturalBambooGrowth()
+{
+    if (environment == null)
+        return;
+
+    // Natural bamboo growth only happens
+    // when the water supply is high enough.
+    if (environment.Water < naturalGrowthWaterThreshold)
+    {
+        naturalGrowthTimer = 0f;
+        return;
+    }
+
+    naturalGrowthTimer += Time.deltaTime;
+
+    if (naturalGrowthTimer >= naturalGrowthTargetTime)
+    {
+        naturalGrowthTimer = 0f;
+
+        List<BambooGrowthSpot> availableSpots =
+            GetFreeSpots();
+
+        if (availableSpots.Count > 0)
+        {
+            BambooGrowthSpot selectedSpot =
+                availableSpots[
+                    Random.Range(
+                        0,
+                        availableSpots.Count
+                    )
+                ];
+
+            selectedSpot.GrowBamboo();
+        }
+
+        // Choose a new random interval.
+        SetNaturalGrowthTimer();
+    }
+}
 
 
     // =========================================================
@@ -609,6 +671,18 @@ public class BambooManager : MonoBehaviour
 
         return free;
     }
+
+
+    private void SetNaturalGrowthTimer()
+{
+    naturalGrowthTargetTime =
+        Random.Range(
+            minimumNaturalGrowthInterval,
+            maximumNaturalGrowthInterval
+        );
+
+    naturalGrowthTimer = 0f;
+}
 
 
     // =========================================================
