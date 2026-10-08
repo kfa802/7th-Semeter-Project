@@ -189,9 +189,8 @@ public class EnvironmentUI : MonoBehaviour
         }
 
         temperatureText.text =
-            "Temperature: " +
-            environment.Temperature.ToString("0.0") +
-            "°C";
+    environment.Temperature.ToString("0.0") +
+    "°C";
 
         waterText.text =
             "Clean Water: " +
