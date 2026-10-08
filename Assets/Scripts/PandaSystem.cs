@@ -2,22 +2,31 @@ using UnityEngine;
 
 public class PandaSystem : MonoBehaviour
 {
-    [Header("Panda")]
-    [SerializeField] private float health = 100f;
+    [Header("Panda Health")]
+    [SerializeField, Range(0f, 100f)]
+    private float health = 100f;
 
-    [Header("Health Reaction")]
-    [SerializeField] private float healthReactionSpeed = 2f;
+    [Header("Feeding")]
+    [SerializeField]
+    private float healthPerFeeding = 10f;
 
-    [Header("Water Health")]
+    [Header("Water Threshold")]
     [SerializeField, Range(0f, 100f)]
     private float waterHealthThreshold = 30f;
 
+    [Header("Health Recovery")]
     [SerializeField]
-    private float waterDamagePower = 2f;
+    private float maximumHealthRecoveryPerSecond = 15f;
 
-    [Header("Resource Importance")]
     [SerializeField]
-    private float waterImportance = 1f;
+    private float waterRecoveryPower = 2f;
+
+    [Header("Health Damage")]
+    [SerializeField]
+    private float maximumHealthLossPerSecond = 10f;
+
+    [SerializeField]
+    private float waterDamagePower = 3f;
 
     [Header("References")]
     [SerializeField]
@@ -25,98 +34,99 @@ public class PandaSystem : MonoBehaviour
 
     public float Health => health;
 
-
-    private void Start()
-    {
-        // Panda always starts with full health
-        health = 100f;
-    }
-
-
     private void Update()
     {
         if (environment == null)
             return;
 
-
         float water = environment.Water;
 
+        float healthChangePerSecond = 0f;
 
-        // -----------------------------------------------------
-        // WATER HEALTH
-        // -----------------------------------------------------
+        // =====================================================
+        // WATER ABOVE 30%
+        // =====================================================
 
-        float waterHealth;
-
-
-        if (water >= waterHealthThreshold)
+        if (water > waterHealthThreshold)
         {
-            // Above 30% water:
-            // Panda stays completely healthy.
+            float recoveryAmount =
+                Mathf.InverseLerp(
+                    waterHealthThreshold,
+                    100f,
+                    water
+                );
 
-            waterHealth = 1f;
+            recoveryAmount =
+                Mathf.Pow(
+                    recoveryAmount,
+                    waterRecoveryPower
+                );
+
+            healthChangePerSecond =
+                recoveryAmount *
+                maximumHealthRecoveryPerSecond;
         }
-        else
-        {
-            // Convert the dangerous water range into 0–1.
-            //
-            // 30% water = 0 stress
-            // 0% water  = 1 stress
 
-            float waterStress =
+        // =====================================================
+        // WATER BELOW 30%
+        // =====================================================
+
+        else if (water < waterHealthThreshold)
+        {
+            float damageAmount =
                 1f -
                 (water / waterHealthThreshold);
 
-            waterStress =
-                Mathf.Clamp01(waterStress);
+            damageAmount =
+                Mathf.Clamp01(
+                    damageAmount
+                );
 
-
-            // Make the damage increasingly stronger
-            // as the water gets lower.
-
-            float exponentialStress =
+            damageAmount =
                 Mathf.Pow(
-                    waterStress,
+                    damageAmount,
                     waterDamagePower
                 );
 
-
-            // Convert stress into a health value.
-            //
-            // 30% water = 100% health
-            // 0% water  = 0% health
-
-            waterHealth =
-                1f -
-                exponentialStress;
+            healthChangePerSecond =
+                -damageAmount *
+                maximumHealthLossPerSecond;
         }
 
+        // =====================================================
+        // APPLY HEALTH CHANGE
+        // =====================================================
 
-        // -----------------------------------------------------
-        // TARGET HEALTH
-        // -----------------------------------------------------
+        health +=
+            healthChangePerSecond *
+            Time.deltaTime;
 
-        float targetHealth =
-            waterHealth * 100f;
+        health =
+            Mathf.Clamp(
+                health,
+                0f,
+                100f
+            );
+    }
 
+    // =========================================================
+    // FEEDING
+    // =========================================================
 
-        // -----------------------------------------------------
-        // HEALTH MOVES TOWARD TARGET
-        // -----------------------------------------------------
+    public void FeedPanda()
+    {
+        health += healthPerFeeding;
 
-        health = Mathf.MoveTowards(
-            health,
-            targetHealth,
-            healthReactionSpeed * Time.deltaTime
-        );
+        health =
+            Mathf.Clamp(
+                health,
+                0f,
+                100f
+            );
 
-
-        // Keep health between 0 and 100.
-
-        health = Mathf.Clamp(
-            health,
-            0f,
-            100f
+        Debug.Log(
+            "Panda fed. Health = " +
+            health.ToString("0.00")
         );
     }
 }

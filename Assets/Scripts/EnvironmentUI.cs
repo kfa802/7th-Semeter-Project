@@ -8,13 +8,11 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private EnvironmentSystem environment;
     [SerializeField] private PandaSystem panda;
 
-
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
     [SerializeField] private Slider waterSlider;
     [SerializeField] private Slider bambooSlider;
     [SerializeField] private Slider pandaHealthSlider;
-
 
     [Header("Text")]
     [SerializeField] private TMP_Text temperatureText;
@@ -22,11 +20,10 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text bambooText;
     [SerializeField] private TMP_Text pandaHealthText;
 
-
     [Header("Visual Slider Speeds")]
     [SerializeField] private float waterSliderSpeed = 15f;
     [SerializeField] private float bambooSliderSpeed = 4f;
-
+    [SerializeField] private float pandaHealthSliderSpeed = 20f;
 
     // =========================================================
     // START
@@ -43,7 +40,6 @@ public class EnvironmentUI : MonoBehaviour
             return;
         }
 
-
         if (panda == null)
         {
             Debug.LogError(
@@ -52,7 +48,6 @@ public class EnvironmentUI : MonoBehaviour
 
             return;
         }
-
 
         // =====================================================
         // TEMPERATURE
@@ -64,83 +59,62 @@ public class EnvironmentUI : MonoBehaviour
         temperatureSlider.maxValue =
             environment.MaxTemperature;
 
-        temperatureSlider.wholeNumbers =
-            false;
-
-        temperatureSlider.interactable =
-            true;
-
+        temperatureSlider.wholeNumbers = false;
+        temperatureSlider.interactable = true;
 
         temperatureSlider.SetValueWithoutNotify(
             environment.Temperature
         );
 
-
         temperatureSlider.onValueChanged.AddListener(
             OnTemperatureChanged
         );
-
 
         // =====================================================
         // WATER
         // =====================================================
 
-        waterSlider.minValue =
-            0f;
+        waterSlider.minValue = 0f;
+        waterSlider.maxValue = 100f;
 
-        waterSlider.maxValue =
-            100f;
-
-        waterSlider.interactable =
-            false;
-
+        waterSlider.wholeNumbers = false;
+        waterSlider.interactable = false;
 
         waterSlider.SetValueWithoutNotify(
             environment.Water
         );
 
-
         // =====================================================
         // BAMBOO
         // =====================================================
 
-        bambooSlider.minValue =
-            0f;
+        bambooSlider.minValue = 0f;
+        bambooSlider.maxValue = 100f;
 
-        bambooSlider.maxValue =
-            100f;
-
-        bambooSlider.interactable =
-            false;
-
+        bambooSlider.wholeNumbers = false;
+        bambooSlider.interactable = false;
 
         bambooSlider.SetValueWithoutNotify(
             environment.Bamboo
         );
 
-
         // =====================================================
         // PANDA HEALTH
         // =====================================================
 
-        pandaHealthSlider.minValue =
-            0f;
+        pandaHealthSlider.minValue = 0f;
+        pandaHealthSlider.maxValue = 100f;
 
-        pandaHealthSlider.maxValue =
-            100f;
-
-        pandaHealthSlider.interactable =
-            false;
-
+        // IMPORTANT
+        pandaHealthSlider.wholeNumbers = false;
+        pandaHealthSlider.interactable = false;
 
         pandaHealthSlider.SetValueWithoutNotify(
             panda.Health
         );
 
-
         UpdateText();
     }
-
 
     // =========================================================
     // UPDATE
@@ -154,7 +128,6 @@ public class EnvironmentUI : MonoBehaviour
             return;
         }
 
-
         // =====================================================
         // WATER
         // =====================================================
@@ -163,10 +136,8 @@ public class EnvironmentUI : MonoBehaviour
             Mathf.MoveTowards(
                 waterSlider.value,
                 environment.Water,
-                waterSliderSpeed *
-                Time.deltaTime
+                waterSliderSpeed * Time.deltaTime
             );
-
 
         // =====================================================
         // BAMBOO
@@ -176,41 +147,34 @@ public class EnvironmentUI : MonoBehaviour
             Mathf.MoveTowards(
                 bambooSlider.value,
                 environment.Bamboo,
-                bambooSliderSpeed *
-                Time.deltaTime
+                bambooSliderSpeed * Time.deltaTime
             );
-
 
         // =====================================================
         // PANDA HEALTH
         // =====================================================
 
-        pandaHealthSlider.SetValueWithoutNotify(
-            panda.Health
-        );
-
+        pandaHealthSlider.value =
+            Mathf.MoveTowards(
+                pandaHealthSlider.value,
+                panda.Health,
+                pandaHealthSliderSpeed * Time.deltaTime
+            );
 
         UpdateText();
     }
-
 
     // =========================================================
     // TEMPERATURE
     // =========================================================
 
-    private void OnTemperatureChanged(
-        float value
-    )
+    private void OnTemperatureChanged(float value)
     {
         if (environment == null)
             return;
 
-
-        environment.SetTemperature(
-            value
-        );
+        environment.SetTemperature(value);
     }
-
 
     // =========================================================
     // TEXT
@@ -224,24 +188,20 @@ public class EnvironmentUI : MonoBehaviour
             return;
         }
 
-
         temperatureText.text =
             "Temperature: " +
             environment.Temperature.ToString("0.0") +
             "°C";
-
 
         waterText.text =
             "Clean Water: " +
             waterSlider.value.ToString("0") +
             "%";
 
-
         bambooText.text =
             "Bamboo: " +
             bambooSlider.value.ToString("0") +
             "%";
-
 
         pandaHealthText.text =
             "Panda Health: " +

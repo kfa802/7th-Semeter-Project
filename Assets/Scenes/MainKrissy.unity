@@ -13650,9 +13650,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PandaSystem
   health: 100
-  healthReactionSpeed: 2
-  waterImportance: 0.5
-  bambooImportance: 0.5
+  healthPerFeeding: 10
+  waterHealthThreshold: 30
+  waterDamagePower: 2
+  maximumHealthLossPerSecond: 10
   environment: {fileID: 1431297040}
 --- !u!136 &725808052
 CapsuleCollider:
@@ -13764,6 +13765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PandaFeedingZone
   pandaAnimator: {fileID: 447650352}
+  pandaSystem: {fileID: 0}
 --- !u!1 &755028007
 GameObject:
   m_ObjectHideFlags: 0
@@ -13829,6 +13831,9 @@ MonoBehaviour:
   - {fileID: 338988594}
   - {fileID: 1688189956}
   - {fileID: 281570352}
+  naturalGrowthWaterThreshold: 80
+  minimumNaturalGrowthInterval: 10
+  maximumNaturalGrowthInterval: 20
   environment: {fileID: 1431297040}
   rotStartsAbovePollution: 0.3
   slowestRotInterval: 20
@@ -17773,6 +17778,7 @@ MonoBehaviour:
   minGrowthWhenHot: 0.2
   water: 100
   waterReactionSpeed: 5
+  waterRecoverySpeed: 5
   pollution: 0
 --- !u!4 &1431297041
 Transform:
@@ -25147,6 +25153,7 @@ MonoBehaviour:
   pandaHealthText: {fileID: 2072902922}
   waterSliderSpeed: 15
   bambooSliderSpeed: 5
+  pandaHealthSliderSpeed: 20
 --- !u!114 &1927953434
 MonoBehaviour:
   m_ObjectHideFlags: 0
