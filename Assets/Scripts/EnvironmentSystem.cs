@@ -48,7 +48,11 @@ public class EnvironmentSystem : MonoBehaviour
     [Header("Water")]
     [SerializeField] private float water = 100f;
 
+    [Header("Water Loss")]
     [SerializeField] private float waterReactionSpeed = 5f;
+
+    [Header("Water Recovery")]
+    [SerializeField] private float waterRecoverySpeed = 1f;
 
 
     // =========================================================
@@ -217,70 +221,139 @@ public class EnvironmentSystem : MonoBehaviour
     // =========================================================
 
     private void UpdateWater()
+{
+    // =========================================================
+    // MODERATE / COMFORTABLE TEMPERATURE
+    // 15–24°C
+    // Water increases quickly
+    // =========================================================
+
+    if (temperature >= 15f && temperature <= 24f)
     {
-        float temperatureDifference =
-            Mathf.Abs(
-                temperature -
-                idealTemperature
+        water +=
+            waterRecoverySpeed *
+            Time.deltaTime;
+
+        water = Mathf.Clamp(
+            water,
+            0f,
+            100f
+        );
+
+        return;
+    }
+
+
+    // =========================================================
+    // SLIGHTLY COLD
+    // 0–14°C
+    // Water still increases, but slower the colder it gets
+    // =========================================================
+
+    if (temperature > 0f && temperature < 15f)
+    {
+        float coldDistance =
+            Mathf.InverseLerp(
+                15f,
+                0f,
+                temperature
             );
 
-
-        if (temperatureDifference <=
-            temperatureThreshold)
-        {
-            water =
-                Mathf.MoveTowards(
-                    water,
-                    100f,
-                    waterReactionSpeed *
-                    Time.deltaTime
-                );
-
-            return;
-        }
-
-
-        float excessTemperature =
-            temperatureDifference -
-            temperatureThreshold;
-
-
-        float maximumExcess =
-            Mathf.Max(
-                idealTemperature -
-                temperatureThreshold -
-                minTemperature,
-
-                maxTemperature -
-                idealTemperature -
-                temperatureThreshold
+        // Starts at 100% recovery at 15°C
+        // Drops towards 20% recovery at 0°C
+        float recoveryMultiplier =
+            Mathf.Lerp(
+                1f,
+                0.2f,
+                coldDistance
             );
 
+        water +=
+            waterRecoverySpeed *
+            recoveryMultiplier *
+            Time.deltaTime;
 
-        float severity =
-            Mathf.Clamp01(
-                excessTemperature /
-                maximumExcess
+        water = Mathf.Clamp(
+            water,
+            0f,
+            100f
+        );
+
+        return;
+    }
+
+
+    // =========================================================
+    // SLIGHTLY HOT
+    // 25–40°C
+    // Water decreases, increasingly faster
+    // =========================================================
+
+    if (temperature >= 25f)
+    {
+        float hotSeverity =
+            Mathf.InverseLerp(
+                25f,
+                maxTemperature,
+                temperature
             );
 
-
+        // Make the loss accelerate exponentially
         float exponentialSeverity =
-            severity * severity;
-
+            Mathf.Pow(
+                hotSeverity,
+                2f
+            );
 
         water -=
             exponentialSeverity *
             waterReactionSpeed *
             Time.deltaTime;
 
+        water = Mathf.Clamp(
+            water,
+            0f,
+            100f
+        );
 
-        water =
-            Mathf.Clamp(
-                water,
-                0f,
-                100f
-            );
+        return;
     }
+
+
+    // =========================================================
+    // VERY COLD / FREEZING
+    // -15 to 0°C
+    // Water decreases increasingly faster
+    // =========================================================
+
+    if (temperature <= 0f)
+    {
+        float coldSeverity =
+            Mathf.InverseLerp(
+                0f,
+                minTemperature,
+                temperature
+            );
+
+        // Make freezing accelerate exponentially
+        float exponentialSeverity =
+            Mathf.Pow(
+                coldSeverity,
+                2f
+            );
+
+        water -=
+            exponentialSeverity *
+            waterReactionSpeed *
+            Time.deltaTime;
+
+        water = Mathf.Clamp(
+            water,
+            0f,
+            100f
+        );
+    }
+}
 
 
     // =========================================================
