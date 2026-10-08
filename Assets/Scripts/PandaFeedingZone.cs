@@ -10,19 +10,13 @@ public class PandaFeedingZone : MonoBehaviour
     {
         Debug.Log("PandaFeedingZone: FeedPanda() was called!");
 
-        // =====================================================
-        // PANDA ANIMATION
-        // =====================================================
-
+        // Panda animation
         if (pandaAnimator != null)
         {
             pandaAnimator.SetTrigger("Eat");
         }
 
-        // =====================================================
-        // PANDA HEALTH
-        // =====================================================
-
+        // Give health immediately
         if (pandaSystem != null)
         {
             pandaSystem.FeedPanda();
@@ -34,10 +28,7 @@ public class PandaFeedingZone : MonoBehaviour
             );
         }
 
-        // =====================================================
-        // BAMBOO / POOP
-        // =====================================================
-
+        // Trigger poop / bamboo growth
         if (BambooManager.Instance != null)
         {
             BambooManager.Instance.PandaPooped();

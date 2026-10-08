@@ -13652,8 +13652,10 @@ MonoBehaviour:
   health: 100
   healthPerFeeding: 10
   waterHealthThreshold: 30
-  waterDamagePower: 2
+  maximumHealthRecoveryPerSecond: 8
+  waterRecoveryPower: 2
   maximumHealthLossPerSecond: 10
+  waterDamagePower: 2
   environment: {fileID: 1431297040}
 --- !u!136 &725808052
 CapsuleCollider:
@@ -13765,7 +13767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PandaFeedingZone
   pandaAnimator: {fileID: 447650352}
-  pandaSystem: {fileID: 0}
+  pandaSystem: {fileID: 725808051}
 --- !u!1 &755028007
 GameObject:
   m_ObjectHideFlags: 0
