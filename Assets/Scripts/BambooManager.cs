@@ -35,23 +35,23 @@ public class BambooManager : MonoBehaviour
     private List<GameObject> startingBamboo =
         new List<GameObject>();
 
-    
+
     // =========================================================
-// NATURAL BAMBOO GROWTH
-// =========================================================
+    // NATURAL BAMBOO GROWTH
+    // =========================================================
 
-[Header("Natural Bamboo Growth")]
-[SerializeField, Range(0f, 100f)]
-private float naturalGrowthWaterThreshold = 80f;
+    [Header("Natural Bamboo Growth")]
+    [SerializeField, Range(0f, 100f)]
+    private float naturalGrowthWaterThreshold = 80f;
 
-[SerializeField]
-private float minimumNaturalGrowthInterval = 10f;
+    [SerializeField]
+    private float minimumNaturalGrowthInterval = 10f;
 
-[SerializeField]
-private float maximumNaturalGrowthInterval = 20f;
+    [SerializeField]
+    private float maximumNaturalGrowthInterval = 20f;
 
-private float naturalGrowthTimer;
-private float naturalGrowthTargetTime;
+    private float naturalGrowthTimer;
+    private float naturalGrowthTargetTime;
 
 
     // =========================================================
@@ -176,12 +176,6 @@ private float naturalGrowthTargetTime;
     // CAPACITY
     // =========================================================
 
-    // Every growth spot represents one possible bamboo.
-    //
-    // Example:
-    //
-    // 10 growth spots = maximum 10 bamboo
-    //
     public int Capacity
     {
         get
@@ -195,7 +189,6 @@ private float naturalGrowthTargetTime;
     // ACTIVE BAMBOO COUNT
     // =========================================================
 
-    // The number of actual bamboo currently registered.
     public int ActiveCount
     {
         get
@@ -240,19 +233,6 @@ private float naturalGrowthTargetTime;
     // BAMBOO PERCENTAGE
     // =========================================================
 
-    // This is now based on REAL bamboo.
-    //
-    // Example:
-    //
-    // 10 growth spots
-    // 10 bamboo = 100%
-    //
-    // 10 growth spots
-    // 5 bamboo = 50%
-    //
-    // 10 growth spots
-    // 0 bamboo = 0%
-    //
     public float Percent
     {
         get
@@ -271,9 +251,6 @@ private float naturalGrowthTargetTime;
     // POLLUTION
     // =========================================================
 
-    // Pollution is now controlled by EnvironmentSystem.
-    //
-    // BambooManager only reads it.
     public float Pollution
     {
         get
@@ -323,24 +300,25 @@ private float naturalGrowthTargetTime;
     }
 
 
-private void Start()
-{
-    // Find bamboo that already exists in the scene.
-    ScanForBamboo();
+    private void Start()
+    {
+        // Find bamboo that already exists in the scene.
+        ScanForBamboo();
 
-    // Start the natural growth timer.
-    SetNaturalGrowthTimer();
-}
+        // Start the natural growth timer.
+        SetNaturalGrowthTimer();
+    }
 
 
-private void Update()
-{
-    UpdateRotting();
+    private void Update()
+    {
+        UpdateRotting();
 
-    UpdatePollutionRotTimer();
+        UpdatePollutionRotTimer();
 
-    UpdateNaturalBambooGrowth();
-}
+        UpdateNaturalBambooGrowth();
+    }
+
 
     // =========================================================
     // PANDA POOP
@@ -370,45 +348,57 @@ private void Update()
         selectedSpot.GrowBamboo();
     }
 
+
+    // =========================================================
+    // NATURAL BAMBOO GROWTH
+    // =========================================================
+
     private void UpdateNaturalBambooGrowth()
-{
-    if (environment == null)
-        return;
-
-    // Natural bamboo growth only happens
-    // when the water supply is high enough.
-    if (environment.Water < naturalGrowthWaterThreshold)
     {
-        naturalGrowthTimer = 0f;
-        return;
-    }
+        if (environment == null)
+            return;
 
-    naturalGrowthTimer += Time.deltaTime;
 
-    if (naturalGrowthTimer >= naturalGrowthTargetTime)
-    {
-        naturalGrowthTimer = 0f;
-
-        List<BambooGrowthSpot> availableSpots =
-            GetFreeSpots();
-
-        if (availableSpots.Count > 0)
+        // Natural bamboo growth only happens
+        // when the water supply is high enough.
+        if (environment.Water < naturalGrowthWaterThreshold)
         {
-            BambooGrowthSpot selectedSpot =
-                availableSpots[
-                    Random.Range(
-                        0,
-                        availableSpots.Count
-                    )
-                ];
-
-            selectedSpot.GrowBamboo();
+            naturalGrowthTimer = 0f;
+            return;
         }
 
-        // Choose a new random interval.
-        SetNaturalGrowthTimer();
+
+        naturalGrowthTimer += Time.deltaTime;
+
+
+        if (naturalGrowthTimer >= naturalGrowthTargetTime)
+        {
+            naturalGrowthTimer = 0f;
+
+
+            List<BambooGrowthSpot> availableSpots =
+                GetFreeSpots();
+
+
+            if (availableSpots.Count > 0)
+            {
+                BambooGrowthSpot selectedSpot =
+                    availableSpots[
+                        Random.Range(
+                            0,
+                            availableSpots.Count
+                        )
+                    ];
+
+
+                selectedSpot.GrowBamboo();
+            }
+
+
+            // Choose a new random interval.
+            SetNaturalGrowthTimer();
+        }
     }
-}
 
 
     // =========================================================
@@ -504,6 +494,59 @@ private void Update()
                 bambooTag = "";
             }
         }
+    }
+
+
+    // =========================================================
+    // CONSUME BAMBOO
+    // =========================================================
+
+    public bool ConsumeBamboo()
+    {
+        Prune();
+
+
+        // Find one healthy bamboo that can be eaten.
+        for (int i = 0;
+             i < activeBamboo.Count;
+             i++)
+        {
+            GameObject bamboo =
+                activeBamboo[i];
+
+
+            if (bamboo == null)
+                continue;
+
+
+            // Do not eat bamboo that is currently rotting.
+            if (rottingSet.Contains(bamboo))
+                continue;
+
+
+            // RemoveBamboo handles:
+            // - removing it from activeBamboo
+            // - freeing its growth spot
+            // - destroying the visual bamboo
+            // - updating TotalRemoved
+            RemoveBamboo(bamboo);
+
+
+            Debug.Log(
+                "BAMBOO CONSUMED BY PANDA."
+            );
+
+
+            return true;
+        }
+
+
+        Debug.Log(
+            "PANDA TRIED TO EAT, BUT NO HEALTHY BAMBOO IS AVAILABLE."
+        );
+
+
+        return false;
     }
 
 
@@ -673,16 +716,21 @@ private void Update()
     }
 
 
-    private void SetNaturalGrowthTimer()
-{
-    naturalGrowthTargetTime =
-        Random.Range(
-            minimumNaturalGrowthInterval,
-            maximumNaturalGrowthInterval
-        );
+    // =========================================================
+    // NATURAL GROWTH TIMER
+    // =========================================================
 
-    naturalGrowthTimer = 0f;
-}
+    private void SetNaturalGrowthTimer()
+    {
+        naturalGrowthTargetTime =
+            Random.Range(
+                minimumNaturalGrowthInterval,
+                maximumNaturalGrowthInterval
+            );
+
+
+        naturalGrowthTimer = 0f;
+    }
 
 
     // =========================================================

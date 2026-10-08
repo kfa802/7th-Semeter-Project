@@ -45,7 +45,7 @@ public class PandaSystem : MonoBehaviour
     // =========================================================
 
     [Header("Overfeeding")]
-    [Tooltip("Maximum number of recent feedings before the panda is considered overfed.")]
+    [Tooltip("Number of recent feedings that makes the panda overfed.")]
     [SerializeField]
     private int maximumFeedingsInWindow = 3;
 
@@ -139,7 +139,7 @@ public class PandaSystem : MonoBehaviour
 
 
     // =========================================================
-    // CONDITION CHECKS
+    // CONDITIONS
     // =========================================================
 
     public bool IsHungry
@@ -245,8 +245,7 @@ public class PandaSystem : MonoBehaviour
 
     private void UpdateFeedingHistory()
     {
-        float currentTime =
-            Time.time;
+        float currentTime = Time.time;
 
         for (int i = feedingTimes.Count - 1; i >= 0; i--)
         {
@@ -264,8 +263,7 @@ public class PandaSystem : MonoBehaviour
 
     private void UpdateHealthFromWater()
     {
-        float water =
-            environment.Water;
+        float water = environment.Water;
 
         // -----------------------------------------------------
         // WATER ABOVE THRESHOLD
@@ -363,16 +361,17 @@ public class PandaSystem : MonoBehaviour
 
     public void FeedPanda()
     {
-        Debug.Log("PandaSystem: FeedPanda() called.");
+        Debug.Log(
+            "PandaSystem: FeedPanda() called."
+        );
 
         // -----------------------------------------------------
-        // IF ALREADY OVERFED
+        // OVERFED
         // -----------------------------------------------------
 
         if (IsOverfed)
         {
-            health -=
-                overfeedingDamage;
+            health -= overfeedingDamage;
 
             ClampHealth();
 
@@ -385,25 +384,20 @@ public class PandaSystem : MonoBehaviour
             return;
         }
 
-
         // -----------------------------------------------------
         // NORMAL FEEDING
         // -----------------------------------------------------
 
-        float oldHealth =
-            health;
+        float oldHealth = health;
 
         // Reset hunger.
         hungerTimer = 0f;
 
-        // Remember this feeding.
-        feedingTimes.Add(
-            Time.time
-        );
+        // Remember feeding.
+        feedingTimes.Add(Time.time);
 
-        // Give health.
-        health +=
-            healthPerFeeding;
+        // Increase health.
+        health += healthPerFeeding;
 
         ClampHealth();
 

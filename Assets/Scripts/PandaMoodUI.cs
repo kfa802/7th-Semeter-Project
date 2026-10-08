@@ -43,8 +43,7 @@ public class PandaMoodUI : MonoBehaviour
 
     private void Update()
     {
-        if (panda == null ||
-            moodText == null)
+        if (panda == null || moodText == null)
             return;
 
         UpdateMood();
@@ -57,10 +56,6 @@ public class PandaMoodUI : MonoBehaviour
             new StringBuilder();
 
 
-        // -----------------------------------------------------
-        // OVERFED
-        // -----------------------------------------------------
-
         if (panda.IsOverfed)
         {
             AddMood(
@@ -70,10 +65,6 @@ public class PandaMoodUI : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // VERY HUNGRY
-        // -----------------------------------------------------
-
         if (panda.IsVeryHungry)
         {
             AddMood(
@@ -81,11 +72,6 @@ public class PandaMoodUI : MonoBehaviour
                 showEmoji ? "🍃 VERY HUNGRY" : "VERY HUNGRY"
             );
         }
-
-        // -----------------------------------------------------
-        // HUNGRY
-        // -----------------------------------------------------
-
         else if (panda.IsHungry)
         {
             AddMood(
@@ -94,10 +80,6 @@ public class PandaMoodUI : MonoBehaviour
             );
         }
 
-
-        // -----------------------------------------------------
-        // THIRSTY
-        // -----------------------------------------------------
 
         if (panda.IsThirsty)
         {
@@ -108,10 +90,6 @@ public class PandaMoodUI : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // HOT
-        // -----------------------------------------------------
-
         if (panda.IsHot)
         {
             AddMood(
@@ -120,10 +98,6 @@ public class PandaMoodUI : MonoBehaviour
             );
         }
 
-
-        // -----------------------------------------------------
-        // COLD
-        // -----------------------------------------------------
 
         if (panda.IsCold)
         {
@@ -134,10 +108,6 @@ public class PandaMoodUI : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // STRESSED
-        // -----------------------------------------------------
-
         if (panda.IsStressed)
         {
             AddMood(
@@ -147,16 +117,12 @@ public class PandaMoodUI : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // HAPPY / NORMAL
-        // -----------------------------------------------------
-
         if (moods.Length == 0)
         {
             moods.Append(
                 showEmoji
-                ? "😊 HAPPY"
-                : "HAPPY"
+                    ? "😊 HAPPY"
+                    : "HAPPY"
             );
         }
 
