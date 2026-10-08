@@ -126,6 +126,13 @@ public class PandaSystem : MonoBehaviour
     [SerializeField]
     private EnvironmentSystem environment;
 
+    [Header("Extreme Heat Damage")]
+    [SerializeField]
+    private float extremeHeatTemperature = 35f;
+
+    [SerializeField]
+    private float maximumExtremeHeatDamagePerSecond = 2f;
+
 
     // =========================================================
     // PUBLIC VALUES
@@ -225,7 +232,10 @@ public class PandaSystem : MonoBehaviour
 
         UpdateHealthFromHunger();
 
+        UpdateHealthFromExtremeHeat();
+
         ClampHealth();
+
     }
 
 
@@ -435,6 +445,38 @@ public class PandaSystem : MonoBehaviour
             stress + amount
         );
     }
+
+    private void UpdateHealthFromExtremeHeat()
+{
+    float temperature =
+        environment.Temperature;
+
+    if (temperature <= extremeHeatTemperature)
+        return;
+
+    float heatSeverity =
+        Mathf.InverseLerp(
+            extremeHeatTemperature,
+            environment.MaxTemperature,
+            temperature
+        );
+
+    // Make the damage increase gradually
+    // as the temperature gets higher.
+    float damageMultiplier =
+        Mathf.Pow(
+            heatSeverity,
+            2f
+        );
+
+    float damagePerSecond =
+        damageMultiplier *
+        maximumExtremeHeatDamagePerSecond;
+
+    health -=
+        damagePerSecond *
+        Time.deltaTime;
+}
 
 
     // =========================================================
