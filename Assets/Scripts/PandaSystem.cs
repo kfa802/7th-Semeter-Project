@@ -15,16 +15,24 @@ public class PandaSystem : MonoBehaviour
     private float waterHealthThreshold = 30f;
 
     [Header("Health Recovery From Water")]
+    [Tooltip("Maximum health the panda can reach through water alone.")]
+    [SerializeField, Range(0f, 100f)]
+    private float maximumHealthFromWater = 50f;
+
+    [Tooltip("Maximum health recovered per second when water is at 100%.")]
     [SerializeField]
     private float maximumHealthRecoveryPerSecond = 15f;
 
+    [Tooltip("Higher values make recovery increase more strongly with water.")]
     [SerializeField]
     private float waterRecoveryPower = 2f;
 
     [Header("Health Damage From Water")]
+    [Tooltip("Maximum health lost per second when water is at 0%.")]
     [SerializeField]
     private float maximumHealthLossPerSecond = 10f;
 
+    [Tooltip("Higher values make damage increase more strongly as water gets lower.")]
     [SerializeField]
     private float waterDamagePower = 3f;
 
@@ -33,6 +41,10 @@ public class PandaSystem : MonoBehaviour
     private EnvironmentSystem environment;
 
     public float Health => health;
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
 
     private void Update()
     {
@@ -51,41 +63,58 @@ public class PandaSystem : MonoBehaviour
         float water = environment.Water;
 
         // =====================================================
-        // WATER ABOVE THRESHOLD
+        // WATER ABOVE HEALTH THRESHOLD
         // =====================================================
 
         if (water > waterHealthThreshold)
         {
-            float recoveryAmount =
-                Mathf.InverseLerp(
-                    waterHealthThreshold,
-                    100f,
-                    water
-                );
+            // Only allow water to recover the panda
+            // if health is below the water recovery limit.
+            if (health < maximumHealthFromWater)
+            {
+                // 30% water = 0 recovery
+                // 100% water = 1 recovery
+                float recoveryAmount =
+                    Mathf.InverseLerp(
+                        waterHealthThreshold,
+                        100f,
+                        water
+                    );
 
-            // Exponential recovery:
-            // closer to 100% water = increasingly faster recovery
-            recoveryAmount =
-                Mathf.Pow(
-                    recoveryAmount,
-                    waterRecoveryPower
-                );
+                // Exponential recovery.
+                // More water = increasingly faster recovery.
+                recoveryAmount =
+                    Mathf.Pow(
+                        recoveryAmount,
+                        waterRecoveryPower
+                    );
 
-            float recoveryPerSecond =
-                recoveryAmount *
-                maximumHealthRecoveryPerSecond;
+                float recoveryPerSecond =
+                    recoveryAmount *
+                    maximumHealthRecoveryPerSecond;
 
-            health +=
-                recoveryPerSecond *
-                Time.deltaTime;
+                health +=
+                    recoveryPerSecond *
+                    Time.deltaTime;
+
+                // Water can NEVER recover health
+                // above the maximum water health.
+                health =
+                    Mathf.Min(
+                        health,
+                        maximumHealthFromWater
+                    );
+            }
         }
 
         // =====================================================
-        // WATER BELOW THRESHOLD
+        // WATER BELOW HEALTH THRESHOLD
         // =====================================================
 
         else if (water < waterHealthThreshold)
         {
+            // 30% water = 0 damage
+            // 0% water = 1 damage
             float damageAmount =
                 1f -
                 (water / waterHealthThreshold);
@@ -95,8 +124,8 @@ public class PandaSystem : MonoBehaviour
                     damageAmount
                 );
 
-            // Exponential damage:
-            // closer to 0% water = increasingly faster damage
+            // Exponential damage.
+            // Less water = increasingly faster damage.
             damageAmount =
                 Mathf.Pow(
                     damageAmount,
@@ -111,6 +140,10 @@ public class PandaSystem : MonoBehaviour
                 damagePerSecond *
                 Time.deltaTime;
         }
+
+        // =====================================================
+        // CLAMP HEALTH
+        // =====================================================
 
         health =
             Mathf.Clamp(
@@ -128,9 +161,11 @@ public class PandaSystem : MonoBehaviour
     {
         float oldHealth = health;
 
-        // Instant health increase.
+        // Feeding gives an immediate health increase.
         health += healthPerFeeding;
 
+        // Feeding can take the panda above
+        // the water recovery limit.
         health =
             Mathf.Clamp(
                 health,
