@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -25,9 +26,15 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private float bambooSliderSpeed = 4f;
     [SerializeField] private float pandaHealthSliderSpeed = 20f;
 
-    // =========================================================
+    private bool bambooInitialized;
+    private EcosystemZone lastBambooZone;
+
+    private int currentBambooCount;
+    private int totalBambooCount;
+
+    // =====================================================
     // START
-    // =========================================================
+    // =====================================================
 
     private void Start()
     {
@@ -36,7 +43,6 @@ public class EnvironmentUI : MonoBehaviour
             Debug.LogError(
                 "EnvironmentUI: EnvironmentSystem is not assigned."
             );
-
             return;
         }
 
@@ -45,20 +51,13 @@ public class EnvironmentUI : MonoBehaviour
             Debug.LogError(
                 "EnvironmentUI: PandaSystem is not assigned."
             );
-
             return;
         }
 
-        // =====================================================
         // TEMPERATURE
-        // =====================================================
 
-        temperatureSlider.minValue =
-            environment.MinTemperature;
-
-        temperatureSlider.maxValue =
-            environment.MaxTemperature;
-
+        temperatureSlider.minValue = environment.MinTemperature;
+        temperatureSlider.maxValue = environment.MaxTemperature;
         temperatureSlider.wholeNumbers = false;
         temperatureSlider.interactable = true;
 
@@ -70,103 +69,130 @@ public class EnvironmentUI : MonoBehaviour
             OnTemperatureChanged
         );
 
-        // =====================================================
         // WATER
-        // =====================================================
 
         waterSlider.minValue = 0f;
         waterSlider.maxValue = 100f;
-
         waterSlider.wholeNumbers = false;
         waterSlider.interactable = false;
 
-        waterSlider.SetValueWithoutNotify(
-            environment.Water
-        );
+        waterSlider.SetValueWithoutNotify(environment.Water);
 
-        // =====================================================
         // BAMBOO
-        // =====================================================
+        // The slider represents the percentage of occupied
+        // bamboo growth spots in the current zone.
 
         bambooSlider.minValue = 0f;
         bambooSlider.maxValue = 100f;
-
         bambooSlider.wholeNumbers = false;
         bambooSlider.interactable = false;
 
-        bambooSlider.SetValueWithoutNotify(
-            environment.Bamboo
-        );
+        bambooSlider.SetValueWithoutNotify(0f);
 
-        // =====================================================
         // PANDA HEALTH
-        // =====================================================
 
         pandaHealthSlider.minValue = 0f;
         pandaHealthSlider.maxValue = 100f;
-
-        // IMPORTANT
         pandaHealthSlider.wholeNumbers = false;
         pandaHealthSlider.interactable = false;
 
-        pandaHealthSlider.SetValueWithoutNotify(
-            panda.Health
+        pandaHealthSlider.SetValueWithoutNotify(panda.Health);
+
+        UpdateBambooDisplay();
+        UpdateText();
+    }
+
+    // =====================================================
+    // UPDATE
+    // =====================================================
+
+    private void Update()
+    {
+        if (environment == null || panda == null)
+            return;
+
+        // WATER
+
+        waterSlider.value = Mathf.MoveTowards(
+            waterSlider.value,
+            environment.Water,
+            waterSliderSpeed * Time.deltaTime
+        );
+
+        // BAMBOO
+
+        UpdateBambooDisplay();
+
+        // PANDA HEALTH
+
+        pandaHealthSlider.value = Mathf.MoveTowards(
+            pandaHealthSlider.value,
+            panda.Health,
+            pandaHealthSliderSpeed * Time.deltaTime
         );
 
         UpdateText();
     }
 
-    // =========================================================
-    // UPDATE
-    // =========================================================
+    // =====================================================
+    // BAMBOO DISPLAY
+    // =====================================================
 
-    private void Update()
+    private void UpdateBambooDisplay()
     {
-        if (environment == null ||
-            panda == null)
+        BambooManager manager = BambooManager.Instance;
+
+        EcosystemZone activeZone =
+            environment != null ? environment.ActiveZone : null;
+
+        if (manager == null || activeZone == null)
         {
+            currentBambooCount = 0;
+            totalBambooCount = 0;
+
+            bambooSlider.SetValueWithoutNotify(0f);
+
             return;
         }
 
-        // =====================================================
-        // WATER
-        // =====================================================
+        // Actual bamboo objects in this zone.
+        currentBambooCount =
+            manager.GetCurrentCountForZone(activeZone);
 
-        waterSlider.value =
-            Mathf.MoveTowards(
-                waterSlider.value,
-                environment.Water,
-                waterSliderSpeed * Time.deltaTime
-            );
+        // Total growth spots available in this zone.
+        totalBambooCount =
+            manager.GetCapacityForZone(activeZone);
 
-        // =====================================================
-        // BAMBOO
-        // =====================================================
+        // Convert the bamboo count into a slider percentage.
+        float targetPercentage = totalBambooCount > 0
+            ? Mathf.Clamp01(
+                (float)currentBambooCount / totalBambooCount
+              ) * 100f
+            : 0f;
 
-        bambooSlider.value =
-            Mathf.MoveTowards(
+        // Set the correct starting value immediately.
+        // Also reset immediately when entering another zone.
+        if (!bambooInitialized || lastBambooZone != activeZone)
+        {
+            bambooSlider.SetValueWithoutNotify(targetPercentage);
+
+            bambooInitialized = true;
+            lastBambooZone = activeZone;
+        }
+        else
+        {
+            // Animate changes after initialization.
+            bambooSlider.value = Mathf.MoveTowards(
                 bambooSlider.value,
-                environment.Bamboo,
+                targetPercentage,
                 bambooSliderSpeed * Time.deltaTime
             );
-
-        // =====================================================
-        // PANDA HEALTH
-        // =====================================================
-
-        pandaHealthSlider.value =
-            Mathf.MoveTowards(
-                pandaHealthSlider.value,
-                panda.Health,
-                pandaHealthSliderSpeed * Time.deltaTime
-            );
-
-        UpdateText();
+        }
     }
 
-    // =========================================================
+    // =====================================================
     // TEMPERATURE
-    // =========================================================
+    // =====================================================
 
     private void OnTemperatureChanged(float value)
     {
@@ -176,35 +202,28 @@ public class EnvironmentUI : MonoBehaviour
         environment.SetTemperature(value);
     }
 
-    // =========================================================
+    // =====================================================
     // TEXT
-    // =========================================================
+    // =====================================================
 
     private void UpdateText()
     {
-        if (environment == null ||
-            panda == null)
-        {
+        if (environment == null || panda == null)
             return;
-        }
 
         temperatureText.text =
-    environment.Temperature.ToString("0.0") +
-    "°C";
+            environment.Temperature.ToString("0.0") + "°C";
 
         waterText.text =
             "Clean Water: " +
-            waterSlider.value.ToString("0") +
-            "%";
+            waterSlider.value.ToString("0") + "%";
 
+        // Show bamboo as a count, not a percentage.
         bambooText.text =
-            "Bamboo: " +
-            bambooSlider.value.ToString("0") +
-            "%";
+            currentBambooCount + "/" + totalBambooCount;
 
         pandaHealthText.text =
             "Panda Health: " +
-            pandaHealthSlider.value.ToString("0") +
-            "%";
+            pandaHealthSlider.value.ToString("0") + "%";
     }
 }

@@ -876,7 +876,7 @@ public bool ConsumeBamboo()
         return count;
     }
 
-    private int GetCurrentCountForZone(EcosystemZone zone)
+    public int GetCurrentCountForZone(EcosystemZone zone)
     {
         if (zone == null)
             return 0;
