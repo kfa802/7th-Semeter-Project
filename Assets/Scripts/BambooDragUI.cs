@@ -21,26 +21,44 @@ public class BambooDragUI : MonoBehaviour,
     private GameObject draggedBamboo;
     private Plane fallbackPlane;
     private bool overPanda;
+    private bool dragAllowed;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        dragAllowed = false;
+
+        // Check for real bamboo before allowing the drag.
+        if (BambooManager.Instance == null)
+        {
+            Debug.LogWarning("Cannot drag bamboo: BambooManager is missing.");
+            return;
+        }
+
+        if (EnvironmentSystem.Instance == null ||
+            EnvironmentSystem.Instance.ActiveZone == null)
+        {
+            Debug.Log("Cannot drag bamboo: The panda is not in an ecosystem zone.");
+            return;
+        }
+
+        if (!BambooManager.Instance.HasAvailableBambooInCurrentZone())
+        {
+            Debug.Log("Cannot drag bamboo: No available bamboo in this zone.");
+            return;
+        }
+
         if (worldCamera == null)
             worldCamera = Camera.main;
 
-        if (worldCamera == null)
+        if (worldCamera == null || bambooPrefab == null)
         {
-            Debug.LogError("BambooDragUI: No World Camera assigned and no MainCamera found.");
+            Debug.LogWarning("BambooDragUI: Camera or bamboo prefab is missing.");
             return;
         }
 
-        if (bambooPrefab == null)
-        {
-            Debug.LogError("BambooDragUI: Bamboo Prefab is not assigned.");
-            return;
-        }
+        dragAllowed = true;
 
         draggedBamboo = Instantiate(bambooPrefab);
-        Debug.Log("BambooDragUI: Bamboo spawned.");
 
         fallbackPlane = new Plane(
             Vector3.up,
@@ -52,64 +70,51 @@ public class BambooDragUI : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (draggedBamboo != null)
+        if (dragAllowed && draggedBamboo != null)
             UpdateBambooPosition(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (draggedBamboo == null)
+        if (!dragAllowed || draggedBamboo == null)
+        {
+            dragAllowed = false;
             return;
+        }
 
         UpdateBambooPosition(eventData);
 
-        if (!overPanda)
+        if (overPanda)
         {
-            Debug.Log("BambooDragUI: Bamboo dropped, but no panda collider was detected.");
-            Destroy(draggedBamboo);
-            draggedBamboo = null;
-            return;
-        }
-
-        Collider[] colliders = Physics.OverlapSphere(
-            draggedBamboo.transform.position,
-            pandaDetectionRadius,
-            pandaLayer,
-            QueryTriggerInteraction.Collide
-        );
-
-        bool fed = false;
-
-        foreach (Collider collider in colliders)
-        {
-            PandaFeedingZone feedingZone =
-                collider.GetComponent<PandaFeedingZone>();
-
-            if (feedingZone == null)
-                feedingZone = collider.GetComponentInParent<PandaFeedingZone>();
-
-            if (feedingZone == null)
-                feedingZone = collider.GetComponentInChildren<PandaFeedingZone>();
-
-            if (feedingZone != null)
-            {
-                feedingZone.FeedPanda();
-                Debug.Log("BambooDragUI: FeedPanda() called successfully.");
-                fed = true;
-                break;
-            }
-        }
-
-        if (!fed)
-        {
-            Debug.LogWarning(
-                "BambooDragUI: Panda collider detected, but no PandaFeedingZone was found. " +
-                "Check the collider's object and its parents."
+            Collider[] colliders = Physics.OverlapSphere(
+                draggedBamboo.transform.position,
+                pandaDetectionRadius,
+                pandaLayer,
+                QueryTriggerInteraction.Collide
             );
+
+            foreach (Collider collider in colliders)
+            {
+                PandaFeedingZone feedingZone =
+                    collider.GetComponent<PandaFeedingZone>();
+
+                if (feedingZone == null)
+                    feedingZone = collider.GetComponentInParent<PandaFeedingZone>();
+
+                if (feedingZone == null)
+                    feedingZone = collider.GetComponentInChildren<PandaFeedingZone>();
+
+                if (feedingZone != null)
+                {
+                    feedingZone.FeedPanda();
+                    break;
+                }
+            }
         }
 
         Destroy(draggedBamboo);
         draggedBamboo = null;
+        dragAllowed = false;
     }
 
     private void UpdateBambooPosition(PointerEventData eventData)
@@ -117,7 +122,6 @@ public class BambooDragUI : MonoBehaviour,
         Ray ray = worldCamera.ScreenPointToRay(eventData.position);
         Vector3 worldPosition;
 
-        // Prefer the actual terrain or ground collider.
         if (Physics.Raycast(
             ray,
             out RaycastHit hit,

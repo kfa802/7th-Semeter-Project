@@ -1,27 +1,67 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BambooGrowthSpot : MonoBehaviour
 {
+    // =========================================================
+    // POOP
+    // =========================================================
+
     [Header("Poop")]
     [SerializeField] private Transform poopPoint;
     [SerializeField] private GameObject poopPrefab;
+
+
+    // =========================================================
+    // BAMBOO
+    // =========================================================
 
     [Header("Bamboo")]
     [SerializeField] private GameObject bambooPrefab;
     [SerializeField] private float minSize = 1.5f;
     [SerializeField] private float maxSize = 2.5f;
 
+
+    // =========================================================
+    // TIMING
+    // =========================================================
+
     [Header("Timing")]
     [SerializeField] private float poopToBambooDelay = 5f;
     [SerializeField] private float growTime = 10f;
 
-    [Header("Bamboo already here at the start")]
+
+    // =========================================================
+    // STARTING BAMBOO
+    // =========================================================
+
+    [Header("Bamboo Already Here At The Start")]
     [SerializeField] private GameObject existingBamboo;
     [SerializeField] private float autoDetectRadius = 1.5f;
 
+
+    // =========================================================
+    // ECOSYSTEM ZONE
+    // =========================================================
+
+    [Header("Ecosystem Zone")]
+    [SerializeField] private EcosystemZone ecosystemZone;
+
+    public EcosystemZone Zone => ecosystemZone;
+
+    public GameObject ExistingBamboo => existingBamboo;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
     private bool occupied;
+    private bool isGrowing;
+
+    private Coroutine growthCoroutine;
 
     private static readonly HashSet<GameObject> claimed =
         new HashSet<GameObject>();
@@ -33,41 +73,45 @@ public class BambooGrowthSpot : MonoBehaviour
         claimed.Clear();
     }
 
+
+    // =========================================================
+    // AVAILABILITY
+    // =========================================================
+
     public bool IsAvailable
     {
         get
         {
-            // If the bamboo assigned to this spot has been destroyed,
-            // the spot is available again.
-            if (occupied && existingBamboo == null)
+            // Do not release a spot while bamboo is growing.
+            if (occupied &&
+                existingBamboo == null &&
+                !isGrowing)
             {
                 occupied = false;
             }
 
-            return !occupied;
+            return !occupied && !isGrowing;
         }
     }
 
+
+    // =========================================================
+    // START
+    // =========================================================
+
     private void Start()
     {
-        // -----------------------------------------------------
-        // FIND EXISTING BAMBOO
-        // -----------------------------------------------------
-
+        // Find starting bamboo if none was assigned manually.
         if (existingBamboo == null &&
             autoDetectRadius > 0f)
         {
             existingBamboo = FindNearbyBamboo();
         }
 
-        // -----------------------------------------------------
-        // REGISTER EXISTING BAMBOO
-        // -----------------------------------------------------
-
+        // Register starting bamboo with this specific spot.
         if (existingBamboo != null)
         {
             occupied = true;
-
             claimed.Add(existingBamboo);
 
             if (BambooManager.Instance != null)
@@ -78,29 +122,44 @@ public class BambooGrowthSpot : MonoBehaviour
                 );
             }
         }
+
+        // Warn if this spot has no zone.
+        if (ecosystemZone == null)
+        {
+            Debug.LogWarning(
+                "BambooGrowthSpot '" + gameObject.name +
+                "' has no Ecosystem Zone assigned.",
+                this
+            );
+        }
     }
+
+
+    // =========================================================
+    // FIND STARTING BAMBOO
+    // =========================================================
 
     private GameObject FindNearbyBamboo()
     {
         List<GameObject> candidates =
             new List<GameObject>();
 
-        // Starting bamboo from BambooManager
+        // Starting bamboo explicitly listed in BambooManager.
         if (BambooManager.Instance != null)
         {
             foreach (
                 GameObject bamboo
-                in BambooManager.Instance.StartingBamboo
-            )
+                in BambooManager.Instance.StartingBamboo)
             {
-                if (bamboo != null)
+                if (bamboo != null &&
+                    !candidates.Contains(bamboo))
                 {
                     candidates.Add(bamboo);
                 }
             }
         }
 
-        // BambooPlant objects already in the scene
+        // BambooPlant objects already in the scene.
         BambooPlant[] plants =
             FindObjectsOfType<BambooPlant>();
 
@@ -109,31 +168,31 @@ public class BambooGrowthSpot : MonoBehaviour
             if (plant == null)
                 continue;
 
-            if (!candidates.Contains(plant.gameObject))
+            GameObject bamboo = plant.gameObject;
+
+            if (!candidates.Contains(bamboo))
             {
-                candidates.Add(plant.gameObject);
+                candidates.Add(bamboo);
             }
         }
 
         GameObject best = null;
 
-        float bestDistance =
-            autoDetectRadius;
+        float bestDistance = autoDetectRadius;
 
         foreach (GameObject candidate in candidates)
         {
             if (candidate == null)
                 continue;
 
-            // Don't let two growth spots claim the same bamboo.
+            // Do not allow two spots to claim the same plant.
             if (claimed.Contains(candidate))
                 continue;
 
-            float distance =
-                Vector3.Distance(
-                    candidate.transform.position,
-                    transform.position
-                );
+            float distance = Vector3.Distance(
+                candidate.transform.position,
+                transform.position
+            );
 
             if (distance <= bestDistance)
             {
@@ -145,6 +204,7 @@ public class BambooGrowthSpot : MonoBehaviour
         return best;
     }
 
+
     // =========================================================
     // GROW BAMBOO
     // =========================================================
@@ -154,8 +214,38 @@ public class BambooGrowthSpot : MonoBehaviour
         if (!IsAvailable)
             return;
 
-        StartCoroutine(GrowthSequence());
+        // Every spot must belong to a zone.
+        if (ecosystemZone == null)
+        {
+            Debug.LogWarning(
+                "Cannot grow bamboo: no zone assigned to " +
+                gameObject.name,
+                this
+            );
+
+            return;
+        }
+
+        // Check the zone's maximum bamboo capacity.
+        if (BambooManager.Instance != null &&
+            !BambooManager.Instance.CanGrowInZone(
+                ecosystemZone))
+        {
+            Debug.Log(
+                "Maximum bamboo reached in " +
+                ecosystemZone.zoneName
+            );
+
+            return;
+        }
+
+        // Reserve the spot immediately.
+        occupied = true;
+        isGrowing = true;
+
+        growthCoroutine = StartCoroutine(GrowthSequence());
     }
+
 
     // =========================================================
     // FREE SPOT
@@ -170,7 +260,11 @@ public class BambooGrowthSpot : MonoBehaviour
 
         existingBamboo = null;
         occupied = false;
+
+        // Do not cancel a growth coroutine here.
+        // Free() is also called when bamboo is removed.
     }
+
 
     // =========================================================
     // GROWTH SEQUENCE
@@ -178,9 +272,6 @@ public class BambooGrowthSpot : MonoBehaviour
 
     private IEnumerator GrowthSequence()
     {
-        // Reserve the spot immediately.
-        occupied = true;
-
         GameObject poop = null;
 
         if (poopPrefab != null &&
@@ -193,6 +284,7 @@ public class BambooGrowthSpot : MonoBehaviour
             );
         }
 
+        // Wait before creating bamboo.
         float waited = 0f;
 
         while (waited < poopToBambooDelay)
@@ -202,75 +294,56 @@ public class BambooGrowthSpot : MonoBehaviour
                     ? EnvironmentSystem.Instance.TemperatureGrowthFactor
                     : 1f;
 
-            waited +=
-                Time.deltaTime * factor;
+            waited += Time.deltaTime * factor;
 
             yield return null;
         }
 
-        // Remove poop
         if (poop != null)
         {
             Destroy(poop);
         }
 
-        // -----------------------------------------------------
-        // SAFETY CHECK
-        // -----------------------------------------------------
-
+        // Safety check.
         if (bambooPrefab == null)
         {
             occupied = false;
+            isGrowing = false;
+            growthCoroutine = null;
             yield break;
         }
 
-        // -----------------------------------------------------
-        // CREATE BAMBOO
-        // -----------------------------------------------------
+        // Create the bamboo holder.
+        float size = Random.Range(minSize, maxSize);
 
-        float size =
-            Random.Range(
-                minSize,
-                maxSize
-            );
-
-        GameObject holder =
-            new GameObject(
-                "BambooHolder"
-            );
+        GameObject holder = new GameObject("BambooHolder");
 
         holder.transform.SetPositionAndRotation(
             transform.position,
             bambooPrefab.transform.rotation
         );
 
-        holder.transform.localScale =
-            Vector3.one * size;
+        holder.transform.localScale = Vector3.one * size;
 
-        GameObject bamboo =
-            Instantiate(
-                bambooPrefab,
-                holder.transform
-            );
+        // Create the visible bamboo as a child.
+        GameObject bamboo = Instantiate(
+            bambooPrefab,
+            holder.transform
+        );
 
-        bamboo.transform.localPosition =
-            Vector3.zero;
+        bamboo.transform.localPosition = Vector3.zero;
+        bamboo.transform.localRotation = Quaternion.identity;
 
-        bamboo.transform.localRotation =
-            Quaternion.identity;
-
-        // Add BambooPlant to the HOLDER,
-        // because the holder is what BambooManager tracks.
-        BambooPlant plant =
-            holder.AddComponent<BambooPlant>();
-
+        // BambooManager tracks the holder.
+        BambooPlant plant = holder.AddComponent<BambooPlant>();
         plant.Init(growTime);
 
-        // -----------------------------------------------------
-        // REGISTER THE NEW BAMBOO
-        // -----------------------------------------------------
-
+        // Assign the new bamboo to this spot.
         existingBamboo = holder;
+
+        occupied = true;
+        isGrowing = false;
+        growthCoroutine = null;
 
         claimed.Add(holder);
 
@@ -280,8 +353,11 @@ public class BambooGrowthSpot : MonoBehaviour
                 holder,
                 this
             );
+
+            BambooManager.Instance.RefreshZoneStatistics();
         }
     }
+
 
     // =========================================================
     // DEBUG GIZMO

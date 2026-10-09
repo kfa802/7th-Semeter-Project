@@ -1,89 +1,42 @@
+
 using UnityEngine;
 
 public class PandaFeedingZone : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField]
-    private Animator pandaAnimator;
+    [SerializeField] private Animator pandaAnimator;
+    [SerializeField] private PandaSystem pandaSystem;
 
-    [SerializeField]
-    private PandaSystem pandaSystem;
+    
 
-
-    public void FeedPanda()
+public void FeedPanda()
+{
+    if (pandaSystem == null || BambooManager.Instance == null)
     {
-        Debug.Log(
-            "PandaFeedingZone: FeedPanda() was called!"
-        );
-
-
-        // =====================================================
-        // CHECK PANDA
-        // =====================================================
-
-        if (pandaSystem == null)
-        {
-            Debug.LogError(
-                "PandaFeedingZone: PandaSystem is NOT assigned!"
-            );
-
-            return;
-        }
-
-
-        // =====================================================
-        // CHECK BAMBOO MANAGER
-        // =====================================================
-
-        if (BambooManager.Instance == null)
-        {
-            Debug.LogError(
-                "PandaFeedingZone: BambooManager.Instance is NOT available!"
-            );
-
-            return;
-        }
-
-
-        // =====================================================
-        // CONSUME BAMBOO
-        // =====================================================
-
-        bool bambooConsumed =
-            BambooManager.Instance.ConsumeBamboo();
-
-        if (!bambooConsumed)
-        {
-            Debug.Log(
-                "PandaFeedingZone: No bamboo available. " +
-                "Panda cannot eat."
-            );
-
-            return;
-        }
-
-
-        // =====================================================
-        // PLAY EAT ANIMATION
-        // =====================================================
-
-        if (pandaAnimator != null)
-        {
-            pandaAnimator.SetTrigger("Eat");
-        }
-
-
-        // =====================================================
-        // FEED PANDA
-        // =====================================================
-
-        pandaSystem.FeedPanda();
-
-
-        // =====================================================
-        // POOP / BAMBOO GROWTH
-        // =====================================================
-
-        BambooManager.Instance.PandaPooped();
+        Debug.LogWarning("Cannot feed: Missing PandaSystem or BambooManager.");
+        return;
     }
+
+    if (EnvironmentSystem.Instance == null ||
+        EnvironmentSystem.Instance.ActiveZone == null)
+    {
+        Debug.Log("Cannot feed: Panda is not inside an ecosystem zone.");
+        return;
+    }
+
+    // Feeding is only possible if real bamboo is consumed
+    // from the panda's current zone.
+    if (!BambooManager.Instance.ConsumeBamboo())
+    {
+        Debug.Log("Cannot feed: No bamboo available in this zone.");
+        return;
+    }
+
+    if (pandaAnimator != null)
+        pandaAnimator.SetTrigger("Eat");
+
+    pandaSystem.FeedPanda();
+
+    BambooManager.Instance.PandaPooped();
+}
 }

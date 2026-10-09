@@ -302,40 +302,21 @@ public class PandaSystem : MonoBehaviour
     // FEED PANDA
     // =========================================================
 
-    public void FeedPanda()
-    {
-        // Remove feedings outside the time window.
-        UpdateFeedingHistory();
+    
+public void FeedPanda()
+{
+    // Reset hunger when food has been successfully consumed.
+    hungerTimer = 0f;
 
-        // OVERFED: Reject feeding and apply damage.
-        if (IsOverfed)
-        {
-            // Record the attempt so repeated attempts
-            // keep extending the overfeeding window.
-            feedingTimes.Add(Time.time);
+    // Record the feeding for tracking purposes only.
+    feedingTimes.Add(Time.time);
 
-            health -= overfeedingDamage;
-            ClampHealth();
+    // Restore health.
+    health += healthPerFeeding;
+    ClampHealth();
 
-            Debug.Log("PANDA OVERFED! Stop feeding and wait.");
-
-            return;
-        }
-
-        // NORMAL FEEDING
-        hungerTimer = 0f;
-
-        feedingTimes.Add(Time.time);
-
-        health += healthPerFeeding;
-        ClampHealth();
-
-        if (IsOverfed)
-        {
-            Debug.Log("PANDA IS NOW OVERFED! Stop feeding.");
-        }
-    }
-
+    Debug.Log("Panda fed successfully.");
+}
 
     // =========================================================
     // STRESS

@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -9,6 +10,48 @@ public class EcosystemZone : MonoBehaviour
 
     [Header("Panda Detection")]
     [SerializeField] private string pandaTag = "Panda";
+
+    // =========================================================
+    // BAMBOO
+    // =========================================================
+
+    [Header("Bamboo Settings")]
+    [Min(0)]
+    [SerializeField] private int maximumBamboo = 10;
+
+    [Header("Bamboo Statistics - Runtime")]
+    [SerializeField] private int startingBamboo;
+    [SerializeField] private int currentBamboo;
+    [SerializeField] private int remainingCapacity;
+
+    public int MaximumBamboo => maximumBamboo;
+    public int StartingBamboo => startingBamboo;
+    public int CurrentBamboo => currentBamboo;
+    public int RemainingCapacity => remainingCapacity;
+
+    public int GetStartingBambooCount()
+    {
+        return startingBamboo;
+    }
+
+    public bool CanAddBamboo(int amount = 1)
+    {
+        return currentBamboo + amount <= maximumBamboo;
+    }
+
+    public void SetBambooStatistics(
+        int starting,
+        int current)
+    {
+        startingBamboo = starting;
+        currentBamboo = current;
+        remainingCapacity =
+            Mathf.Max(0, maximumBamboo - currentBamboo);
+    }
+
+    // =========================================================
+    // TEMPERATURE
+    // =========================================================
 
     [Header("Temperature")]
     public float minTemperature = -15f;
@@ -25,9 +68,14 @@ public class EcosystemZone : MonoBehaviour
     [Range(0f, 1f)]
     public float minGrowthWhenHot = 0.2f;
 
+    // =========================================================
+    // WATER
+    // =========================================================
+
     [Header("Water")]
     [Range(0f, 100f)]
     public float water = 100f;
+
     public float waterReactionSpeed = 5f;
     public float waterRecoverySpeed = 1f;
 
@@ -42,9 +90,17 @@ public class EcosystemZone : MonoBehaviour
 
     public float hotWaterStartTemperature = 25f;
 
+    // =========================================================
+    // POLLUTION
+    // =========================================================
+
     [Header("Pollution")]
     [Range(0f, 1f)]
     public float pollution = 0f;
+
+    // =========================================================
+    // UNITY
+    // =========================================================
 
     private void Awake()
     {
@@ -59,26 +115,24 @@ public class EcosystemZone : MonoBehaviour
         );
     }
 
+    private void Start()
+    {
+        // Capture the starting amount after the other
+        // objects have had an opportunity to register.
+        if (BambooManager.Instance != null)
+        {
+            BambooManager.Instance.RefreshZoneStatistics();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(
-            "Something entered " + zoneName +
-            ": " + other.name +
-            " | Tag: " + other.tag,
-            other
-        );
-
         Transform current = other.transform;
 
         while (current != null)
         {
             if (current.CompareTag(pandaTag))
             {
-                Debug.Log(
-                    "PANDA DETECTED IN ZONE: " + zoneName,
-                    this
-                );
-
                 if (EnvironmentSystem.Instance == null)
                 {
                     Debug.LogError(
@@ -93,30 +147,25 @@ public class EcosystemZone : MonoBehaviour
 
             current = current.parent;
         }
-
-        Debug.Log(
-            "Entering object was not tagged Panda: " + other.name,
-            this
-        );
     }
 
     private void OnTriggerExit(Collider other)
-{
-    Transform current = other.transform;
-
-    while (current != null)
     {
-        if (current.CompareTag(pandaTag))
+        Transform current = other.transform;
+
+        while (current != null)
         {
-            if (EnvironmentSystem.Instance != null)
+            if (current.CompareTag(pandaTag))
             {
-                EnvironmentSystem.Instance.ExitZone(this);
+                if (EnvironmentSystem.Instance != null)
+                {
+                    EnvironmentSystem.Instance.ExitZone(this);
+                }
+
+                return;
             }
 
-            return;
+            current = current.parent;
         }
-
-        current = current.parent;
     }
-}
 }

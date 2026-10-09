@@ -12,7 +12,8 @@ public class EnvironmentSystem : MonoBehaviour
 public string ActiveZoneName { get; private set; } = "Travelling";
 
 private EcosystemZone activeZone;
-    // =========================================================
+
+public EcosystemZone ActiveZone => activeZone;    // =========================================================
     // TEMPERATURE
     // =========================================================
 
@@ -77,16 +78,19 @@ private EcosystemZone activeZone;
     public float Water => water;
     public float Pollution => pollution;
 
-    public float Bamboo
+public float Bamboo
+{
+    get
     {
-        get
-        {
-            if (BambooManager.Instance == null)
-                return 0f;
+        if (activeZone == null)
+            return 0f;
 
-            return BambooManager.Instance.Percent;
-        }
+        if (BambooManager.Instance == null)
+            return 0f;
+
+        return BambooManager.Instance.GetPercentForZone(activeZone);
     }
+}
 
     public float TemperatureGrowthFactor { get; private set; } = 1f;
 
