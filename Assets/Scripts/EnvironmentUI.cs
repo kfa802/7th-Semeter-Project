@@ -22,9 +22,11 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text pandaHealthText;
 
     [Header("Visual Slider Speeds")]
-    [SerializeField] private float waterSliderSpeed = 15f;
     [SerializeField] private float bambooSliderSpeed = 4f;
     [SerializeField] private float pandaHealthSliderSpeed = 20f;
+
+    private bool waterSliderInitialized = false;
+    private EcosystemZone previousWaterZone;
 
     private bool bambooInitialized;
     private EcosystemZone lastBambooZone;
@@ -56,47 +58,61 @@ public class EnvironmentUI : MonoBehaviour
 
         // TEMPERATURE
 
-        temperatureSlider.minValue = environment.MinTemperature;
-        temperatureSlider.maxValue = environment.MaxTemperature;
-        temperatureSlider.wholeNumbers = false;
-        temperatureSlider.interactable = true;
+        if (temperatureSlider != null)
+        {
+            temperatureSlider.minValue = environment.MinTemperature;
+            temperatureSlider.maxValue = environment.MaxTemperature;
+            temperatureSlider.wholeNumbers = false;
+            temperatureSlider.interactable = true;
 
-        temperatureSlider.SetValueWithoutNotify(
-            environment.Temperature
-        );
+            temperatureSlider.SetValueWithoutNotify(
+                environment.Temperature
+            );
 
-        temperatureSlider.onValueChanged.AddListener(
-            OnTemperatureChanged
-        );
+            temperatureSlider.onValueChanged.AddListener(
+                OnTemperatureChanged
+            );
+        }
 
         // WATER
 
-        waterSlider.minValue = 0f;
-        waterSlider.maxValue = 100f;
-        waterSlider.wholeNumbers = false;
-        waterSlider.interactable = false;
+        if (waterSlider != null)
+        {
+            waterSlider.minValue = 0f;
+            waterSlider.maxValue = 100f;
+            waterSlider.wholeNumbers = false;
+            waterSlider.interactable = false;
 
-        waterSlider.SetValueWithoutNotify(environment.Water);
+            // Start at the current water level immediately.
+            waterSlider.SetValueWithoutNotify(environment.Water);
+
+            waterSliderInitialized = true;
+            previousWaterZone = environment.ActiveZone;
+        }
 
         // BAMBOO
-        // The slider represents the percentage of occupied
-        // bamboo growth spots in the current zone.
 
-        bambooSlider.minValue = 0f;
-        bambooSlider.maxValue = 100f;
-        bambooSlider.wholeNumbers = false;
-        bambooSlider.interactable = false;
+        if (bambooSlider != null)
+        {
+            bambooSlider.minValue = 0f;
+            bambooSlider.maxValue = 100f;
+            bambooSlider.wholeNumbers = false;
+            bambooSlider.interactable = false;
 
-        bambooSlider.SetValueWithoutNotify(0f);
+            bambooSlider.SetValueWithoutNotify(0f);
+        }
 
         // PANDA HEALTH
 
-        pandaHealthSlider.minValue = 0f;
-        pandaHealthSlider.maxValue = 100f;
-        pandaHealthSlider.wholeNumbers = false;
-        pandaHealthSlider.interactable = false;
+        if (pandaHealthSlider != null)
+        {
+            pandaHealthSlider.minValue = 0f;
+            pandaHealthSlider.maxValue = 100f;
+            pandaHealthSlider.wholeNumbers = false;
+            pandaHealthSlider.interactable = false;
 
-        pandaHealthSlider.SetValueWithoutNotify(panda.Health);
+            pandaHealthSlider.SetValueWithoutNotify(panda.Health);
+        }
 
         UpdateBambooDisplay();
         UpdateText();
@@ -112,26 +128,58 @@ public class EnvironmentUI : MonoBehaviour
             return;
 
         // WATER
-
-        waterSlider.value = Mathf.MoveTowards(
-            waterSlider.value,
-            environment.Water,
-            waterSliderSpeed * Time.deltaTime
-        );
+        // Immediately follows the value from EnvironmentSystem.
+        UpdateWaterDisplay();
 
         // BAMBOO
-
         UpdateBambooDisplay();
 
         // PANDA HEALTH
-
-        pandaHealthSlider.value = Mathf.MoveTowards(
-            pandaHealthSlider.value,
-            panda.Health,
-            pandaHealthSliderSpeed * Time.deltaTime
-        );
+        // Health changes still animate smoothly.
+        if (pandaHealthSlider != null)
+        {
+            pandaHealthSlider.value = Mathf.MoveTowards(
+                pandaHealthSlider.value,
+                panda.Health,
+                pandaHealthSliderSpeed * Time.deltaTime
+            );
+        }
 
         UpdateText();
+    }
+
+    // =====================================================
+    // WATER DISPLAY
+    // =====================================================
+
+    private void UpdateWaterDisplay()
+    {
+        if (environment == null || waterSlider == null)
+            return;
+
+        EcosystemZone currentZone = environment.ActiveZone;
+        float targetWater = Mathf.Clamp(
+            environment.Water,
+            0f,
+            100f
+        );
+
+        // Set the correct value immediately at startup
+        // and whenever the panda enters or leaves a zone.
+        if (!waterSliderInitialized ||
+            currentZone != previousWaterZone)
+        {
+            waterSlider.SetValueWithoutNotify(targetWater);
+
+            waterSliderInitialized = true;
+            previousWaterZone = currentZone;
+        }
+        else
+        {
+            // No animation: the slider immediately matches the
+            // current water value from EnvironmentSystem.
+            waterSlider.SetValueWithoutNotify(targetWater);
+        }
     }
 
     // =====================================================
@@ -140,6 +188,9 @@ public class EnvironmentUI : MonoBehaviour
 
     private void UpdateBambooDisplay()
     {
+        if (bambooSlider == null)
+            return;
+
         BambooManager manager = BambooManager.Instance;
 
         EcosystemZone activeZone =
@@ -181,7 +232,7 @@ public class EnvironmentUI : MonoBehaviour
         }
         else
         {
-            // Animate changes after initialization.
+            // Animate bamboo changes after initialization.
             bambooSlider.value = Mathf.MoveTowards(
                 bambooSlider.value,
                 targetPercentage,
@@ -211,19 +262,53 @@ public class EnvironmentUI : MonoBehaviour
         if (environment == null || panda == null)
             return;
 
-        temperatureText.text =
-            environment.Temperature.ToString("0.0") + "°C";
+        if (temperatureText != null)
+        {
+            temperatureText.text =
+                environment.Temperature.ToString("0.0") + "°C";
+        }
 
-        waterText.text =
-            "Clean Water: " +
-            waterSlider.value.ToString("0") + "%";
+        if (waterText != null)
+        {
+            float displayedWater = waterSlider != null
+                ? waterSlider.value
+                : environment.Water;
+
+            waterText.text =
+                "Clean Water: " +
+                displayedWater.ToString("0") + "%";
+        }
 
         // Show bamboo as a count, not a percentage.
-        bambooText.text =
-            currentBambooCount + "/" + totalBambooCount;
+        if (bambooText != null)
+        {
+            bambooText.text =
+                currentBambooCount + "/" + totalBambooCount;
+        }
 
-        pandaHealthText.text =
-            "Panda Health: " +
-            pandaHealthSlider.value.ToString("0") + "%";
+        if (pandaHealthText != null)
+        {
+            float displayedHealth = pandaHealthSlider != null
+                ? pandaHealthSlider.value
+                : panda.Health;
+
+            pandaHealthText.text =
+                "Panda Health: " +
+                displayedHealth.ToString("0") + "%";
+        }
+    }
+
+    // =====================================================
+    // CLEANUP
+    // =====================================================
+
+    private void OnDestroy()
+    {
+        if (temperatureSlider != null)
+        {
+            temperatureSlider.onValueChanged.RemoveListener(
+                OnTemperatureChanged
+            );
+        }
     }
 }

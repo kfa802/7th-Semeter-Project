@@ -195,16 +195,20 @@ private void Start()
     Debug.Log("Active ecosystem: " + ActiveZoneName);
 }
 
+
 public void ExitZone(EcosystemZone zone)
 {
-    // Only leave the zone if it is still the active zone.
+    // Only exit if this is still the active zone.
     if (activeZone != zone)
         return;
 
     activeZone = null;
     ActiveZoneName = "Travelling";
 
-    Debug.Log("Panda is travelling between zones.");
+    // No water is available while travelling.
+    water = 0f;
+
+    Debug.Log("Panda is travelling between zones. Water: 0");
 }
 
     // =========================================================
@@ -270,6 +274,12 @@ public void ExitZone(EcosystemZone zone)
 
     private void UpdateWater()
     {
+            // No active zone means the panda is travelling.
+    if (activeZone == null)
+    {
+        water = 0f;
+        return;
+    }
         // Comfortable temperatures: water recovers quickly.
         if (temperature >= comfortableWaterMinTemperature &&
             temperature <= comfortableWaterMaxTemperature)
