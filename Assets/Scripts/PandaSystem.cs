@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,8 +58,7 @@ public class PandaSystem : MonoBehaviour
     [SerializeField]
     private float overfeedingDamage = 10f;
 
-    private List<float> feedingTimes =
-        new List<float>();
+    private List<float> feedingTimes = new List<float>();
 
 
     // =========================================================
@@ -68,19 +68,6 @@ public class PandaSystem : MonoBehaviour
     [Header("Water Threshold")]
     [SerializeField, Range(0f, 100f)]
     private float waterHealthThreshold = 30f;
-
-    [Header("Health Recovery From Water")]
-    [Tooltip("Maximum health the panda can reach through water alone.")]
-    [SerializeField, Range(0f, 100f)]
-    private float maximumHealthFromWater = 50f;
-
-    [Tooltip("Maximum health recovered per second when water is at 100%.")]
-    [SerializeField]
-    private float maximumHealthRecoveryPerSecond = 15f;
-
-    [Tooltip("Higher values make recovery increase more strongly with water.")]
-    [SerializeField]
-    private float waterRecoveryPower = 2f;
 
     [Header("Health Damage From Water")]
     [Tooltip("Maximum health lost per second when water is at 0%.")]
@@ -225,17 +212,13 @@ public class PandaSystem : MonoBehaviour
             return;
 
         UpdateHunger();
-
         UpdateFeedingHistory();
 
         UpdateHealthFromWater();
-
         UpdateHealthFromHunger();
-
         UpdateHealthFromExtremeHeat();
 
         ClampHealth();
-
     }
 
 
@@ -275,72 +258,26 @@ public class PandaSystem : MonoBehaviour
     {
         float water = environment.Water;
 
-        // -----------------------------------------------------
-        // WATER ABOVE THRESHOLD
-        // -----------------------------------------------------
-
-        if (water > waterHealthThreshold)
-        {
-            if (health < maximumHealthFromWater)
-            {
-                float recoveryAmount =
-                    Mathf.InverseLerp(
-                        waterHealthThreshold,
-                        100f,
-                        water
-                    );
-
-                recoveryAmount =
-                    Mathf.Pow(
-                        recoveryAmount,
-                        waterRecoveryPower
-                    );
-
-                float recoveryPerSecond =
-                    recoveryAmount *
-                    maximumHealthRecoveryPerSecond;
-
-                health +=
-                    recoveryPerSecond *
-                    Time.deltaTime;
-
-                health =
-                    Mathf.Min(
-                        health,
-                        maximumHealthFromWater
-                    );
-            }
-        }
-
-        // -----------------------------------------------------
-        // WATER BELOW THRESHOLD
-        // -----------------------------------------------------
-
-        else if (water < waterHealthThreshold)
+        // WATER BELOW THRESHOLD: DAMAGE HEALTH
+        if (water < waterHealthThreshold)
         {
             float damageAmount =
-                1f -
-                (water / waterHealthThreshold);
+                1f - (water / waterHealthThreshold);
 
-            damageAmount =
-                Mathf.Clamp01(
-                    damageAmount
-                );
+            damageAmount = Mathf.Clamp01(damageAmount);
 
-            damageAmount =
-                Mathf.Pow(
-                    damageAmount,
-                    waterDamagePower
-                );
+            damageAmount = Mathf.Pow(
+                damageAmount,
+                waterDamagePower
+            );
 
             float damagePerSecond =
-                damageAmount *
-                maximumHealthLossPerSecond;
+                damageAmount * maximumHealthLossPerSecond;
 
-            health -=
-                damagePerSecond *
-                Time.deltaTime;
+            health -= damagePerSecond * Time.deltaTime;
         }
+
+        // Water above the threshold does not restore health.
     }
 
 
@@ -352,15 +289,11 @@ public class PandaSystem : MonoBehaviour
     {
         if (IsVeryHungry)
         {
-            health -=
-                veryHungryHealthLossPerSecond *
-                Time.deltaTime;
+            health -= veryHungryHealthLossPerSecond * Time.deltaTime;
         }
         else if (IsHungry)
         {
-            health -=
-                hungryHealthLossPerSecond *
-                Time.deltaTime;
+            health -= hungryHealthLossPerSecond * Time.deltaTime;
         }
     }
 
@@ -371,57 +304,36 @@ public class PandaSystem : MonoBehaviour
 
     public void FeedPanda()
     {
-        Debug.Log(
-            "PandaSystem: FeedPanda() called."
-        );
+        // Remove feedings outside the time window.
+        UpdateFeedingHistory();
 
-        // -----------------------------------------------------
-        // OVERFED
-        // -----------------------------------------------------
-
+        // OVERFED: Reject feeding and apply damage.
         if (IsOverfed)
         {
-            health -= overfeedingDamage;
+            // Record the attempt so repeated attempts
+            // keep extending the overfeeding window.
+            feedingTimes.Add(Time.time);
 
+            health -= overfeedingDamage;
             ClampHealth();
 
-            Debug.Log(
-                "PANDA OVERFED! Feeding caused " +
-                overfeedingDamage.ToString("0.0") +
-                " damage."
-            );
+            Debug.Log("PANDA OVERFED! Stop feeding and wait.");
 
             return;
         }
 
-        // -----------------------------------------------------
         // NORMAL FEEDING
-        // -----------------------------------------------------
-
-        float oldHealth = health;
-
-        // Reset hunger.
         hungerTimer = 0f;
 
-        // Remember feeding.
         feedingTimes.Add(Time.time);
 
-        // Increase health.
         health += healthPerFeeding;
-
         ClampHealth();
 
-        Debug.Log(
-            "PANDA FED! " +
-            oldHealth.ToString("0.0") +
-            " -> " +
-            health.ToString("0.0")
-        );
-
-        Debug.Log(
-            "Recent feedings: " +
-            feedingTimes.Count
-        );
+        if (IsOverfed)
+        {
+            Debug.Log("PANDA IS NOW OVERFED! Stop feeding.");
+        }
     }
 
 
@@ -431,52 +343,47 @@ public class PandaSystem : MonoBehaviour
 
     public void SetStress(float value)
     {
-        stress =
-            Mathf.Clamp(
-                value,
-                0f,
-                100f
-            );
+        stress = Mathf.Clamp(
+            value,
+            0f,
+            100f
+        );
     }
 
     public void ChangeStress(float amount)
     {
-        SetStress(
-            stress + amount
-        );
+        SetStress(stress + amount);
     }
 
+
+    // =========================================================
+    // EXTREME HEAT DAMAGE
+    // =========================================================
+
     private void UpdateHealthFromExtremeHeat()
-{
-    float temperature =
-        environment.Temperature;
+    {
+        float temperature = environment.Temperature;
 
-    if (temperature <= extremeHeatTemperature)
-        return;
+        if (temperature <= extremeHeatTemperature)
+            return;
 
-    float heatSeverity =
-        Mathf.InverseLerp(
+        float heatSeverity = Mathf.InverseLerp(
             extremeHeatTemperature,
             environment.MaxTemperature,
             temperature
         );
 
-    // Make the damage increase gradually
-    // as the temperature gets higher.
-    float damageMultiplier =
-        Mathf.Pow(
+        // Damage increases gradually as temperature rises.
+        float damageMultiplier = Mathf.Pow(
             heatSeverity,
             2f
         );
 
-    float damagePerSecond =
-        damageMultiplier *
-        maximumExtremeHeatDamagePerSecond;
+        float damagePerSecond =
+            damageMultiplier * maximumExtremeHeatDamagePerSecond;
 
-    health -=
-        damagePerSecond *
-        Time.deltaTime;
-}
+        health -= damagePerSecond * Time.deltaTime;
+    }
 
 
     // =========================================================
@@ -485,11 +392,10 @@ public class PandaSystem : MonoBehaviour
 
     private void ClampHealth()
     {
-        health =
-            Mathf.Clamp(
-                health,
-                0f,
-                100f
-            );
+        health = Mathf.Clamp(
+            health,
+            0f,
+            100f
+        );
     }
 }

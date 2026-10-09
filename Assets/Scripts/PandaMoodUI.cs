@@ -1,3 +1,4 @@
+
 using System.Text;
 using UnityEngine;
 using TMPro;
@@ -52,10 +53,10 @@ public class PandaMoodUI : MonoBehaviour
 
     private void UpdateMood()
     {
-        StringBuilder moods =
-            new StringBuilder();
+        StringBuilder moods = new StringBuilder();
 
 
+        // OVERFED takes priority over hunger.
         if (panda.IsOverfed)
         {
             AddMood(
@@ -63,9 +64,7 @@ public class PandaMoodUI : MonoBehaviour
                 showEmoji ? "🤢 OVERFED" : "OVERFED"
             );
         }
-
-
-        if (panda.IsVeryHungry)
+        else if (panda.IsVeryHungry)
         {
             AddMood(
                 moods,
@@ -81,6 +80,7 @@ public class PandaMoodUI : MonoBehaviour
         }
 
 
+        // Other moods can still display alongside OVERFED.
         if (panda.IsThirsty)
         {
             AddMood(
@@ -120,21 +120,16 @@ public class PandaMoodUI : MonoBehaviour
         if (moods.Length == 0)
         {
             moods.Append(
-                showEmoji
-                    ? "😊 HAPPY"
-                    : "HAPPY"
+                showEmoji ? "😊 HAPPY" : "HAPPY"
             );
         }
 
 
-        moodText.text =
-            moods.ToString();
+        moodText.text = moods.ToString();
     }
 
 
-    private void AddMood(
-        StringBuilder moods,
-        string mood)
+    private void AddMood(StringBuilder moods, string mood)
     {
         if (moods.Length > 0)
         {

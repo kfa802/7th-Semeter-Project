@@ -1,10 +1,17 @@
+
 using UnityEngine;
 
 public class EnvironmentSystem : MonoBehaviour
 {
     public static EnvironmentSystem Instance { get; private set; }
 
+    // =========================================================
+    // ACTIVE ZONE
+    // =========================================================
 
+public string ActiveZoneName { get; private set; } = "Travelling";
+
+private EcosystemZone activeZone;
     // =========================================================
     // TEMPERATURE
     // =========================================================
@@ -14,23 +21,13 @@ public class EnvironmentSystem : MonoBehaviour
 
     [Header("Temperature")]
     [SerializeField] private float temperature = 20f;
-
-    [Header("Ideal Temperature")]
     [SerializeField] private float idealTemperature = 20f;
-
-    [Header("Temperature Threshold")]
     [SerializeField] private float temperatureThreshold = 3f;
-
-    [Header("Freezing")]
     [SerializeField] private float freezingPoint = 0f;
-
-    // Higher = growth drops off faster when cold
     [SerializeField] private float coldSlowdownPower = 1.5f;
 
-    // Slowest growth speed when freezing
     [SerializeField, Range(0.05f, 0.5f)]
     private float minGrowthWhenCold = 0.2f;
-
 
     // =========================================================
     // HEAT
@@ -40,50 +37,46 @@ public class EnvironmentSystem : MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     private float minGrowthWhenHot = 0.2f;
 
-
     // =========================================================
     // WATER
     // =========================================================
 
     [Header("Water")]
-    [SerializeField] private float water = 100f;
+    [SerializeField, Range(0f, 100f)]
+    private float water = 100f;
 
-    [Header("Water Loss")]
+    [Header("Water Rates")]
     [SerializeField] private float waterReactionSpeed = 5f;
-
-    [Header("Water Recovery")]
     [SerializeField] private float waterRecoverySpeed = 1f;
 
+    [Header("Water Temperature Ranges")]
+    [SerializeField] private float comfortableWaterMinTemperature = 15f;
+    [SerializeField] private float comfortableWaterMaxTemperature = 24f;
+    [SerializeField] private float coldWaterMinTemperature = 0f;
+    [SerializeField] private float coldWaterMaxTemperature = 15f;
+    [SerializeField, Range(0f, 1f)]
+    private float coldWaterMinRecoveryMultiplier = 0.2f;
+    [SerializeField] private float hotWaterStartTemperature = 25f;
 
     // =========================================================
     // POLLUTION
     // =========================================================
 
     [Header("Pollution")]
-    [Tooltip("0 = no pollution, 1 = maximum pollution.")]
     [SerializeField, Range(0f, 1f)]
     private float pollution = 0f;
-
 
     // =========================================================
     // PUBLIC VALUES
     // =========================================================
 
-    public float Temperature =>
-        temperature;
+    public float Temperature => temperature;
+    public float MinTemperature => minTemperature;
+    public float MaxTemperature => maxTemperature;
+    public float IdealTemperature => idealTemperature;
+    public float Water => water;
+    public float Pollution => pollution;
 
-    public float MinTemperature =>
-        minTemperature;
-
-    public float MaxTemperature =>
-        maxTemperature;
-
-    public float Water =>
-        water;
-
-
-    // Bamboo is based on the actual bamboo
-    // existing in the scene.
     public float Bamboo
     {
         get
@@ -95,19 +88,7 @@ public class EnvironmentSystem : MonoBehaviour
         }
     }
 
-
-    public float Pollution =>
-        pollution;
-
-
-    // 1 = normal growth
-    // smaller number = slower growth
-    public float TemperatureGrowthFactor
-    {
-        get;
-        private set;
-    } = 1f;
-
+    public float TemperatureGrowthFactor { get; private set; } = 1f;
 
     // =========================================================
     // UNITY
@@ -115,22 +96,112 @@ public class EnvironmentSystem : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogError("More than one EnvironmentSystem exists!");
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
     }
 
-    private void Start()
+private void Start()
+{
+    if (activeZone != null)
+        ApplyZoneSettings(activeZone);
+    else
     {
-        water = 100f;
+        water = Mathf.Clamp(water, 0f, 100f);
+        pollution = Mathf.Clamp01(pollution);
+        temperature = Mathf.Clamp(
+            temperature,
+            minTemperature,
+            maxTemperature
+        );
     }
+}
 
     private void Update()
     {
         UpdateWater();
-
-        TemperatureGrowthFactor =
-            GetTemperatureGrowthFactor();
+        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
+    // =========================================================
+    // APPLY ZONE SETTINGS
+    // =========================================================
+
+    public void ApplyZoneSettings(EcosystemZone zone)
+{
+    if (zone == null)
+        return;
+
+    // The active zone becomes the source of truth.
+    activeZone = zone;
+    ActiveZoneName = zone.zoneName;
+
+    minTemperature = zone.minTemperature;
+    maxTemperature = zone.maxTemperature;
+
+    idealTemperature = zone.idealTemperature;
+    temperatureThreshold = zone.temperatureThreshold;
+    freezingPoint = zone.freezingPoint;
+    coldSlowdownPower = zone.coldSlowdownPower;
+    minGrowthWhenCold = zone.minGrowthWhenCold;
+    minGrowthWhenHot = zone.minGrowthWhenHot;
+
+    waterReactionSpeed = zone.waterReactionSpeed;
+    waterRecoverySpeed = zone.waterRecoverySpeed;
+
+    comfortableWaterMinTemperature =
+        zone.comfortableWaterMinTemperature;
+    comfortableWaterMaxTemperature =
+        zone.comfortableWaterMaxTemperature;
+
+    coldWaterMinTemperature =
+        zone.coldWaterMinTemperature;
+    coldWaterMaxTemperature =
+        zone.coldWaterMaxTemperature;
+
+    coldWaterMinRecoveryMultiplier =
+        zone.coldWaterMinRecoveryMultiplier;
+
+    hotWaterStartTemperature =
+        zone.hotWaterStartTemperature;
+
+    // Apply the zone's values.
+    temperature = Mathf.Clamp(
+        zone.temperature,
+        minTemperature,
+        maxTemperature
+    );
+
+    water = Mathf.Clamp(zone.water, 0f, 100f);
+    pollution = Mathf.Clamp01(zone.pollution);
+
+    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+
+    Debug.Log("Active ecosystem: " + ActiveZoneName);
+}
+
+public void ExitZone(EcosystemZone zone)
+{
+    // Only leave the zone if it is still the active zone.
+    if (activeZone != zone)
+        return;
+
+    activeZone = null;
+    ActiveZoneName = "Travelling";
+
+    Debug.Log("Panda is travelling between zones.");
+}
 
     // =========================================================
     // TEMPERATURE
@@ -138,223 +209,138 @@ public class EnvironmentSystem : MonoBehaviour
 
     public void SetTemperature(float newTemperature)
     {
-        temperature =
-            Mathf.Clamp(
-                newTemperature,
-                minTemperature,
-                maxTemperature
-            );
+        temperature = Mathf.Clamp(
+            newTemperature,
+            minTemperature,
+            maxTemperature
+        );
     }
 
     public void ChangeTemperature(float amount)
     {
-        SetTemperature(
-            temperature + amount
-        );
+        SetTemperature(temperature + amount);
     }
-
 
     private float GetTemperatureGrowthFactor()
     {
         float comfortableMin =
-            idealTemperature -
-            temperatureThreshold;
+            idealTemperature - temperatureThreshold;
 
         float comfortableMax =
-            idealTemperature +
-            temperatureThreshold;
-
-
-        // -------------------------------------------------
-        // COLD SIDE
-        // -------------------------------------------------
+            idealTemperature + temperatureThreshold;
 
         if (temperature < comfortableMin)
         {
-            float t =
-                Mathf.Clamp01(
-                    Mathf.InverseLerp(
-                        freezingPoint,
-                        comfortableMin,
-                        temperature
-                    )
-                );
+            float t = Mathf.Clamp01(
+                Mathf.InverseLerp(
+                    freezingPoint,
+                    comfortableMin,
+                    temperature
+                )
+            );
 
             return Mathf.Lerp(
                 minGrowthWhenCold,
                 1f,
-                Mathf.Pow(
-                    t,
-                    coldSlowdownPower
-                )
+                Mathf.Pow(t, coldSlowdownPower)
             );
         }
-
-
-        // -------------------------------------------------
-        // HOT SIDE
-        // -------------------------------------------------
 
         if (temperature > comfortableMax)
         {
-            float t =
-                Mathf.InverseLerp(
-                    comfortableMax,
-                    maxTemperature,
-                    temperature
-                );
-
-            return Mathf.Lerp(
-                1f,
-                minGrowthWhenHot,
-                t
+            float t = Mathf.InverseLerp(
+                comfortableMax,
+                maxTemperature,
+                temperature
             );
-        }
 
+            return Mathf.Lerp(1f, minGrowthWhenHot, t);
+        }
 
         return 1f;
     }
-
 
     // =========================================================
     // WATER
     // =========================================================
 
     private void UpdateWater()
-{
-    // =========================================================
-    // MODERATE / COMFORTABLE TEMPERATURE
-    // 15–24°C
-    // Water increases quickly
-    // =========================================================
-
-    if (temperature >= 15f && temperature <= 24f)
     {
-        water +=
-            waterRecoverySpeed *
-            Time.deltaTime;
-
-        water = Mathf.Clamp(
-            water,
-            0f,
-            100f
-        );
-
-        return;
-    }
-
-
-    // =========================================================
-    // SLIGHTLY COLD
-    // 0–14°C
-    // Water still increases, but slower the colder it gets
-    // =========================================================
-
-    if (temperature > 0f && temperature < 15f)
-    {
-        float coldDistance =
-            Mathf.InverseLerp(
-                15f,
-                0f,
+        // Comfortable temperatures: water recovers quickly.
+        if (temperature >= comfortableWaterMinTemperature &&
+            temperature <= comfortableWaterMaxTemperature)
+        {
+            water += waterRecoverySpeed * Time.deltaTime;
+        }
+        // Slightly cold: water recovers more slowly.
+        else if (temperature > coldWaterMinTemperature &&
+                 temperature < coldWaterMaxTemperature)
+        {
+            float coldDistance = Mathf.InverseLerp(
+                coldWaterMaxTemperature,
+                coldWaterMinTemperature,
                 temperature
             );
 
-        // Starts at 100% recovery at 15°C
-        // Drops towards 20% recovery at 0°C
-        float recoveryMultiplier =
-            Mathf.Lerp(
+            float recoveryMultiplier = Mathf.Lerp(
                 1f,
-                0.2f,
+                coldWaterMinRecoveryMultiplier,
                 coldDistance
             );
 
-        water +=
-            waterRecoverySpeed *
-            recoveryMultiplier *
-            Time.deltaTime;
+            water += waterRecoverySpeed *
+                     recoveryMultiplier *
+                     Time.deltaTime;
+        }
+        // Hot: water decreases increasingly quickly.
+        else if (temperature >= hotWaterStartTemperature)
+        {
+            float hotRange = Mathf.Max(
+                0.01f,
+                maxTemperature - hotWaterStartTemperature
+            );
 
-        water = Mathf.Clamp(
-            water,
-            0f,
-            100f
-        );
+            float hotSeverity = Mathf.Clamp01(
+                (temperature - hotWaterStartTemperature) / hotRange
+            );
 
-        return;
+            water -= Mathf.Pow(hotSeverity, 2f) *
+                     waterReactionSpeed *
+                     Time.deltaTime;
+        }
+        // Freezing: water decreases increasingly quickly.
+        else if (temperature <= freezingPoint)
+        {
+            float coldRange = Mathf.Max(
+                0.01f,
+                freezingPoint - minTemperature
+            );
+
+            float coldSeverity = Mathf.Clamp01(
+                (freezingPoint - temperature) / coldRange
+            );
+
+            water -= Mathf.Pow(coldSeverity, 2f) *
+                     waterReactionSpeed *
+                     Time.deltaTime;
+        }
+
+        water = Mathf.Clamp(water, 0f, 100f);
     }
 
-
     // =========================================================
-    // SLIGHTLY HOT
-    // 25–40°C
-    // Water decreases, increasingly faster
+    // WATER ACCESS
     // =========================================================
 
-    if (temperature >= 25f)
+    public void SetWater(float value)
     {
-        float hotSeverity =
-            Mathf.InverseLerp(
-                25f,
-                maxTemperature,
-                temperature
-            );
-
-        // Make the loss accelerate exponentially
-        float exponentialSeverity =
-            Mathf.Pow(
-                hotSeverity,
-                2f
-            );
-
-        water -=
-            exponentialSeverity *
-            waterReactionSpeed *
-            Time.deltaTime;
-
-        water = Mathf.Clamp(
-            water,
-            0f,
-            100f
-        );
-
-        return;
+        water = Mathf.Clamp(value, 0f, 100f);
     }
 
-
-    // =========================================================
-    // VERY COLD / FREEZING
-    // -15 to 0°C
-    // Water decreases increasingly faster
-    // =========================================================
-
-    if (temperature <= 0f)
+    public void ChangeWater(float amount)
     {
-        float coldSeverity =
-            Mathf.InverseLerp(
-                0f,
-                minTemperature,
-                temperature
-            );
-
-        // Make freezing accelerate exponentially
-        float exponentialSeverity =
-            Mathf.Pow(
-                coldSeverity,
-                2f
-            );
-
-        water -=
-            exponentialSeverity *
-            waterReactionSpeed *
-            Time.deltaTime;
-
-        water = Mathf.Clamp(
-            water,
-            0f,
-            100f
-        );
+        SetWater(water + amount);
     }
-}
-
 
     // =========================================================
     // POLLUTION
@@ -362,14 +348,11 @@ public class EnvironmentSystem : MonoBehaviour
 
     public void SetPollution(float value)
     {
-        pollution =
-            Mathf.Clamp01(value);
+        pollution = Mathf.Clamp01(value);
     }
 
     public void ChangePollution(float amount)
     {
-        SetPollution(
-            pollution + amount
-        );
+        SetPollution(pollution + amount);
     }
 }
