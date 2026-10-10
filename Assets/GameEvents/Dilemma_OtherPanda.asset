@@ -16,9 +16,9 @@ MonoBehaviour:
   description: sdsmdjbs
   choiceA: Stay with panda
   choiceB: Go to valley
-  triggerType: 1
+  triggerType: 0
   requiredZoneName: Midway
-  delaySeconds: 10
+  delaySeconds: 6
   threshold: 30
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
