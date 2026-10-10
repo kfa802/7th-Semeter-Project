@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +11,9 @@ public class DilemmaManager : MonoBehaviour
     [Tooltip("Drag your DilemmaPanel GameObject here.")]
     [SerializeField] private GameObject dilemmaPanel;
 
+    [Tooltip("Optional panel displayed when the game ends.")]
+    [SerializeField] private GameObject gameOverPanel;
+
     private DilemmaUI dilemmaUI;
 
     [Header("Dilemmas")]
@@ -18,46 +22,46 @@ public class DilemmaManager : MonoBehaviour
     [Header("Travel Integration")]
     public UnityEvent<string> onTravelRequested;
 
-    [Header("Repeating Mountain Dilemma")]
-    [SerializeField] private string repeatingZoneName = "Mountain";
-    [SerializeField] private float repeatDelay = 30f;
+    [Header("Game Over Settings")]
+    [Tooltip("Seconds to wait before showing the Game Over panel.")]
+    [SerializeField] private float gameOverDelay = 3f;
 
     private readonly HashSet<Dilemma> completedDilemmas = new();
+
+    private readonly Dictionary<Dilemma, float> scheduledDilemmas = new();
+
+    private readonly Dictionary<Dilemma, bool> resolvedChoices = new();
 
     private Dilemma activeDilemma;
 
     private string currentZone = "";
     private float zoneEnteredTime;
 
-    private Dilemma repeatingDilemma;
-    private float nextDilemmaTime;
-    private bool waitingForRepeat;
+    private bool gameEnded;
 
     private void Awake()
     {
         if (dilemmaPanel != null)
         {
             dilemmaUI = dilemmaPanel.GetComponent<DilemmaUI>();
-
-            if (dilemmaUI == null)
-            {
-                Debug.LogError(
-                    "DilemmaManager: The assigned panel does not have a DilemmaUI component.",
-                    dilemmaPanel
-                );
-            }
         }
-        else
+
+        if (dilemmaUI == null)
         {
             Debug.LogError(
-                "DilemmaManager: Please assign your DilemmaPanel."
+                "DilemmaManager: Assign a DilemmaPanel with DilemmaUI."
             );
+        }
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
         }
     }
 
     private void Update()
     {
-        if (environment == null || dilemmaUI == null)
+        if (gameEnded || environment == null || dilemmaUI == null)
             return;
 
         if (activeDilemma != null)
@@ -71,32 +75,44 @@ public class DilemmaManager : MonoBehaviour
             currentZone = zoneName;
             zoneEnteredTime = Time.time;
 
-            Debug.Log("DilemmaManager: Active zone changed to " + zoneName);
+            Debug.Log(
+                "DilemmaManager: Active zone changed to " + zoneName
+            );
         }
 
-        // Show the Mountain dilemma again after the repeat delay.
-        if (waitingForRepeat &&
-            Time.time >= nextDilemmaTime &&
-            environment.ActiveZoneName == repeatingZoneName)
-        {
-            waitingForRepeat = false;
-
-            if (repeatingDilemma != null)
-            {
-                Debug.Log("DilemmaManager: Repeating Mountain dilemma.");
-                ShowDilemma(repeatingDilemma);
-                return;
-            }
-        }
-
+        // Check dilemmas scheduled after a prerequisite choice.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null || completedDilemmas.Contains(dilemma))
                 continue;
 
-            // Don't trigger the same dilemma through its normal trigger
-            // while it is waiting for its repeat.
-            if (waitingForRepeat && dilemma == repeatingDilemma)
+            if (!scheduledDilemmas.ContainsKey(dilemma))
+                continue;
+
+            if (Time.time < scheduledDilemmas[dilemma])
+                continue;
+
+            if (!IsInRequiredZone(dilemma))
+                continue;
+
+            scheduledDilemmas.Remove(dilemma);
+
+            Debug.Log(
+                "DilemmaManager: Delay finished. Showing " + dilemma.name
+            );
+
+            ShowDilemma(dilemma);
+            return;
+        }
+
+        // Check ordinary dilemmas without prerequisites.
+        foreach (Dilemma dilemma in dilemmas)
+        {
+            if (dilemma == null || completedDilemmas.Contains(dilemma))
+                continue;
+
+            // Prerequisite dilemmas are scheduled after a matching choice.
+            if (dilemma.prerequisiteDilemma != null)
                 continue;
 
             if (!IsInRequiredZone(dilemma))
@@ -104,9 +120,12 @@ public class DilemmaManager : MonoBehaviour
 
             if (ShouldTrigger(dilemma, zoneChanged))
             {
-                Debug.Log("DilemmaManager: Triggering dilemma: " + dilemma.name);
+                Debug.Log(
+                    "DilemmaManager: Triggering " + dilemma.name
+                );
+
                 ShowDilemma(dilemma);
-                break;
+                return;
             }
         }
     }
@@ -143,6 +162,9 @@ public class DilemmaManager : MonoBehaviour
     private void ShowDilemma(Dilemma dilemma)
     {
         activeDilemma = dilemma;
+
+        Debug.Log("DilemmaManager: Showing " + dilemma.name);
+
         dilemmaUI.ShowDilemma(dilemma, this);
     }
 
@@ -158,46 +180,70 @@ public class DilemmaManager : MonoBehaviour
 
     private void ResolveDilemma(bool choseA)
     {
-        if (activeDilemma == null)
+        if (activeDilemma == null || gameEnded)
             return;
 
         Dilemma resolvedDilemma = activeDilemma;
+
+        Debug.Log(
+            "DilemmaManager: " + resolvedDilemma.name
+            + " resolved with Choice " + (choseA ? "A" : "B")
+        );
+
+        completedDilemmas.Add(resolvedDilemma);
+        resolvedChoices[resolvedDilemma] = choseA;
 
         GameEvent gameEvent = choseA
             ? resolvedDilemma.choiceAEvent
             : resolvedDilemma.choiceBEvent;
 
-        bool choseToStay =
-            resolvedDilemma.requiredZoneName == repeatingZoneName &&
-            choseA;
-
-        if (choseToStay)
-        {
-            // Allow this dilemma to appear again in 30 seconds.
-            repeatingDilemma = resolvedDilemma;
-            nextDilemmaTime = Time.time + repeatDelay;
-            waitingForRepeat = true;
-
-            Debug.Log(
-                "DilemmaManager: Stayed in Mountain. Dilemma will repeat in "
-                + repeatDelay + " seconds."
-            );
-        }
-        else
-        {
-            completedDilemmas.Add(resolvedDilemma);
-
-            if (resolvedDilemma == repeatingDilemma)
-            {
-                repeatingDilemma = null;
-                waitingForRepeat = false;
-            }
-        }
-
         activeDilemma = null;
         dilemmaUI.HideDilemma();
 
         ExecuteEvent(gameEvent);
+
+        if (resolvedDilemma.endsGame)
+        {
+            EndGame();
+            return;
+        }
+
+        // Schedule matching follow-up dilemmas.
+        foreach (Dilemma nextDilemma in dilemmas)
+        {
+            if (nextDilemma == null ||
+                completedDilemmas.Contains(nextDilemma))
+                continue;
+
+            if (nextDilemma.prerequisiteDilemma != resolvedDilemma)
+                continue;
+
+            bool choiceMatches =
+                nextDilemma.prerequisiteChoice == PrerequisiteChoice.Either ||
+                (nextDilemma.prerequisiteChoice == PrerequisiteChoice.ChoiceA
+                    && choseA) ||
+                (nextDilemma.prerequisiteChoice == PrerequisiteChoice.ChoiceB
+                    && !choseA);
+
+            if (!choiceMatches)
+            {
+                Debug.Log(
+                    nextDilemma.name
+                    + ": Prerequisite choice did not match."
+                );
+
+                continue;
+            }
+
+            // Countdown starts when the choice is made.
+            scheduledDilemmas[nextDilemma] =
+                Time.time + Mathf.Max(0f, nextDilemma.delaySeconds);
+
+            Debug.Log(
+                nextDilemma.name + " scheduled in "
+                + nextDilemma.delaySeconds + " seconds."
+            );
+        }
     }
 
     private void ExecuteEvent(GameEvent gameEvent)
@@ -221,9 +267,37 @@ public class DilemmaManager : MonoBehaviour
             else
             {
                 Debug.LogWarning(
-                    "No travel action is connected to DilemmaManager."
+                    "DilemmaManager: No travel action is connected."
                 );
             }
         }
+    }
+
+    private void EndGame()
+    {
+        gameEnded = true;
+
+        Debug.Log(
+            "DilemmaManager: Game Over panel will appear in "
+            + gameOverDelay + " seconds."
+        );
+
+        Invoke(nameof(ShowGameOverPanel), Mathf.Max(0f, gameOverDelay));
+    }
+
+    private void ShowGameOverPanel()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "DilemmaManager: No Game Over panel is assigned."
+            );
+        }
+
+        Debug.Log("DilemmaManager: GAME OVER");
     }
 }
