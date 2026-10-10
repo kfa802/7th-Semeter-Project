@@ -1,21 +1,38 @@
+
 using UnityEngine;
+
+public enum DilemmaTriggerType
+{
+    ZoneDelay,
+    ZoneEntered,
+    WaterBelow,
+    PollutionAbove
+}
 
 [CreateAssetMenu(fileName = "New Dilemma", menuName = "Panda/Dilemma")]
 public class Dilemma : ScriptableObject
 {
+    [Header("Dilemma Text")]
     public string title;
 
-    [TextArea]
+    [TextArea(3, 6)]
     public string description;
 
     public string choiceA;
     public string choiceB;
 
-    public float choiceA_Disturbance;
-    public float choiceA_Temperature;
-    public float choiceA_Pollution;
+    [Header("Trigger")]
+    public DilemmaTriggerType triggerType;
+    public string requiredZoneName;
 
-    public float choiceB_Disturbance;
-    public float choiceB_Temperature;
-    public float choiceB_Pollution;
+    [Tooltip("Used for ZoneDelay, in seconds.")]
+    public float delaySeconds = 30f;
+
+    [Tooltip("Used for WaterBelow or PollutionAbove.")]
+    [Range(0f, 100f)]
+    public float threshold = 30f;
+
+    [Header("Choice Consequences")]
+    public GameEvent choiceAEvent;
+    public GameEvent choiceBEvent;
 }

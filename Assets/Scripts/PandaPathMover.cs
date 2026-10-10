@@ -38,6 +38,10 @@ public class PandaPathMover : MonoBehaviour
 
     public bool IsMoving => isMoving;
 
+    [Header("Zone Destinations")]
+[SerializeField] private Transform mountainDestination;
+[SerializeField] private Transform midwayDestination;
+
 
     private void Start()
     {
@@ -311,4 +315,26 @@ public class PandaPathMover : MonoBehaviour
             walking
         );
     }
+
+    
+public void TravelToZone(string zoneName)
+{
+    Transform target = null;
+
+    if (zoneName == "Mountain")
+        target = mountainDestination;
+    else if (zoneName == "Midway")
+        target = midwayDestination;
+
+    if (target == null)
+    {
+        Debug.LogWarning(
+            "PandaPathMover: No destination assigned for " + zoneName
+        );
+        return;
+    }
+
+    destination = target;
+    StartMovement();
+}
 }

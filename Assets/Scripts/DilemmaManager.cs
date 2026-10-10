@@ -1,154 +1,229 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DilemmaManager : MonoBehaviour
 {
-    [Header("Environment")]
+    [Header("References")]
     [SerializeField] private EnvironmentSystem environment;
 
-    [Header("Pollution Particles")]
-    [SerializeField] private ParticleSystem pollutionParticles;
-    [SerializeField] private float maxEmission = 100f;
+    [Tooltip("Drag your DilemmaPanel GameObject here.")]
+    [SerializeField] private GameObject dilemmaPanel;
 
-    [SerializeField] private float pollutionFadeDuration = 2f;
+    private DilemmaUI dilemmaUI;
 
-    [Header("First Dilemma")]
-    [SerializeField] private float delay = 10f;
+    [Header("Dilemmas")]
+    [SerializeField] private List<Dilemma> dilemmas = new();
 
-    [SerializeField, Range(0f, 1f)]
-    private float pollutionAfterDilemma = 0.5f;
+    [Header("Travel Integration")]
+    public UnityEvent<string> onTravelRequested;
 
-    private bool dilemmaTriggered = false;
-    private float timer = 0f;
+    [Header("Repeating Mountain Dilemma")]
+    [SerializeField] private string repeatingZoneName = "Mountain";
+    [SerializeField] private float repeatDelay = 30f;
 
+    private readonly HashSet<Dilemma> completedDilemmas = new();
+
+    private Dilemma activeDilemma;
+
+    private string currentZone = "";
+    private float zoneEnteredTime;
+
+    private Dilemma repeatingDilemma;
+    private float nextDilemmaTime;
+    private bool waitingForRepeat;
+
+    private void Awake()
+    {
+        if (dilemmaPanel != null)
+        {
+            dilemmaUI = dilemmaPanel.GetComponent<DilemmaUI>();
+
+            if (dilemmaUI == null)
+            {
+                Debug.LogError(
+                    "DilemmaManager: The assigned panel does not have a DilemmaUI component.",
+                    dilemmaPanel
+                );
+            }
+        }
+        else
+        {
+            Debug.LogError(
+                "DilemmaManager: Please assign your DilemmaPanel."
+            );
+        }
+    }
 
     private void Update()
     {
-        if (dilemmaTriggered)
+        if (environment == null || dilemmaUI == null)
             return;
 
-        timer += Time.deltaTime;
+        if (activeDilemma != null)
+            return;
 
-        if (timer >= delay)
+        string zoneName = environment.ActiveZoneName;
+        bool zoneChanged = zoneName != currentZone;
+
+        if (zoneChanged)
         {
-            TriggerFirstDilemma();
+            currentZone = zoneName;
+            zoneEnteredTime = Time.time;
+
+            Debug.Log("DilemmaManager: Active zone changed to " + zoneName);
+        }
+
+        // Show the Mountain dilemma again after the repeat delay.
+        if (waitingForRepeat &&
+            Time.time >= nextDilemmaTime &&
+            environment.ActiveZoneName == repeatingZoneName)
+        {
+            waitingForRepeat = false;
+
+            if (repeatingDilemma != null)
+            {
+                Debug.Log("DilemmaManager: Repeating Mountain dilemma.");
+                ShowDilemma(repeatingDilemma);
+                return;
+            }
+        }
+
+        foreach (Dilemma dilemma in dilemmas)
+        {
+            if (dilemma == null || completedDilemmas.Contains(dilemma))
+                continue;
+
+            // Don't trigger the same dilemma through its normal trigger
+            // while it is waiting for its repeat.
+            if (waitingForRepeat && dilemma == repeatingDilemma)
+                continue;
+
+            if (!IsInRequiredZone(dilemma))
+                continue;
+
+            if (ShouldTrigger(dilemma, zoneChanged))
+            {
+                Debug.Log("DilemmaManager: Triggering dilemma: " + dilemma.name);
+                ShowDilemma(dilemma);
+                break;
+            }
         }
     }
 
-
-    private void TriggerFirstDilemma()
+    private bool IsInRequiredZone(Dilemma dilemma)
     {
-        dilemmaTriggered = true;
+        if (string.IsNullOrWhiteSpace(dilemma.requiredZoneName))
+            return true;
 
-        if (environment == null)
-            return;
-
-        // Set pollution to 50%
-        environment.SetPollution(
-            pollutionAfterDilemma
-        );
-
-        StartCoroutine(
-            FadePollutionParticles()
-        );
+        return environment.ActiveZoneName == dilemma.requiredZoneName;
     }
 
-
-    private IEnumerator FadePollutionParticles()
+    private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
     {
-        if (pollutionParticles == null)
-            yield break;
-
-        var emission =
-            pollutionParticles.emission;
-
-        float targetEmission =
-            environment.Pollution *
-            maxEmission;
-
-        float startEmission =
-            0f;
-
-        emission.rateOverTime =
-            startEmission;
-
-        if (!pollutionParticles.isPlaying)
+        switch (dilemma.triggerType)
         {
-            pollutionParticles.Play();
+            case DilemmaTriggerType.ZoneDelay:
+                return Time.time - zoneEnteredTime >= dilemma.delaySeconds;
+
+            case DilemmaTriggerType.ZoneEntered:
+                return zoneChanged;
+
+            case DilemmaTriggerType.WaterBelow:
+                return environment.Water < dilemma.threshold;
+
+            case DilemmaTriggerType.PollutionAbove:
+                return environment.Pollution > dilemma.threshold;
+
+            default:
+                return false;
         }
+    }
 
-        float elapsed = 0f;
+    private void ShowDilemma(Dilemma dilemma)
+    {
+        activeDilemma = dilemma;
+        dilemmaUI.ShowDilemma(dilemma, this);
+    }
 
-        while (elapsed < pollutionFadeDuration)
+    public void ChooseA()
+    {
+        ResolveDilemma(true);
+    }
+
+    public void ChooseB()
+    {
+        ResolveDilemma(false);
+    }
+
+    private void ResolveDilemma(bool choseA)
+    {
+        if (activeDilemma == null)
+            return;
+
+        Dilemma resolvedDilemma = activeDilemma;
+
+        GameEvent gameEvent = choseA
+            ? resolvedDilemma.choiceAEvent
+            : resolvedDilemma.choiceBEvent;
+
+        bool choseToStay =
+            resolvedDilemma.requiredZoneName == repeatingZoneName &&
+            choseA;
+
+        if (choseToStay)
         {
-            elapsed += Time.deltaTime;
+            // Allow this dilemma to appear again in 30 seconds.
+            repeatingDilemma = resolvedDilemma;
+            nextDilemmaTime = Time.time + repeatDelay;
+            waitingForRepeat = true;
 
-            float t =
-                Mathf.Clamp01(
-                    elapsed /
-                    pollutionFadeDuration
-                );
-
-            // Smooth fade
-            t = Mathf.SmoothStep(
-                0f,
-                1f,
-                t
+            Debug.Log(
+                "DilemmaManager: Stayed in Mountain. Dilemma will repeat in "
+                + repeatDelay + " seconds."
             );
+        }
+        else
+        {
+            completedDilemmas.Add(resolvedDilemma);
 
-            emission.rateOverTime =
-                Mathf.Lerp(
-                    startEmission,
-                    targetEmission,
-                    t
-                );
-
-            yield return null;
+            if (resolvedDilemma == repeatingDilemma)
+            {
+                repeatingDilemma = null;
+                waitingForRepeat = false;
+            }
         }
 
-        emission.rateOverTime =
-            targetEmission;
+        activeDilemma = null;
+        dilemmaUI.HideDilemma();
+
+        ExecuteEvent(gameEvent);
     }
 
-
-    // =========================================================
-    // EXISTING DILEMMA CHOICES
-    // =========================================================
-
-    public void ChooseA(Dilemma dilemma)
+    private void ExecuteEvent(GameEvent gameEvent)
     {
-        if (environment == null)
+        if (gameEvent == null)
             return;
 
-        environment.ChangeTemperature(
-            dilemma.choiceA_Temperature
-        );
+        if (environment != null)
+        {
+            environment.ChangeTemperature(gameEvent.temperatureChange);
+            environment.ChangePollution(gameEvent.pollutionChange);
+        }
 
-        environment.ChangePollution(
-            dilemma.choiceA_Pollution
-        );
-
-        StartCoroutine(
-            FadePollutionParticles()
-        );
-    }
-
-
-    public void ChooseB(Dilemma dilemma)
-    {
-        if (environment == null)
-            return;
-
-        environment.ChangeTemperature(
-            dilemma.choiceB_Temperature
-        );
-
-        environment.ChangePollution(
-            dilemma.choiceB_Pollution
-        );
-
-        StartCoroutine(
-            FadePollutionParticles()
-        );
+        if (gameEvent.requestTravel)
+        {
+            if (onTravelRequested != null &&
+                onTravelRequested.GetPersistentEventCount() > 0)
+            {
+                onTravelRequested.Invoke(gameEvent.targetZoneName);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "No travel action is connected to DilemmaManager."
+                );
+            }
+        }
     }
 }
