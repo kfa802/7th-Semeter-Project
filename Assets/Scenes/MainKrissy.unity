@@ -8192,6 +8192,37 @@ MonoBehaviour:
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
   pollution: 0
+--- !u!1 &440457959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 440457960}
+  m_Layer: 8
+  m_Name: PandaDestinationMountain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &440457960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440457959}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.309183, z: -0, w: 0.9510026}
+  m_LocalPosition: {x: 7.9395905, y: -1.21, z: -6.9592323}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910538470}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &440763440
 GameObject:
   m_ObjectHideFlags: 0
@@ -15165,14 +15196,15 @@ MonoBehaviour:
   cinematicCamera: {fileID: 1966459872}
   cameraPoints:
   - {fileID: 1851566701}
+  - {fileID: 1572491159}
   - {fileID: 1411984243}
   - {fileID: 675466736}
   cameraMoveSpeed: 3
   cameraRotationSpeed: 4
   cameraLookHeight: 1.5
   cameraReturnDuration: 1
-  mountainDestination: {fileID: 439519099}
-  midwayDestination: {fileID: 2079388587}
+  mountainDestination: {fileID: 440457960}
+  midwayDestination: {fileID: 1599928678}
 --- !u!195 &725808059
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -16167,7 +16199,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 440457960}
   - {fileID: 1599928678}
+  - {fileID: 1143116278}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &937856959 stripped
@@ -17528,6 +17562,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1143116277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1143116278}
+  m_Layer: 0
+  m_Name: PandaDestinationValley
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1143116278
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143116277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 32.942, y: -10.46, z: -69.883}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910538470}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1146612481
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19900,6 +19965,8 @@ MonoBehaviour:
   dilemmas:
   - {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}
   - {fileID: 11400000, guid: d76b42dc5732ddd44ba49faa27a38db3, type: 2}
+  - {fileID: 11400000, guid: 0cb605a0320b23d48bfe81902b4d41bb, type: 2}
+  - {fileID: 11400000, guid: f67e0ea2cf8545047b097c93e8126cb3, type: 2}
   onTravelRequested:
     m_PersistentCalls:
       m_Calls:
@@ -25889,7 +25956,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1599928678}
   m_Layer: 0
-  m_Name: PandaDestination1
+  m_Name: PandaDestinationMidway
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29004,7 +29071,7 @@ Transform:
   m_GameObject: {fileID: 2079388586}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.69, y: -3.89, z: -39.84}
+  m_LocalPosition: {x: 17.5, y: -3.89, z: -39.84}
   m_LocalScale: {x: 12, y: 4.110188, z: 12}
   m_ConstrainProportionsScale: 1
   m_Children: []

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
+  m_Name: Dilemma_OtherPanda
+  m_EditorClassIdentifier: Assembly-CSharp::Dilemma
+  title: Dilemma 2
+  description: sdsmdjbs
+  choiceA: Stay with panda
+  choiceB: Go to valley
+  triggerType: 1
+  requiredZoneName: Midway
+  delaySeconds: 10
+  threshold: 30
+  prerequisiteDilemma: {fileID: 0}
+  prerequisiteChoice: 0
+  choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 77487f0415bae2c40a923b39edfe1137, type: 2}
+  choiceAEnding: {fileID: 0}
+  choiceBEnding: {fileID: 0}
