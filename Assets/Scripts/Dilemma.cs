@@ -40,17 +40,16 @@ public class Dilemma : ScriptableObject
     public float threshold = 30f;
 
     [Header("Prerequisites")]
-    [Tooltip("This dilemma requires another dilemma to be resolved first.")]
     public Dilemma prerequisiteDilemma;
 
-    [Tooltip("Choose which answer to the prerequisite unlocks this dilemma.")]
-    public PrerequisiteChoice prerequisiteChoice = PrerequisiteChoice.Either;
+    public PrerequisiteChoice prerequisiteChoice =
+        PrerequisiteChoice.Either;
 
     [Header("Choice Consequences")]
     public GameEvent choiceAEvent;
     public GameEvent choiceBEvent;
 
-    [Header("Game Ending")]
-    [Tooltip("Enable this if resolving this dilemma should end the game.")]
-    public bool endsGame = false;
+    [Header("Choice Endings")]
+    public Ending choiceAEnding;
+    public Ending choiceBEnding;
 }

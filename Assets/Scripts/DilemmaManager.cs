@@ -11,10 +11,8 @@ public class DilemmaManager : MonoBehaviour
     [Tooltip("Drag your DilemmaPanel GameObject here.")]
     [SerializeField] private GameObject dilemmaPanel;
 
-    [Tooltip("Optional panel displayed when the game ends.")]
-    [SerializeField] private GameObject gameOverPanel;
-
-    private DilemmaUI dilemmaUI;
+    [Tooltip("Drag the GameObject with your EndingUI component here.")]
+    [SerializeField] private GameObject endingPanel;
 
     [Header("Dilemmas")]
     [SerializeField] private List<Dilemma> dilemmas = new();
@@ -22,9 +20,12 @@ public class DilemmaManager : MonoBehaviour
     [Header("Travel Integration")]
     public UnityEvent<string> onTravelRequested;
 
-    [Header("Game Over Settings")]
-    [Tooltip("Seconds to wait before showing the Game Over panel.")]
-    [SerializeField] private float gameOverDelay = 3f;
+    [Header("Ending Settings")]
+    [Tooltip("Seconds to wait before displaying the selected ending.")]
+    [SerializeField] private float endingDelay = 3f;
+
+    private DilemmaUI dilemmaUI;
+    private EndingUI endingUI;
 
     private readonly HashSet<Dilemma> completedDilemmas = new();
 
@@ -42,21 +43,23 @@ public class DilemmaManager : MonoBehaviour
     private void Awake()
     {
         if (dilemmaPanel != null)
-        {
             dilemmaUI = dilemmaPanel.GetComponent<DilemmaUI>();
-        }
 
         if (dilemmaUI == null)
-        {
             Debug.LogError(
                 "DilemmaManager: Assign a DilemmaPanel with DilemmaUI."
             );
+
+        if (endingPanel != null)
+        {
+            endingUI = endingPanel.GetComponent<EndingUI>();
+            endingPanel.SetActive(false);
         }
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
+        if (endingPanel != null && endingUI == null)
+            Debug.LogError(
+                "DilemmaManager: EndingPanel needs an EndingUI component."
+            );
     }
 
     private void Update()
@@ -80,7 +83,7 @@ public class DilemmaManager : MonoBehaviour
             );
         }
 
-        // Check dilemmas scheduled after a prerequisite choice.
+        // Check dilemmas waiting for their scheduled delay.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null || completedDilemmas.Contains(dilemma))
@@ -105,13 +108,13 @@ public class DilemmaManager : MonoBehaviour
             return;
         }
 
-        // Check ordinary dilemmas without prerequisites.
+        // Check normal dilemmas without prerequisites.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null || completedDilemmas.Contains(dilemma))
                 continue;
 
-            // Prerequisite dilemmas are scheduled after a matching choice.
+            // Follow-up dilemmas must be scheduled by a matching choice.
             if (dilemma.prerequisiteDilemma != null)
                 continue;
 
@@ -197,18 +200,24 @@ public class DilemmaManager : MonoBehaviour
             ? resolvedDilemma.choiceAEvent
             : resolvedDilemma.choiceBEvent;
 
+        Ending selectedEnding = choseA
+            ? resolvedDilemma.choiceAEnding
+            : resolvedDilemma.choiceBEnding;
+
         activeDilemma = null;
         dilemmaUI.HideDilemma();
 
+        // Apply the selected choice's environmental/travel consequences.
         ExecuteEvent(gameEvent);
 
-        if (resolvedDilemma.endsGame)
+        // If this choice has an ending assigned, show that ending.
+        if (selectedEnding != null)
         {
-            EndGame();
+            BeginEnding(selectedEnding);
             return;
         }
 
-        // Schedule matching follow-up dilemmas.
+        // Otherwise, schedule follow-up dilemmas whose prerequisites match.
         foreach (Dilemma nextDilemma in dilemmas)
         {
             if (nextDilemma == null ||
@@ -235,7 +244,6 @@ public class DilemmaManager : MonoBehaviour
                 continue;
             }
 
-            // Countdown starts when the choice is made.
             scheduledDilemmas[nextDilemma] =
                 Time.time + Mathf.Max(0f, nextDilemma.delaySeconds);
 
@@ -244,6 +252,48 @@ public class DilemmaManager : MonoBehaviour
                 + nextDilemma.delaySeconds + " seconds."
             );
         }
+    }
+
+    private void BeginEnding(Ending ending)
+    {
+        gameEnded = true;
+
+        Debug.Log(
+            "DilemmaManager: Ending '" + ending.endingTitle
+            + "' will appear in " + endingDelay + " seconds."
+        );
+
+        Invoke(nameof(ShowSelectedEnding), Mathf.Max(0f, endingDelay));
+
+        // Store the selected ending for the delayed display.
+        pendingEnding = ending;
+    }
+
+    private Ending pendingEnding;
+
+    private void ShowSelectedEnding()
+    {
+        if (pendingEnding == null)
+        {
+            Debug.LogError("DilemmaManager: No ending was selected.");
+            return;
+        }
+
+        if (endingUI != null)
+        {
+            endingPanel.SetActive(true);
+            endingUI.ShowEnding(pendingEnding);
+        }
+        else
+        {
+            Debug.LogError(
+                "DilemmaManager: Assign an EndingPanel with EndingUI."
+            );
+        }
+
+        Debug.Log(
+            "DilemmaManager: Displaying ending " + pendingEnding.endingTitle
+        );
     }
 
     private void ExecuteEvent(GameEvent gameEvent)
@@ -271,33 +321,5 @@ public class DilemmaManager : MonoBehaviour
                 );
             }
         }
-    }
-
-    private void EndGame()
-    {
-        gameEnded = true;
-
-        Debug.Log(
-            "DilemmaManager: Game Over panel will appear in "
-            + gameOverDelay + " seconds."
-        );
-
-        Invoke(nameof(ShowGameOverPanel), Mathf.Max(0f, gameOverDelay));
-    }
-
-    private void ShowGameOverPanel()
-    {
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning(
-                "DilemmaManager: No Game Over panel is assigned."
-            );
-        }
-
-        Debug.Log("DilemmaManager: GAME OVER");
     }
 }
