@@ -9,6 +9,9 @@ public class GameEvent : ScriptableObject
     public float pollutionChange;
 
     [Header("Travel")]
+    [Tooltip("Enable this if the event should move the panda.")]
     public bool requestTravel;
+
+    [Tooltip("Must match a Zone Name in PandaPathMover.")]
     public string targetZoneName;
 }

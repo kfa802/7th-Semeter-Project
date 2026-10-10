@@ -15194,17 +15194,22 @@ MonoBehaviour:
   walkingParameter: IsWalking
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
-  cameraPoints:
-  - {fileID: 1851566701}
-  - {fileID: 1572491159}
-  - {fileID: 1411984243}
-  - {fileID: 675466736}
   cameraMoveSpeed: 3
   cameraRotationSpeed: 4
   cameraLookHeight: 1.5
   cameraReturnDuration: 1
-  mountainDestination: {fileID: 440457960}
-  midwayDestination: {fileID: 1599928678}
+  zoneDestinations:
+  - zoneName: Midway
+    destination: {fileID: 1599928678}
+    cameraPoints:
+    - {fileID: 1851566701}
+    - {fileID: 1572491159}
+    - {fileID: 1411984243}
+    - {fileID: 675466736}
+  - zoneName: Valley
+    destination: {fileID: 1143116278}
+    cameraPoints:
+    - {fileID: 675466736}
 --- !u!195 &725808059
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -19972,8 +19977,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 725808057}
         m_TargetAssemblyTypeName: PandaPathMover, Assembly-CSharp
-        m_MethodName: StartMovement
-        m_Mode: 1
+        m_MethodName: TravelToZone
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

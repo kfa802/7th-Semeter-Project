@@ -21,16 +21,13 @@ public class DilemmaManager : MonoBehaviour
     public UnityEvent<string> onTravelRequested;
 
     [Header("Ending Settings")]
-    [Tooltip("Seconds to wait before displaying the selected ending.")]
     [SerializeField] private float endingDelay = 3f;
 
     private DilemmaUI dilemmaUI;
     private EndingUI endingUI;
 
     private readonly HashSet<Dilemma> completedDilemmas = new();
-
     private readonly Dictionary<Dilemma, float> scheduledDilemmas = new();
-
     private readonly Dictionary<Dilemma, bool> resolvedChoices = new();
 
     private Dilemma activeDilemma;
@@ -39,6 +36,7 @@ public class DilemmaManager : MonoBehaviour
     private float zoneEnteredTime;
 
     private bool gameEnded;
+    private Ending pendingEnding;
 
     private void Awake()
     {
@@ -59,6 +57,17 @@ public class DilemmaManager : MonoBehaviour
         if (endingPanel != null && endingUI == null)
             Debug.LogError(
                 "DilemmaManager: EndingPanel needs an EndingUI component."
+            );
+
+        if (onTravelRequested == null)
+            Debug.LogError(
+                "DilemmaManager: Travel UnityEvent is missing."
+            );
+        else
+            Debug.Log(
+                "DilemmaManager: Travel event has " +
+                onTravelRequested.GetPersistentEventCount() +
+                " Inspector listener(s)."
             );
     }
 
@@ -83,7 +92,6 @@ public class DilemmaManager : MonoBehaviour
             );
         }
 
-        // Check dilemmas waiting for their scheduled delay.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null || completedDilemmas.Contains(dilemma))
@@ -108,13 +116,11 @@ public class DilemmaManager : MonoBehaviour
             return;
         }
 
-        // Check normal dilemmas without prerequisites.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null || completedDilemmas.Contains(dilemma))
                 continue;
 
-            // Follow-up dilemmas must be scheduled by a matching choice.
             if (dilemma.prerequisiteDilemma != null)
                 continue;
 
@@ -184,13 +190,19 @@ public class DilemmaManager : MonoBehaviour
     private void ResolveDilemma(bool choseA)
     {
         if (activeDilemma == null || gameEnded)
+        {
+            Debug.LogWarning(
+                "DilemmaManager: Choice ignored. No active dilemma " +
+                "or the game has ended."
+            );
             return;
+        }
 
         Dilemma resolvedDilemma = activeDilemma;
 
         Debug.Log(
-            "DilemmaManager: " + resolvedDilemma.name
-            + " resolved with Choice " + (choseA ? "A" : "B")
+            "DilemmaManager: " + resolvedDilemma.name +
+            " resolved with Choice " + (choseA ? "A" : "B")
         );
 
         completedDilemmas.Add(resolvedDilemma);
@@ -207,17 +219,14 @@ public class DilemmaManager : MonoBehaviour
         activeDilemma = null;
         dilemmaUI.HideDilemma();
 
-        // Apply the selected choice's environmental/travel consequences.
         ExecuteEvent(gameEvent);
 
-        // If this choice has an ending assigned, show that ending.
         if (selectedEnding != null)
         {
             BeginEnding(selectedEnding);
             return;
         }
 
-        // Otherwise, schedule follow-up dilemmas whose prerequisites match.
         foreach (Dilemma nextDilemma in dilemmas)
         {
             if (nextDilemma == null ||
@@ -237,10 +246,9 @@ public class DilemmaManager : MonoBehaviour
             if (!choiceMatches)
             {
                 Debug.Log(
-                    nextDilemma.name
-                    + ": Prerequisite choice did not match."
+                    nextDilemma.name +
+                    ": Prerequisite choice did not match."
                 );
-
                 continue;
             }
 
@@ -248,8 +256,8 @@ public class DilemmaManager : MonoBehaviour
                 Time.time + Mathf.Max(0f, nextDilemma.delaySeconds);
 
             Debug.Log(
-                nextDilemma.name + " scheduled in "
-                + nextDilemma.delaySeconds + " seconds."
+                nextDilemma.name + " scheduled in " +
+                nextDilemma.delaySeconds + " seconds."
             );
         }
     }
@@ -257,19 +265,18 @@ public class DilemmaManager : MonoBehaviour
     private void BeginEnding(Ending ending)
     {
         gameEnded = true;
+        pendingEnding = ending;
 
         Debug.Log(
-            "DilemmaManager: Ending '" + ending.endingTitle
-            + "' will appear in " + endingDelay + " seconds."
+            "DilemmaManager: Ending '" + ending.endingTitle +
+            "' will appear in " + endingDelay + " seconds."
         );
 
-        Invoke(nameof(ShowSelectedEnding), Mathf.Max(0f, endingDelay));
-
-        // Store the selected ending for the delayed display.
-        pendingEnding = ending;
+        Invoke(
+            nameof(ShowSelectedEnding),
+            Mathf.Max(0f, endingDelay)
+        );
     }
-
-    private Ending pendingEnding;
 
     private void ShowSelectedEnding()
     {
@@ -292,34 +299,89 @@ public class DilemmaManager : MonoBehaviour
         }
 
         Debug.Log(
-            "DilemmaManager: Displaying ending " + pendingEnding.endingTitle
+            "DilemmaManager: Displaying ending " +
+            pendingEnding.endingTitle
         );
     }
 
     private void ExecuteEvent(GameEvent gameEvent)
     {
         if (gameEvent == null)
+        {
+            Debug.LogError(
+                "DilemmaManager: ExecuteEvent received NULL! " +
+                "Check the selected Choice A Event / Choice B Event."
+            );
             return;
+        }
+
+        Debug.Log(
+            $"DilemmaManager: Executing GameEvent '{gameEvent.name}' | " +
+            $"RequestTravel = {gameEvent.requestTravel} | " +
+            $"TargetZoneName = '{gameEvent.targetZoneName}'"
+        );
 
         if (environment != null)
         {
             environment.ChangeTemperature(gameEvent.temperatureChange);
             environment.ChangePollution(gameEvent.pollutionChange);
         }
-
-        if (gameEvent.requestTravel)
+        else
         {
-            if (onTravelRequested != null &&
-                onTravelRequested.GetPersistentEventCount() > 0)
-            {
-                onTravelRequested.Invoke(gameEvent.targetZoneName);
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "DilemmaManager: No travel action is connected."
-                );
-            }
+            Debug.LogWarning(
+                "DilemmaManager: Environment reference is missing."
+            );
         }
+
+        if (!gameEvent.requestTravel)
+        {
+            Debug.Log(
+                "DilemmaManager: Travel was NOT requested by this GameEvent."
+            );
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(gameEvent.targetZoneName))
+        {
+            Debug.LogError(
+                "DilemmaManager: Travel requested, but Target Zone Name " +
+                "is empty!"
+            );
+            return;
+        }
+
+        if (onTravelRequested == null)
+        {
+            Debug.LogError(
+                "DilemmaManager: onTravelRequested UnityEvent is NULL."
+            );
+            return;
+        }
+
+        int listenerCount =
+            onTravelRequested.GetPersistentEventCount();
+
+        Debug.Log(
+            $"DilemmaManager: Requesting travel to " +
+            $"'{gameEvent.targetZoneName}'. " +
+            $"Inspector listeners = {listenerCount}"
+        );
+
+        if (listenerCount == 0)
+        {
+            Debug.LogError(
+                "DilemmaManager: No travel listener configured! " +
+                "Connect PandaPathMover.TravelToZone(string) " +
+                "in the Inspector."
+            );
+            return;
+        }
+
+        onTravelRequested.Invoke(gameEvent.targetZoneName);
+
+        Debug.Log(
+            "DilemmaManager: Travel event invoked for '" +
+            gameEvent.targetZoneName + "'."
+        );
     }
 }
