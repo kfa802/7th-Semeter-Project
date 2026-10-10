@@ -66,21 +66,33 @@ public class BambooManager : MonoBehaviour
     [SerializeField] private string bambooTag = "";
 
     // =========================================================
-    // NATURAL BAMBOO GROWTH
-    // =========================================================
+// NATURAL BAMBOO GROWTH
+// =========================================================
 
-    [Header("Natural Bamboo Growth")]
-    [SerializeField, Range(0f, 100f)]
-    private float naturalGrowthWaterThreshold = 80f;
+[Header("Natural Bamboo Growth")]
+[SerializeField, Range(0f, 100f)]
+private float naturalGrowthWaterThreshold = 80f;
 
-    [SerializeField]
-    private float minimumNaturalGrowthInterval = 10f;
+[SerializeField]
+private float minimumNaturalGrowthInterval = 10f;
 
-    [SerializeField]
-    private float maximumNaturalGrowthInterval = 20f;
+[SerializeField]
+private float maximumNaturalGrowthInterval = 20f;
 
-    private float naturalGrowthTimer;
-    private float naturalGrowthTargetTime;
+[Header("Water-Based Growth Difficulty")]
+[SerializeField, Range(0f, 100f)]
+private float bambooWaterThreshold = 30f;
+
+[Tooltip("Growth speed multiplier when water is at the threshold.")]
+[SerializeField, Range(0.01f, 1f)]
+private float growthMultiplierAtThreshold = 1f;
+
+[Tooltip("Growth speed multiplier when water is almost empty.")]
+[SerializeField, Range(0.01f, 1f)]
+private float growthMultiplierAtZeroWater = 0.05f;
+
+private float naturalGrowthTimer;
+private float naturalGrowthTargetTime;
 
     // =========================================================
     // POLLUTION
@@ -601,48 +613,55 @@ public class BambooManager : MonoBehaviour
     // =========================================================
 
     private void UpdateNaturalBambooGrowth()
+{
+    if (environment == null ||
+        EnvironmentSystem.Instance == null)
+        return;
+
+    EcosystemZone zone = EnvironmentSystem.Instance.ActiveZone;
+
+    if (zone == null)
     {
-        if (environment == null)
-            return;
-
-        EcosystemZone zone =
-            EnvironmentSystem.Instance != null
-                ? EnvironmentSystem.Instance.ActiveZone
-                : null;
-
-        if (zone == null)
-        {
-            naturalGrowthTimer = 0f;
-            return;
-        }
-
-        if (environment.Water < naturalGrowthWaterThreshold)
-        {
-            naturalGrowthTimer = 0f;
-            return;
-        }
-
-        naturalGrowthTimer += Time.deltaTime;
-
-        if (naturalGrowthTimer < naturalGrowthTargetTime)
-            return;
-
         naturalGrowthTimer = 0f;
-        SetNaturalGrowthTimer();
-
-        if (!CanGrowInZone(zone))
-            return;
-
-        List<BambooGrowthSpot> available = GetFreeSpotsForZone(zone);
-
-        if (available.Count == 0)
-            return;
-
-        BambooGrowthSpot selected =
-            available[Random.Range(0, available.Count)];
-
-        selected.GrowBamboo();
+        return;
     }
+
+    float water = environment.Water;
+
+    // Keep your existing minimum water requirement.
+    if (water < naturalGrowthWaterThreshold)
+    {
+        naturalGrowthTimer = 0f;
+        return;
+    }
+
+    float growthMultiplier = GetWaterGrowthMultiplier();
+
+    if (growthMultiplier <= 0f)
+        return;
+
+    // Slower growth means more time is required.
+    naturalGrowthTimer += Time.deltaTime * growthMultiplier;
+
+    if (naturalGrowthTimer < naturalGrowthTargetTime)
+        return;
+
+    naturalGrowthTimer = 0f;
+    SetNaturalGrowthTimer();
+
+    if (!CanGrowInZone(zone))
+        return;
+
+    List<BambooGrowthSpot> available = GetFreeSpotsForZone(zone);
+
+    if (available.Count == 0)
+        return;
+
+    BambooGrowthSpot selected =
+        available[Random.Range(0, available.Count)];
+
+    selected.GrowBamboo();
+}
 
     private void SetNaturalGrowthTimer()
     {
@@ -1180,6 +1199,35 @@ public bool HasAvailableBambooInCurrentZone()
     }
 
     return false;
+}
+
+public float GetWaterGrowthMultiplier()
+{
+    if (EnvironmentSystem.Instance == null)
+        return 0f;
+
+    float water = EnvironmentSystem.Instance.Water;
+
+    // No water means no bamboo growth.
+    if (water <= 0f)
+        return 0f;
+
+    // At or above the threshold, growth is normal.
+    if (water >= bambooWaterThreshold)
+        return 1f;
+
+    // Progressively slow growth as water drops below the threshold.
+    float waterFactor = Mathf.InverseLerp(
+        0f,
+        bambooWaterThreshold,
+        water
+    );
+
+    return Mathf.Lerp(
+        growthMultiplierAtZeroWater,
+        growthMultiplierAtThreshold,
+        waterFactor
+    );
 }
 
     

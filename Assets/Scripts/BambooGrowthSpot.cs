@@ -226,6 +226,7 @@ public class BambooGrowthSpot : MonoBehaviour
             return;
         }
 
+
         // Check the zone's maximum bamboo capacity.
         if (BambooManager.Instance != null &&
             !BambooManager.Instance.CanGrowInZone(
@@ -287,17 +288,28 @@ public class BambooGrowthSpot : MonoBehaviour
         // Wait before creating bamboo.
         float waited = 0f;
 
-        while (waited < poopToBambooDelay)
-        {
-            float factor =
-                EnvironmentSystem.Instance != null
-                    ? EnvironmentSystem.Instance.TemperatureGrowthFactor
-                    : 1f;
+while (waited < poopToBambooDelay)
+{
+    float waterMultiplier =
+        BambooManager.Instance != null
+            ? BambooManager.Instance.GetWaterGrowthMultiplier()
+            : 0f;
 
-            waited += Time.deltaTime * factor;
+    float temperatureMultiplier =
+        EnvironmentSystem.Instance != null
+            ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+            : 1f;
 
-            yield return null;
-        }
+    // Only progress when water is available.
+    if (waterMultiplier > 0f)
+    {
+        waited += Time.deltaTime
+                  * temperatureMultiplier
+                  * waterMultiplier;
+    }
+
+    yield return null;
+}
 
         if (poop != null)
         {
