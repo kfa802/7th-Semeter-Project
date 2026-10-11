@@ -16,10 +16,10 @@ MonoBehaviour:
   description: You are running out of food
   choiceA: Stay with Panda
   choiceB: Go to Valley
-  triggerType: 2
+  triggerType: 4
   requiredZoneName: Midway
-  delaySeconds: 30
-  threshold: 30
+  delaySeconds: 0
+  threshold: 50
   prerequisiteDilemma: {fileID: 11400000, guid: 0cb605a0320b23d48bfe81902b4d41bb, type: 2}
   prerequisiteChoice: 1
   choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}

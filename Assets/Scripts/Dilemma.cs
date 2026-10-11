@@ -6,7 +6,8 @@ public enum DilemmaTriggerType
     ZoneDelay,
     ZoneEntered,
     WaterBelow,
-    PollutionAbove
+    PollutionAbove,
+    BambooBelow
 }
 
 public enum PrerequisiteChoice
@@ -35,7 +36,7 @@ public class Dilemma : ScriptableObject
     [Tooltip("Delay in seconds for ZoneDelay triggers.")]
     public float delaySeconds = 30f;
 
-    [Tooltip("Threshold for WaterBelow or PollutionAbove.")]
+    [Tooltip("Threshold percentage for WaterBelow, PollutionAbove, or BambooBelow.")]
     [Range(0f, 100f)]
     public float threshold = 30f;
 

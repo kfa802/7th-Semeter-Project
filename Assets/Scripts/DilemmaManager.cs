@@ -100,13 +100,25 @@ public class DilemmaManager : MonoBehaviour
             if (!scheduledDilemmas.ContainsKey(dilemma))
                 continue;
 
-            if (Time.time < scheduledDilemmas[dilemma])
-                continue;
+// BambooBelow is condition-based, not time-based.
+if (dilemma.triggerType != DilemmaTriggerType.BambooBelow &&
+    Time.time < scheduledDilemmas[dilemma])
+{
+    continue;
+}
 
-            if (!IsInRequiredZone(dilemma))
-                continue;
+if (!IsInRequiredZone(dilemma))
+    continue;
 
-            scheduledDilemmas.Remove(dilemma);
+// Even after its prerequisite is fulfilled, a BambooBelow
+// dilemma must wait until the bamboo threshold is reached.
+if (dilemma.triggerType == DilemmaTriggerType.BambooBelow &&
+    !ShouldTrigger(dilemma, zoneChanged))
+{
+    continue;
+}
+
+scheduledDilemmas.Remove(dilemma);
 
             Debug.Log(
                 "DilemmaManager: Delay finished. Showing " + dilemma.name
@@ -147,26 +159,64 @@ public class DilemmaManager : MonoBehaviour
         return environment.ActiveZoneName == dilemma.requiredZoneName;
     }
 
-    private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
+
+private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
+{
+    switch (dilemma.triggerType)
     {
-        switch (dilemma.triggerType)
+        case DilemmaTriggerType.ZoneDelay:
+            return Time.time - zoneEnteredTime >= dilemma.delaySeconds;
+
+        case DilemmaTriggerType.ZoneEntered:
+            return zoneChanged;
+
+        case DilemmaTriggerType.WaterBelow:
+            return environment.Water < dilemma.threshold;
+
+        case DilemmaTriggerType.PollutionAbove:
+            return environment.Pollution > dilemma.threshold;
+
+        case DilemmaTriggerType.BambooBelow:
         {
-            case DilemmaTriggerType.ZoneDelay:
-                return Time.time - zoneEnteredTime >= dilemma.delaySeconds;
-
-            case DilemmaTriggerType.ZoneEntered:
-                return zoneChanged;
-
-            case DilemmaTriggerType.WaterBelow:
-                return environment.Water < dilemma.threshold;
-
-            case DilemmaTriggerType.PollutionAbove:
-                return environment.Pollution > dilemma.threshold;
-
-            default:
+            if (BambooManager.Instance == null ||
+                environment.ActiveZone == null)
+            {
                 return false;
+            }
+
+            EcosystemZone zone = environment.ActiveZone;
+
+            // Avoid triggering if this zone has no registered growth spots.
+            int capacity =
+                BambooManager.Instance.GetCapacityForZone(zone);
+
+            if (capacity <= 0)
+            {
+                Debug.LogWarning(
+                    "BambooBelow: No growth spots registered for zone " +
+                    zone.zoneName
+                );
+
+                return false;
+            }
+
+            float bambooPercent =
+                BambooManager.Instance.GetPercentForZone(zone);
+
+            Debug.Log(
+                "BambooBelow: " + zone.zoneName +
+                " has " + bambooPercent.ToString("F1") +
+                "% healthy bamboo. Threshold: " +
+                dilemma.threshold + "%"
+            );
+
+            return bambooPercent < dilemma.threshold;
         }
+
+        default:
+            return false;
     }
+}
 
     private void ShowDilemma(Dilemma dilemma)
     {

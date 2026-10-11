@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Dilemma 3
+  title: Dilemma 3.2
   description: You are running out of food
   choiceA: Stay with Panda
   choiceB: Go to Valley
-  triggerType: 2
+  triggerType: 4
   requiredZoneName: Midway
-  delaySeconds: 30
+  delaySeconds: 10
   threshold: 30
-  prerequisiteDilemma: {fileID: 11400000, guid: 0cb605a0320b23d48bfe81902b4d41bb, type: 2}
+  prerequisiteDilemma: {fileID: 11400000, guid: f67e0ea2cf8545047b097c93e8126cb3, type: 2}
   prerequisiteChoice: 1
   choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 77487f0415bae2c40a923b39edfe1137, type: 2}
