@@ -16,6 +16,7 @@ MonoBehaviour:
   description: The pollution is rotting the bamboo
   choiceA: Stay in Valley
   choiceB: Go back to the other panda
+  choiceC: Go back to mountain
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 30
@@ -24,5 +25,7 @@ MonoBehaviour:
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: 82827fe770e2eee41bb123ecd2f6e6f6, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
-  choiceAEnding: {fileID: 0}
-  choiceBEnding: {fileID: 0}
+  choiceCEvent: {fileID: 11400000, guid: 31a9ebf7233b9f746b9ff30ead41ac2b, type: 2}
+  choiceAEnding: {fileID: 11400000, guid: 310cae3e4c3c7884da67466812a9a250, type: 2}
+  choiceBEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
+  choiceCEnding: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}

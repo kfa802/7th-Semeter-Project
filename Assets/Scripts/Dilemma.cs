@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public enum DilemmaTriggerType
@@ -14,7 +13,8 @@ public enum PrerequisiteChoice
 {
     Either,
     ChoiceA,
-    ChoiceB
+    ChoiceB,
+    ChoiceC
 }
 
 [CreateAssetMenu(fileName = "New Dilemma", menuName = "Panda/Dilemma")]
@@ -28,6 +28,7 @@ public class Dilemma : ScriptableObject
 
     public string choiceA;
     public string choiceB;
+    public string choiceC;
 
     [Header("Trigger")]
     public DilemmaTriggerType triggerType;
@@ -49,8 +50,10 @@ public class Dilemma : ScriptableObject
     [Header("Choice Consequences")]
     public GameEvent choiceAEvent;
     public GameEvent choiceBEvent;
+    public GameEvent choiceCEvent;
 
     [Header("Choice Endings")]
     public Ending choiceAEnding;
     public Ending choiceBEnding;
+    public Ending choiceCEnding;
 }

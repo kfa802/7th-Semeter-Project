@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Event_AroundForest
   m_EditorClassIdentifier: Assembly-CSharp::GameEvent
   temperatureChange: 0
-  pollutionChange: 50
+  pollutionChange: 0.5
   requestTravel: 0
   targetZoneName: 

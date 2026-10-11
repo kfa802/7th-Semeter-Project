@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b49f136b01dc9c0408135fcd1a1ecea4, type: 3}
-  m_Name: Event_GoToMountain
+  m_Name: Event_TravelMountain
   m_EditorClassIdentifier: Assembly-CSharp::GameEvent
   temperatureChange: 0
   pollutionChange: 0
-  requestTravel: 0
-  targetZoneName: 
+  requestTravel: 1
+  targetZoneName: Mountain

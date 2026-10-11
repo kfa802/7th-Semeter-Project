@@ -28,7 +28,6 @@ public class DilemmaManager : MonoBehaviour
 
     private readonly HashSet<Dilemma> completedDilemmas = new();
     private readonly Dictionary<Dilemma, float> scheduledDilemmas = new();
-    private readonly Dictionary<Dilemma, bool> resolvedChoices = new();
 
     private Dilemma activeDilemma;
 
@@ -44,9 +43,11 @@ public class DilemmaManager : MonoBehaviour
             dilemmaUI = dilemmaPanel.GetComponent<DilemmaUI>();
 
         if (dilemmaUI == null)
+        {
             Debug.LogError(
                 "DilemmaManager: Assign a DilemmaPanel with DilemmaUI."
             );
+        }
 
         if (endingPanel != null)
         {
@@ -55,20 +56,26 @@ public class DilemmaManager : MonoBehaviour
         }
 
         if (endingPanel != null && endingUI == null)
+        {
             Debug.LogError(
                 "DilemmaManager: EndingPanel needs an EndingUI component."
             );
+        }
 
         if (onTravelRequested == null)
+        {
             Debug.LogError(
                 "DilemmaManager: Travel UnityEvent is missing."
             );
+        }
         else
+        {
             Debug.Log(
                 "DilemmaManager: Travel event has " +
                 onTravelRequested.GetPersistentEventCount() +
                 " Inspector listener(s)."
             );
+        }
     }
 
     private void Update()
@@ -92,45 +99,49 @@ public class DilemmaManager : MonoBehaviour
             );
         }
 
+        // First, check dilemmas scheduled after a prerequisite choice.
         foreach (Dilemma dilemma in dilemmas)
         {
-            if (dilemma == null || completedDilemmas.Contains(dilemma))
+            if (dilemma == null ||
+                completedDilemmas.Contains(dilemma))
                 continue;
 
             if (!scheduledDilemmas.ContainsKey(dilemma))
                 continue;
 
-// BambooBelow is condition-based, not time-based.
-if (dilemma.triggerType != DilemmaTriggerType.BambooBelow &&
-    Time.time < scheduledDilemmas[dilemma])
-{
-    continue;
-}
+            // BambooBelow triggers depend on bamboo levels,
+            // not on a timer.
+            if (dilemma.triggerType != DilemmaTriggerType.BambooBelow &&
+                Time.time < scheduledDilemmas[dilemma])
+            {
+                continue;
+            }
 
-if (!IsInRequiredZone(dilemma))
-    continue;
+            if (!IsInRequiredZone(dilemma))
+                continue;
 
-// Even after its prerequisite is fulfilled, a BambooBelow
-// dilemma must wait until the bamboo threshold is reached.
-if (dilemma.triggerType == DilemmaTriggerType.BambooBelow &&
-    !ShouldTrigger(dilemma, zoneChanged))
-{
-    continue;
-}
+            if (dilemma.triggerType == DilemmaTriggerType.BambooBelow &&
+                !ShouldTrigger(dilemma, zoneChanged))
+            {
+                continue;
+            }
 
-scheduledDilemmas.Remove(dilemma);
+            scheduledDilemmas.Remove(dilemma);
 
             Debug.Log(
-                "DilemmaManager: Delay finished. Showing " + dilemma.name
+                "DilemmaManager: Scheduled dilemma is ready. Showing " +
+                dilemma.name
             );
 
             ShowDilemma(dilemma);
             return;
         }
 
+        // Next, check dilemmas without prerequisites.
         foreach (Dilemma dilemma in dilemmas)
         {
-            if (dilemma == null || completedDilemmas.Contains(dilemma))
+            if (dilemma == null ||
+                completedDilemmas.Contains(dilemma))
                 continue;
 
             if (dilemma.prerequisiteDilemma != null)
@@ -159,64 +170,63 @@ scheduledDilemmas.Remove(dilemma);
         return environment.ActiveZoneName == dilemma.requiredZoneName;
     }
 
-
-private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
-{
-    switch (dilemma.triggerType)
+    private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
     {
-        case DilemmaTriggerType.ZoneDelay:
-            return Time.time - zoneEnteredTime >= dilemma.delaySeconds;
-
-        case DilemmaTriggerType.ZoneEntered:
-            return zoneChanged;
-
-        case DilemmaTriggerType.WaterBelow:
-            return environment.Water < dilemma.threshold;
-
-        case DilemmaTriggerType.PollutionAbove:
-            return environment.Pollution > dilemma.threshold;
-
-        case DilemmaTriggerType.BambooBelow:
+        switch (dilemma.triggerType)
         {
-            if (BambooManager.Instance == null ||
-                environment.ActiveZone == null)
+            case DilemmaTriggerType.ZoneDelay:
+                return Time.time - zoneEnteredTime >=
+                       dilemma.delaySeconds;
+
+            case DilemmaTriggerType.ZoneEntered:
+                return zoneChanged;
+
+            case DilemmaTriggerType.WaterBelow:
+                return environment.Water < dilemma.threshold;
+
+            case DilemmaTriggerType.PollutionAbove:
+                return environment.Pollution > dilemma.threshold;
+
+            case DilemmaTriggerType.BambooBelow:
             {
-                return false;
-            }
+                if (BambooManager.Instance == null ||
+                    environment.ActiveZone == null)
+                {
+                    return false;
+                }
 
-            EcosystemZone zone = environment.ActiveZone;
+                EcosystemZone zone = environment.ActiveZone;
 
-            // Avoid triggering if this zone has no registered growth spots.
-            int capacity =
-                BambooManager.Instance.GetCapacityForZone(zone);
+                int capacity =
+                    BambooManager.Instance.GetCapacityForZone(zone);
 
-            if (capacity <= 0)
-            {
-                Debug.LogWarning(
-                    "BambooBelow: No growth spots registered for zone " +
-                    zone.zoneName
+                if (capacity <= 0)
+                {
+                    Debug.LogWarning(
+                        "BambooBelow: No growth spots registered for zone " +
+                        zone.zoneName
+                    );
+
+                    return false;
+                }
+
+                float bambooPercent =
+                    BambooManager.Instance.GetPercentForZone(zone);
+
+                Debug.Log(
+                    "BambooBelow: " + zone.zoneName +
+                    " has " + bambooPercent.ToString("F1") +
+                    "% healthy bamboo. Threshold: " +
+                    dilemma.threshold + "%"
                 );
 
-                return false;
+                return bambooPercent < dilemma.threshold;
             }
 
-            float bambooPercent =
-                BambooManager.Instance.GetPercentForZone(zone);
-
-            Debug.Log(
-                "BambooBelow: " + zone.zoneName +
-                " has " + bambooPercent.ToString("F1") +
-                "% healthy bamboo. Threshold: " +
-                dilemma.threshold + "%"
-            );
-
-            return bambooPercent < dilemma.threshold;
+            default:
+                return false;
         }
-
-        default:
-            return false;
     }
-}
 
     private void ShowDilemma(Dilemma dilemma)
     {
@@ -229,15 +239,20 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
 
     public void ChooseA()
     {
-        ResolveDilemma(true);
+        ResolveDilemma(0);
     }
 
     public void ChooseB()
     {
-        ResolveDilemma(false);
+        ResolveDilemma(1);
     }
 
-    private void ResolveDilemma(bool choseA)
+    public void ChooseC()
+    {
+        ResolveDilemma(2);
+    }
+
+    private void ResolveDilemma(int choice)
     {
         if (activeDilemma == null || gameEnded)
         {
@@ -248,23 +263,38 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
             return;
         }
 
+        if (choice < 0 || choice > 2)
+        {
+            Debug.LogError(
+                "DilemmaManager: Invalid choice index " + choice
+            );
+            return;
+        }
+
         Dilemma resolvedDilemma = activeDilemma;
+
+        string choiceName = choice == 0 ? "A" :
+                            choice == 1 ? "B" : "C";
 
         Debug.Log(
             "DilemmaManager: " + resolvedDilemma.name +
-            " resolved with Choice " + (choseA ? "A" : "B")
+            " resolved with Choice " + choiceName
         );
 
         completedDilemmas.Add(resolvedDilemma);
-        resolvedChoices[resolvedDilemma] = choseA;
 
-        GameEvent gameEvent = choseA
+        // Select the GameEvent and Ending for the chosen option.
+        GameEvent gameEvent = choice == 0
             ? resolvedDilemma.choiceAEvent
-            : resolvedDilemma.choiceBEvent;
+            : choice == 1
+                ? resolvedDilemma.choiceBEvent
+                : resolvedDilemma.choiceCEvent;
 
-        Ending selectedEnding = choseA
+        Ending selectedEnding = choice == 0
             ? resolvedDilemma.choiceAEnding
-            : resolvedDilemma.choiceBEnding;
+            : choice == 1
+                ? resolvedDilemma.choiceBEnding
+                : resolvedDilemma.choiceCEnding;
 
         activeDilemma = null;
         dilemmaUI.HideDilemma();
@@ -277,6 +307,7 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
             return;
         }
 
+        // Schedule follow-up dilemmas that match this choice.
         foreach (Dilemma nextDilemma in dilemmas)
         {
             if (nextDilemma == null ||
@@ -287,11 +318,17 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
                 continue;
 
             bool choiceMatches =
-                nextDilemma.prerequisiteChoice == PrerequisiteChoice.Either ||
-                (nextDilemma.prerequisiteChoice == PrerequisiteChoice.ChoiceA
-                    && choseA) ||
-                (nextDilemma.prerequisiteChoice == PrerequisiteChoice.ChoiceB
-                    && !choseA);
+                nextDilemma.prerequisiteChoice ==
+                    PrerequisiteChoice.Either ||
+
+                (nextDilemma.prerequisiteChoice ==
+                    PrerequisiteChoice.ChoiceA && choice == 0) ||
+
+                (nextDilemma.prerequisiteChoice ==
+                    PrerequisiteChoice.ChoiceB && choice == 1) ||
+
+                (nextDilemma.prerequisiteChoice ==
+                    PrerequisiteChoice.ChoiceC && choice == 2);
 
             if (!choiceMatches)
             {
@@ -336,7 +373,7 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
             return;
         }
 
-        if (endingUI != null)
+        if (endingUI != null && endingPanel != null)
         {
             endingPanel.SetActive(true);
             endingUI.ShowEnding(pendingEnding);
@@ -358,17 +395,18 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
     {
         if (gameEvent == null)
         {
-            Debug.LogError(
-                "DilemmaManager: ExecuteEvent received NULL! " +
-                "Check the selected Choice A Event / Choice B Event."
+            Debug.LogWarning(
+                "DilemmaManager: No GameEvent assigned to the selected " +
+                "choice. Check the choice's GameEvent field if effects " +
+                "were expected."
             );
             return;
         }
 
         Debug.Log(
-            $"DilemmaManager: Executing GameEvent '{gameEvent.name}' | " +
-            $"RequestTravel = {gameEvent.requestTravel} | " +
-            $"TargetZoneName = '{gameEvent.targetZoneName}'"
+            "DilemmaManager: Executing GameEvent '" + gameEvent.name +
+            "' | RequestTravel = " + gameEvent.requestTravel +
+            " | TargetZoneName = '" + gameEvent.targetZoneName + "'"
         );
 
         if (environment != null)
@@ -412,9 +450,9 @@ private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
             onTravelRequested.GetPersistentEventCount();
 
         Debug.Log(
-            $"DilemmaManager: Requesting travel to " +
-            $"'{gameEvent.targetZoneName}'. " +
-            $"Inspector listeners = {listenerCount}"
+            "DilemmaManager: Requesting travel to '" +
+            gameEvent.targetZoneName + "'. Inspector listeners = " +
+            listenerCount
         );
 
         if (listenerCount == 0)

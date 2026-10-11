@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -13,19 +12,25 @@ public class DilemmaUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text choiceAText;
     [SerializeField] private TMP_Text choiceBText;
+    [SerializeField] private TMP_Text choiceCText;
 
     [Header("Buttons")]
     [SerializeField] private Button choiceAButton;
     [SerializeField] private Button choiceBButton;
+    [SerializeField] private Button choiceCButton;
 
     private DilemmaManager manager;
 
     private void Awake()
     {
-        panel.SetActive(false);
+        if (panel != null)
+            panel.SetActive(false);
 
         choiceAButton.onClick.AddListener(ChooseA);
         choiceBButton.onClick.AddListener(ChooseB);
+
+        if (choiceCButton != null)
+            choiceCButton.onClick.AddListener(ChooseC);
     }
 
     public void ShowDilemma(
@@ -39,6 +44,14 @@ public class DilemmaUI : MonoBehaviour
         choiceAText.text = dilemma.choiceA;
         choiceBText.text = dilemma.choiceB;
 
+        bool hasChoiceC = !string.IsNullOrWhiteSpace(dilemma.choiceC);
+
+        if (choiceCButton != null)
+            choiceCButton.gameObject.SetActive(hasChoiceC);
+
+        if (hasChoiceC && choiceCText != null)
+            choiceCText.text = dilemma.choiceC;
+
         panel.SetActive(true);
     }
 
@@ -49,11 +62,19 @@ public class DilemmaUI : MonoBehaviour
 
     private void ChooseA()
     {
-        manager.ChooseA();
+        if (manager != null)
+            manager.ChooseA();
     }
 
     private void ChooseB()
     {
-        manager.ChooseB();
+        if (manager != null)
+            manager.ChooseB();
+    }
+
+    private void ChooseC()
+    {
+        if (manager != null)
+            manager.ChooseC();
     }
 }
