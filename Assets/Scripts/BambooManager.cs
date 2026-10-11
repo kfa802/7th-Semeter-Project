@@ -1230,5 +1230,63 @@ public float GetWaterGrowthMultiplier()
     );
 }
 
+public bool ConsumeBambooInZone(EcosystemZone zone)
+{
+    Prune();
+
+    if (zone == null)
+        return false;
+
+    foreach (GameObject bamboo in activeBamboo.ToArray())
+    {
+        if (bamboo == null || !bamboo.activeInHierarchy)
+            continue;
+
+        if (rottingSet.Contains(bamboo))
+            continue;
+
+        if (!spotOf.TryGetValue(
+                bamboo,
+                out BambooGrowthSpot spot))
+            continue;
+
+        if (spot == null || spot.Zone != zone)
+            continue;
+
+        // Remove the actual bamboo and free its growth spot.
+        Forget(bamboo);
+        Destroy(bamboo);
+
+        Debug.Log("Other panda ate bamboo in " + zone.zoneName);
+
+        return true;
+    }
+
+    Debug.Log("Other panda found no bamboo in " + zone.zoneName);
+    return false;
+}
+
+
+public bool OtherPandaPooped(EcosystemZone zone)
+{
+    if (zone == null || !CanGrowInZone(zone))
+        return false;
+
+    List<BambooGrowthSpot> available =
+        GetFreeSpotsForZone(zone);
+
+    if (available.Count == 0)
+        return false;
+
+    BambooGrowthSpot selected =
+        available[Random.Range(0, available.Count)];
+
+    selected.GrowBamboo();
+
+    Debug.Log("Other panda grew bamboo in " + zone.zoneName);
+
+    return true;
+}
+
     
 }
