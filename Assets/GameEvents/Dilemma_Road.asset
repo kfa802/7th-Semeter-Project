@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: 
-  description: 
-  choiceA: 
-  choiceB: 
+  title: dilemma 4
+  description: Humans want to build a road
+  choiceA: through forest
+  choiceB: around forest
   triggerType: 0
-  requiredZoneName: 
-  delaySeconds: 30
+  requiredZoneName: Valley
+  delaySeconds: 10
   threshold: 30
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
-  choiceAEvent: {fileID: 0}
-  choiceBEvent: {fileID: 0}
+  choiceAEvent: {fileID: 11400000, guid: c259cfdebecd3c94f9824291217c5988, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 02b47041ab779ab4195afff2e444f4d1, type: 2}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 0}

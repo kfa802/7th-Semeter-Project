@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
+  m_Name: Dilemma_RottingBamboo
+  m_EditorClassIdentifier: Assembly-CSharp::Dilemma
+  title: Dilemma 5
+  description: The pollution is rotting the bamboo
+  choiceA: Stay in Valley
+  choiceB: Go back to the other panda
+  triggerType: 4
+  requiredZoneName: Valley
+  delaySeconds: 30
+  threshold: 30
+  prerequisiteDilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
+  prerequisiteChoice: 0
+  choiceAEvent: {fileID: 11400000, guid: 82827fe770e2eee41bb123ecd2f6e6f6, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
+  choiceAEnding: {fileID: 0}
+  choiceBEnding: {fileID: 0}
