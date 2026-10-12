@@ -19692,7 +19692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentSystem
   temperature: 15
-  temperatureChangeSpeed: 0.5
+  temperatureChangeSpeed: 2
   idealTemperature: 20
   temperatureThreshold: 10
   freezingPoint: 0
