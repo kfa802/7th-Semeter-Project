@@ -16,13 +16,16 @@ MonoBehaviour:
   description: sdsmdjbs
   choiceA: Stay with panda
   choiceB: Go to valley
+  choiceC: 
   triggerType: 0
   requiredZoneName: Midway
-  delaySeconds: 6
+  delaySeconds: 10
   threshold: 30
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 77487f0415bae2c40a923b39edfe1137, type: 2}
+  choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 0}
+  choiceCEnding: {fileID: 0}
