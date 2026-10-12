@@ -16,9 +16,16 @@ MonoBehaviour:
   description: ffdfdggf
   choiceA: Go
   choiceB: Stay
+  choiceC: 
   triggerType: 0
   requiredZoneName: Mountain
-  delaySeconds: 10
+  delaySeconds: 30
   threshold: 10
+  prerequisiteDilemma: {fileID: 0}
+  prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
   choiceBEvent: {fileID: 11400000, guid: c2d72d562eaf44b469bf76115dda1e2e, type: 2}
+  choiceCEvent: {fileID: 0}
+  choiceAEnding: {fileID: 0}
+  choiceBEnding: {fileID: 0}
+  choiceCEnding: {fileID: 0}

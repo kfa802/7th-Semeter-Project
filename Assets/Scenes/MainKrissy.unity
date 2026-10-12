@@ -45295,7 +45295,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.8301887, g: 0.82235664, b: 0.82235664, a: 0.69411767}
+      maxColor: {r: 0.76415086, g: 1, b: 0.8435315, a: 0.69411767}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -59010,6 +59010,7 @@ GameObject:
   - component: {fileID: 2082669485}
   - component: {fileID: 2082669484}
   - component: {fileID: 2082669486}
+  - component: {fileID: 2082669487}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -59126,6 +59127,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &2082669487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082669483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7515d653ab0bea40b4c6cb0a905af92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SunMovement
+  movementSpeed: 0.15
+  movementAngle: 8
 --- !u!1 &2107011382
 GameObject:
   m_ObjectHideFlags: 0
