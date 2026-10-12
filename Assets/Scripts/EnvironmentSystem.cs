@@ -156,18 +156,19 @@ private void Update()
     // APPLY ZONE SETTINGS
     // =========================================================
 
-    public void ApplyZoneSettings(EcosystemZone zone)
+
+public void ApplyZoneSettings(EcosystemZone zone)
 {
     if (zone == null)
         return;
 
-    // The active zone becomes the source of truth.
+    // Set the active ecosystem.
     activeZone = zone;
     ActiveZoneName = zone.zoneName;
 
+    // Apply temperature settings.
     minTemperature = zone.minTemperature;
     maxTemperature = zone.maxTemperature;
-
     idealTemperature = zone.idealTemperature;
     temperatureThreshold = zone.temperatureThreshold;
     freezingPoint = zone.freezingPoint;
@@ -175,16 +176,19 @@ private void Update()
     minGrowthWhenCold = zone.minGrowthWhenCold;
     minGrowthWhenHot = zone.minGrowthWhenHot;
 
+    // Apply water settings.
     waterReactionSpeed = zone.waterReactionSpeed;
     waterRecoverySpeed = zone.waterRecoverySpeed;
 
     comfortableWaterMinTemperature =
         zone.comfortableWaterMinTemperature;
+
     comfortableWaterMaxTemperature =
         zone.comfortableWaterMaxTemperature;
 
     coldWaterMinTemperature =
         zone.coldWaterMinTemperature;
+
     coldWaterMaxTemperature =
         zone.coldWaterMaxTemperature;
 
@@ -194,21 +198,24 @@ private void Update()
     hotWaterStartTemperature =
         zone.hotWaterStartTemperature;
 
-// Set the target temperature instead of changing it instantly.
-targetTemperature = Mathf.Clamp(
-    zone.temperature,
-    minTemperature,
-    maxTemperature
-);
+    // Gradually change temperature toward the new zone's temperature.
+    targetTemperature = Mathf.Clamp(
+        zone.temperature,
+        minTemperature,
+        maxTemperature
+    );
 
+    // Apply the new zone's water and pollution.
     water = Mathf.Clamp(zone.water, 0f, 100f);
     pollution = Mathf.Clamp01(zone.pollution);
 
     TemperatureGrowthFactor = GetTemperatureGrowthFactor();
 
-    Debug.Log("Active ecosystem: " + ActiveZoneName);
+    Debug.Log(
+        "Active ecosystem: " + ActiveZoneName +
+        ". Temperature target: " + targetTemperature + "°C"
+    );
 }
-
 
 public void ExitZone(EcosystemZone zone)
 {
@@ -231,13 +238,16 @@ public void ExitZone(EcosystemZone zone)
 
 public void SetTemperature(float newTemperature)
 {
-    targetTemperature = Mathf.Clamp(
+    temperature = Mathf.Clamp(
         newTemperature,
         minTemperature,
         maxTemperature
     );
-}
 
+    targetTemperature = temperature;
+
+    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+}
     public void ChangeTemperature(float amount)
     {
         SetTemperature(temperature + amount);

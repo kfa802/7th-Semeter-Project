@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -19,15 +20,29 @@ public class DilemmaUI : MonoBehaviour
     [SerializeField] private Button choiceBButton;
     [SerializeField] private Button choiceCButton;
 
+    [Header("Input Blocking")]
+    [Tooltip("Optional full-screen UI Image behind the dilemma content. " +
+             "It should cover the screen and have Raycast Target enabled.")]
+    [SerializeField] private GameObject inputBlocker;
+
     private DilemmaManager manager;
+
+    private float previousTimeScale = 1f;
+    private bool pausedByDilemma;
 
     private void Awake()
     {
         if (panel != null)
             panel.SetActive(false);
 
-        choiceAButton.onClick.AddListener(ChooseA);
-        choiceBButton.onClick.AddListener(ChooseB);
+        if (inputBlocker != null)
+            inputBlocker.SetActive(false);
+
+        if (choiceAButton != null)
+            choiceAButton.onClick.AddListener(ChooseA);
+
+        if (choiceBButton != null)
+            choiceBButton.onClick.AddListener(ChooseB);
 
         if (choiceCButton != null)
             choiceCButton.onClick.AddListener(ChooseC);
@@ -37,14 +52,30 @@ public class DilemmaUI : MonoBehaviour
         Dilemma dilemma,
         DilemmaManager dilemmaManager)
     {
+        if (dilemma == null)
+        {
+            Debug.LogError("DilemmaUI: Cannot show a missing dilemma.");
+            return;
+        }
+
         manager = dilemmaManager;
 
-        titleText.text = dilemma.title;
-        descriptionText.text = dilemma.description;
-        choiceAText.text = dilemma.choiceA;
-        choiceBText.text = dilemma.choiceB;
+        // Update the dilemma text.
+        if (titleText != null)
+            titleText.text = dilemma.title;
 
-        bool hasChoiceC = !string.IsNullOrWhiteSpace(dilemma.choiceC);
+        if (descriptionText != null)
+            descriptionText.text = dilemma.description;
+
+        if (choiceAText != null)
+            choiceAText.text = dilemma.choiceA;
+
+        if (choiceBText != null)
+            choiceBText.text = dilemma.choiceB;
+
+        // Only show choice C when it has text.
+        bool hasChoiceC =
+            !string.IsNullOrWhiteSpace(dilemma.choiceC);
 
         if (choiceCButton != null)
             choiceCButton.gameObject.SetActive(hasChoiceC);
@@ -52,12 +83,44 @@ public class DilemmaUI : MonoBehaviour
         if (hasChoiceC && choiceCText != null)
             choiceCText.text = dilemma.choiceC;
 
-        panel.SetActive(true);
+        // Pause gameplay, remembering the previous time scale.
+        if (!pausedByDilemma)
+        {
+            previousTimeScale = Time.timeScale;
+            Time.timeScale = 0f;
+            pausedByDilemma = true;
+        }
+
+        // Block interaction with other UI.
+        if (inputBlocker != null)
+            inputBlocker.SetActive(true);
+
+        // Show the dilemma on top of the blocker.
+        if (panel != null)
+            panel.SetActive(true);
+
+        // Ensure the dilemma panel is the top UI element
+        // within its own Canvas.
+        if (panel != null)
+            panel.transform.SetAsLastSibling();
     }
 
     public void HideDilemma()
     {
-        panel.SetActive(false);
+        if (panel != null)
+            panel.SetActive(false);
+
+        if (inputBlocker != null)
+            inputBlocker.SetActive(false);
+
+        // Resume gameplay.
+        if (pausedByDilemma)
+        {
+            Time.timeScale = previousTimeScale;
+            pausedByDilemma = false;
+        }
+
+        manager = null;
     }
 
     private void ChooseA()
@@ -76,5 +139,12 @@ public class DilemmaUI : MonoBehaviour
     {
         if (manager != null)
             manager.ChooseC();
+    }
+
+    private void OnDestroy()
+    {
+        // Avoid leaving the game paused if this object is destroyed.
+        if (pausedByDilemma)
+            Time.timeScale = previousTimeScale;
     }
 }
