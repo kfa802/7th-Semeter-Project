@@ -16826,10 +16826,8 @@ MonoBehaviour:
   pollutionParticles: {fileID: 538238533}
   pollutionThreshold: 0.01
   maximumEmission: 80
-  minimumSize: 0.15
-  maximumSize: 0.8
-  minimumOpacity: 0.1
-  maximumOpacity: 1
+  fadeInDuration: 2
+  fadeOutDuration: 2
 --- !u!1001 &1078312320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19694,6 +19692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentSystem
   temperature: 15
+  temperatureChangeSpeed: 0.5
   idealTemperature: 20
   temperatureThreshold: 10
   freezingPoint: 0
@@ -30490,8 +30489,8 @@ SceneRoots:
   - {fileID: 725808055}
   - {fileID: 217616557}
   - {fileID: 1927953437}
-  - {fileID: 755028009}
   - {fileID: 540502387}
+  - {fileID: 755028009}
   - {fileID: 1195853868}
   - {fileID: 2123499182}
   - {fileID: 1788926375}

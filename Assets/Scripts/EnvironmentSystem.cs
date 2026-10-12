@@ -20,8 +20,12 @@ public EcosystemZone ActiveZone => activeZone;    // ===========================
     private float minTemperature = -15f;
     private float maxTemperature = 40f;
 
-    [Header("Temperature")]
-    [SerializeField] private float temperature = 20f;
+[Header("Temperature")]
+[SerializeField] private float temperature = 20f;
+
+[SerializeField] private float temperatureChangeSpeed = 2f;
+
+private float targetTemperature = 20f;
     [SerializeField] private float idealTemperature = 20f;
     [SerializeField] private float temperatureThreshold = 3f;
     [SerializeField] private float freezingPoint = 0f;
@@ -124,13 +128,23 @@ private void Start()
             maxTemperature
         );
     }
+
+    targetTemperature = temperature;
 }
 
-    private void Update()
-    {
-        UpdateWater();
-        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
-    }
+private void Update()
+{
+    // Gradually move toward the target temperature.
+    temperature = Mathf.MoveTowards(
+        temperature,
+        targetTemperature,
+        temperatureChangeSpeed * Time.deltaTime
+    );
+
+    UpdateWater();
+
+    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+}
 
     private void OnDestroy()
     {
@@ -180,12 +194,12 @@ private void Start()
     hotWaterStartTemperature =
         zone.hotWaterStartTemperature;
 
-    // Apply the zone's values.
-    temperature = Mathf.Clamp(
-        zone.temperature,
-        minTemperature,
-        maxTemperature
-    );
+// Set the target temperature instead of changing it instantly.
+targetTemperature = Mathf.Clamp(
+    zone.temperature,
+    minTemperature,
+    maxTemperature
+);
 
     water = Mathf.Clamp(zone.water, 0f, 100f);
     pollution = Mathf.Clamp01(zone.pollution);
@@ -215,14 +229,14 @@ public void ExitZone(EcosystemZone zone)
     // TEMPERATURE
     // =========================================================
 
-    public void SetTemperature(float newTemperature)
-    {
-        temperature = Mathf.Clamp(
-            newTemperature,
-            minTemperature,
-            maxTemperature
-        );
-    }
+public void SetTemperature(float newTemperature)
+{
+    targetTemperature = Mathf.Clamp(
+        newTemperature,
+        minTemperature,
+        maxTemperature
+    );
+}
 
     public void ChangeTemperature(float amount)
     {
@@ -369,4 +383,50 @@ public void ExitZone(EcosystemZone zone)
     {
         SetPollution(pollution + amount);
     }
+
+    
+public void BeginTravelToZone(string zoneName)
+{
+    if (string.IsNullOrWhiteSpace(zoneName))
+        return;
+
+    EcosystemZone[] zones = FindObjectsOfType<EcosystemZone>();
+
+    foreach (EcosystemZone zone in zones)
+    {
+        if (zone == null)
+            continue;
+
+        if (string.Equals(
+            zone.zoneName?.Trim(),
+            zoneName.Trim(),
+            System.StringComparison.OrdinalIgnoreCase))
+        {
+            // Preserve any existing difference between the current
+            // temperature and its target, such as a recent temperature
+            // change caused by a dilemma.
+            float temperatureOffset = targetTemperature - temperature;
+
+            targetTemperature = Mathf.Clamp(
+                zone.temperature + temperatureOffset,
+                zone.minTemperature,
+                zone.maxTemperature
+            );
+
+            Debug.Log(
+                "EnvironmentSystem: Temperature transition started. " +
+                "Current = " + temperature.ToString("F1") +
+                "°C, destination = " +
+                targetTemperature.ToString("F1") + "°C."
+            );
+
+            return;
+        }
+    }
+
+    Debug.LogWarning(
+        "EnvironmentSystem: Could not find destination zone '" +
+        zoneName + "' for the temperature transition."
+    );
+}
 }

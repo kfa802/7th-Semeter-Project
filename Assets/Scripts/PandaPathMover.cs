@@ -473,12 +473,19 @@ public class PandaPathMover : MonoBehaviour
                 $"camera points = {zone.cameraPoints.Length}."
             );
 
-            StartMovement();
 
-            Debug.Log(
-                $"PandaPathMover: StartMovement called for '{zone.zoneName}'."
-            );
-            return;
+StartMovement();
+
+// Begin the temperature transition only if movement started.
+if (isMoving && EnvironmentSystem.Instance != null)
+{
+    EnvironmentSystem.Instance.BeginTravelToZone(zone.zoneName);
+}
+
+Debug.Log(
+    $"PandaPathMover: StartMovement called for '{zone.zoneName}'."
+);
+return;
         }
 
         Debug.LogError(
