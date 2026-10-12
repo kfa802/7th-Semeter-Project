@@ -17,6 +17,13 @@ public class PollutionUI : MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     private float visibilityThreshold = 0.01f;
 
+    [Header("Animation")]
+    [SerializeField, Min(0.1f)]
+    private float fillSpeed = 0.5f;
+
+    private float displayedPollution = 0f;
+    private float targetPollution = 0f;
+
     private void Start()
     {
         if (pollutionSlider != null)
@@ -24,9 +31,12 @@ public class PollutionUI : MonoBehaviour
             pollutionSlider.minValue = 0f;
             pollutionSlider.maxValue = 1f;
             pollutionSlider.interactable = false;
+            pollutionSlider.value = 0f;
         }
 
-        // Start hidden if pollution is zero.
+        if (pollutionText != null)
+            pollutionText.text = "Pollution: 0%";
+
         if (pollutionPanel != null)
             pollutionPanel.SetActive(false);
     }
@@ -36,21 +46,30 @@ public class PollutionUI : MonoBehaviour
         if (environment == null || pollutionPanel == null)
             return;
 
-        float pollution = Mathf.Clamp01(environment.Pollution);
+        // Get the actual pollution level.
+        targetPollution = Mathf.Clamp01(environment.Pollution);
 
-        // Show the panel only when pollution is present.
-        bool showUI = pollution > visibilityThreshold;
+        // Show the panel when pollution is present.
+        bool showUI = targetPollution > visibilityThreshold;
 
         if (pollutionPanel.activeSelf != showUI)
             pollutionPanel.SetActive(showUI);
 
+        // Smoothly animate the displayed value.
+        displayedPollution = Mathf.MoveTowards(
+            displayedPollution,
+            targetPollution,
+            fillSpeed * Time.deltaTime
+        );
+
         if (pollutionSlider != null)
-            pollutionSlider.value = pollution;
+            pollutionSlider.value = displayedPollution;
 
         if (pollutionText != null)
         {
             pollutionText.text =
-                "Pollution: " + Mathf.RoundToInt(pollution * 100f) + "%";
+                "Pollution: " +
+                Mathf.RoundToInt(displayedPollution * 100f) + "%";
         }
     }
 }

@@ -16768,6 +16768,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1074660712}
   - component: {fileID: 1074660711}
+  - component: {fileID: 1074660713}
   m_Layer: 0
   m_Name: PollutionUIController
   m_TagString: Untagged
@@ -16792,6 +16793,7 @@ MonoBehaviour:
   pollutionText: {fileID: 901206171}
   environment: {fileID: 1431297040}
   visibilityThreshold: 0.04
+  fillSpeed: 0.5
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -16807,6 +16809,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1074660713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074660710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f31c96b21bd7c8a4e8d9da6958a185fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PollutionParticles
+  environment: {fileID: 1431297040}
+  thisZone: {fileID: 1231037625}
+  pollutionParticles: {fileID: 538238533}
+  pollutionThreshold: 0.01
+  maximumEmission: 80
+  minimumSize: 0.15
+  maximumSize: 0.8
+  minimumOpacity: 0.1
+  maximumOpacity: 1
 --- !u!1001 &1078312320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28008,10 +28031,10 @@ RectTransform:
   - {fileID: 1268121302}
   - {fileID: 651601091}
   - {fileID: 2120751867}
-  - {fileID: 352441065}
-  - {fileID: 1153701520}
   - {fileID: 520329583}
   - {fileID: 2033208196}
+  - {fileID: 352441065}
+  - {fileID: 1153701520}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -29138,7 +29161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
