@@ -16792,6 +16792,7 @@ MonoBehaviour:
   pollutionText: {fileID: 901206171}
   environment: {fileID: 1431297040}
   visibilityThreshold: 0.04
+  fillSpeed: 0.5
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -19671,6 +19672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentSystem
   temperature: 15
+  temperatureChangeSpeed: 2
   idealTemperature: 20
   temperatureThreshold: 10
   freezingPoint: 0
