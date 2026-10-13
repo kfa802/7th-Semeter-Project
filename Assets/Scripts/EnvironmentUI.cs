@@ -6,9 +6,10 @@ using TMPro;
 public class EnvironmentUI : MonoBehaviour
 {
     [Header("References")]
-[SerializeField] private EnvironmentSystem environment;
-[SerializeField] private PandaSystem panda;
-[SerializeField] private PandaPathMover pandaPathMover;
+    [SerializeField] private EnvironmentSystem environment;
+    [SerializeField] private PandaSystem panda;
+    [SerializeField] private PandaPathMover pandaPathMover;
+    [SerializeField] private DilemmaUI dilemmaUI;
 
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
@@ -57,28 +58,37 @@ public class EnvironmentUI : MonoBehaviour
             return;
         }
 
-// TEMPERATURE
-if (temperatureSlider != null)
-{
-    temperatureSlider.minValue = environment.MinTemperature;
-    temperatureSlider.maxValue = environment.MaxTemperature;
-    temperatureSlider.wholeNumbers = false;
+        // TEMPERATURE
+        if (temperatureSlider != null)
+        {
+            temperatureSlider.minValue = environment.MinTemperature;
+            temperatureSlider.maxValue = environment.MaxTemperature;
+            temperatureSlider.wholeNumbers = false;
 
-    // Start with the current temperature.
-    temperatureSlider.SetValueWithoutNotify(
-        environment.Temperature
-    );
+            // Start with the current temperature.
+            temperatureSlider.SetValueWithoutNotify(
+                environment.Temperature
+            );
 
-    // Prevent manual temperature changes during travel.
-    temperatureSlider.interactable =
-        pandaPathMover == null || !pandaPathMover.IsTravelling;
+            // Prevent manual temperature changes during travel
+            // or while a dilemma is open.
+            bool travelling =
+                pandaPathMover != null &&
+                pandaPathMover.IsTravelling;
 
-    temperatureSlider.onValueChanged.AddListener(
-        OnTemperatureChanged
-    );
-}
+            bool dilemmaOpen =
+                dilemmaUI != null &&
+                dilemmaUI.IsDilemmaOpen;
+
+            temperatureSlider.interactable =
+                !travelling && !dilemmaOpen;
+
+            temperatureSlider.onValueChanged.AddListener(
+                OnTemperatureChanged
+            );
+        }
+
         // WATER
-
         if (waterSlider != null)
         {
             waterSlider.minValue = 0f;
@@ -94,7 +104,6 @@ if (temperatureSlider != null)
         }
 
         // BAMBOO
-
         if (bambooSlider != null)
         {
             bambooSlider.minValue = 0f;
@@ -106,7 +115,6 @@ if (temperatureSlider != null)
         }
 
         // PANDA HEALTH
-
         if (pandaHealthSlider != null)
         {
             pandaHealthSlider.minValue = 0f;
@@ -137,6 +145,7 @@ if (temperatureSlider != null)
         // BAMBOO
         UpdateBambooDisplay();
 
+        // TEMPERATURE
         UpdateTemperatureDisplay();
 
         // PANDA HEALTH
@@ -169,11 +178,17 @@ if (temperatureSlider != null)
             )
         );
 
-        // Lock the slider while the panda is travelling.
+        // Lock the slider while travelling or while a dilemma is open.
         bool travelling =
-            pandaPathMover != null && pandaPathMover.IsTravelling;
+            pandaPathMover != null &&
+            pandaPathMover.IsTravelling;
 
-        temperatureSlider.interactable = !travelling;
+        bool dilemmaOpen =
+            dilemmaUI != null &&
+            dilemmaUI.IsDilemmaOpen;
+
+        temperatureSlider.interactable =
+            !travelling && !dilemmaOpen;
     }
 
     // =====================================================
@@ -186,6 +201,7 @@ if (temperatureSlider != null)
             return;
 
         EcosystemZone currentZone = environment.ActiveZone;
+
         float targetWater = Mathf.Clamp(
             environment.Water,
             0f,
@@ -276,6 +292,14 @@ if (temperatureSlider != null)
     private void OnTemperatureChanged(float value)
     {
         if (environment == null)
+            return;
+
+        // Extra protection: ignore slider changes during a dilemma
+        // or while the panda is travelling.
+        if (dilemmaUI != null && dilemmaUI.IsDilemmaOpen)
+            return;
+
+        if (pandaPathMover != null && pandaPathMover.IsTravelling)
             return;
 
         environment.SetTemperature(value);

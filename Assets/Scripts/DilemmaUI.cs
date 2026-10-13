@@ -30,6 +30,8 @@ public class DilemmaUI : MonoBehaviour
     private float previousTimeScale = 1f;
     private bool pausedByDilemma;
 
+    public bool IsDilemmaOpen { get; private set; }
+
     private void Awake()
     {
         if (panel != null)
@@ -95,6 +97,9 @@ public class DilemmaUI : MonoBehaviour
         if (inputBlocker != null)
             inputBlocker.SetActive(true);
 
+        // Mark the dilemma as open so EnvironmentUI can lock the slider.
+        IsDilemmaOpen = true;
+
         // Show the dilemma on top of the blocker.
         if (panel != null)
             panel.SetActive(true);
@@ -107,6 +112,8 @@ public class DilemmaUI : MonoBehaviour
 
     public void HideDilemma()
     {
+        IsDilemmaOpen = false;
+
         if (panel != null)
             panel.SetActive(false);
 
