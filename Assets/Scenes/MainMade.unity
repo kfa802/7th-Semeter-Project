@@ -14765,6 +14765,7 @@ MonoBehaviour:
   veryHungryHealthLossPerSecond: 6
   maximumFeedingsInWindow: 3
   overfeedingWindow: 10
+  overfedDuration: 5
   overfeedingDamage: 5
   waterHealthThreshold: 30
   maximumHealthLossPerSecond: 10
@@ -20358,6 +20359,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1849329693}
+    - targetCorrespondingSourceObject: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1849329697}
   m_SourcePrefab: {fileID: 100100000, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
 --- !u!1001 &1538024067
 PrefabInstance:
@@ -27370,6 +27374,31 @@ MonoBehaviour:
   pollutedDeep: {r: 0.07, g: 0.065, b: 0.025, a: 1}
   pollutedHighlights: {r: 0.12, g: 0.115, b: 0.065, a: 1}
   sunInfluence: 0
+  freezeStartTemperature: 0
+  fullyFrozenTemperature: -5
+  iceColor: {r: 0.72, g: 0.88, b: 0.95, a: 1}
+  freezeSeconds: 3
+  drySecondsAtMaxHeat: 10
+  refillSeconds: 10
+  dryLevelDrop: 0.5
+--- !u!114 &1849329697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849329692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14c692c80171b41e590ddfc00989a749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterSurfaceDetails
+  surfaceShader: {fileID: 4800000, guid: da1cc6a4b08ba4ae3a9bc4c3f649e940, type: 3}
+  iceOffset: 0.025
+  crackScale: 2.2
+  iceTint: {r: 0.48, g: 0.72, b: 0.81, a: 1}
+  shorelineResolution: 240
+  shoreDepth: 0.03
 --- !u!1 &1850019329
 GameObject:
   m_ObjectHideFlags: 0
@@ -28091,6 +28120,7 @@ MonoBehaviour:
   choiceAButton: {fileID: 2012366120}
   choiceBButton: {fileID: 646996670}
   choiceCButton: {fileID: 1571433057}
+  inputBlocker: {fileID: 0}
 --- !u!1 &1939262300
 GameObject:
   m_ObjectHideFlags: 0
