@@ -19,7 +19,7 @@ MonoBehaviour:
   choiceC: 
   triggerType: 0
   requiredZoneName: Mountain
-  delaySeconds: 30
+  delaySeconds: 60
   threshold: 10
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0

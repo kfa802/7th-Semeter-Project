@@ -37924,7 +37924,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 100, y: 1, z: 100}
+    m_Scale: {x: 50, y: 1, z: 50}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -42017,7 +42017,7 @@ Transform:
   m_GameObject: {fileID: 1157284844}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.7931, y: 123.99186, z: 45.930237}
+  m_LocalPosition: {x: -5.8, y: 123.99186, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -44208,7 +44208,10 @@ MonoBehaviour:
   hotAmbientColor: {r: 1, g: 0.9, b: 0.75, a: 1}
   coldSkyTint: {r: 0.85, g: 0.9, b: 1, a: 1}
   hotSkyTint: {r: 1, g: 0.8, b: 0.6, a: 1}
-  maxSnowRate: 200
+  freezingTemperature: 0
+  snowFadeInSpeed: 0.5
+  minimumSnowFadeOutSpeed: 0.1
+  snowFadeOutSpeedPerDegree: 0.15
   coldVolume: {fileID: 1513267756}
   hotVolume: {fileID: 342025089}
 --- !u!1 &1439852879 stripped

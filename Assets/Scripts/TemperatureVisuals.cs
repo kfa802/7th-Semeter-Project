@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -5,13 +6,13 @@ public class TemperatureVisuals : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnvironmentSystem environment;
-    [SerializeField] private Light sunLight;                 // your Directional Light
-    [SerializeField] private ParticleSystem snow;            // optional
+    [SerializeField] private Light sunLight;
+    [SerializeField] private ParticleSystem snow;
 
     [Header("Range")]
-    [SerializeField] private float coldStartTemperature = 15f;  // below this it starts getting cold
-    [SerializeField] private float hotStartTemperature = 25f;   // above this it starts getting hot
-    [SerializeField] private float smoothSpeed = 2f;            // how fast visuals follow the slider
+    [SerializeField] private float coldStartTemperature = 15f;
+    [SerializeField] private float hotStartTemperature = 25f;
+    [SerializeField] private float smoothSpeed = 2f;
 
     [Header("Fog Mode")]
     [SerializeField] private FogMode fogMode = FogMode.ExponentialSquared;
@@ -45,16 +46,27 @@ public class TemperatureVisuals : MonoBehaviour
     [SerializeField] private Color hotSkyTint = new Color(1f, 0.8f, 0.6f);
 
     [Header("Snow")]
-    [SerializeField] private float maxSnowRate = 200f;
+    [SerializeField] private float freezingTemperature = 0f;
+
+    [Tooltip("How quickly snow emission increases when it gets cold.")]
+    [SerializeField] private float snowFadeInSpeed = 0.5f;
+
+    [Tooltip("How slowly snow emission fades just above freezing.")]
+    [SerializeField] private float minimumSnowFadeOutSpeed = 0.1f;
+
+    [Tooltip("How much faster snow fades for each degree above freezing.")]
+    [SerializeField] private float snowFadeOutSpeedPerDegree = 0.15f;
 
     [Header("Post Processing (optional)")]
-    [SerializeField] private Volume coldVolume;   // weight 0 in the profile
-    [SerializeField] private Volume hotVolume;    // weight 0 in the profile
+    [SerializeField] private Volume coldVolume;
+    [SerializeField] private Volume hotVolume;
 
-    private float coldAmount;   // 0 = not cold, 1 = coldest
-    private float hotAmount;    // 0 = not hot, 1 = hottest
+    private float coldAmount;
+    private float hotAmount;
 
-    // "Normal" look, read from your Lighting window / scene at the start
+    // Controls the snow emission independently of the cold visuals.
+    private float snowAmount;
+
     private Color normalFogColor;
     private float normalFogDensity;
     private float normalFogStart;
@@ -68,9 +80,12 @@ public class TemperatureVisuals : MonoBehaviour
     private string skyProperty;
     private Color normalSkyTint;
 
+    private ParticleSystem.EmissionModule snowEmission;
+    private float originalSnowEmissionRate;
+
     private void Start()
     {
-        // Use the values from your Lighting window as the normal look
+        // Store the normal lighting settings.
         normalFogColor = RenderSettings.fogColor;
         normalFogDensity = RenderSettings.fogDensity;
         normalFogStart = RenderSettings.fogStartDistance;
@@ -87,22 +102,43 @@ public class TemperatureVisuals : MonoBehaviour
             normalLightIntensity = sunLight.intensity;
         }
 
-        // Use a copy of the skybox so the asset itself isn't changed
+        // Use a copy of the skybox so the original asset is not changed.
         if (RenderSettings.skybox != null)
         {
             skyInstance = new Material(RenderSettings.skybox);
             RenderSettings.skybox = skyInstance;
 
-            if (skyInstance.HasProperty("_SkyTint")) skyProperty = "_SkyTint";
-            else if (skyInstance.HasProperty("_Tint")) skyProperty = "_Tint";
+            if (skyInstance.HasProperty("_SkyTint"))
+                skyProperty = "_SkyTint";
+            else if (skyInstance.HasProperty("_Tint"))
+                skyProperty = "_Tint";
 
             if (skyProperty != null)
                 normalSkyTint = skyInstance.GetColor(skyProperty);
         }
 
-        // Start with the right look immediately
+        // Set up snow.
+        if (snow != null)
+        {
+            snowEmission = snow.emission;
+
+            originalSnowEmissionRate =
+                snowEmission.rateOverTime.constant;
+
+            snowAmount = 0f;
+            snowEmission.rateOverTime = 0f;
+
+            // Clear particles only during initial setup.
+            snow.Stop(
+                true,
+                ParticleSystemStopBehavior.StopEmittingAndClear
+            );
+        }
+
+        // Initialize the visuals using the current temperature.
         coldAmount = GetTargetCold();
         hotAmount = GetTargetHot();
+
         Apply();
     }
 
@@ -111,15 +147,26 @@ public class TemperatureVisuals : MonoBehaviour
         if (environment == null)
             return;
 
-        coldAmount = Mathf.MoveTowards(coldAmount, GetTargetCold(), smoothSpeed * Time.deltaTime);
-        hotAmount = Mathf.MoveTowards(hotAmount, GetTargetHot(), smoothSpeed * Time.deltaTime);
+        coldAmount = Mathf.MoveTowards(
+            coldAmount,
+            GetTargetCold(),
+            smoothSpeed * Time.deltaTime
+        );
 
+        hotAmount = Mathf.MoveTowards(
+            hotAmount,
+            GetTargetHot(),
+            smoothSpeed * Time.deltaTime
+        );
+
+        UpdateSnow();
         Apply();
     }
 
     private float GetTargetCold()
     {
-        if (environment == null) return 0f;
+        if (environment == null)
+            return 0f;
 
         float t = Mathf.InverseLerp(
             coldStartTemperature,
@@ -132,7 +179,8 @@ public class TemperatureVisuals : MonoBehaviour
 
     private float GetTargetHot()
     {
-        if (environment == null) return 0f;
+        if (environment == null)
+            return 0f;
 
         float t = Mathf.InverseLerp(
             hotStartTemperature,
@@ -143,40 +191,112 @@ public class TemperatureVisuals : MonoBehaviour
         return Mathf.SmoothStep(0f, 1f, t);
     }
 
-    // Blend normal -> cold by coldAmount, then -> hot by hotAmount.
-    // Only one of them is above 0 at a time.
+    private void UpdateSnow()
+    {
+        if (snow == null || environment == null)
+            return;
+
+        float temperature = environment.Temperature;
+
+        // Snow emission is active only below freezing.
+        float targetSnowAmount =
+            temperature < freezingTemperature ? 1f : 0f;
+
+        float fadeSpeed;
+
+        if (targetSnowAmount > 0f)
+        {
+            // Fade in at a steady speed when it gets cold.
+            fadeSpeed = snowFadeInSpeed;
+        }
+        else
+        {
+            // The warmer it gets, the faster snow emission fades out.
+            float degreesAboveFreezing = Mathf.Max(
+                0f,
+                temperature - freezingTemperature
+            );
+
+            fadeSpeed =
+                minimumSnowFadeOutSpeed +
+                degreesAboveFreezing * snowFadeOutSpeedPerDegree;
+        }
+
+        snowAmount = Mathf.MoveTowards(
+            snowAmount,
+            targetSnowAmount,
+            fadeSpeed * Time.deltaTime
+        );
+
+        // Gradually change the emission rate.
+        snowEmission.rateOverTime =
+            originalSnowEmissionRate * snowAmount;
+
+        // Start the system when snow begins to fade in.
+        if (snowAmount > 0f && !snow.isPlaying)
+        {
+            snow.Play();
+        }
+
+        // Stop emitting without clearing existing particles.
+        // They will finish their lifetimes naturally.
+        if (snowAmount <= 0f && snow.isPlaying)
+        {
+            snow.Stop(
+                true,
+                ParticleSystemStopBehavior.StopEmitting
+            );
+        }
+    }
+
     private Color Blend(Color normal, Color cold, Color hot)
     {
-        return Color.Lerp(Color.Lerp(normal, cold, coldAmount), hot, hotAmount);
+        return Color.Lerp(
+            Color.Lerp(normal, cold, coldAmount),
+            hot,
+            hotAmount
+        );
     }
 
     private float Blend(float normal, float cold, float hot)
     {
-        return Mathf.Lerp(Mathf.Lerp(normal, cold, coldAmount), hot, hotAmount);
+        return Mathf.Lerp(
+            Mathf.Lerp(normal, cold, coldAmount),
+            hot,
+            hotAmount
+        );
     }
 
     private void Apply()
     {
-        // Fog
-        RenderSettings.fogColor = Blend(normalFogColor, coldFogColor, hotFogColor);
+        // Fog.
+        RenderSettings.fogColor =
+            Blend(normalFogColor, coldFogColor, hotFogColor);
 
         if (fogMode == FogMode.Linear)
         {
-            RenderSettings.fogStartDistance = Blend(normalFogStart, coldFogStart, hotFogStart);
-            RenderSettings.fogEndDistance = Blend(normalFogEnd, coldFogEnd, hotFogEnd);
+            RenderSettings.fogStartDistance =
+                Blend(normalFogStart, coldFogStart, hotFogStart);
+
+            RenderSettings.fogEndDistance =
+                Blend(normalFogEnd, coldFogEnd, hotFogEnd);
         }
         else
         {
-            RenderSettings.fogDensity = Blend(normalFogDensity, coldFogDensity, hotFogDensity);
+            RenderSettings.fogDensity =
+                Blend(normalFogDensity, coldFogDensity, hotFogDensity);
         }
 
-        // Ambient light
-        RenderSettings.ambientLight = Blend(normalAmbientColor, coldAmbientColor, hotAmbientColor);
+        // Ambient light.
+        RenderSettings.ambientLight =
+            Blend(normalAmbientColor, coldAmbientColor, hotAmbientColor);
 
-        // Sun
+        // Sun.
         if (sunLight != null)
         {
-            sunLight.color = Blend(normalLightColor, coldLightColor, hotLightColor);
+            sunLight.color =
+                Blend(normalLightColor, coldLightColor, hotLightColor);
+
             sunLight.intensity = Blend(
                 normalLightIntensity,
                 normalLightIntensity * coldLightIntensityMultiplier,
@@ -184,22 +304,32 @@ public class TemperatureVisuals : MonoBehaviour
             );
         }
 
-        // Sky
+        // Skybox.
         if (skyInstance != null && skyProperty != null)
-            skyInstance.SetColor(skyProperty, Blend(normalSkyTint, coldSkyTint, hotSkyTint));
-
-        // Snow (cold only)
-        if (snow != null)
         {
-            var emission = snow.emission;
-            emission.rateOverTime = maxSnowRate * coldAmount;
-
-            if (coldAmount > 0.05f && !snow.isPlaying) snow.Play();
-            else if (coldAmount <= 0.05f && snow.isPlaying) snow.Stop();
+            skyInstance.SetColor(
+                skyProperty,
+                Blend(normalSkyTint, coldSkyTint, hotSkyTint)
+            );
         }
 
-        // Post processing volumes
-        if (coldVolume != null) coldVolume.weight = coldAmount;
-        if (hotVolume != null) hotVolume.weight = hotAmount;
+        // Post-processing volumes.
+        if (coldVolume != null)
+            coldVolume.weight = coldAmount;
+
+        if (hotVolume != null)
+            hotVolume.weight = hotAmount;
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up the runtime skybox copy.
+        if (skyInstance != null)
+        {
+            if (RenderSettings.skybox == skyInstance)
+                RenderSettings.skybox = null;
+
+            Destroy(skyInstance);
+        }
     }
 }
