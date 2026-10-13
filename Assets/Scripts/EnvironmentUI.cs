@@ -6,8 +6,9 @@ using TMPro;
 public class EnvironmentUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private EnvironmentSystem environment;
-    [SerializeField] private PandaSystem panda;
+[SerializeField] private EnvironmentSystem environment;
+[SerializeField] private PandaSystem panda;
+[SerializeField] private PandaPathMover pandaPathMover;
 
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
@@ -56,24 +57,26 @@ public class EnvironmentUI : MonoBehaviour
             return;
         }
 
-        // TEMPERATURE
+// TEMPERATURE
+if (temperatureSlider != null)
+{
+    temperatureSlider.minValue = environment.MinTemperature;
+    temperatureSlider.maxValue = environment.MaxTemperature;
+    temperatureSlider.wholeNumbers = false;
 
-        if (temperatureSlider != null)
-        {
-            temperatureSlider.minValue = environment.MinTemperature;
-            temperatureSlider.maxValue = environment.MaxTemperature;
-            temperatureSlider.wholeNumbers = false;
-            temperatureSlider.interactable = true;
+    // Start with the current temperature.
+    temperatureSlider.SetValueWithoutNotify(
+        environment.Temperature
+    );
 
-            temperatureSlider.SetValueWithoutNotify(
-                environment.Temperature
-            );
+    // Prevent manual temperature changes during travel.
+    temperatureSlider.interactable =
+        pandaPathMover == null || !pandaPathMover.IsTravelling;
 
-            temperatureSlider.onValueChanged.AddListener(
-                OnTemperatureChanged
-            );
-        }
-
+    temperatureSlider.onValueChanged.AddListener(
+        OnTemperatureChanged
+    );
+}
         // WATER
 
         if (waterSlider != null)
@@ -134,6 +137,8 @@ public class EnvironmentUI : MonoBehaviour
         // BAMBOO
         UpdateBambooDisplay();
 
+        UpdateTemperatureDisplay();
+
         // PANDA HEALTH
         // Health changes still animate smoothly.
         if (pandaHealthSlider != null)
@@ -146,6 +151,29 @@ public class EnvironmentUI : MonoBehaviour
         }
 
         UpdateText();
+    }
+
+    private void UpdateTemperatureDisplay()
+    {
+        if (environment == null || temperatureSlider == null)
+            return;
+
+        // Keep the slider synchronized with the actual environment.
+        // SetValueWithoutNotify prevents the slider from changing
+        // the environment again through its own callback.
+        temperatureSlider.SetValueWithoutNotify(
+            Mathf.Clamp(
+                environment.Temperature,
+                temperatureSlider.minValue,
+                temperatureSlider.maxValue
+            )
+        );
+
+        // Lock the slider while the panda is travelling.
+        bool travelling =
+            pandaPathMover != null && pandaPathMover.IsTravelling;
+
+        temperatureSlider.interactable = !travelling;
     }
 
     // =====================================================

@@ -24147,6 +24147,135 @@ MonoBehaviour:
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 2079388591}
+--- !u!1001 &694363161
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2123499182}
+    m_Modifications:
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.08522
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.679729
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 41.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      propertyPath: m_Name
+      value: Water
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 694363164}
+    - targetCorrespondingSourceObject: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 694363163}
+  m_SourcePrefab: {fileID: 100100000, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+--- !u!1 &694363162 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+  m_PrefabInstance: {fileID: 694363161}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &694363163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694363162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14c692c80171b41e590ddfc00989a749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterSurfaceDetails
+  surfaceShader: {fileID: 4800000, guid: da1cc6a4b08ba4ae3a9bc4c3f649e940, type: 3}
+  iceOffset: 0.025
+  crackScale: 2.2
+  iceTint: {r: 0.48, g: 0.72, b: 0.81, a: 1}
+  shorelineResolution: 240
+  shoreDepth: 0.03
+--- !u!114 &694363164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694363162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac041418222b46c59ba04b698d5b14a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterEnvironmentVisuals
+  environment: {fileID: 1431297040}
+  sunLight: {fileID: 2082669484}
+  coldStartTemperature: 15
+  hotStartTemperature: 25
+  smoothSpeed: 2
+  coldShallow: {r: 0.4, g: 0.65, b: 0.75, a: 1}
+  coldDeep: {r: 0.08, g: 0.2, b: 0.3, a: 1}
+  coldHighlights: {r: 0.65, g: 0.85, b: 0.95, a: 1}
+  hotShallow: {r: 0.32, g: 0.4, b: 0.22, a: 1}
+  hotDeep: {r: 0.1, g: 0.17, b: 0.07, a: 1}
+  hotHighlights: {r: 0.65, g: 0.65, b: 0.35, a: 1}
+  pollutedShallow: {r: 0.28, g: 0.25, b: 0.1, a: 1}
+  pollutedDeep: {r: 0.07, g: 0.065, b: 0.025, a: 1}
+  pollutedHighlights: {r: 0.12, g: 0.115, b: 0.065, a: 1}
+  sunInfluence: 0
+  freezeStartTemperature: 0
+  fullyFrozenTemperature: -5
+  iceColor: {r: 0.72, g: 0.88, b: 0.95, a: 1}
+  freezeSeconds: 3
+  drySecondsAtMaxHeat: 20
+  refillSeconds: 30
+  dryLevelDrop: 0.5
+--- !u!4 &694363168 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
+  m_PrefabInstance: {fileID: 694363161}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &709863703
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24504,6 +24633,7 @@ MonoBehaviour:
   veryHungryHealthLossPerSecond: 6
   maximumFeedingsInWindow: 3
   overfeedingWindow: 10
+  overfedDuration: 5
   overfeedingDamage: 5
   waterHealthThreshold: 30
   maximumHealthLossPerSecond: 10
@@ -24927,11 +25057,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0c0b87f01fe366d49ba93f7d55339b07, type: 3}
   m_PrefabInstance: {fileID: 761176886}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &762938081 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-  m_PrefabInstance: {fileID: 2016610219}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &765308420
 GameObject:
@@ -52341,6 +52466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentUI
   environment: {fileID: 1431297040}
   panda: {fileID: 725808051}
+  pandaPathMover: {fileID: 725808057}
   temperatureSlider: {fileID: 196287759}
   waterSlider: {fileID: 1235136938}
   bambooSlider: {fileID: 1084733768}
@@ -52768,7 +52894,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!199 &1952931729
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -58266,67 +58392,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2012366118}
   m_CullTransparentMesh: 1
---- !u!1001 &2016610219
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 2123499182}
-    m_Modifications:
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.0852154
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -10.44
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 41.16
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1268234722435400427, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8701269036245842808, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
-      propertyPath: m_Name
-      value: Water (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0cc12161732c2444698a0e0c3007a2a1, type: 3}
 --- !u!1001 &2026303666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59570,7 +59635,7 @@ Transform:
   m_Children:
   - {fileID: 2141643130}
   - {fileID: 186140658}
-  - {fileID: 762938081}
+  - {fileID: 694363168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2141283416

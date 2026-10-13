@@ -53,6 +53,7 @@ public class PandaPathMover : MonoBehaviour
     private Quaternion cameraStartRotation;
 
     public bool IsMoving => isMoving;
+public bool IsTravelling => isMoving || returningCamera;
 
     private void Start()
     {
