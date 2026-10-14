@@ -330,7 +330,7 @@ Transform:
   m_GameObject: {fileID: 21857683}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.3, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1055,7 +1055,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 90, y: 0, z: 0}
-    m_Scale: {x: 50, y: 50, z: 1}
+    m_Scale: {x: 60, y: 115, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -18982,7 +18982,7 @@ Transform:
   m_GameObject: {fileID: 651362997}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.3000002, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19707,7 +19707,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 90, y: 0, z: 0}
-    m_Scale: {x: 50, y: 50, z: 1}
+    m_Scale: {x: 60, y: 115, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -31548,7 +31548,7 @@ Transform:
   m_GameObject: {fileID: 1072827110}
   serializedVersion: 2
   m_LocalRotation: {x: 0.3535534, y: -0.61237246, z: 0.3535534, w: 0.61237246}
-  m_LocalPosition: {x: -70, y: 40, z: 0}
+  m_LocalPosition: {x: -67.7, y: 40, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -32273,7 +32273,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 90, y: 0, z: 0}
-    m_Scale: {x: 50, y: 50, z: 1}
+    m_Scale: {x: 60, y: 115, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -52470,6 +52470,7 @@ MonoBehaviour:
   environment: {fileID: 1431297040}
   panda: {fileID: 725808051}
   pandaPathMover: {fileID: 725808057}
+  dilemmaUI: {fileID: 1927953439}
   temperatureSlider: {fileID: 196287759}
   waterSlider: {fileID: 1235136938}
   bambooSlider: {fileID: 1084733768}
@@ -57710,7 +57711,7 @@ Transform:
   m_GameObject: {fileID: 1952931728}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.506901, y: 18.59186, z: 31.130241}
+  m_LocalPosition: {x: -14.6, y: 18.59186, z: 25.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
