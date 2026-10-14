@@ -1384,15 +1384,110 @@ private System.Collections.IEnumerator BreakAndRemoveBamboo(
         );
     }
 
-    // Remove the bamboo after the animation.
-    bambooBeingEaten.Remove(bamboo);
 
+    // Fade out the bamboo after the break animation.
     if (bamboo != null)
     {
+        bambooBeingEaten.Remove(bamboo);
         Forget(bamboo);
-        Destroy(bamboo);
+
+        yield return StartCoroutine(
+            FadeOutAndRemoveBamboo(bamboo, 1.2f)
+        );
     }
+
 }
+
+
+private System.Collections.IEnumerator FadeOutAndRemoveBamboo(
+    GameObject bamboo,
+    float fadeDuration)
+{
+    if (bamboo == null)
+        yield break;
+
+    Renderer[] renderers =
+        bamboo.GetComponentsInChildren<Renderer>(true);
+
+    List<Material> materials = new List<Material>();
+    List<Color> originalColors = new List<Color>();
+    List<string> colorProperties = new List<string>();
+
+    foreach (Renderer renderer in renderers)
+    {
+        foreach (Material material in renderer.materials)
+        {
+            if (material == null)
+                continue;
+
+            string property = material.HasProperty("_BaseColor")
+                ? "_BaseColor"
+                : material.HasProperty("_Color")
+                    ? "_Color"
+                    : "";
+
+            if (property == "")
+                continue;
+
+            // Make a unique material instance for this bamboo.
+            materials.Add(material);
+            originalColors.Add(material.GetColor(property));
+            colorProperties.Add(property);
+
+            // Enable transparency for common Unity shaders.
+            if (material.HasProperty("_Surface"))
+                material.SetFloat("_Surface", 1f);
+
+            if (material.HasProperty("_Mode"))
+                material.SetFloat("_Mode", 2f);
+
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.SetInt("_SrcBlend",
+                (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend",
+                (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+
+            material.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.DisableKeyword("_ALPHATEST_ON");
+            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            material.renderQueue = 3000;
+        }
+    }
+
+    fadeDuration = Mathf.Max(0.01f, fadeDuration);
+    float elapsed = 0f;
+
+    while (elapsed < fadeDuration)
+    {
+        if (bamboo == null)
+            yield break;
+
+        elapsed += Time.deltaTime;
+
+        float t = Mathf.Clamp01(elapsed / fadeDuration);
+
+        // Smooth fade: gradual at the start and end.
+        float alpha = 1f - t * t * (3f - 2f * t);
+
+        for (int i = 0; i < materials.Count; i++)
+        {
+            if (materials[i] == null)
+                continue;
+
+            Color color = originalColors[i];
+            color.a *= alpha;
+
+            materials[i].SetColor(colorProperties[i], color);
+        }
+
+        yield return null;
+    }
+
+    Destroy(bamboo);
+}
+
 
 
     
