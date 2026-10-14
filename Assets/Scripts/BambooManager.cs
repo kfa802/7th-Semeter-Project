@@ -151,20 +151,24 @@ private float naturalGrowthTargetTime;
         keptSpots =
             new List<KeyValuePair<GameObject, BambooGrowthSpot>>();
 
-    private readonly List<RotState> rotting =
-        new List<RotState>();
+private readonly List<RotState> rotting =
+    new List<RotState>();
 
-    private readonly HashSet<GameObject> rottingSet =
-        new HashSet<GameObject>();
 
-    private MaterialPropertyBlock block;
-    private bool initialized;
+private readonly HashSet<GameObject> rottingSet =
+    new HashSet<GameObject>();
 
-    private static readonly int BaseColorId =
-        Shader.PropertyToID("_BaseColor");
+private readonly HashSet<GameObject> bambooBeingEaten =
+    new HashSet<GameObject>();
 
-    private static readonly int ColorId =
-        Shader.PropertyToID("_Color");
+private MaterialPropertyBlock block;
+private bool initialized;
+
+private static readonly int BaseColorId =
+    Shader.PropertyToID("_BaseColor");
+
+private static readonly int ColorId =
+    Shader.PropertyToID("_Color");
 
     // =========================================================
     // TOTAL COUNTERS
@@ -678,42 +682,48 @@ private float naturalGrowthTargetTime;
 
    
 
+
 public bool ConsumeBamboo()
 {
     Prune();
 
-    // The panda must be inside an ecosystem zone.
     if (EnvironmentSystem.Instance == null ||
         EnvironmentSystem.Instance.ActiveZone == null)
     {
-        Debug.Log("Cannot eat: The panda is not inside an ecosystem zone.");
+        Debug.Log(
+            "Cannot eat: The panda is not inside an ecosystem zone."
+        );
         return false;
     }
 
-    EcosystemZone activeZone = EnvironmentSystem.Instance.ActiveZone;
+    EcosystemZone activeZone =
+        EnvironmentSystem.Instance.ActiveZone;
 
-    // Only consume bamboo that is actually active in the scene,
-    // healthy, and assigned to the panda's current zone.
-    foreach (GameObject bamboo in activeBamboo.ToArray())
+    // Make a copy because bamboo will be removed after its animation.
+    List<GameObject> bambooList =
+        new List<GameObject>(activeBamboo);
+
+    foreach (GameObject bamboo in bambooList)
     {
-        if (bamboo == null)
+        if (bamboo == null || !bamboo.activeInHierarchy)
             continue;
 
-        if (!bamboo.activeInHierarchy)
+        if (rottingSet.Contains(bamboo) ||
+            bambooBeingEaten.Contains(bamboo))
             continue;
 
-        if (rottingSet.Contains(bamboo))
-            continue;
-
-        if (!spotOf.TryGetValue(bamboo, out BambooGrowthSpot spot))
+        if (!spotOf.TryGetValue(
+                bamboo,
+                out BambooGrowthSpot spot))
             continue;
 
         if (spot == null || spot.Zone != activeZone)
             continue;
 
-        // Consume exactly one bamboo.
-        Forget(bamboo);
-        Destroy(bamboo);
+        // Reserve this bamboo so it cannot be eaten twice.
+        bambooBeingEaten.Add(bamboo);
+
+        StartCoroutine(BreakAndRemoveBamboo(bamboo));
 
         Debug.Log("Panda ate bamboo in " + activeZone.zoneName);
         return true;
@@ -722,6 +732,7 @@ public bool ConsumeBamboo()
     Debug.Log("No available bamboo in " + activeZone.zoneName);
     return false;
 }
+
 
     // =========================================================
     // REMOVE BAMBOO
@@ -1230,6 +1241,7 @@ public float GetWaterGrowthMultiplier()
     );
 }
 
+
 public bool ConsumeBambooInZone(EcosystemZone zone)
 {
     Prune();
@@ -1237,12 +1249,16 @@ public bool ConsumeBambooInZone(EcosystemZone zone)
     if (zone == null)
         return false;
 
-    foreach (GameObject bamboo in activeBamboo.ToArray())
+    List<GameObject> bambooList =
+        new List<GameObject>(activeBamboo);
+
+    foreach (GameObject bamboo in bambooList)
     {
         if (bamboo == null || !bamboo.activeInHierarchy)
             continue;
 
-        if (rottingSet.Contains(bamboo))
+        if (rottingSet.Contains(bamboo) ||
+            bambooBeingEaten.Contains(bamboo))
             continue;
 
         if (!spotOf.TryGetValue(
@@ -1253,18 +1269,18 @@ public bool ConsumeBambooInZone(EcosystemZone zone)
         if (spot == null || spot.Zone != zone)
             continue;
 
-        // Remove the actual bamboo and free its growth spot.
-        Forget(bamboo);
-        Destroy(bamboo);
+        bambooBeingEaten.Add(bamboo);
+
+        StartCoroutine(BreakAndRemoveBamboo(bamboo));
 
         Debug.Log("Other panda ate bamboo in " + zone.zoneName);
-
         return true;
     }
 
     Debug.Log("Other panda found no bamboo in " + zone.zoneName);
     return false;
 }
+
 
 
 public bool OtherPandaPooped(EcosystemZone zone)
@@ -1287,6 +1303,97 @@ public bool OtherPandaPooped(EcosystemZone zone)
 
     return true;
 }
+
+
+private System.Collections.IEnumerator BreakAndRemoveBamboo(
+    GameObject bamboo)
+{
+    if (bamboo == null)
+        yield break;
+
+    Animator bambooAnimator =
+        bamboo.GetComponentInChildren<Animator>(true);
+
+    if (bambooAnimator != null &&
+        bambooAnimator.runtimeAnimatorController != null)
+    {
+        bambooAnimator.speed = 1f;
+        bambooAnimator.ResetTrigger("Break");
+        bambooAnimator.SetTrigger("Break");
+
+        float elapsed = 0f;
+        const float startTimeout = 2f;
+        bool breakStarted = false;
+
+        // Wait for the Break state to begin.
+        while (elapsed < startTimeout)
+        {
+            if (bamboo == null || bambooAnimator == null)
+                break;
+
+            AnimatorStateInfo state =
+                bambooAnimator.GetCurrentAnimatorStateInfo(0);
+
+            if (state.IsName("Break"))
+            {
+                breakStarted = true;
+                break;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Wait until the Break animation has finished.
+        if (breakStarted && bamboo != null)
+        {
+            elapsed = 0f;
+
+            while (elapsed < 10f)
+            {
+                if (bamboo == null || bambooAnimator == null)
+                    break;
+
+                AnimatorStateInfo state =
+                    bambooAnimator.GetCurrentAnimatorStateInfo(0);
+
+                if (state.IsName("Break") &&
+                    !bambooAnimator.IsInTransition(0) &&
+                    state.normalizedTime >= 1f)
+                {
+                    break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+        else if (bamboo != null)
+        {
+            Debug.LogWarning(
+                "The Break animation did not start for " + bamboo.name,
+                bamboo
+            );
+        }
+    }
+    else
+    {
+        Debug.LogWarning(
+            "No Animator Controller assigned to bamboo: " + bamboo.name,
+            bamboo
+        );
+    }
+
+    // Remove the bamboo after the animation.
+    bambooBeingEaten.Remove(bamboo);
+
+    if (bamboo != null)
+    {
+        Forget(bamboo);
+        Destroy(bamboo);
+    }
+}
+
 
     
 }
