@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Dilemma 1.2
-  description: dsjdjsjd
-  choiceA: go
-  choiceB: stay
+  title: 
+  description: 
+  choiceA: 
+  choiceB: 
+  choiceC: 
   triggerType: 0
   requiredZoneName: Mountain
   delaySeconds: 10
@@ -24,5 +25,7 @@ MonoBehaviour:
   prerequisiteChoice: 2
   choiceAEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
   choiceBEvent: {fileID: 11400000, guid: c2d72d562eaf44b469bf76115dda1e2e, type: 2}
+  choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  choiceCEnding: {fileID: 0}
