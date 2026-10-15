@@ -27,7 +27,12 @@ public class DilemmaManager : MonoBehaviour
     private EndingUI endingUI;
 
     private readonly HashSet<Dilemma> completedDilemmas = new();
+
+    private readonly Dictionary<Dilemma, int> resolvedChoices = new();
+
     private readonly Dictionary<Dilemma, float> scheduledDilemmas = new();
+
+    private readonly Dictionary<Dilemma, float> temperatureStartTimes = new();
 
     private Dilemma activeDilemma;
 
@@ -99,67 +104,67 @@ public class DilemmaManager : MonoBehaviour
             );
         }
 
-        // First, check dilemmas scheduled after a prerequisite choice.
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null ||
                 completedDilemmas.Contains(dilemma))
                 continue;
 
-            if (!scheduledDilemmas.ContainsKey(dilemma))
-                continue;
-
-            // BambooBelow triggers depend on bamboo levels,
-            // not on a timer.
-            if (dilemma.triggerType != DilemmaTriggerType.BambooBelow &&
-                Time.time < scheduledDilemmas[dilemma])
+            // A blocking choice makes this dilemma unavailable.
+            if (IsBlockedByAnyDilemma(dilemma))
             {
+                scheduledDilemmas.Remove(dilemma);
+                temperatureStartTimes.Remove(dilemma);
                 continue;
             }
+
+            bool isScheduled =
+                scheduledDilemmas.TryGetValue(
+                    dilemma,
+                    out float scheduledTime
+                );
+
+            // A dilemma with prerequisites must first be unlocked.
+            if (HasPrerequisites(dilemma) && !isScheduled)
+                continue;
 
             if (!IsInRequiredZone(dilemma))
-                continue;
-
-            if (dilemma.triggerType == DilemmaTriggerType.BambooBelow &&
-                !ShouldTrigger(dilemma, zoneChanged))
             {
+                temperatureStartTimes.Remove(dilemma);
                 continue;
             }
 
-            scheduledDilemmas.Remove(dilemma);
+            if (isScheduled && Time.time < scheduledTime)
+                continue;
+
+            if (!ShouldTrigger(dilemma, zoneChanged))
+                continue;
+
+            if (isScheduled)
+                scheduledDilemmas.Remove(dilemma);
 
             Debug.Log(
-                "DilemmaManager: Scheduled dilemma is ready. Showing " +
-                dilemma.name
+                "DilemmaManager: Triggering " + dilemma.name +
+                " | Trigger Type = " + dilemma.triggerType +
+                " | Temperature = " + environment.Temperature +
+                " | Threshold = " + dilemma.temperatureThreshold
             );
 
             ShowDilemma(dilemma);
             return;
         }
+    }
 
-        // Next, check dilemmas without prerequisites.
-        foreach (Dilemma dilemma in dilemmas)
+    private bool HasPrerequisites(Dilemma dilemma)
+    {
+        if (dilemma.prerequisiteDilemmas != null &&
+            dilemma.prerequisiteDilemmas.Count > 0)
         {
-            if (dilemma == null ||
-                completedDilemmas.Contains(dilemma))
-                continue;
-
-            if (dilemma.prerequisiteDilemma != null)
-                continue;
-
-            if (!IsInRequiredZone(dilemma))
-                continue;
-
-            if (ShouldTrigger(dilemma, zoneChanged))
-            {
-                Debug.Log(
-                    "DilemmaManager: Triggering " + dilemma.name
-                );
-
-                ShowDilemma(dilemma);
-                return;
-            }
+            return true;
         }
+
+        // Backward compatibility with the old single prerequisite.
+        return dilemma.prerequisiteDilemma != null;
     }
 
     private bool IsInRequiredZone(Dilemma dilemma)
@@ -168,6 +173,33 @@ public class DilemmaManager : MonoBehaviour
             return true;
 
         return environment.ActiveZoneName == dilemma.requiredZoneName;
+    }
+
+    private bool IsBlockedByAnyDilemma(Dilemma dilemma)
+    {
+        if (dilemma.blockedByDilemmas == null)
+            return false;
+
+        foreach (DilemmaBlockRule rule in dilemma.blockedByDilemmas)
+        {
+            if (rule == null || rule.dilemma == null)
+                continue;
+
+            // The blocking dilemma must have been resolved.
+            if (!resolvedChoices.TryGetValue(
+                    rule.dilemma,
+                    out int selectedChoice))
+            {
+                continue;
+            }
+
+            if (ChoiceMatches(rule.requiredChoice, selectedChoice))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool ShouldTrigger(Dilemma dilemma, bool zoneChanged)
@@ -223,9 +255,76 @@ public class DilemmaManager : MonoBehaviour
                 return bambooPercent < dilemma.threshold;
             }
 
+            case DilemmaTriggerType.TemperatureTooLow:
+            {
+                bool belowThreshold =
+                    environment.Temperature < dilemma.temperatureThreshold;
+
+                DebugTemperatureCondition(dilemma, belowThreshold);
+
+                return CheckTemperatureDuration(
+                    dilemma,
+                    belowThreshold
+                );
+            }
+
+            case DilemmaTriggerType.TemperatureTooHigh:
+            {
+                bool aboveThreshold =
+                    environment.Temperature > dilemma.temperatureThreshold;
+
+                DebugTemperatureCondition(dilemma, aboveThreshold);
+
+                return CheckTemperatureDuration(
+                    dilemma,
+                    aboveThreshold
+                );
+            }
+
             default:
                 return false;
         }
+    }
+
+    private void DebugTemperatureCondition(
+        Dilemma dilemma,
+        bool conditionIsMet)
+    {
+        if (!conditionIsMet)
+            return;
+
+        Debug.Log(
+            "DilemmaManager: Temperature condition met for " +
+            dilemma.name +
+            " | Type = " + dilemma.triggerType +
+            " | Current = " + environment.Temperature +
+            " | Threshold = " + dilemma.temperatureThreshold +
+            " | Required duration = " +
+            dilemma.temperatureDurationSeconds + " seconds"
+        );
+    }
+
+    private bool CheckTemperatureDuration(
+        Dilemma dilemma,
+        bool conditionIsMet)
+    {
+        if (!conditionIsMet)
+        {
+            temperatureStartTimes.Remove(dilemma);
+            return false;
+        }
+
+        if (!temperatureStartTimes.TryGetValue(
+                dilemma,
+                out float startTime))
+        {
+            temperatureStartTimes[dilemma] = Time.time;
+            return dilemma.temperatureDurationSeconds <= 0f;
+        }
+
+        float elapsedTime = Time.time - startTime;
+
+        return elapsedTime >= dilemma.temperatureDurationSeconds;
     }
 
     private void ShowDilemma(Dilemma dilemma)
@@ -282,8 +381,11 @@ public class DilemmaManager : MonoBehaviour
         );
 
         completedDilemmas.Add(resolvedDilemma);
+        resolvedChoices[resolvedDilemma] = choice;
 
-        // Select the GameEvent and Ending for the chosen option.
+        temperatureStartTimes.Remove(resolvedDilemma);
+        scheduledDilemmas.Remove(resolvedDilemma);
+
         GameEvent gameEvent = choice == 0
             ? resolvedDilemma.choiceAEvent
             : choice == 1
@@ -299,6 +401,26 @@ public class DilemmaManager : MonoBehaviour
         activeDilemma = null;
         dilemmaUI.HideDilemma();
 
+        // Remove pending schedules for dilemmas that this choice blocks.
+        foreach (Dilemma candidate in dilemmas)
+        {
+            if (candidate == null)
+                continue;
+
+            if (IsBlockedByAnyDilemma(candidate))
+            {
+                if (scheduledDilemmas.Remove(candidate))
+                {
+                    Debug.Log(
+                        "DilemmaManager: " + candidate.name +
+                        " removed from its schedule because it is blocked."
+                    );
+                }
+
+                temperatureStartTimes.Remove(candidate);
+            }
+        }
+
         ExecuteEvent(gameEvent);
 
         if (selectedEnding != null)
@@ -307,46 +429,82 @@ public class DilemmaManager : MonoBehaviour
             return;
         }
 
-        // Schedule follow-up dilemmas that match this choice.
+        // Schedule any follow-up unlocked by this choice.
         foreach (Dilemma nextDilemma in dilemmas)
         {
             if (nextDilemma == null ||
-                completedDilemmas.Contains(nextDilemma))
-                continue;
-
-            if (nextDilemma.prerequisiteDilemma != resolvedDilemma)
-                continue;
-
-            bool choiceMatches =
-                nextDilemma.prerequisiteChoice ==
-                    PrerequisiteChoice.Either ||
-
-                (nextDilemma.prerequisiteChoice ==
-                    PrerequisiteChoice.ChoiceA && choice == 0) ||
-
-                (nextDilemma.prerequisiteChoice ==
-                    PrerequisiteChoice.ChoiceB && choice == 1) ||
-
-                (nextDilemma.prerequisiteChoice ==
-                    PrerequisiteChoice.ChoiceC && choice == 2);
-
-            if (!choiceMatches)
+                completedDilemmas.Contains(nextDilemma) ||
+                scheduledDilemmas.ContainsKey(nextDilemma))
             {
-                Debug.Log(
-                    nextDilemma.name +
-                    ": Prerequisite choice did not match."
-                );
+                continue;
+            }
+
+            // Do not schedule a dilemma that has already been blocked.
+            if (IsBlockedByAnyDilemma(nextDilemma))
+                continue;
+
+            if (!MatchesAnyPrerequisite(
+                    nextDilemma,
+                    resolvedDilemma,
+                    choice))
+            {
                 continue;
             }
 
             scheduledDilemmas[nextDilemma] =
                 Time.time + Mathf.Max(0f, nextDilemma.delaySeconds);
 
+            temperatureStartTimes.Remove(nextDilemma);
+
             Debug.Log(
-                nextDilemma.name + " scheduled in " +
+                nextDilemma.name + " unlocked by " +
+                resolvedDilemma.name + " (Choice " + choiceName + ")" +
+                " and scheduled in " +
                 nextDilemma.delaySeconds + " seconds."
             );
         }
+    }
+
+    private bool MatchesAnyPrerequisite(
+        Dilemma nextDilemma,
+        Dilemma resolvedDilemma,
+        int choice)
+    {
+        if (nextDilemma.prerequisiteDilemmas != null &&
+            nextDilemma.prerequisiteDilemmas.Count > 0)
+        {
+            foreach (DilemmaPrerequisite prerequisite
+                     in nextDilemma.prerequisiteDilemmas)
+            {
+                if (prerequisite == null ||
+                    prerequisite.dilemma != resolvedDilemma)
+                {
+                    continue;
+                }
+
+                if (ChoiceMatches(prerequisite.requiredChoice, choice))
+                    return true;
+            }
+
+            return false;
+        }
+
+        // Backward compatibility with the old single prerequisite.
+        return nextDilemma.prerequisiteDilemma == resolvedDilemma &&
+               ChoiceMatches(nextDilemma.prerequisiteChoice, choice);
+    }
+
+    private bool ChoiceMatches(
+        PrerequisiteChoice requiredChoice,
+        int selectedChoice)
+    {
+        return requiredChoice == PrerequisiteChoice.Either ||
+               (requiredChoice == PrerequisiteChoice.ChoiceA &&
+                selectedChoice == 0) ||
+               (requiredChoice == PrerequisiteChoice.ChoiceB &&
+                selectedChoice == 1) ||
+               (requiredChoice == PrerequisiteChoice.ChoiceC &&
+                selectedChoice == 2);
     }
 
     private void BeginEnding(Ending ending)

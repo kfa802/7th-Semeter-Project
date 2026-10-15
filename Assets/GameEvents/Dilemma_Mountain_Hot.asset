@@ -10,22 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
-  m_Name: Dilemma_Mountain_2
+  m_Name: Dilemma_Mountain_Hot
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: 
-  description: 
-  choiceA: 
-  choiceB: 
+  title: Dilemma 1 hot
+  description: ffdfdggf
+  choiceA: Go
+  choiceB: Stay
   choiceC: 
-  triggerType: 0
+  triggerType: 6
   requiredZoneName: Mountain
-  delaySeconds: 10
-  threshold: 10
-  prerequisiteDilemma: {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}
-  prerequisiteChoice: 2
+  delaySeconds: 0
+  threshold: 30.9
+  temperatureThreshold: 30
+  temperatureDurationSeconds: 5
+  prerequisiteDilemmas: []
+  blockedByDilemmas:
+  - dilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}
+    requiredChoice: 0
+  prerequisiteDilemma: {fileID: 0}
+  prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
   choiceBEvent: {fileID: 11400000, guid: c2d72d562eaf44b469bf76115dda1e2e, type: 2}
   choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
-  choiceBEnding: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  choiceBEnding: {fileID: 0}
   choiceCEnding: {fileID: 0}
