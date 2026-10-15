@@ -10800,7 +10800,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1678148489}
   m_Direction: 0
   m_MinValue: -15
-  m_MaxValue: 27
+  m_MaxValue: 4
   m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
@@ -11368,7 +11368,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -907.1707, y: 0, z: -886.85474, w: 0}
+  m_margin: {x: -1129.5865, y: 0, z: -1110.9478, w: -190.80045}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -11893,7 +11893,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -26, y: -29}
+  m_AnchoredPosition: {x: 0, y: -29}
   m_SizeDelta: {x: 4133.012, y: 2010}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &352441066
@@ -24521,7 +24521,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -1364.474, y: -290.7989, z: -1423.3661, w: -225.64313}
+  m_margin: {x: -1364.474, y: -372.18317, z: -1423.3661, w: -225.64313}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -43786,7 +43786,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -43818,7 +43818,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -15.736267, y: -0.000076274046, z: 119.59756, w: 16.572468}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -44197,7 +44197,10 @@ MonoBehaviour:
   hotAmbientColor: {r: 1, g: 0.9, b: 0.75, a: 1}
   coldSkyTint: {r: 0.85, g: 0.9, b: 1, a: 1}
   hotSkyTint: {r: 1, g: 0.8, b: 0.6, a: 1}
-  maxSnowRate: 200
+  freezingTemperature: 0
+  snowFadeInSpeed: 0.5
+  minimumSnowFadeOutSpeed: 0.1
+  snowFadeOutSpeedPerDegree: 0.15
   coldVolume: {fileID: 1513267756}
   hotVolume: {fileID: 342025089}
 --- !u!1 &1439852879 stripped
@@ -52575,6 +52578,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentUI
   environment: {fileID: 1431297040}
   panda: {fileID: 725808051}
+  pandaPathMover: {fileID: 0}
+  dilemmaUI: {fileID: 0}
   temperatureSlider: {fileID: 196287759}
   waterSlider: {fileID: 1235136938}
   bambooSlider: {fileID: 1084733768}
@@ -59502,7 +59507,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MOUNTAIN
+  m_text: Mountain
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
