@@ -25,6 +25,8 @@ public class PandaPathMover : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private string walkingParameter = "IsWalking";
+    [SerializeField] private string standUpTrigger = "StandUp";
+    [SerializeField] private string sitDownTrigger = "SitDown";
 
     [Header("Cameras")]
     [SerializeField] private Camera mainCamera;
@@ -53,12 +55,21 @@ public class PandaPathMover : MonoBehaviour
     private Quaternion cameraStartRotation;
 
     public bool IsMoving => isMoving;
-public bool IsTravelling => isMoving || returningCamera;
+    public bool IsTravelling => isMoving || returningCamera;
+
+    [Header("Facing Direction")]
+    [SerializeField] private Transform pandaModel;
+    [SerializeField] private float facingCorrection = 180f;
 
     private void Start()
     {
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
+
+        if (agent != null)
+        {
+            agent.updateRotation = false;
+        }
 
         Debug.Log(
             $"PandaPathMover: Initialized. " +
@@ -82,17 +93,45 @@ public bool IsTravelling => isMoving || returningCamera;
             );
     }
 
-    private void Update()
+private void Update()
+{
+    if (isMoving)
     {
-        if (isMoving)
+        // Keep walking enabled once the stand-up animation
+        // has finished and the panda is moving.
+        if (animator != null &&
+            agent != null &&
+            !agent.pathPending &&
+            agent.hasPath &&
+            agent.velocity.magnitude > 0.05f)
         {
-            CheckPandaArrival();
-            MoveCinematicCamera();
+            AnimatorStateInfo state =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            // Do not interrupt the stand-up animation.
+            if (!state.IsName("Stand Up") &&
+                !state.IsName("StandUp") &&
+                !state.IsName("Stand_Up"))
+            {
+                if (!animator.GetBool(walkingParameter))
+                {
+                    animator.SetBool(walkingParameter, true);
+
+                    Debug.Log(
+                        "PandaPathMover: Walking enabled by movement fallback."
+                    );
+                }
+            }
         }
 
-        if (returningCamera)
-            ReturnCameraToMain();
+        CheckPandaArrival();
+        MoveCinematicCamera();
     }
+
+    if (returningCamera)
+        ReturnCameraToMain();
+}
+
 
     public void StartMovement()
     {
@@ -190,7 +229,22 @@ public bool IsTravelling => isMoving || returningCamera;
             return;
         }
 
-        SetWalkingAnimation(true);
+        // Begin the stand-up animation.
+        if (animator != null)
+        {
+            animator.SetBool(walkingParameter, false);
+            animator.ResetTrigger(standUpTrigger);
+            animator.ResetTrigger(sitDownTrigger);
+            animator.SetTrigger(standUpTrigger);
+
+            Debug.Log("PandaPathMover: Stand-up trigger activated.");
+        }
+        else
+        {
+            Debug.LogError(
+                "PandaPathMover: Animator is not assigned."
+            );
+        }
 
         mainCamera.gameObject.SetActive(false);
         cinematicCamera.gameObject.SetActive(true);
@@ -205,6 +259,23 @@ public bool IsTravelling => isMoving || returningCamera;
             "PandaPathMover: Movement started successfully."
         );
     }
+
+
+public void StartWalkingAnimation()
+{
+    if (!isMoving || animator == null)
+        return;
+
+    animator.ResetTrigger(standUpTrigger);
+    animator.ResetTrigger(sitDownTrigger);
+    animator.SetBool(walkingParameter, true);
+
+    Debug.Log(
+        $"PandaPathMover: StartWalkingAnimation called. " +
+        $"IsWalking = {animator.GetBool(walkingParameter)}"
+    );
+}
+
 
     private void CheckPandaArrival()
     {
@@ -320,7 +391,15 @@ public bool IsTravelling => isMoving || returningCamera;
         if (agent != null)
             agent.isStopped = true;
 
-        SetWalkingAnimation(false);
+        // Stop walking and begin sitting down.
+        if (animator != null)
+        {
+            animator.SetBool(walkingParameter, false);
+            animator.ResetTrigger(standUpTrigger);
+            animator.SetTrigger(sitDownTrigger);
+
+            Debug.Log("PandaPathMover: Sit-down trigger activated.");
+        }
 
         Debug.Log(
             "PandaPathMover: Travel finished. Returning camera to main view."
@@ -474,24 +553,48 @@ public bool IsTravelling => isMoving || returningCamera;
                 $"camera points = {zone.cameraPoints.Length}."
             );
 
+            StartMovement();
 
-StartMovement();
+            // Begin the temperature transition only if movement started.
+            if (isMoving && EnvironmentSystem.Instance != null)
+            {
+                EnvironmentSystem.Instance.BeginTravelToZone(zone.zoneName);
+            }
 
-// Begin the temperature transition only if movement started.
-if (isMoving && EnvironmentSystem.Instance != null)
-{
-    EnvironmentSystem.Instance.BeginTravelToZone(zone.zoneName);
-}
+            Debug.Log(
+                $"PandaPathMover: StartMovement called for '{zone.zoneName}'."
+            );
 
-Debug.Log(
-    $"PandaPathMover: StartMovement called for '{zone.zoneName}'."
-);
-return;
+            return;
         }
 
         Debug.LogError(
             $"PandaPathMover: NO MATCH FOUND for zone '{zoneName}'. " +
             "Check the Zone Destinations list in the Inspector."
+        );
+    }
+
+    private void CorrectPandaFacingDirection()
+    {
+        if (agent == null || pandaModel == null)
+            return;
+
+        Vector3 movementDirection = agent.desiredVelocity;
+
+        movementDirection.y = 0f;
+
+        if (movementDirection.sqrMagnitude < 0.01f)
+            return;
+
+        Quaternion targetRotation =
+            Quaternion.LookRotation(movementDirection);
+
+        targetRotation *= Quaternion.Euler(0f, facingCorrection, 0f);
+
+        pandaModel.rotation = Quaternion.Slerp(
+            pandaModel.rotation,
+            targetRotation,
+            10f * Time.deltaTime
         );
     }
 }
