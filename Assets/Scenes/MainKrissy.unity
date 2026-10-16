@@ -12724,14 +12724,14 @@ MonoBehaviour:
   remainingCapacity: 0
   minTemperature: -15
   maxTemperature: 40
-  temperature: 15
+  temperature: 9
   idealTemperature: 20
   temperatureThreshold: 12
   freezingPoint: 0
   coldSlowdownPower: 1.5
   minGrowthWhenCold: 0.2
   minGrowthWhenHot: 0.2
-  water: 60.8
+  water: 35
   waterReactionSpeed: 5
   waterRecoverySpeed: 1
   comfortableWaterMinTemperature: 15
@@ -43540,14 +43540,14 @@ MonoBehaviour:
   remainingCapacity: 0
   minTemperature: -15
   maxTemperature: 40
-  temperature: 5
+  temperature: 20
   idealTemperature: 20
   temperatureThreshold: 3
   freezingPoint: 0
   coldSlowdownPower: 1.5
   minGrowthWhenCold: 0.2
   minGrowthWhenHot: 0.2
-  water: 100
+  water: 90
   waterReactionSpeed: 5
   waterRecoverySpeed: 1
   comfortableWaterMinTemperature: 15
@@ -59843,14 +59843,14 @@ MonoBehaviour:
   remainingCapacity: 0
   minTemperature: -15
   maxTemperature: 40
-  temperature: 5
+  temperature: 15
   idealTemperature: 20
   temperatureThreshold: 3
   freezingPoint: 0
   coldSlowdownPower: 1.5
   minGrowthWhenCold: 0.2
   minGrowthWhenHot: 0.2
-  water: 100
+  water: 60
   waterReactionSpeed: 5
   waterRecoverySpeed: 1
   comfortableWaterMinTemperature: 15
