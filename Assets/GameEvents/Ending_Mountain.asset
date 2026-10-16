@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Mountain Ending
   endingDescription: mbsdmbsdb
-  endingImage: {fileID: 21300000, guid: d608404972aef4d218921d2aef89593a, type: 3}
+  endingImage: {fileID: 0}

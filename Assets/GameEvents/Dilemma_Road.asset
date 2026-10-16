@@ -12,17 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: dilemma 4
-  description: Humans want to build a road
-  choiceA: through forest
-  choiceB: around forest
+  title: The road
+  description: 'Dilemma: A nearby village needs a road. It can go straight through
+    the forest or around it, which is longer and more expensive. '
+  choiceA: Through
+  choiceB: Around
+  choiceC: 
   triggerType: 0
   requiredZoneName: Valley
   delaySeconds: 10
   threshold: 30
+  temperatureThreshold: 30
+  temperatureHighThreshold: 25
+  temperatureDurationSeconds: 20
+  prerequisiteDilemmas: []
+  blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: c259cfdebecd3c94f9824291217c5988, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 02b47041ab779ab4195afff2e444f4d1, type: 2}
+  choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 0}
+  choiceCEnding: {fileID: 0}

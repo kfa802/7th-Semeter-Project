@@ -12,17 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Dilemma 3.2
-  description: You are running out of food
-  choiceA: Stay with Panda
-  choiceB: Go to Valley
+  title: "There isn\u2019t enough food"
+  description: "Dilemma: The two pandas have now been together for a long time. But
+    the bamboo in the valley is almost gone, and there isn\u2019t enough food for
+    two pandas. Should they go to separate areas, or stay? "
+  choiceA: Stay
+  choiceB: Go
+  choiceC: 
   triggerType: 4
   requiredZoneName: Midway
   delaySeconds: 10
   threshold: 30
+  temperatureThreshold: 30
+  temperatureHighThreshold: 25
+  temperatureDurationSeconds: 20
+  prerequisiteDilemmas: []
+  blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: f67e0ea2cf8545047b097c93e8126cb3, type: 2}
   prerequisiteChoice: 1
   choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 77487f0415bae2c40a923b39edfe1137, type: 2}
+  choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
   choiceBEnding: {fileID: 0}
+  choiceCEnding: {fileID: 0}

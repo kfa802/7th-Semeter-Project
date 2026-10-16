@@ -12,15 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Dilemma 2
-  description: sdsmdjbs
-  choiceA: Stay with panda
-  choiceB: Go to valley
+  title: A new panda
+  description: 'Dilemma: The panda is on its way down into the valley, but along
+    the way it meets a new panda. Should they go their separate ways, or stay together? '
+  choiceA: Stay
+  choiceB: Go
   choiceC: 
   triggerType: 0
   requiredZoneName: Midway
   delaySeconds: 10
   threshold: 30
+  temperatureThreshold: 30
+  temperatureHighThreshold: 25
+  temperatureDurationSeconds: 20
+  prerequisiteDilemmas: []
+  blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}

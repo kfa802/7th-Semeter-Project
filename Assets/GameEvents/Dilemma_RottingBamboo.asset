@@ -12,15 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Dilemma 5
-  description: The pollution is rotting the bamboo
-  choiceA: Stay in Valley
-  choiceB: Go back to the other panda
-  choiceC: Go back to mountain
+  title: The bamboo is withering
+  description: 'Dilemma: The bamboo in the valley has begun to wither, so the panda
+    has to look for new paths and must choose where to be next season. '
+  choiceA: Stay
+  choiceB: Other panda
+  choiceC: Mountains
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 30
   threshold: 30
+  temperatureThreshold: 30
+  temperatureHighThreshold: 25
+  temperatureDurationSeconds: 20
+  prerequisiteDilemmas: []
+  blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: 82827fe770e2eee41bb123ecd2f6e6f6, type: 2}
