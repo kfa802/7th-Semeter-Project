@@ -5814,7 +5814,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 1159956426}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -11416,7 +11416,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -11446,6 +11446,24 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.5, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &223310769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223310763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdacaf22657314dd19eaf49a0e81ebc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooWindController
+  windyBelowTemperature: 5
+  margin: 1
+  windyParameter: IsWindy
+  animator: {fileID: 0}
+  randomizeStart: 0
+  isWindy: 0
 --- !u!1 &246701395
 GameObject:
   m_ObjectHideFlags: 0
@@ -12624,6 +12642,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
       insertIndex: -1
       addedObject: {fileID: 379122037}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 379122038}
   m_SourcePrefab: {fileID: 100100000, guid: 946c52136580546d18ce27dbe7268563, type: 3}
 --- !u!1 &379122033 stripped
 GameObject:
@@ -12694,6 +12715,24 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.5, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &379122038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379122033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdacaf22657314dd19eaf49a0e81ebc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooWindController
+  windyBelowTemperature: 5
+  margin: 1
+  windyParameter: IsWindy
+  animator: {fileID: 0}
+  randomizeStart: 0
+  isWindy: 0
 --- !u!1 &399929418
 GameObject:
   m_ObjectHideFlags: 0
@@ -12744,7 +12783,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -24852,7 +24891,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 1509108731}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -26093,7 +26132,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -26147,7 +26186,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 223310763}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -43196,6 +43235,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1159956430}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1159956431}
   m_SourcePrefab: {fileID: 100100000, guid: 946c52136580546d18ce27dbe7268563, type: 3}
 --- !u!1 &1159956426 stripped
 GameObject:
@@ -43266,6 +43308,24 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.5, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &1159956431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159956426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdacaf22657314dd19eaf49a0e81ebc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooWindController
+  windyBelowTemperature: 5
+  margin: 1
+  windyParameter: IsWindy
+  animator: {fileID: 0}
+  randomizeStart: 0
+  isWindy: 0
 --- !u!1 &1166320373
 GameObject:
   m_ObjectHideFlags: 0
@@ -43359,7 +43419,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -46420,6 +46480,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1509108735}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 946c52136580546d18ce27dbe7268563, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1509108736}
   m_SourcePrefab: {fileID: 100100000, guid: 946c52136580546d18ce27dbe7268563, type: 3}
 --- !u!1 &1509108731 stripped
 GameObject:
@@ -46490,6 +46553,24 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.5, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &1509108736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509108731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdacaf22657314dd19eaf49a0e81ebc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooWindController
+  windyBelowTemperature: 5
+  margin: 1
+  windyParameter: IsWindy
+  animator: {fileID: 0}
+  randomizeStart: 0
+  isWindy: 0
 --- !u!1 &1509138175
 GameObject:
   m_ObjectHideFlags: 0
@@ -61064,7 +61145,7 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
-  growTime: 10
+  growTime: 5
   existingBamboo: {fileID: 379122033}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
@@ -61517,6 +61598,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7886964337042595602, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       insertIndex: -1
       addedObject: {fileID: 223310765}
+    - targetCorrespondingSourceObject: {fileID: 7886964337042595602, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 223310769}
   m_SourcePrefab: {fileID: 100100000, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
 --- !u!65 &8866398472450223731
 BoxCollider:
