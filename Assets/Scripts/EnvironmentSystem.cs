@@ -26,6 +26,7 @@ public EcosystemZone ActiveZone => activeZone;    // ===========================
 [SerializeField] private float temperatureChangeSpeed = 2f;
 
 private float targetTemperature = 20f;
+private bool isTravelling = false;
     [SerializeField] private float idealTemperature = 20f;
     [SerializeField] private float temperatureThreshold = 3f;
     [SerializeField] private float freezingPoint = 0f;
@@ -134,12 +135,15 @@ private void Start()
 
 private void Update()
 {
-    // Gradually move toward the target temperature.
-    temperature = Mathf.MoveTowards(
-        temperature,
-        targetTemperature,
-        temperatureChangeSpeed * Time.deltaTime
-    );
+    // Only transition temperature while travelling.
+    if (isTravelling)
+    {
+        temperature = Mathf.MoveTowards(
+            temperature,
+            targetTemperature,
+            temperatureChangeSpeed * Time.deltaTime
+        );
+    }
 
     UpdateWater();
 
@@ -198,12 +202,12 @@ public void ApplyZoneSettings(EcosystemZone zone)
     hotWaterStartTemperature =
         zone.hotWaterStartTemperature;
 
-    // Gradually change temperature toward the new zone's temperature.
-    targetTemperature = Mathf.Clamp(
-        zone.temperature,
-        minTemperature,
-        maxTemperature
-    );
+// Stop the automatic temperature transition upon arrival.
+isTravelling = false;
+
+// Keep the temperature where it currently is.
+// The player can now adjust it freely.
+targetTemperature = temperature;
 
     // Apply the new zone's water and pollution.
     water = Mathf.Clamp(zone.water, 0f, 100f);
@@ -412,16 +416,14 @@ public void BeginTravelToZone(string zoneName)
             zoneName.Trim(),
             System.StringComparison.OrdinalIgnoreCase))
         {
-            // Preserve any existing difference between the current
-            // temperature and its target, such as a recent temperature
-            // change caused by a dilemma.
-            float temperatureOffset = targetTemperature - temperature;
+// Start the automatic temperature transition during travel.
+isTravelling = true;
 
-            targetTemperature = Mathf.Clamp(
-                zone.temperature + temperatureOffset,
-                zone.minTemperature,
-                zone.maxTemperature
-            );
+targetTemperature = Mathf.Clamp(
+    zone.temperature,
+    zone.minTemperature,
+    zone.maxTemperature
+);
 
             Debug.Log(
                 "EnvironmentSystem: Temperature transition started. " +
