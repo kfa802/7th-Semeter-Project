@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
+  m_Name: Dilemma_Mountain_Moderate
+  m_EditorClassIdentifier: Assembly-CSharp::Dilemma
+  title: 'Moderate temperature '
+  description: 'Dilemma: High up on the mountain, the panda is searching for food.
+    The weather is mild, and the water is flowing. But there is only a little bamboo
+    on the mountain, and the panda has been eating it for several days. '
+  choiceA: Travel
+  choiceB: Stay
+  choiceC: 
+  triggerType: 7
+  requiredZoneName: Mountain
+  delaySeconds: 30
+  threshold: 5.9
+  temperatureThreshold: 0
+  temperatureHighThreshold: 25
+  temperatureDurationSeconds: 20
+  prerequisiteDilemmas: []
+  blockedByDilemmas:
+  - dilemma: {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}
+    requiredChoice: 2
+  - dilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}
+    requiredChoice: 2
+  prerequisiteDilemma: {fileID: 0}
+  prerequisiteChoice: 0
+  choiceAEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: c2d72d562eaf44b469bf76115dda1e2e, type: 2}
+  choiceCEvent: {fileID: 0}
+  choiceAEnding: {fileID: 0}
+  choiceBEnding: {fileID: 0}
+  choiceCEnding: {fileID: 0}

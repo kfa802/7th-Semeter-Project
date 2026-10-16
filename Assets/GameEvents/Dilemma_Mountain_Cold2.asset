@@ -12,21 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Cold2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: 2 cold
-  description: 
-  choiceA: Go
-  choiceB: stay
+  title: 'Low temperature '
+  description: 'Dilemma: High up on the mountain, the panda is searching for food.
+    The cold has frozen the water, and the bamboo is growing more slowly. There is
+    less and less to eat. '
+  choiceA: Travel
+  choiceB: Stay
   choiceC: 
   triggerType: 5
   requiredZoneName: Mountain
   delaySeconds: 0
   threshold: 10
   temperatureThreshold: 0
-  temperatureDurationSeconds: 5
+  temperatureHighThreshold: 0
+  temperatureDurationSeconds: 20
   prerequisiteDilemmas:
   - dilemma: {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}
     requiredChoice: 2
   - dilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}
+    requiredChoice: 2
+  - dilemma: {fileID: 11400000, guid: 9a8dad775e15bfe47bd49d0969eeffed, type: 2}
     requiredChoice: 2
   blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}

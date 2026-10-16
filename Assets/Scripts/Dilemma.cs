@@ -10,7 +10,8 @@ public enum DilemmaTriggerType
     PollutionAbove,
     BambooBelow,
     TemperatureTooLow,
-    TemperatureTooHigh
+    TemperatureTooHigh,
+    TemperatureModerate
 }
 
 public enum PrerequisiteChoice
@@ -68,6 +69,9 @@ public class Dilemma : ScriptableObject
     [Header("Temperature Trigger")]
     [Tooltip("Temperature threshold in degrees Celsius for this specific dilemma.")]
     public float temperatureThreshold = 30f;
+
+    [Tooltip("Upper temperature boundary for a moderate-temperature dilemma.")]
+public float temperatureHighThreshold = 25f;
 
     [Tooltip("How long the temperature condition must persist, in seconds.")]
     [Min(0f)]

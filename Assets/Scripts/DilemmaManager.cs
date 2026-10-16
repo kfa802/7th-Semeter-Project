@@ -281,6 +281,15 @@ public class DilemmaManager : MonoBehaviour
                 );
             }
 
+            case DilemmaTriggerType.TemperatureModerate:
+            {
+                bool isModerate =
+                    environment.Temperature >= dilemma.temperatureThreshold &&
+                    environment.Temperature <= dilemma.temperatureHighThreshold;
+
+                return CheckTemperatureDuration(dilemma, isModerate);
+            }
+
             default:
                 return false;
         }
