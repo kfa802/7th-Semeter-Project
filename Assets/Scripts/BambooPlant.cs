@@ -89,8 +89,13 @@ if (progress >= 1f)
     if (HasAnimatorController())
     {
         animator.speed = 1f;
-        animator.Play("Idle", 0, 0f);
+
+        // Go straight to Windy if it's cold, otherwise Idle.
+        bool windy = animator.GetBool("IsWindy");
+        animator.Play(windy ? "Windy" : "Idle", 0, 0f);
         animator.Update(0f);
+
+        Debug.Log("BambooPlant: Fully grown → " + (windy ? "Windy" : "Idle"), this);
     }
 }
     }
