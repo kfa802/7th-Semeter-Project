@@ -1,4 +1,3 @@
-
 using System.Collections;
 using UnityEngine;
 
@@ -7,6 +6,9 @@ public class PandaFeedingZone : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator pandaAnimator;
     [SerializeField] private PandaSystem pandaSystem;
+
+    [Tooltip("Feeding is blocked while the panda is travelling.")]
+    [SerializeField] private PandaPathMover pathMover;
 
     [Header("Eating Bamboo Visual")]
     [SerializeField] private GameObject eatingBambooPrefab;
@@ -30,8 +32,12 @@ public class PandaFeedingZone : MonoBehaviour
     [Header("Eating Animation")]
     [SerializeField] private string eatTrigger = "Eat";
 
+    [Tooltip("Name of the eating state in the Animator (or give the state the tag 'Eat').")]
+    [SerializeField] private string eatStateName = "Eat";
+
     [SerializeField] private float eatingCooldown = 3f;
 
+    private bool eatingAnimationPhase;
     private bool isEating;
     private float nextAllowedEatingTime;
     private GameObject spawnedBamboo;
@@ -39,8 +45,50 @@ public class PandaFeedingZone : MonoBehaviour
 
     public bool IsEating => isEating;
 
+    /// <summary>
+    /// True while the panda is visibly eating: from the moment it is fed
+    /// until the bamboo is gone AND the Animator has left the eat state.
+    /// (The feeding cooldown afterwards does not count.)
+    /// </summary>
+    public bool IsEatingAnimationPlaying
+    {
+        get
+        {
+            if (eatingAnimationPhase)
+                return true;
+
+            if (pandaAnimator == null)
+                return false;
+
+            if (IsEatState(pandaAnimator.GetCurrentAnimatorStateInfo(0)))
+                return true;
+
+            if (pandaAnimator.IsInTransition(0) &&
+                IsEatState(pandaAnimator.GetNextAnimatorStateInfo(0)))
+                return true;
+
+            return false;
+        }
+    }
+
+    private bool IsEatState(AnimatorStateInfo state)
+    {
+        return state.IsTag("Eat") ||
+               (!string.IsNullOrEmpty(eatStateName) &&
+                state.IsName(eatStateName));
+    }
+
     public void FeedPanda()
     {
+        // Don't start eating while the panda is walking to a zone
+        // or the camera is still returning.
+        if (pathMover != null &&
+            (pathMover.IsTravelling || pathMover.HasPendingTravel))
+        {
+            Debug.Log("Cannot feed: Panda is travelling.");
+            return;
+        }
+
         if (isEating || Time.time < nextAllowedEatingTime)
         {
             Debug.Log("Panda is still eating. Please wait.");
@@ -73,6 +121,7 @@ public class PandaFeedingZone : MonoBehaviour
         }
 
         isEating = true;
+        eatingAnimationPhase = true;
         nextAllowedEatingTime = Time.time + eatingCooldown;
 
         pandaSystem.FeedPanda();
@@ -92,6 +141,34 @@ public class PandaFeedingZone : MonoBehaviour
         BambooManager.Instance.PandaPooped();
 
         eatingCoroutine = StartCoroutine(EatingSequence());
+    }
+
+    /// <summary>
+    /// Stops eating immediately: clears the Eat trigger, stops the
+    /// bamboo sequence and removes the bamboo. Called when travel starts.
+    /// </summary>
+    public void CancelEating()
+    {
+        if (eatingCoroutine != null)
+        {
+            StopCoroutine(eatingCoroutine);
+            eatingCoroutine = null;
+        }
+
+        if (spawnedBamboo != null)
+        {
+            Destroy(spawnedBamboo);
+            spawnedBamboo = null;
+        }
+
+        if (pandaAnimator != null && !string.IsNullOrEmpty(eatTrigger))
+            pandaAnimator.ResetTrigger(eatTrigger);
+
+        if (isEating)
+            Debug.Log("PandaFeedingZone: Eating cancelled.");
+
+        isEating = false;
+        eatingAnimationPhase = false;
     }
 
     private IEnumerator EatingSequence()
@@ -202,6 +279,10 @@ public class PandaFeedingZone : MonoBehaviour
             spawnedBamboo = null;
         }
 
+        // The visible eating is over (the Animator check in
+        // IsEatingAnimationPlaying covers any remaining eat animation).
+        eatingAnimationPhase = false;
+
         // Keep the feeding lock active until the cooldown finishes.
         float remainingCooldown = nextAllowedEatingTime - Time.time;
 
@@ -218,18 +299,6 @@ public class PandaFeedingZone : MonoBehaviour
 
     private void OnDisable()
     {
-        if (spawnedBamboo != null)
-        {
-            Destroy(spawnedBamboo);
-            spawnedBamboo = null;
-        }
-
-        if (eatingCoroutine != null)
-        {
-            StopCoroutine(eatingCoroutine);
-            eatingCoroutine = null;
-        }
-
-        isEating = false;
+        CancelEating();
     }
 }

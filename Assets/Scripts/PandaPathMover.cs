@@ -15,17 +15,63 @@ public class PandaPathMover : MonoBehaviour
 
         [Tooltip("Camera positions used when travelling to this zone.")]
         public Transform[] cameraPoints;
+
+        [Tooltip("What the panda looks at when it sits down here. Empty = the default Sit Facing Target, or the main camera.")]
+        public Transform sitFacingTarget;
     }
 
     [Header("NavMesh Movement")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform destination;
 
+    [Header("Walking Height")]
+    [Tooltip("How much to raise (+) or lower (-) the panda while walking, added to the agent's Base Offset. Use a negative value if the panda floats.")]
+    [SerializeField] private float walkingBaseOffset = -0.1f;
+
+    [Tooltip("How fast (units per second) the panda blends to and from the walking height, so there is no sudden pop.")]
+    [SerializeField] private float baseOffsetBlendSpeed = 1f;
+
+    private float originalBaseOffset;
+
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private string walkingParameter = "IsWalking";
     [SerializeField] private string standUpTrigger = "StandUp";
     [SerializeField] private string sitDownTrigger = "SitDown";
+    [SerializeField] private string eatTrigger = "Eat";
+
+    [Header("Stand Up")]
+    [Tooltip("Name of the stand-up state in the Animator (or give that state the tag 'StandUp').")]
+    [SerializeField] private string standUpStateName = "Stand Up";
+
+    [Tooltip("How far through the stand-up clip (0-1) before walking begins.")]
+    [Range(0.5f, 1f)]
+    [SerializeField] private float standUpFinishedAt = 0.95f;
+
+    [Tooltip("Safety limit: start walking anyway if the stand-up hasn't finished after this many seconds.")]
+    [SerializeField] private float maxStandUpWait = 4f;
+
+    private bool standUpStarted;
+    private float movementStartTime;
+    private bool cinematicStarted;
+
+    private bool enteringCamera;
+    private float cameraEnterTimer;
+    private Vector3 cameraEnterStartPosition;
+    private Quaternion cameraEnterStartRotation;
+    private float cinematicFieldOfView;
+
+    [Header("Feeding")]
+    [Tooltip("Travel waits until the eating animation has finished.")]
+    [SerializeField] private PandaFeedingZone feedingZone;
+
+    [Tooltip("Safety limit: start travelling anyway after waiting this many seconds.")]
+    [SerializeField] private float maxWaitForEating = 10f;
+
+    private string pendingZoneName;
+    private float pendingTravelStartTime;
+
+    public bool HasPendingTravel => pendingZoneName != null;
 
     [Header("Cameras")]
     [SerializeField] private Camera mainCamera;
@@ -35,6 +81,10 @@ public class PandaPathMover : MonoBehaviour
     [SerializeField] private float cameraMoveSpeed = 3f;
     [SerializeField] private float cameraRotationSpeed = 4f;
     [SerializeField] private float cameraLookHeight = 1.5f;
+
+    [Header("Camera Enter")]
+    [Tooltip("Seconds to glide from the main camera view to the first camera point.")]
+    [SerializeField] private float cameraEnterDuration = 1.5f;
 
     [Header("Camera Return")]
     [SerializeField] private float cameraReturnDuration = 1.5f;
@@ -50,8 +100,27 @@ public class PandaPathMover : MonoBehaviour
     [Tooltip("Extra Y rotation if the model doesn't face forward. Try 0, 180, 90 or -90.")]
     [SerializeField] private float facingCorrection = 180f;
 
-    [Tooltip("How quickly the panda turns to face its path.")]
-    [SerializeField] private float turnSpeed = 12f;
+    [Tooltip("How quickly the panda turns to follow its path while walking.")]
+    [SerializeField] private float turnSpeed = 6f;
+
+    [Header("Smooth Turning")]
+    [Tooltip("Seconds the panda spends turning from its sitting angle toward the path before it starts walking forward.")]
+    [SerializeField] private float startTurnDuration = 0.7f;
+
+    [Tooltip("Seconds the panda spends turning to face the camera before it sits down.")]
+    [SerializeField] private float arrivalTurnDuration = 0.9f;
+
+    [Tooltip("What the panda looks at when it sits. Empty = the main camera.")]
+    [SerializeField] private Transform sitFacingTarget;
+
+    [Tooltip("Extra angle when sitting, so the panda sits slightly turned (e.g. 20 or -20). 0 = looks straight at the target.")]
+    [SerializeField] private float sitAngleOffset = 0f;
+
+    private enum TurnPhase { None, TowardPath, TowardCamera }
+    private TurnPhase turnPhase = TurnPhase.None;
+    private float turnTimer;
+    private Quaternion turnStartRotation;
+    private Transform currentSitFacingTarget;
 
     private Transform[] cameraPoints;
     private int currentCameraPoint;
@@ -75,6 +144,9 @@ public class PandaPathMover : MonoBehaviour
         {
             // This script handles the rotation itself (see CorrectPandaFacingDirection).
             agent.updateRotation = false;
+
+            // Remember the normal height so we can return to it when not walking.
+            originalBaseOffset = agent.baseOffset;
         }
 
         // Root motion makes the animation move the panda on its own,
@@ -96,7 +168,11 @@ public class PandaPathMover : MonoBehaviour
             mainCamera.gameObject.SetActive(true);
 
         if (cinematicCamera != null)
+        {
+            // Remember the cinematic camera's own zoom so we can blend to it.
+            cinematicFieldOfView = cinematicCamera.fieldOfView;
             cinematicCamera.gameObject.SetActive(false);
+        }
 
         if (mainCamera == null)
             Debug.LogWarning("PandaPathMover: Main Camera is not assigned.");
@@ -109,44 +185,119 @@ public class PandaPathMover : MonoBehaviour
 
     private void Update()
     {
+        // Start a queued journey once the panda has finished eating.
+        if (pendingZoneName != null)
+        {
+            bool stillEating =
+                feedingZone != null && feedingZone.IsEatingAnimationPlaying;
+
+            bool waitedTooLong =
+                Time.time - pendingTravelStartTime >= maxWaitForEating;
+
+            if (!stillEating || waitedTooLong)
+            {
+                if (stillEating)
+                {
+                    Debug.LogWarning(
+                        "PandaPathMover: Waited too long for eating to " +
+                        "finish. Starting travel anyway. Check that the " +
+                        "Eat state has an exit transition in the Animator."
+                    );
+                }
+
+                string zoneToTravel = pendingZoneName;
+                pendingZoneName = null;
+
+                Debug.Log(
+                    $"PandaPathMover: Eating finished. " +
+                    $"Starting queued travel to '{zoneToTravel}'."
+                );
+
+                BeginTravel(zoneToTravel);
+            }
+        }
+
         if (isMoving)
         {
-            // Keep walking enabled once the stand-up animation
-            // has finished and the panda is moving.
-            if (animator != null &&
-                agent != null &&
-                !agent.pathPending &&
-                agent.hasPath &&
-                agent.velocity.magnitude > 0.05f)
+            // Turn IsWalking on once the stand-up animation is done.
+            UpdateWalkingState();
+
+            if (IsWalkingActive())
             {
-                AnimatorStateInfo state =
-                    animator.GetCurrentAnimatorStateInfo(0);
+                if (!cinematicStarted)
+                    StartCinematicCamera();
 
-                // Do not interrupt the stand-up animation.
-                if (!state.IsName("Stand Up") &&
-                    !state.IsName("StandUp") &&
-                    !state.IsName("Stand_Up"))
+                if (turnPhase == TurnPhase.TowardPath)
                 {
-                    if (!animator.GetBool(walkingParameter))
-                    {
-                        animator.SetBool(walkingParameter, true);
+                    // Turn gently from the sitting angle toward the path,
+                    // stepping in place, before walking forward.
+                    HoldAgent();
 
-                        Debug.Log(
-                            "PandaPathMover: Walking enabled by movement fallback."
-                        );
+                    if (UpdateTurn(GetPathFacingRotation(), startTurnDuration))
+                    {
+                        turnPhase = TurnPhase.None;
+                        agent.isStopped = false;
+                        Debug.Log("PandaPathMover: Facing the path. Panda starts moving.");
                     }
                 }
+                else if (turnPhase == TurnPhase.TowardCamera)
+                {
+                    // Arrived: turn to face the camera, then sit down.
+                    HoldAgent();
+
+                    if (UpdateTurn(GetSitFacingRotation(), arrivalTurnDuration))
+                    {
+                        turnPhase = TurnPhase.None;
+                        FinishMovement();
+                    }
+                }
+                else
+                {
+                    // Walking along the path.
+                    if (agent.isStopped)
+                        agent.isStopped = false;
+
+                    CorrectPandaFacingDirection();
+                    CheckPandaArrival();
+                }
+
+                // First glide smoothly from the main view, then follow the camera points.
+                if (enteringCamera)
+                    EnterCinematicCamera();
+                else
+                    MoveCinematicCamera();
             }
-
-            // FIX: turn the panda to face the direction it is walking.
-            CorrectPandaFacingDirection();
-
-            CheckPandaArrival();
-            MoveCinematicCamera();
+            else
+            {
+                // Eating or standing up: hold the panda and camera still.
+                HoldAgent();
+            }
         }
 
         if (returningCamera)
             ReturnCameraToMain();
+
+        UpdateBaseOffset();
+    }
+
+    // Lowers (or raises) the panda while walking so its feet touch the
+    // ground, and blends back to the normal height when it stops.
+    private void UpdateBaseOffset()
+    {
+        if (agent == null)
+            return;
+
+        bool walking = isMoving && IsWalkingActive();
+
+        float targetOffset = walking
+            ? originalBaseOffset + walkingBaseOffset
+            : originalBaseOffset;
+
+        agent.baseOffset = Mathf.MoveTowards(
+            agent.baseOffset,
+            targetOffset,
+            Mathf.Max(baseOffsetBlendSpeed, 0.01f) * Time.deltaTime
+        );
     }
 
     public void StartMovement()
@@ -224,8 +375,16 @@ public class PandaPathMover : MonoBehaviour
         currentCameraPoint = 0;
         isMoving = true;
         returningCamera = false;
+        cinematicStarted = false;
+        standUpStarted = false;
+        movementStartTime = Time.time;
 
-        agent.isStopped = false;
+        // When walking begins, first turn smoothly toward the path.
+        BeginTurn(startTurnDuration > 0f ? TurnPhase.TowardPath : TurnPhase.None);
+
+        // Calculate the path now, but don't move until IsWalking is true.
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
 
         bool destinationAccepted =
             agent.SetDestination(destination.position);
@@ -248,6 +407,10 @@ public class PandaPathMover : MonoBehaviour
         // Begin the stand-up animation.
         if (animator != null)
         {
+            // Clear a pending Eat trigger from a recent feed.
+            if (!string.IsNullOrEmpty(eatTrigger))
+                animator.ResetTrigger(eatTrigger);
+
             animator.SetBool(walkingParameter, false);
             animator.ResetTrigger(standUpTrigger);
             animator.ResetTrigger(sitDownTrigger);
@@ -262,18 +425,148 @@ public class PandaPathMover : MonoBehaviour
             );
         }
 
-        mainCamera.gameObject.SetActive(false);
-        cinematicCamera.gameObject.SetActive(true);
-
-        cinematicCamera.transform.position =
-            cameraPoints[0].position;
-
-        cinematicCamera.transform.rotation =
-            cameraPoints[0].rotation;
-
+        // The cinematic camera starts later, when IsWalking becomes true.
         Debug.Log(
-            "PandaPathMover: Movement started successfully."
+            "PandaPathMover: Journey prepared. Waiting for the stand-up " +
+            "animation to finish before walking."
         );
+    }
+
+    private void StartCinematicCamera()
+    {
+        cinematicStarted = true;
+
+        // Start the cinematic camera exactly where the main camera is,
+        // so the switch itself is invisible.
+        cinematicCamera.transform.position = mainCamera.transform.position;
+        cinematicCamera.transform.rotation = mainCamera.transform.rotation;
+        cinematicCamera.fieldOfView = mainCamera.fieldOfView;
+
+        cameraEnterStartPosition = mainCamera.transform.position;
+        cameraEnterStartRotation = mainCamera.transform.rotation;
+        cameraEnterTimer = 0f;
+        enteringCamera = true;
+
+        cinematicCamera.gameObject.SetActive(true);
+        mainCamera.gameObject.SetActive(false);
+
+        Debug.Log("PandaPathMover: Cinematic camera gliding in from main view.");
+    }
+
+    // Glides from the main camera view to the first camera point,
+    // turning to look at the panda along the way.
+    private void EnterCinematicCamera()
+    {
+        Transform firstPoint = cameraPoints[0];
+
+        cameraEnterTimer +=
+            Time.deltaTime / Mathf.Max(cameraEnterDuration, 0.01f);
+
+        float t = Mathf.Clamp01(cameraEnterTimer);
+        float smoothT = t * t * (3f - 2f * t);
+
+        cinematicCamera.transform.position = Vector3.Lerp(
+            cameraEnterStartPosition,
+            firstPoint.position,
+            smoothT
+        );
+
+        // Aim at the panda, same as MoveCinematicCamera does.
+        Vector3 lookTarget = transform.position + Vector3.up * cameraLookHeight;
+        Vector3 direction = lookTarget - cinematicCamera.transform.position;
+
+        Quaternion endRotation = direction.sqrMagnitude > 0.001f
+            ? Quaternion.LookRotation(direction)
+            : firstPoint.rotation;
+
+        cinematicCamera.transform.rotation = Quaternion.Slerp(
+            cameraEnterStartRotation,
+            endRotation,
+            smoothT
+        );
+
+        cinematicCamera.fieldOfView = Mathf.Lerp(
+            mainCamera.fieldOfView,
+            cinematicFieldOfView,
+            smoothT
+        );
+
+        if (t >= 1f)
+        {
+            enteringCamera = false;
+            Debug.Log("PandaPathMover: Cinematic camera in position.");
+        }
+    }
+
+    private bool IsWalkingActive()
+    {
+        if (animator == null || string.IsNullOrEmpty(walkingParameter))
+            return true;
+
+        return animator.GetBool(walkingParameter);
+    }
+
+    private bool IsStandUpState(AnimatorStateInfo state)
+    {
+        return state.IsTag("StandUp") ||
+               (!string.IsNullOrEmpty(standUpStateName) &&
+                state.IsName(standUpStateName)) ||
+               state.IsName("Stand Up") ||
+               state.IsName("StandUp") ||
+               state.IsName("Stand_Up");
+    }
+
+    // Sets IsWalking to true once the stand-up animation has finished
+    // (and the panda is not eating). An animation event calling
+    // StartWalkingAnimation() does the same thing, if you have one.
+    private void UpdateWalkingState()
+    {
+        if (animator == null || animator.GetBool(walkingParameter))
+            return;
+
+        bool timedOut = Time.time - movementStartTime >= maxStandUpWait;
+
+        // Blending into the stand-up animation: keep waiting.
+        if (animator.IsInTransition(0) &&
+            IsStandUpState(animator.GetNextAnimatorStateInfo(0)))
+        {
+            standUpStarted = true;
+
+            if (!timedOut)
+                return;
+        }
+
+        AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (IsStandUpState(current))
+        {
+            standUpStarted = true;
+
+            // Still standing up.
+            if (current.normalizedTime < standUpFinishedAt && !timedOut)
+                return;
+        }
+        else if (!standUpStarted && !timedOut)
+        {
+            // The stand-up animation hasn't begun yet.
+            return;
+        }
+
+        // Never walk while the eat animation is still playing.
+        if (feedingZone != null &&
+            feedingZone.IsEatingAnimationPlaying &&
+            !timedOut)
+            return;
+
+        if (timedOut)
+        {
+            Debug.LogWarning(
+                "PandaPathMover: Stand-up didn't finish in time. Walking " +
+                "anyway. Check 'Stand Up State Name' matches your Animator."
+            );
+        }
+
+        StartWalkingAnimation();
     }
 
     public void StartWalkingAnimation()
@@ -284,6 +577,7 @@ public class PandaPathMover : MonoBehaviour
         animator.ResetTrigger(standUpTrigger);
         animator.ResetTrigger(sitDownTrigger);
         animator.SetBool(walkingParameter, true);
+        standUpStarted = true;
 
         Debug.Log(
             $"PandaPathMover: StartWalkingAnimation called. " +
@@ -331,10 +625,19 @@ public class PandaPathMover : MonoBehaviour
         if (agent.remainingDistance <= agent.stoppingDistance + 0.05f)
         {
             Debug.Log(
-                "PandaPathMover: Panda reached its destination."
+                "PandaPathMover: Panda reached its destination. " +
+                "Turning to face the camera before sitting."
             );
 
-            FinishMovement();
+            HoldAgent();
+
+            if (arrivalTurnDuration > 0f)
+                BeginTurn(TurnPhase.TowardCamera);
+            else
+            {
+                GetModel().rotation = GetSitFacingRotation();
+                FinishMovement();
+            }
         }
     }
 
@@ -428,6 +731,7 @@ public class PandaPathMover : MonoBehaviour
             return;
 
         returningCamera = true;
+        enteringCamera = false;
         cameraReturnTimer = 0f;
 
         cameraStartPosition = cinematicCamera.transform.position;
@@ -457,9 +761,18 @@ public class PandaPathMover : MonoBehaviour
             smoothT
         );
 
+        cinematicCamera.fieldOfView = Mathf.Lerp(
+            cinematicFieldOfView,
+            mainCamera.fieldOfView,
+            smoothT
+        );
+
         if (t >= 1f)
         {
             returningCamera = false;
+
+            // Restore the cinematic camera's own zoom for next time.
+            cinematicCamera.fieldOfView = cinematicFieldOfView;
 
             cinematicCamera.transform.position =
                 mainCamera.transform.position;
@@ -508,6 +821,26 @@ public class PandaPathMover : MonoBehaviour
             return;
         }
 
+        // If the panda is eating, wait. Update() starts the journey
+        // (walking and camera) as soon as the eating animation ends.
+        if (feedingZone != null && feedingZone.IsEatingAnimationPlaying)
+        {
+            pendingZoneName = zoneName;
+            pendingTravelStartTime = Time.time;
+
+            Debug.Log(
+                $"PandaPathMover: Panda is eating. Travel to " +
+                $"'{zoneName}' will start when eating finishes."
+            );
+            return;
+        }
+
+        pendingZoneName = null;
+        BeginTravel(zoneName);
+    }
+
+    private void BeginTravel(string zoneName)
+    {
         Debug.Log(
             $"PandaPathMover: Checking {zoneDestinations.Count} " +
             "configured zone destinations."
@@ -560,6 +893,7 @@ public class PandaPathMover : MonoBehaviour
 
             destination = zone.destination;
             cameraPoints = zone.cameraPoints;
+            currentSitFacingTarget = zone.sitFacingTarget;
 
             Debug.Log(
                 $"PandaPathMover: Destination position = " +
@@ -588,14 +922,94 @@ public class PandaPathMover : MonoBehaviour
         );
     }
 
-    // FIX: rotates the panda (or its model) to face the way it is walking.
+    // ---------- Smooth turning helpers ----------
+
+    private Transform GetModel()
+    {
+        // Rotate the model if assigned, otherwise the panda object itself.
+        return pandaModel != null ? pandaModel : transform;
+    }
+
+    private void HoldAgent()
+    {
+        if (agent != null && !agent.isStopped)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+    }
+
+    private void BeginTurn(TurnPhase phase)
+    {
+        turnPhase = phase;
+        turnTimer = 0f;
+        turnStartRotation = GetModel().rotation;
+    }
+
+    // Eases the model from where the turn started to the target.
+    // Returns true when the turn is complete.
+    private bool UpdateTurn(Quaternion targetRotation, float duration)
+    {
+        turnTimer += Time.deltaTime / Mathf.Max(duration, 0.01f);
+
+        float t = Mathf.Clamp01(turnTimer);
+        float smoothT = t * t * (3f - 2f * t);
+
+        GetModel().rotation = Quaternion.Slerp(
+            turnStartRotation,
+            targetRotation,
+            smoothT
+        );
+
+        return t >= 1f;
+    }
+
+    private Quaternion FacingRotation(Vector3 direction, float extraAngle)
+    {
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.0001f)
+            return GetModel().rotation;
+
+        return Quaternion.LookRotation(direction) *
+               Quaternion.Euler(0f, facingCorrection + extraAngle, 0f);
+    }
+
+    private Quaternion GetPathFacingRotation()
+    {
+        Vector3 target;
+
+        if (agent != null && !agent.pathPending && agent.hasPath)
+            target = agent.steeringTarget;
+        else if (destination != null)
+            target = destination.position;
+        else
+            return GetModel().rotation;
+
+        return FacingRotation(target - transform.position, 0f);
+    }
+
+    private Quaternion GetSitFacingRotation()
+    {
+        Transform target = currentSitFacingTarget != null
+            ? currentSitFacingTarget
+            : sitFacingTarget != null
+                ? sitFacingTarget
+                : mainCamera != null ? mainCamera.transform : null;
+
+        if (target == null)
+            return GetModel().rotation;
+
+        return FacingRotation(target.position - transform.position, sitAngleOffset);
+    }
+
+    // Rotates the panda (or its model) to face the way it is walking.
     private void CorrectPandaFacingDirection()
     {
         if (agent == null)
             return;
 
-        // Rotate the model if assigned, otherwise the panda object itself.
-        Transform model = pandaModel != null ? pandaModel : transform;
+        Transform model = GetModel();
 
         // Use real movement; fall back to the path direction when moving slowly.
         Vector3 movementDirection = agent.velocity;

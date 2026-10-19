@@ -26590,6 +26590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PandaFeedingZone
   pandaAnimator: {fileID: 1462404990}
   pandaSystem: {fileID: 725808051}
+  pathMover: {fileID: 725808057}
   eatingBambooPrefab: {fileID: 458428974522346397, guid: 9d3794f7eb94f264a80d4b99295b1c3c, type: 3}
   bambooSpawnPoint: {fileID: 1289144263}
   bambooGroundPoint: {fileID: 966834957}
@@ -26597,6 +26598,7 @@ MonoBehaviour:
   bambooMoveDuration: 0.6
   bambooVisibleDuration: 2.2
   eatTrigger: Eat
+  eatStateName: Eat
   eatingCooldown: 2.5
 --- !u!114 &725808057
 MonoBehaviour:
@@ -26612,15 +26614,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PandaPathMover
   agent: {fileID: 725808059}
   destination: {fileID: 1599928678}
+  walkingBaseOffset: -0.15
+  baseOffsetBlendSpeed: 1
   animator: {fileID: 1462404990}
   walkingParameter: IsWalking
   standUpTrigger: StandUp
   sitDownTrigger: SitDown
+  eatTrigger: Eat
+  standUpStateName: StandUp
+  standUpFinishedAt: 0.95
+  maxStandUpWait: 4
+  feedingZone: {fileID: 725808056}
+  maxWaitForEating: 10
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
   cameraMoveSpeed: 3
   cameraRotationSpeed: 4
   cameraLookHeight: 1.5
+  cameraEnterDuration: 1.5
   cameraReturnDuration: 1
   zoneDestinations:
   - zoneName: Midway
@@ -26629,17 +26640,24 @@ MonoBehaviour:
     - {fileID: 1851566701}
     - {fileID: 1572491159}
     - {fileID: 1411984243}
+    sitFacingTarget: {fileID: 0}
   - zoneName: Valley
     destination: {fileID: 1143116278}
     cameraPoints:
     - {fileID: 51422573}
+    sitFacingTarget: {fileID: 0}
   - zoneName: Mountain
     destination: {fileID: 440457960}
     cameraPoints:
     - {fileID: 1642788169}
+    sitFacingTarget: {fileID: 0}
   pandaModel: {fileID: 1462404988}
   facingCorrection: 0
   turnSpeed: 12
+  startTurnDuration: 0.7
+  arrivalTurnDuration: 0.9
+  sitFacingTarget: {fileID: 0}
+  sitAngleOffset: 0
 --- !u!195 &725808059
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -48365,7 +48383,7 @@ Transform:
   m_GameObject: {fileID: 1411984242}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.98, y: -3.39, z: -45.98}
+  m_LocalPosition: {x: 12.83, y: -3.39, z: -48.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -49947,7 +49965,7 @@ Transform:
   m_GameObject: {fileID: 1572491158}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.15, z: -25.6}
+  m_LocalPosition: {x: 0, y: 0.15, z: -27.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56980,7 +56998,7 @@ Transform:
   m_GameObject: {fileID: 1851566700}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.15, y: 7.5, z: -6.86}
+  m_LocalPosition: {x: -1.98, y: 7.5, z: -19.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
