@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class BambooPlant : MonoBehaviour
@@ -82,21 +81,25 @@ public class BambooPlant : MonoBehaviour
         if (HasAnimatorController())
             animator.speed = temperatureFactor;
 
-if (progress >= 1f)
-{
-    fullyGrown = true;
+        if (progress >= 1f)
+        {
+            fullyGrown = true;
 
-    if (HasAnimatorController())
-    {
-        animator.speed = 1f;
+            if (HasAnimatorController())
+            {
+                animator.speed = 1f;
 
-        // Go straight to Windy if it's cold, otherwise Idle.
-        bool windy = animator.GetBool("IsWindy");
-        animator.Play(windy ? "Windy" : "Idle", 0, 0f);
-        animator.Update(0f);
+                // Go straight to Windy if it's cold, otherwise Idle.
+                bool windy = animator.GetBool("IsWindy");
+                animator.Play(windy ? "Windy" : "Idle", 0, 0f);
+                animator.Update(0f);
 
-        Debug.Log("BambooPlant: Fully grown → " + (windy ? "Windy" : "Idle"), this);
-    }
-}
+                Debug.Log("BambooPlant: Fully grown → " + (windy ? "Windy" : "Idle"), this);
+            }
+
+            // Now that it's fully grown, add it to the bamboo count.
+            if (BambooManager.Instance != null)
+                BambooManager.Instance.RefreshZoneStatistics();
+        }
     }
 }

@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -192,12 +191,23 @@ private static readonly int ColorId =
 
     public int Capacity => growthSpots.Count;
 
+    // Only fully grown bamboo counts. Bamboo that is still growing,
+    // or being eaten (breaking), is left out of the numbers.
     public int ActiveCount
     {
         get
         {
             Prune();
-            return activeBamboo.Count;
+
+            int count = 0;
+
+            foreach (GameObject bamboo in activeBamboo)
+            {
+                if (CountsAsBamboo(bamboo))
+                    count++;
+            }
+
+            return count;
         }
     }
 
@@ -208,9 +218,46 @@ private static readonly int ColorId =
         get
         {
             Prune();
-            return Mathf.Max(0, activeBamboo.Count - rottingSet.Count);
+
+            int count = 0;
+
+            foreach (GameObject bamboo in activeBamboo)
+            {
+                if (CountsAsBamboo(bamboo) && !rottingSet.Contains(bamboo))
+                    count++;
+            }
+
+            return count;
         }
     }
+
+    // True while a newly planted bamboo hasn't finished growing.
+    public bool IsStillGrowing(GameObject bamboo)
+    {
+        if (bamboo == null)
+            return false;
+
+        BambooPlant plant = bamboo.GetComponent<BambooPlant>();
+
+        if (plant == null)
+            plant = bamboo.GetComponentInChildren<BambooPlant>();
+
+        return plant != null && !plant.IsFullyGrown;
+    }
+
+    // A bamboo counts when it exists, is fully grown and isn't being eaten.
+    private bool CountsAsBamboo(GameObject bamboo)
+    {
+        return bamboo != null &&
+               !bambooBeingEaten.Contains(bamboo) &&
+               !IsStillGrowing(bamboo);
+    }
+
+    /// <summary>
+    /// Fired whenever the bamboo count changes (fed, broken, grown, rotted).
+    /// UI scripts can subscribe to this to update instantly.
+    /// </summary>
+    public event System.Action BambooCountChanged;
 
     public float Percent
     {
@@ -708,8 +755,10 @@ public bool ConsumeBamboo()
         if (bamboo == null || !bamboo.activeInHierarchy)
             continue;
 
+        // Skip rotting, already-eaten and still-growing bamboo.
         if (rottingSet.Contains(bamboo) ||
-            bambooBeingEaten.Contains(bamboo))
+            bambooBeingEaten.Contains(bamboo) ||
+            IsStillGrowing(bamboo))
             continue;
 
         if (!spotOf.TryGetValue(
@@ -722,6 +771,9 @@ public bool ConsumeBamboo()
 
         // Reserve this bamboo so it cannot be eaten twice.
         bambooBeingEaten.Add(bamboo);
+
+        // Update the count right away, before the break animation plays.
+        RefreshZoneStatistics();
 
         StartCoroutine(BreakAndRemoveBamboo(bamboo));
 
@@ -781,6 +833,10 @@ public bool ConsumeBamboo()
     private void Prune()
     {
         bool changed = false;
+
+        // Forget bamboo that was destroyed while it was being eaten.
+        if (bambooBeingEaten.RemoveWhere(bamboo => bamboo == null) > 0)
+            changed = true;
 
         for (int i = activeBamboo.Count - 1; i >= 0; i--)
         {
@@ -892,7 +948,7 @@ public bool ConsumeBamboo()
 
         foreach (GameObject bamboo in activeBamboo)
         {
-            if (bamboo == null || rottingSet.Contains(bamboo))
+            if (!CountsAsBamboo(bamboo) || rottingSet.Contains(bamboo))
                 continue;
 
             if (spotOf.TryGetValue(bamboo, out BambooGrowthSpot spot) &&
@@ -917,7 +973,8 @@ public bool ConsumeBamboo()
 
         foreach (GameObject bamboo in activeBamboo)
         {
-            if (bamboo == null)
+            // Only fully grown bamboo that isn't being eaten counts.
+            if (!CountsAsBamboo(bamboo))
                 continue;
 
             if (spotOf.TryGetValue(bamboo, out BambooGrowthSpot spot) &&
@@ -956,6 +1013,9 @@ public bool ConsumeBamboo()
 
             settings.UpdateStatistics(current);
         }
+
+        // Tell any listening UI to update now.
+        BambooCountChanged?.Invoke();
     }
 
     // =========================================================
@@ -1019,7 +1079,10 @@ public bool ConsumeBamboo()
 
         foreach (GameObject bamboo in activeBamboo)
         {
-            if (bamboo == null || rottingSet.Contains(bamboo))
+            if (bamboo == null ||
+                rottingSet.Contains(bamboo) ||
+                bambooBeingEaten.Contains(bamboo) ||
+                IsStillGrowing(bamboo))
                 continue;
 
             if (!spotOf.TryGetValue(bamboo, out BambooGrowthSpot spot))
@@ -1042,7 +1105,9 @@ public bool ConsumeBamboo()
 
     public void StartRotting(GameObject bamboo)
     {
-        if (bamboo == null || rottingSet.Contains(bamboo))
+        if (bamboo == null ||
+            rottingSet.Contains(bamboo) ||
+            bambooBeingEaten.Contains(bamboo))
             return;
 
         if (!activeBamboo.Contains(bamboo))
@@ -1195,7 +1260,11 @@ public bool HasAvailableBambooInCurrentZone()
         if (bamboo == null || !bamboo.activeInHierarchy)
             continue;
 
-        if (rottingSet.Contains(bamboo))
+        // Skip rotting bamboo and bamboo already being eaten.
+        // Skip rotting, already-eaten and still-growing bamboo.
+        if (rottingSet.Contains(bamboo) ||
+            bambooBeingEaten.Contains(bamboo) ||
+            IsStillGrowing(bamboo))
             continue;
 
         if (!spotOf.TryGetValue(
@@ -1257,8 +1326,10 @@ public bool ConsumeBambooInZone(EcosystemZone zone)
         if (bamboo == null || !bamboo.activeInHierarchy)
             continue;
 
+        // Skip rotting, already-eaten and still-growing bamboo.
         if (rottingSet.Contains(bamboo) ||
-            bambooBeingEaten.Contains(bamboo))
+            bambooBeingEaten.Contains(bamboo) ||
+            IsStillGrowing(bamboo))
             continue;
 
         if (!spotOf.TryGetValue(
@@ -1270,6 +1341,9 @@ public bool ConsumeBambooInZone(EcosystemZone zone)
             continue;
 
         bambooBeingEaten.Add(bamboo);
+
+        // Update the count right away, before the break animation plays.
+        RefreshZoneStatistics();
 
         StartCoroutine(BreakAndRemoveBamboo(bamboo));
 
