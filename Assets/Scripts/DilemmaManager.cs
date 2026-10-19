@@ -245,13 +245,6 @@ public class DilemmaManager : MonoBehaviour
                 float bambooPercent =
                     BambooManager.Instance.GetPercentForZone(zone);
 
-                Debug.Log(
-                    "BambooBelow: " + zone.zoneName +
-                    " has " + bambooPercent.ToString("F1") +
-                    "% healthy bamboo. Threshold: " +
-                    dilemma.threshold + "%"
-                );
-
                 return bambooPercent < dilemma.threshold;
             }
 

@@ -13721,6 +13721,7 @@ GameObject:
   - component: {fileID: 439519102}
   - component: {fileID: 439519101}
   - component: {fileID: 439519103}
+  - component: {fileID: 439519104}
   m_Layer: 0
   m_Name: MountainZone
   m_TagString: Untagged
@@ -13811,6 +13812,26 @@ MonoBehaviour:
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
   pollution: 0
+--- !u!114 &439519104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439519098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f4d7b0bca01fa42918ed778df529cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RainZoneController
+  canRain: 0
+  minimumRainInterval: 1
+  maximumRainInterval: 2
+  rainDuration: 20
+  rainParticles: {fileID: 1157284846}
+  extraWaterPerSecond: 5
+  showDebugLogs: 1
+  showTimerLogs: 1
 --- !u!1 &440457959
 GameObject:
   m_ObjectHideFlags: 0
@@ -41040,7 +41061,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!199 &1157284845
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -46505,6 +46526,7 @@ GameObject:
   - component: {fileID: 1231037627}
   - component: {fileID: 1231037626}
   - component: {fileID: 1231037625}
+  - component: {fileID: 1231037628}
   m_Layer: 0
   m_Name: ValleyZone
   m_TagString: Untagged
@@ -46595,6 +46617,26 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1231037623}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1231037628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231037623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f4d7b0bca01fa42918ed778df529cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RainZoneController
+  canRain: 1
+  minimumRainInterval: 5
+  maximumRainInterval: 15
+  rainDuration: 20
+  rainParticles: {fileID: 1157284846}
+  extraWaterPerSecond: 5
+  showDebugLogs: 1
+  showTimerLogs: 1
 --- !u!1 &1235136937
 GameObject:
   m_ObjectHideFlags: 0
@@ -64471,6 +64513,7 @@ GameObject:
   - component: {fileID: 2079388590}
   - component: {fileID: 2079388589}
   - component: {fileID: 2079388591}
+  - component: {fileID: 2079388592}
   m_Layer: 0
   m_Name: MidwayZone
   m_TagString: Untagged
@@ -64561,6 +64604,26 @@ MonoBehaviour:
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
   pollution: 0
+--- !u!114 &2079388592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079388586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f4d7b0bca01fa42918ed778df529cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RainZoneController
+  canRain: 1
+  minimumRainInterval: 5
+  maximumRainInterval: 15
+  rainDuration: 20
+  rainParticles: {fileID: 1157284846}
+  extraWaterPerSecond: 5
+  showDebugLogs: 1
+  showTimerLogs: 1
 --- !u!1 &2080282439
 GameObject:
   m_ObjectHideFlags: 0
