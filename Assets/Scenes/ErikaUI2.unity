@@ -12914,6 +12914,14 @@ MonoBehaviour:
   midwayZone: {fileID: 2079388591}
   secondsBetweenMeals: 7
   bambooPerMeal: 1
+  pandaAnimator: {fileID: 0}
+  eatTrigger: Eat
+  eatingBambooPrefab: {fileID: 0}
+  bambooSpawnPoint: {fileID: 0}
+  bambooGroundPoint: {fileID: 0}
+  groundSpawnOffset: {x: 0, y: 0.05, z: 0.8}
+  bambooMoveDuration: 0.6
+  bambooVisibleDuration: 2
   mealsBeforePooping: 2
 --- !u!1001 &471393582
 PrefabInstance:
@@ -24704,6 +24712,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PandaFeedingZone
   pandaAnimator: {fileID: 447650352}
   pandaSystem: {fileID: 725808051}
+  eatingBambooPrefab: {fileID: 0}
+  bambooSpawnPoint: {fileID: 0}
+  bambooGroundPoint: {fileID: 0}
+  groundSpawnOffset: {x: 0, y: 0.05, z: 0.8}
+  bambooMoveDuration: 0.6
+  bambooVisibleDuration: 2
+  eatTrigger: Eat
+  eatingCooldown: 3
 --- !u!114 &725808057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24742,6 +24758,7 @@ MonoBehaviour:
     - {fileID: 675466736}
   pandaModel: {fileID: 0}
   facingCorrection: 180
+  turnSpeed: 12
 --- !u!195 &725808059
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -59564,7 +59581,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10}
+  m_AnchoredPosition: {x: 1, y: -10}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2120751868
