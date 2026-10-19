@@ -21,7 +21,7 @@ MonoBehaviour:
   choiceC: 
   triggerType: 7
   requiredZoneName: Mountain
-  delaySeconds: 10
+  delaySeconds: 30
   threshold: 5.9
   temperatureThreshold: 0
   temperatureHighThreshold: 25
