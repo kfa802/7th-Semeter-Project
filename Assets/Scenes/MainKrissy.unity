@@ -26638,7 +26638,8 @@ MonoBehaviour:
     cameraPoints:
     - {fileID: 1642788169}
   pandaModel: {fileID: 1462404988}
-  facingCorrection: 174.71
+  facingCorrection: 0
+  turnSpeed: 12
 --- !u!195 &725808059
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -48875,7 +48876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.051
+      value: -1.148
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalPosition.z

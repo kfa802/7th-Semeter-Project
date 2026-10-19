@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,6 +43,16 @@ public class PandaPathMover : MonoBehaviour
     [SerializeField] private List<ZoneDestination> zoneDestinations =
         new List<ZoneDestination>();
 
+    [Header("Facing Direction")]
+    [Tooltip("The panda's visual model. If empty, the panda object itself is rotated.")]
+    [SerializeField] private Transform pandaModel;
+
+    [Tooltip("Extra Y rotation if the model doesn't face forward. Try 0, 180, 90 or -90.")]
+    [SerializeField] private float facingCorrection = 180f;
+
+    [Tooltip("How quickly the panda turns to face its path.")]
+    [SerializeField] private float turnSpeed = 12f;
+
     private Transform[] cameraPoints;
     private int currentCameraPoint;
 
@@ -57,10 +66,6 @@ public class PandaPathMover : MonoBehaviour
     public bool IsMoving => isMoving;
     public bool IsTravelling => isMoving || returningCamera;
 
-    [Header("Facing Direction")]
-    [SerializeField] private Transform pandaModel;
-    [SerializeField] private float facingCorrection = 180f;
-
     private void Start()
     {
         if (agent == null)
@@ -68,7 +73,16 @@ public class PandaPathMover : MonoBehaviour
 
         if (agent != null)
         {
+            // This script handles the rotation itself (see CorrectPandaFacingDirection).
             agent.updateRotation = false;
+        }
+
+        // Root motion makes the animation move the panda on its own,
+        // which fights the NavMeshAgent and causes sideways drifting.
+        if (animator != null && animator.applyRootMotion)
+        {
+            animator.applyRootMotion = false;
+            Debug.Log("PandaPathMover: Disabled Apply Root Motion on the Animator.");
         }
 
         Debug.Log(
@@ -93,45 +107,47 @@ public class PandaPathMover : MonoBehaviour
             );
     }
 
-private void Update()
-{
-    if (isMoving)
+    private void Update()
     {
-        // Keep walking enabled once the stand-up animation
-        // has finished and the panda is moving.
-        if (animator != null &&
-            agent != null &&
-            !agent.pathPending &&
-            agent.hasPath &&
-            agent.velocity.magnitude > 0.05f)
+        if (isMoving)
         {
-            AnimatorStateInfo state =
-                animator.GetCurrentAnimatorStateInfo(0);
-
-            // Do not interrupt the stand-up animation.
-            if (!state.IsName("Stand Up") &&
-                !state.IsName("StandUp") &&
-                !state.IsName("Stand_Up"))
+            // Keep walking enabled once the stand-up animation
+            // has finished and the panda is moving.
+            if (animator != null &&
+                agent != null &&
+                !agent.pathPending &&
+                agent.hasPath &&
+                agent.velocity.magnitude > 0.05f)
             {
-                if (!animator.GetBool(walkingParameter))
-                {
-                    animator.SetBool(walkingParameter, true);
+                AnimatorStateInfo state =
+                    animator.GetCurrentAnimatorStateInfo(0);
 
-                    Debug.Log(
-                        "PandaPathMover: Walking enabled by movement fallback."
-                    );
+                // Do not interrupt the stand-up animation.
+                if (!state.IsName("Stand Up") &&
+                    !state.IsName("StandUp") &&
+                    !state.IsName("Stand_Up"))
+                {
+                    if (!animator.GetBool(walkingParameter))
+                    {
+                        animator.SetBool(walkingParameter, true);
+
+                        Debug.Log(
+                            "PandaPathMover: Walking enabled by movement fallback."
+                        );
+                    }
                 }
             }
+
+            // FIX: turn the panda to face the direction it is walking.
+            CorrectPandaFacingDirection();
+
+            CheckPandaArrival();
+            MoveCinematicCamera();
         }
 
-        CheckPandaArrival();
-        MoveCinematicCamera();
+        if (returningCamera)
+            ReturnCameraToMain();
     }
-
-    if (returningCamera)
-        ReturnCameraToMain();
-}
-
 
     public void StartMovement()
     {
@@ -260,22 +276,20 @@ private void Update()
         );
     }
 
+    public void StartWalkingAnimation()
+    {
+        if (!isMoving || animator == null)
+            return;
 
-public void StartWalkingAnimation()
-{
-    if (!isMoving || animator == null)
-        return;
+        animator.ResetTrigger(standUpTrigger);
+        animator.ResetTrigger(sitDownTrigger);
+        animator.SetBool(walkingParameter, true);
 
-    animator.ResetTrigger(standUpTrigger);
-    animator.ResetTrigger(sitDownTrigger);
-    animator.SetBool(walkingParameter, true);
-
-    Debug.Log(
-        $"PandaPathMover: StartWalkingAnimation called. " +
-        $"IsWalking = {animator.GetBool(walkingParameter)}"
-    );
-}
-
+        Debug.Log(
+            $"PandaPathMover: StartWalkingAnimation called. " +
+            $"IsWalking = {animator.GetBool(walkingParameter)}"
+        );
+    }
 
     private void CheckPandaArrival()
     {
@@ -574,27 +588,34 @@ public void StartWalkingAnimation()
         );
     }
 
+    // FIX: rotates the panda (or its model) to face the way it is walking.
     private void CorrectPandaFacingDirection()
     {
-        if (agent == null || pandaModel == null)
+        if (agent == null)
             return;
 
-        Vector3 movementDirection = agent.desiredVelocity;
+        // Rotate the model if assigned, otherwise the panda object itself.
+        Transform model = pandaModel != null ? pandaModel : transform;
+
+        // Use real movement; fall back to the path direction when moving slowly.
+        Vector3 movementDirection = agent.velocity;
+
+        if (movementDirection.sqrMagnitude < 0.0025f && agent.hasPath)
+            movementDirection = agent.steeringTarget - transform.position;
 
         movementDirection.y = 0f;
 
-        if (movementDirection.sqrMagnitude < 0.01f)
+        if (movementDirection.sqrMagnitude < 0.0001f)
             return;
 
         Quaternion targetRotation =
-            Quaternion.LookRotation(movementDirection);
+            Quaternion.LookRotation(movementDirection) *
+            Quaternion.Euler(0f, facingCorrection, 0f);
 
-        targetRotation *= Quaternion.Euler(0f, facingCorrection, 0f);
-
-        pandaModel.rotation = Quaternion.Slerp(
-            pandaModel.rotation,
+        model.rotation = Quaternion.Slerp(
+            model.rotation,
             targetRotation,
-            10f * Time.deltaTime
+            turnSpeed * Time.deltaTime
         );
     }
 }
