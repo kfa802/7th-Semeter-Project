@@ -26633,6 +26633,7 @@ Transform:
   - {fileID: 1851566701}
   - {fileID: 1572491159}
   - {fileID: 1411984243}
+  - {fileID: 1920373498}
   m_Father: {fileID: 217616557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &719967091
@@ -26883,7 +26884,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PandaPathMover
   agent: {fileID: 725808059}
   destination: {fileID: 1599928678}
-  walkingBaseOffset: -0.15
+  walkingBaseOffset: 0
   baseOffsetBlendSpeed: 1
   animator: {fileID: 1462404990}
   walkingParameter: IsWalking
@@ -26892,31 +26893,99 @@ MonoBehaviour:
   eatTrigger: Eat
   standUpStateName: StandUp
   standUpFinishedAt: 0.95
-  maxStandUpWait: 4
+  maxStandUpWait: 1
   feedingZone: {fileID: 725808056}
   maxWaitForEating: 10
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
-  cameraMoveSpeed: 3
-  cameraRotationSpeed: 4
+  curvedCameraPath: 1
   cameraLookHeight: 1.5
-  cameraEnterDuration: 1.5
+  lookTargetSmoothTime: 0.2
+  defaultShotDuration: 2
   cameraReturnDuration: 1
+  cameraReturnEase:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   zoneDestinations:
   - zoneName: Midway
     destination: {fileID: 1599928678}
-    cameraPoints:
-    - {fileID: 1851566701}
-    - {fileID: 1572491159}
-    - {fileID: 1411984243}
+    cameraShots:
+    - point: {fileID: 1851566701}
+      moveDuration: 5
+      ease:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+      holdDuration: 2
+      lookAtPanda: 1
+      fieldOfView: 0
+    - point: {fileID: 1572491159}
+      moveDuration: 5
+      ease:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+      holdDuration: 2
+      lookAtPanda: 1
+      fieldOfView: 0
+    - point: {fileID: 1411984243}
+      moveDuration: 4
+      ease:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 4
+      holdDuration: 5
+      lookAtPanda: 1
+      fieldOfView: 0
+    - point: {fileID: 1920373498}
+      moveDuration: 2
+      ease:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 4
+      holdDuration: 1
+      lookAtPanda: 1
+      fieldOfView: 0
+    cameraPoints: []
     sitFacingTarget: {fileID: 0}
   - zoneName: Valley
     destination: {fileID: 1143116278}
+    cameraShots: []
     cameraPoints:
     - {fileID: 51422573}
     sitFacingTarget: {fileID: 0}
   - zoneName: Mountain
     destination: {fileID: 440457960}
+    cameraShots: []
     cameraPoints:
     - {fileID: 1642788169}
     sitFacingTarget: {fileID: 0}
@@ -49148,7 +49217,7 @@ Transform:
   m_GameObject: {fileID: 1411984242}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.83, y: -3.39, z: -48.68}
+  m_LocalPosition: {x: 12.83, y: -2.39, z: -50.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50769,7 +50838,7 @@ Transform:
   m_GameObject: {fileID: 1572491158}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.15, z: -27.06}
+  m_LocalPosition: {x: 9, y: 2.15, z: -27.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -57831,7 +57900,7 @@ Transform:
   m_GameObject: {fileID: 1851566700}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.98, y: 7.5, z: -19.94}
+  m_LocalPosition: {x: -1.98, y: 7.5, z: -22.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58263,6 +58332,37 @@ MonoBehaviour:
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 2079388591}
+--- !u!1 &1920373497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1920373498}
+  m_Layer: 0
+  m_Name: CameraPoint4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1920373498
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920373497}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.83, y: -4.3900003, z: -50.68}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 716968255}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1920531128
 PrefabInstance:
   m_ObjectHideFlags: 0

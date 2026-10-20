@@ -6,6 +6,28 @@ using UnityEngine.AI;
 public class PandaPathMover : MonoBehaviour
 {
     [Serializable]
+    public class CameraShot
+    {
+        [Tooltip("Where the camera goes for this shot.")]
+        public Transform point;
+
+        [Tooltip("Seconds to move from the previous shot (or the main camera, for the first shot) to this one.")]
+        public float moveDuration = 2f;
+
+        [Tooltip("How the move speeds up and slows down. Flat at the start = eases in, flat at the end = eases out, straight line = constant speed.")]
+        public AnimationCurve ease = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+        [Tooltip("Seconds the camera stays at this point before moving on.")]
+        public float holdDuration = 0f;
+
+        [Tooltip("On: the camera keeps looking at the panda. Off: the camera uses this point's own rotation.")]
+        public bool lookAtPanda = true;
+
+        [Tooltip("Field of view at this shot. 0 = the cinematic camera's default.")]
+        public float fieldOfView = 0f;
+    }
+
+    [Serializable]
     public class ZoneDestination
     {
         public string zoneName;
@@ -13,7 +35,10 @@ public class PandaPathMover : MonoBehaviour
         [Tooltip("The panda's destination in this zone.")]
         public Transform destination;
 
-        [Tooltip("Camera positions used when travelling to this zone.")]
+        [Tooltip("Camera shots for the journey to this zone, in order.")]
+        public List<CameraShot> cameraShots = new List<CameraShot>();
+
+        [Tooltip("Old setup: only used if Camera Shots is empty.")]
         public Transform[] cameraPoints;
 
         [Tooltip("What the panda looks at when it sits down here. Empty = the default Sit Facing Target, or the main camera.")]
@@ -54,11 +79,6 @@ public class PandaPathMover : MonoBehaviour
     private bool standUpStarted;
     private float movementStartTime;
     private bool cinematicStarted;
-
-    private bool enteringCamera;
-    private float cameraEnterTimer;
-    private Vector3 cameraEnterStartPosition;
-    private Quaternion cameraEnterStartRotation;
     private float cinematicFieldOfView;
 
     [Header("Feeding")]
@@ -78,16 +98,49 @@ public class PandaPathMover : MonoBehaviour
     [SerializeField] private Camera cinematicCamera;
 
     [Header("Camera Movement")]
-    [SerializeField] private float cameraMoveSpeed = 3f;
-    [SerializeField] private float cameraRotationSpeed = 4f;
+    [Tooltip("On: the camera curves smoothly through the points. Off: straight lines between points.")]
+    [SerializeField] private bool curvedCameraPath = true;
+
+    [Tooltip("Height above the panda that the camera looks at.")]
     [SerializeField] private float cameraLookHeight = 1.5f;
 
-    [Header("Camera Enter")]
-    [Tooltip("Seconds to glide from the main camera view to the first camera point.")]
-    [SerializeField] private float cameraEnterDuration = 1.5f;
+    [Tooltip("How softly the camera follows the panda with its gaze. Higher = lazier, removes jitter.")]
+    [SerializeField] private float lookTargetSmoothTime = 0.2f;
+
+    [Tooltip("Move duration used for zones still using the old Camera Points list.")]
+    [SerializeField] private float defaultShotDuration = 2f;
 
     [Header("Camera Return")]
+    [Tooltip("Seconds to glide back to the main camera after the panda arrives.")]
     [SerializeField] private float cameraReturnDuration = 1.5f;
+
+    [Tooltip("How the return speeds up and slows down.")]
+    [SerializeField] private AnimationCurve cameraReturnEase =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    // Shot sequence state.
+    private List<CameraShot> activeShots;
+    private int currentShot;
+    private float shotTimer;
+    private bool holdingShot;
+    private float holdTimer;
+    private bool shotSequenceDone;
+
+    private Vector3 shotStartPosition;
+    private Quaternion shotStartRotation;
+    private float shotStartFov;
+
+    private Vector3 smoothedLookTarget;
+    private Vector3 lookTargetVelocity;
+
+    // Return state.
+    private float cameraReturnTimer;
+    private Vector3 returnStartPosition;
+    private Quaternion returnStartRotation;
+    private float returnStartFov;
+
+    private Vector3 PandaLookPoint =>
+        transform.position + Vector3.up * cameraLookHeight;
 
     [Header("Zone Destinations")]
     [SerializeField] private List<ZoneDestination> zoneDestinations =
@@ -122,15 +175,8 @@ public class PandaPathMover : MonoBehaviour
     private Quaternion turnStartRotation;
     private Transform currentSitFacingTarget;
 
-    private Transform[] cameraPoints;
-    private int currentCameraPoint;
-
     private bool isMoving;
     private bool returningCamera;
-
-    private float cameraReturnTimer;
-    private Vector3 cameraStartPosition;
-    private Quaternion cameraStartRotation;
 
     public bool IsMoving => isMoving;
     public bool IsTravelling => isMoving || returningCamera;
@@ -169,7 +215,7 @@ public class PandaPathMover : MonoBehaviour
 
         if (cinematicCamera != null)
         {
-            // Remember the cinematic camera's own zoom so we can blend to it.
+            // Remember the cinematic camera's own zoom as the default.
             cinematicFieldOfView = cinematicCamera.fieldOfView;
             cinematicCamera.gameObject.SetActive(false);
         }
@@ -260,24 +306,26 @@ public class PandaPathMover : MonoBehaviour
                     CorrectPandaFacingDirection();
                     CheckPandaArrival();
                 }
-
-                // First glide smoothly from the main view, then follow the camera points.
-                if (enteringCamera)
-                    EnterCinematicCamera();
-                else
-                    MoveCinematicCamera();
             }
             else
             {
-                // Eating or standing up: hold the panda and camera still.
+                // Eating or standing up: hold the panda still.
                 HoldAgent();
             }
         }
 
+        UpdateBaseOffset();
+    }
+
+    // The camera runs in LateUpdate, after the NavMeshAgent has moved
+    // the panda this frame, so it never aims at last frame's position.
+    private void LateUpdate()
+    {
+        if (isMoving && cinematicStarted)
+            UpdateCinematicCamera();
+
         if (returningCamera)
             ReturnCameraToMain();
-
-        UpdateBaseOffset();
     }
 
     // Lowers (or raises) the panda while walking so its feet touch the
@@ -340,18 +388,10 @@ public class PandaPathMover : MonoBehaviour
             return;
         }
 
-        if (cameraPoints == null || cameraPoints.Length == 0)
+        if (activeShots == null || activeShots.Count == 0)
         {
             Debug.LogError(
-                "PandaPathMover: No camera points assigned for this zone."
-            );
-            return;
-        }
-
-        if (cameraPoints[0] == null)
-        {
-            Debug.LogError(
-                "PandaPathMover: The first camera point is missing."
+                "PandaPathMover: No camera shots assigned for this zone."
             );
             return;
         }
@@ -372,7 +412,6 @@ public class PandaPathMover : MonoBehaviour
             $"Stopping distance={agent.stoppingDistance}"
         );
 
-        currentCameraPoint = 0;
         isMoving = true;
         returningCamera = false;
         cinematicStarted = false;
@@ -432,71 +471,279 @@ public class PandaPathMover : MonoBehaviour
         );
     }
 
+    // =========================================================
+    // CINEMATIC CAMERA: SHOT SEQUENCE
+    // =========================================================
+
     private void StartCinematicCamera()
     {
         cinematicStarted = true;
 
+        Transform main = mainCamera.transform;
+
         // Start the cinematic camera exactly where the main camera is,
         // so the switch itself is invisible.
-        cinematicCamera.transform.position = mainCamera.transform.position;
-        cinematicCamera.transform.rotation = mainCamera.transform.rotation;
+        cinematicCamera.transform.position = main.position;
+        cinematicCamera.transform.rotation = main.rotation;
         cinematicCamera.fieldOfView = mainCamera.fieldOfView;
 
-        cameraEnterStartPosition = mainCamera.transform.position;
-        cameraEnterStartRotation = mainCamera.transform.rotation;
-        cameraEnterTimer = 0f;
-        enteringCamera = true;
+        shotStartPosition = main.position;
+        shotStartRotation = main.rotation;
+        shotStartFov = mainCamera.fieldOfView;
+
+        currentShot = 0;
+        shotTimer = 0f;
+        holdingShot = false;
+        holdTimer = 0f;
+        shotSequenceDone = false;
+
+        smoothedLookTarget = PandaLookPoint;
+        lookTargetVelocity = Vector3.zero;
 
         cinematicCamera.gameObject.SetActive(true);
         mainCamera.gameObject.SetActive(false);
 
-        Debug.Log("PandaPathMover: Cinematic camera gliding in from main view.");
+        Debug.Log("PandaPathMover: Cinematic camera started.");
     }
 
-    // Glides from the main camera view to the first camera point,
-    // turning to look at the panda along the way.
-    private void EnterCinematicCamera()
+    private void UpdateCinematicCamera()
     {
-        Transform firstPoint = cameraPoints[0];
+        if (cinematicCamera == null ||
+            activeShots == null ||
+            activeShots.Count == 0)
+            return;
 
-        cameraEnterTimer +=
-            Time.deltaTime / Mathf.Max(cameraEnterDuration, 0.01f);
+        UpdateLookTarget();
 
-        float t = Mathf.Clamp01(cameraEnterTimer);
-        float smoothT = t * t * (3f - 2f * t);
+        Transform cam = cinematicCamera.transform;
 
-        cinematicCamera.transform.position = Vector3.Lerp(
-            cameraEnterStartPosition,
-            firstPoint.position,
-            smoothT
-        );
+        // All shots done: stay on the last one until the panda arrives.
+        if (shotSequenceDone)
+        {
+            CameraShot last = activeShots[activeShots.Count - 1];
 
-        // Aim at the panda, same as MoveCinematicCamera does.
-        Vector3 lookTarget = transform.position + Vector3.up * cameraLookHeight;
-        Vector3 direction = lookTarget - cinematicCamera.transform.position;
+            cam.position = last.point.position;
+            cam.rotation = GetShotRotation(last, cam.position);
+            cinematicCamera.fieldOfView = GetShotFov(last);
+            return;
+        }
 
-        Quaternion endRotation = direction.sqrMagnitude > 0.001f
-            ? Quaternion.LookRotation(direction)
-            : firstPoint.rotation;
+        CameraShot shot = activeShots[currentShot];
 
-        cinematicCamera.transform.rotation = Quaternion.Slerp(
-            cameraEnterStartRotation,
-            endRotation,
-            smoothT
-        );
+        // Holding at a point.
+        if (holdingShot)
+        {
+            holdTimer += Time.deltaTime;
 
-        cinematicCamera.fieldOfView = Mathf.Lerp(
-            mainCamera.fieldOfView,
-            cinematicFieldOfView,
-            smoothT
-        );
+            cam.position = shot.point.position;
+            cam.rotation = GetShotRotation(shot, cam.position);
+            cinematicCamera.fieldOfView = GetShotFov(shot);
+
+            if (holdTimer >= shot.holdDuration)
+            {
+                holdingShot = false;
+                AdvanceShot();
+            }
+
+            return;
+        }
+
+        // Moving toward this shot.
+        shotTimer += Time.deltaTime;
+
+        float t = Mathf.Clamp01(shotTimer / GetShotDuration(shot));
+        float eased = Ease(shot.ease, t);
+
+        // Path index 0 is where the camera started,
+        // path index i is shot i-1.
+        Vector3 p1 = GetPathPoint(currentShot);
+        Vector3 p2 = GetPathPoint(currentShot + 1);
+
+        if (curvedCameraPath)
+        {
+            Vector3 p0 = GetPathPoint(currentShot - 1);
+            Vector3 p3 = GetPathPoint(currentShot + 2);
+            cam.position = CatmullRom(p0, p1, p2, p3, eased);
+        }
+        else
+        {
+            cam.position = Vector3.Lerp(p1, p2, eased);
+        }
+
+        Quaternion fromRotation = currentShot == 0
+            ? shotStartRotation
+            : GetShotRotation(activeShots[currentShot - 1], cam.position);
+
+        Quaternion toRotation = GetShotRotation(shot, cam.position);
+
+        cam.rotation = Quaternion.Slerp(fromRotation, toRotation, eased);
+
+        float fromFov = currentShot == 0
+            ? shotStartFov
+            : GetShotFov(activeShots[currentShot - 1]);
+
+        cinematicCamera.fieldOfView =
+            Mathf.Lerp(fromFov, GetShotFov(shot), eased);
 
         if (t >= 1f)
         {
-            enteringCamera = false;
-            Debug.Log("PandaPathMover: Cinematic camera in position.");
+            if (shot.holdDuration > 0f)
+            {
+                holdingShot = true;
+                holdTimer = 0f;
+            }
+            else
+            {
+                AdvanceShot();
+            }
         }
     }
+
+    private void AdvanceShot()
+    {
+        Debug.Log($"PandaPathMover: Camera reached shot {currentShot}.");
+
+        currentShot++;
+        shotTimer = 0f;
+
+        if (currentShot >= activeShots.Count)
+        {
+            currentShot = activeShots.Count - 1;
+            shotSequenceDone = true;
+        }
+    }
+
+    private Vector3 GetPathPoint(int index)
+    {
+        index = Mathf.Clamp(index, 0, activeShots.Count);
+
+        return index == 0
+            ? shotStartPosition
+            : activeShots[index - 1].point.position;
+    }
+
+    private Quaternion GetShotRotation(CameraShot shot, Vector3 cameraPosition)
+    {
+        if (!shot.lookAtPanda)
+            return shot.point.rotation;
+
+        Vector3 direction = smoothedLookTarget - cameraPosition;
+
+        return direction.sqrMagnitude > 0.001f
+            ? Quaternion.LookRotation(direction)
+            : shot.point.rotation;
+    }
+
+    private float GetShotFov(CameraShot shot)
+    {
+        return shot.fieldOfView > 0f ? shot.fieldOfView : cinematicFieldOfView;
+    }
+
+    private float GetShotDuration(CameraShot shot)
+    {
+        float duration = shot.moveDuration > 0f
+            ? shot.moveDuration
+            : defaultShotDuration;
+
+        return Mathf.Max(duration, 0.01f);
+    }
+
+    // Follows the panda's look point with a little lag, so tiny
+    // movements of the panda don't shake the camera.
+    private void UpdateLookTarget()
+    {
+        smoothedLookTarget = Vector3.SmoothDamp(
+            smoothedLookTarget,
+            PandaLookPoint,
+            ref lookTargetVelocity,
+            Mathf.Max(lookTargetSmoothTime, 0.01f)
+        );
+    }
+
+    private static float Ease(AnimationCurve curve, float t)
+    {
+        // An empty curve would freeze the camera, so fall back to smoothstep.
+        if (curve == null || curve.length < 2)
+            return t * t * (3f - 2f * t);
+
+        return curve.Evaluate(t);
+    }
+
+    // Smooth curve through p1 -> p2, shaped by the points before and after.
+    private static Vector3 CatmullRom(
+        Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        return 0.5f * (
+            2f * p1 +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
+        );
+    }
+
+    // Builds the shot list for a zone. Uses Camera Shots if set,
+    // otherwise converts the old Camera Points list.
+    private List<CameraShot> BuildShots(ZoneDestination zone)
+    {
+        List<CameraShot> shots = new List<CameraShot>();
+
+        if (zone.cameraShots != null && zone.cameraShots.Count > 0)
+        {
+            foreach (CameraShot shot in zone.cameraShots)
+            {
+                if (shot != null && shot.point != null)
+                    shots.Add(shot);
+            }
+
+            return shots;
+        }
+
+        if (zone.cameraPoints == null)
+            return shots;
+
+        List<Transform> points = new List<Transform>();
+
+        foreach (Transform point in zone.cameraPoints)
+        {
+            if (point != null)
+                points.Add(point);
+        }
+
+        for (int i = 0; i < points.Count; i++)
+        {
+            bool first = i == 0;
+            bool last = i == points.Count - 1;
+
+            // Ease in at the start, ease out at the end,
+            // constant speed in between so the camera flows.
+            AnimationCurve curve;
+
+            if (first && last)
+                curve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            else if (first)
+                curve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 2f, 2f));
+            else if (last)
+                curve = new AnimationCurve(new Keyframe(0f, 0f, 2f, 2f), new Keyframe(1f, 1f, 0f, 0f));
+            else
+                curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+
+            shots.Add(new CameraShot
+            {
+                point = points[i],
+                moveDuration = defaultShotDuration,
+                ease = curve
+            });
+        }
+
+        return shots;
+    }
+
+    // =========================================================
+    // WALKING / ARRIVAL
+    // =========================================================
 
     private bool IsWalkingActive()
     {
@@ -641,66 +888,6 @@ public class PandaPathMover : MonoBehaviour
         }
     }
 
-    private void MoveCinematicCamera()
-    {
-        if (cinematicCamera == null ||
-            cameraPoints == null ||
-            currentCameraPoint >= cameraPoints.Length)
-            return;
-
-        Transform targetPoint = cameraPoints[currentCameraPoint];
-
-        if (targetPoint == null)
-        {
-            Debug.LogWarning(
-                $"PandaPathMover: Camera point {currentCameraPoint} " +
-                "is missing."
-            );
-
-            currentCameraPoint++;
-            return;
-        }
-
-        cinematicCamera.transform.position = Vector3.MoveTowards(
-            cinematicCamera.transform.position,
-            targetPoint.position,
-            cameraMoveSpeed * Time.deltaTime
-        );
-
-        Vector3 lookTarget =
-            transform.position + Vector3.up * cameraLookHeight;
-
-        Vector3 direction =
-            lookTarget - cinematicCamera.transform.position;
-
-        if (direction.sqrMagnitude > 0.001f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-            cinematicCamera.transform.rotation = Quaternion.Slerp(
-                cinematicCamera.transform.rotation,
-                targetRotation,
-                cameraRotationSpeed * Time.deltaTime
-            );
-        }
-
-        float distance = Vector3.Distance(
-            cinematicCamera.transform.position,
-            targetPoint.position
-        );
-
-        if (distance <= 0.05f &&
-            currentCameraPoint < cameraPoints.Length - 1)
-        {
-            currentCameraPoint++;
-
-            Debug.Log(
-                "PandaPathMover: Moving camera to point " +
-                currentCameraPoint + "."
-            );
-        }
-    }
-
     private void FinishMovement()
     {
         isMoving = false;
@@ -725,17 +912,21 @@ public class PandaPathMover : MonoBehaviour
         StartCameraReturn();
     }
 
+    // =========================================================
+    // CAMERA RETURN
+    // =========================================================
+
     private void StartCameraReturn()
     {
         if (mainCamera == null || cinematicCamera == null)
             return;
 
         returningCamera = true;
-        enteringCamera = false;
         cameraReturnTimer = 0f;
 
-        cameraStartPosition = cinematicCamera.transform.position;
-        cameraStartRotation = cinematicCamera.transform.rotation;
+        returnStartPosition = cinematicCamera.transform.position;
+        returnStartRotation = cinematicCamera.transform.rotation;
+        returnStartFov = cinematicCamera.fieldOfView;
     }
 
     private void ReturnCameraToMain()
@@ -747,25 +938,16 @@ public class PandaPathMover : MonoBehaviour
             Time.deltaTime / Mathf.Max(cameraReturnDuration, 0.01f);
 
         float t = Mathf.Clamp01(cameraReturnTimer);
-        float smoothT = t * t * (3f - 2f * t);
+        float eased = Ease(cameraReturnEase, t);
 
-        cinematicCamera.transform.position = Vector3.Lerp(
-            cameraStartPosition,
-            mainCamera.transform.position,
-            smoothT
-        );
+        Transform cam = cinematicCamera.transform;
+        Transform main = mainCamera.transform;
 
-        cinematicCamera.transform.rotation = Quaternion.Slerp(
-            cameraStartRotation,
-            mainCamera.transform.rotation,
-            smoothT
-        );
+        cam.position = Vector3.Lerp(returnStartPosition, main.position, eased);
+        cam.rotation = Quaternion.Slerp(returnStartRotation, main.rotation, eased);
 
-        cinematicCamera.fieldOfView = Mathf.Lerp(
-            cinematicFieldOfView,
-            mainCamera.fieldOfView,
-            smoothT
-        );
+        cinematicCamera.fieldOfView =
+            Mathf.Lerp(returnStartFov, mainCamera.fieldOfView, eased);
 
         if (t >= 1f)
         {
@@ -774,11 +956,8 @@ public class PandaPathMover : MonoBehaviour
             // Restore the cinematic camera's own zoom for next time.
             cinematicCamera.fieldOfView = cinematicFieldOfView;
 
-            cinematicCamera.transform.position =
-                mainCamera.transform.position;
-
-            cinematicCamera.transform.rotation =
-                mainCamera.transform.rotation;
+            cam.position = main.position;
+            cam.rotation = main.rotation;
 
             cinematicCamera.gameObject.SetActive(false);
             mainCamera.gameObject.SetActive(true);
@@ -788,6 +967,10 @@ public class PandaPathMover : MonoBehaviour
             );
         }
     }
+
+    // =========================================================
+    // TRAVEL
+    // =========================================================
 
     private void SetWalkingAnimation(bool walking)
     {
@@ -881,24 +1064,25 @@ public class PandaPathMover : MonoBehaviour
                 return;
             }
 
-            if (zone.cameraPoints == null ||
-                zone.cameraPoints.Length == 0)
+            List<CameraShot> shots = BuildShots(zone);
+
+            if (shots.Count == 0)
             {
                 Debug.LogError(
-                    $"PandaPathMover: No camera points assigned " +
-                    $"for '{zone.zoneName}'."
+                    $"PandaPathMover: No camera shots (or camera points) " +
+                    $"assigned for '{zone.zoneName}'."
                 );
                 return;
             }
 
             destination = zone.destination;
-            cameraPoints = zone.cameraPoints;
+            activeShots = shots;
             currentSitFacingTarget = zone.sitFacingTarget;
 
             Debug.Log(
                 $"PandaPathMover: Destination position = " +
                 $"{zone.destination.position}; " +
-                $"camera points = {zone.cameraPoints.Length}."
+                $"camera shots = {shots.Count}."
             );
 
             StartMovement();
