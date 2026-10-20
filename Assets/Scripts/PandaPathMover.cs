@@ -66,8 +66,8 @@ public class PandaPathMover : MonoBehaviour
     [SerializeField] private string eatTrigger = "Eat";
 
     [Header("Stand Up")]
-    [Tooltip("Name of the stand-up state in the Animator (or give that state the tag 'StandUp').")]
-    [SerializeField] private string standUpStateName = "Stand Up";
+    [Tooltip("Exact name of the stand-up state in the Animator (or give that state the tag 'StandUp').")]
+    [SerializeField] private string standUpStateName = "StandUp";
 
     [Tooltip("How far through the stand-up clip (0-1) before walking begins.")]
     [Range(0.5f, 1f)]
@@ -76,7 +76,14 @@ public class PandaPathMover : MonoBehaviour
     [Tooltip("Safety limit: start walking anyway if the stand-up hasn't finished after this many seconds.")]
     [SerializeField] private float maxStandUpWait = 4f;
 
+    [Tooltip("Exact name of the walk state in the Animator. Used to force walking if the Animator gets stuck.")]
+    [SerializeField] private string walkStateName = "PandaRig|Panda_Walk";
+
+    [Tooltip("Seconds to wait for the StandUp trigger to work before forcing the stand-up animation.")]
+    [SerializeField] private float forceStandUpAfter = 0.3f;
+
     private bool standUpStarted;
+    private bool forcedStandUp;
     private float movementStartTime;
     private bool cinematicStarted;
     private float cinematicFieldOfView;
@@ -202,6 +209,11 @@ public class PandaPathMover : MonoBehaviour
             animator.applyRootMotion = false;
             Debug.Log("PandaPathMover: Disabled Apply Root Motion on the Animator.");
         }
+
+        // Keep animating even when a camera shot isn't looking at the panda.
+        // Otherwise Unity freezes the pose and the panda slides.
+        if (animator != null)
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
         Debug.Log(
             $"PandaPathMover: Initialized. " +
@@ -416,6 +428,7 @@ public class PandaPathMover : MonoBehaviour
         returningCamera = false;
         cinematicStarted = false;
         standUpStarted = false;
+        forcedStandUp = false;
         movementStartTime = Time.time;
 
         // When walking begins, first turn smoothly toward the path.
@@ -763,53 +776,74 @@ public class PandaPathMover : MonoBehaviour
                state.IsName("Stand_Up");
     }
 
-    // Sets IsWalking to true once the stand-up animation has finished
-    // (and the panda is not eating). An animation event calling
-    // StartWalkingAnimation() does the same thing, if you have one.
+    // Sets IsWalking to true once the stand-up animation has finished.
+    // If the StandUp trigger had no effect (the Animator was in a state
+    // with no StandUp transition), the stand-up is played directly.
     private void UpdateWalkingState()
     {
         if (animator == null || animator.GetBool(walkingParameter))
             return;
 
-        bool timedOut = Time.time - movementStartTime >= maxStandUpWait;
+        float elapsed = Time.time - movementStartTime;
+        bool timedOut = elapsed >= maxStandUpWait;
+        bool eating = feedingZone != null && feedingZone.IsEatingAnimationPlaying;
 
-        // Blending into the stand-up animation: keep waiting.
-        if (animator.IsInTransition(0) &&
-            IsStandUpState(animator.GetNextAnimatorStateInfo(0)))
-        {
-            standUpStarted = true;
-
-            if (!timedOut)
-                return;
-        }
+        bool enteringStandUp =
+            animator.IsInTransition(0) &&
+            IsStandUpState(animator.GetNextAnimatorStateInfo(0));
 
         AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
+        bool inStandUp = IsStandUpState(current);
 
-        if (IsStandUpState(current))
-        {
+        if (enteringStandUp || inStandUp)
             standUpStarted = true;
 
-            // Still standing up.
-            if (current.normalizedTime < standUpFinishedAt && !timedOut)
+        // The trigger didn't start the stand-up: force it.
+        if (!standUpStarted && !forcedStandUp && !eating &&
+            elapsed >= forceStandUpAfter)
+        {
+            forcedStandUp = true;
+            animator.ResetTrigger(standUpTrigger);
+
+            if (CrossFadeToState(standUpStateName, "StandUp", "Stand Up", "Stand_Up"))
+            {
+                Debug.LogWarning(
+                    "PandaPathMover: StandUp trigger had no effect. " +
+                    "Forcing the stand-up animation."
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "PandaPathMover: Could not find the stand-up state. " +
+                    "Check 'Stand Up State Name' in the Inspector."
+                );
+            }
+
+            return;
+        }
+
+        if (!timedOut)
+        {
+            // Still blending into or playing the stand-up.
+            if (enteringStandUp)
+                return;
+
+            if (inStandUp && current.normalizedTime < standUpFinishedAt)
+                return;
+
+            // Stand-up hasn't begun yet.
+            if (!standUpStarted)
+                return;
+
+            // Never walk while the eat animation is still playing.
+            if (eating)
                 return;
         }
-        else if (!standUpStarted && !timedOut)
-        {
-            // The stand-up animation hasn't begun yet.
-            return;
-        }
-
-        // Never walk while the eat animation is still playing.
-        if (feedingZone != null &&
-            feedingZone.IsEatingAnimationPlaying &&
-            !timedOut)
-            return;
-
-        if (timedOut)
+        else
         {
             Debug.LogWarning(
-                "PandaPathMover: Stand-up didn't finish in time. Walking " +
-                "anyway. Check 'Stand Up State Name' matches your Animator."
+                "PandaPathMover: Stand-up didn't finish in time. Walking anyway."
             );
         }
 
@@ -826,10 +860,62 @@ public class PandaPathMover : MonoBehaviour
         animator.SetBool(walkingParameter, true);
         standUpStarted = true;
 
+        // Normally StandUp -> Walk happens through IsWalking. If the
+        // Animator is anywhere else, go straight to the walk state so
+        // the panda never slides in a sitting pose.
+        AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
+
+        bool goingToWalk =
+            animator.IsInTransition(0) &&
+            animator.GetNextAnimatorStateInfo(0).IsName(walkStateName);
+
+        if (!IsStandUpState(current) &&
+            !current.IsName(walkStateName) &&
+            !goingToWalk)
+        {
+            if (CrossFadeToState(walkStateName))
+            {
+                Debug.LogWarning(
+                    "PandaPathMover: Animator was not in StandUp. " +
+                    "Forcing the walk animation."
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "PandaPathMover: Could not find the walk state '" +
+                    walkStateName + "'. Check 'Walk State Name' in the Inspector."
+                );
+            }
+        }
+
         Debug.Log(
             $"PandaPathMover: StartWalkingAnimation called. " +
             $"IsWalking = {animator.GetBool(walkingParameter)}"
         );
+    }
+
+    // Blends directly into the first state name that exists in the Animator.
+    private bool CrossFadeToState(params string[] stateNames)
+    {
+        if (animator == null)
+            return false;
+
+        foreach (string stateName in stateNames)
+        {
+            if (string.IsNullOrEmpty(stateName))
+                continue;
+
+            int hash = Animator.StringToHash(stateName);
+
+            if (animator.HasState(0, hash))
+            {
+                animator.CrossFadeInFixedTime(hash, 0.2f, 0);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void CheckPandaArrival()
