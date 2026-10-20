@@ -363,4 +363,15 @@ public class EnvironmentUI : MonoBehaviour
             );
         }
     }
+    public float BambooPercent =>
+    totalBambooCount > 0
+        ? (float)currentBambooCount / totalBambooCount * 100f
+        : 0f;
+
+public bool HasBambooZone => totalBambooCount > 0;
+public float WaterPercent =>
+    environment != null ? Mathf.Clamp(environment.Water, 0f, 100f) : 0f;
+
+public bool HasActiveZone =>
+    environment != null && environment.ActiveZone != null;
 }
