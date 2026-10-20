@@ -1,7 +1,61 @@
-
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
+public enum SceneChangeTiming
+{
+    WhenShown,
+    ChoiceA,
+    ChoiceB,
+    ChoiceC,
+    AnyChoice
+}
+
+public enum RevealStyle
+{
+    Instant,
+    RiseFromGround,
+    GrowUp
+}
+
+[System.Serializable]
+public class DilemmaSceneChange
+{
+    [Tooltip("A note for yourself, e.g. 'City + road A'.")]
+    public string label;
+
+    [Tooltip("The dilemma this change belongs to.")]
+    public Dilemma dilemma;
+
+    [Tooltip("When the change happens: when the dilemma appears, or after a specific choice.")]
+    public SceneChangeTiming when = SceneChangeTiming.AnyChoice;
+
+    [Tooltip("Seconds to wait before the change starts.")]
+    public float startDelay = 0f;
+
+    [Header("Objects")]
+    [Tooltip("Hidden objects in the scene to reveal.")]
+    public List<GameObject> objectsToShow = new List<GameObject>();
+
+    [Tooltip("Objects to hide (e.g. trees where the city goes).")]
+    public List<GameObject> objectsToHide = new List<GameObject>();
+
+    [Header("Reveal")]
+    public RevealStyle revealStyle = RevealStyle.RiseFromGround;
+
+    [Tooltip("Seconds each object takes to appear.")]
+    public float revealDuration = 2f;
+
+    [Tooltip("How far below its final position an object starts (Rise From Ground).")]
+    public float riseDistance = 5f;
+
+    [Tooltip("Reveal each child of an object one by one (e.g. building by building).")]
+    public bool revealChildrenOneByOne = true;
+
+    [Tooltip("Seconds between each object or child starting to appear.")]
+    public float delayBetweenObjects = 0.15f;
+}
 
 public class DilemmaManager : MonoBehaviour
 {
@@ -16,6 +70,10 @@ public class DilemmaManager : MonoBehaviour
 
     [Header("Dilemmas")]
     [SerializeField] private List<Dilemma> dilemmas = new();
+
+    [Header("Scene Changes")]
+    [Tooltip("Objects to show or hide in the scene when a dilemma appears or a choice is made.")]
+    [SerializeField] private List<DilemmaSceneChange> sceneChanges = new();
 
     [Header("Travel Integration")]
     public UnityEvent<string> onTravelRequested;
@@ -294,7 +352,6 @@ public class DilemmaManager : MonoBehaviour
     {
         if (!conditionIsMet)
             return;
-
     }
 
     private bool CheckTemperatureDuration(
@@ -327,6 +384,9 @@ public class DilemmaManager : MonoBehaviour
         Debug.Log("DilemmaManager: Showing " + dilemma.name);
 
         dilemmaUI.ShowDilemma(dilemma, this);
+
+        // Scene changes set to "When Shown".
+        ApplySceneChanges(dilemma, -1);
     }
 
     public void ChooseA()
@@ -394,6 +454,9 @@ public class DilemmaManager : MonoBehaviour
         activeDilemma = null;
         dilemmaUI.HideDilemma();
 
+        // Scene changes for this choice (e.g. city and roads).
+        ApplySceneChanges(resolvedDilemma, choice);
+
         // Remove pending schedules for dilemmas that this choice blocks.
         foreach (Dilemma candidate in dilemmas)
         {
@@ -457,6 +520,147 @@ public class DilemmaManager : MonoBehaviour
             );
         }
     }
+
+    // =========================================================
+    // SCENE CHANGES (city, roads, ...)
+    // =========================================================
+
+    // choice = -1 means the dilemma was just shown.
+    private void ApplySceneChanges(Dilemma dilemma, int choice)
+    {
+        foreach (DilemmaSceneChange change in sceneChanges)
+        {
+            if (change == null || change.dilemma != dilemma)
+                continue;
+
+            if (!TimingMatches(change.when, choice))
+                continue;
+
+            Debug.Log(
+                "DilemmaManager: Applying scene change '" +
+                change.label + "' for " + dilemma.name
+            );
+
+            StartCoroutine(RunSceneChange(change));
+        }
+    }
+
+    private bool TimingMatches(SceneChangeTiming timing, int choice)
+    {
+        if (choice < 0)
+            return timing == SceneChangeTiming.WhenShown;
+
+        return timing == SceneChangeTiming.AnyChoice ||
+               (timing == SceneChangeTiming.ChoiceA && choice == 0) ||
+               (timing == SceneChangeTiming.ChoiceB && choice == 1) ||
+               (timing == SceneChangeTiming.ChoiceC && choice == 2);
+    }
+
+    private IEnumerator RunSceneChange(DilemmaSceneChange change)
+    {
+        if (change.startDelay > 0f)
+            yield return new WaitForSeconds(change.startDelay);
+
+        foreach (GameObject obj in change.objectsToHide)
+        {
+            if (obj != null)
+                obj.SetActive(false);
+        }
+
+        foreach (GameObject obj in change.objectsToShow)
+        {
+            if (obj == null || obj.activeSelf)
+                continue;
+
+            if (change.revealChildrenOneByOne && obj.transform.childCount > 0)
+            {
+                // Hide the children, show the parent, then reveal
+                // each child in turn (e.g. building by building).
+                List<GameObject> children = new List<GameObject>();
+
+                foreach (Transform child in obj.transform)
+                {
+                    if (!child.gameObject.activeSelf)
+                        continue;
+
+                    children.Add(child.gameObject);
+                    child.gameObject.SetActive(false);
+                }
+
+                obj.SetActive(true);
+
+                foreach (GameObject child in children)
+                {
+                    StartCoroutine(RevealObject(child, change));
+
+                    if (change.delayBetweenObjects > 0f)
+                        yield return new WaitForSeconds(change.delayBetweenObjects);
+                }
+            }
+            else
+            {
+                StartCoroutine(RevealObject(obj, change));
+
+                if (change.delayBetweenObjects > 0f)
+                    yield return new WaitForSeconds(change.delayBetweenObjects);
+            }
+        }
+    }
+
+    private IEnumerator RevealObject(GameObject obj, DilemmaSceneChange change)
+    {
+        Transform target = obj.transform;
+
+        if (change.revealStyle == RevealStyle.Instant ||
+            change.revealDuration <= 0f)
+        {
+            obj.SetActive(true);
+            yield break;
+        }
+
+        Vector3 endPosition = target.position;
+        Vector3 endScale = target.localScale;
+
+        Vector3 startPosition = endPosition;
+        Vector3 startScale = endScale;
+
+        if (change.revealStyle == RevealStyle.RiseFromGround)
+            startPosition = endPosition - Vector3.up * change.riseDistance;
+        else if (change.revealStyle == RevealStyle.GrowUp)
+            startScale = endScale * 0.001f;
+
+        target.position = startPosition;
+        target.localScale = startScale;
+        obj.SetActive(true);
+
+        float elapsed = 0f;
+
+        while (elapsed < change.revealDuration)
+        {
+            if (obj == null)
+                yield break;
+
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(elapsed / change.revealDuration);
+            float smoothT = t * t * (3f - 2f * t);
+
+            target.position = Vector3.Lerp(startPosition, endPosition, smoothT);
+            target.localScale = Vector3.Lerp(startScale, endScale, smoothT);
+
+            yield return null;
+        }
+
+        if (obj != null)
+        {
+            target.position = endPosition;
+            target.localScale = endScale;
+        }
+    }
+
+    // =========================================================
+    // PREREQUISITES / ENDINGS / EVENTS
+    // =========================================================
 
     private bool MatchesAnyPrerequisite(
         Dilemma nextDilemma,
