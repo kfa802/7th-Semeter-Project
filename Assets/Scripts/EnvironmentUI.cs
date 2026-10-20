@@ -374,4 +374,9 @@ public float WaterPercent =>
 
 public bool HasActiveZone =>
     environment != null && environment.ActiveZone != null;
+
+public float HealthPercent =>
+    panda != null ? Mathf.Clamp(panda.Health, 0f, 100f) : 0f;
+
+public bool HasPanda => panda != null;
 }

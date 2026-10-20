@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Pulses a red outline around a resource bar (bamboo or water) when it is low.
+/// Pulses a red outline around a resource bar (bamboo, water or health) when it is low.
 /// Put one on each bar's root object and pick the resource to watch.
 /// </summary>
 public class BambooLowWarning : MonoBehaviour
@@ -10,7 +10,8 @@ public class BambooLowWarning : MonoBehaviour
     public enum WatchedResource
     {
         Bamboo,
-        Water
+        Water,
+        Health
     }
 
     [Header("Source")]
@@ -89,6 +90,11 @@ public class BambooLowWarning : MonoBehaviour
             case WatchedResource.Water:
                 percent = environmentUI.WaterPercent;
                 hasData = environmentUI.HasActiveZone;
+                break;
+
+            case WatchedResource.Health:
+                percent = environmentUI.HealthPercent;
+                hasData = environmentUI.HasPanda;
                 break;
 
             default:

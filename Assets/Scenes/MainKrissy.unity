@@ -11785,6 +11785,81 @@ MonoBehaviour:
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 439519103}
+--- !u!1 &221514771
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 221514772}
+  - component: {fileID: 221514774}
+  - component: {fileID: 221514773}
+  m_Layer: 5
+  m_Name: WarningUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &221514772
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221514771}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1740021516}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -50.02395, y: 0}
+  m_SizeDelta: {x: 64.164, y: 64.164}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &221514773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221514771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &221514774
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221514771}
+  m_CullTransparentMesh: 1
 --- !u!1 &223310763 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7886964337042595602, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
@@ -56663,6 +56738,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1740021516}
   - component: {fileID: 1740021515}
+  - component: {fileID: 1740021517}
   m_Layer: 5
   m_Name: PandaHealthSlider
   m_TagString: Untagged
@@ -56737,6 +56813,7 @@ RectTransform:
   - {fileID: 80159896}
   - {fileID: 2072902921}
   - {fileID: 259561564}
+  - {fileID: 221514772}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -56744,6 +56821,33 @@ RectTransform:
   m_AnchoredPosition: {x: -262.8534, y: 186}
   m_SizeDelta: {x: 117.1466, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1740021517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740021514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb956e65f522e4567b2a6cd2e796b818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooLowWarning
+  environmentUI: {fileID: 1927953433}
+  resource: 2
+  outlineGraphics:
+  - {fileID: 221514773}
+  pulseTarget: {fileID: 259561564}
+  warningColor: {r: 0.85, g: 0.15, b: 0.12, a: 0.6509804}
+  lowThreshold: 25
+  recoverThreshold: 30
+  pulsesPerSecond: 0.8
+  minAlpha: 0.25
+  maxAlpha: 1
+  scaleAmount: 0.04
+  fadeSpeed: 4
+  urgencyScaling: 1
+  syncPulse: 1
 --- !u!1001 &1740696856
 PrefabInstance:
   m_ObjectHideFlags: 0
