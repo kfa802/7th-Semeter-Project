@@ -63900,6 +63900,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d2b6568820d4946eb9d686b5307abf02, type: 3}
   m_PrefabInstance: {fileID: 1993246239}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2005340717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2005340718}
+  m_Layer: 0
+  m_Name: Svampetaerte
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2005340718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2005340717}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -28.67213, y: 9.40038, z: 69.63551}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2026303666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65737,3 +65768,4 @@ SceneRoots:
   - {fileID: 729937078}
   - {fileID: 857498132}
   - {fileID: 1385872038}
+  - {fileID: 2005340718}
