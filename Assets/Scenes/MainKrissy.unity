@@ -13189,7 +13189,6 @@ MonoBehaviour:
   pandaFeedingZone: {fileID: 725808056}
   dragHeight: 0.5
   availableAnimator: {fileID: 358437395}
-  canFeedParameter: CanFeed
 --- !u!114 &358437392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14681,6 +14680,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc1de4ba35b96467c834618f1aa2d0a2, type: 3}
+--- !u!1 &518015153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 518015154}
+  - component: {fileID: 518015156}
+  - component: {fileID: 518015155}
+  m_Layer: 5
+  m_Name: WarningUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &518015154
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518015153}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1084733769}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -73.7, y: -0.1}
+  m_SizeDelta: {x: 44.6473, y: 44.6473}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &518015155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518015153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &518015156
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518015153}
+  m_CullTransparentMesh: 1
 --- !u!1 &520319733
 GameObject:
   m_ObjectHideFlags: 0
@@ -39894,6 +39968,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1084733769}
   - component: {fileID: 1084733768}
+  - component: {fileID: 1084733770}
   m_Layer: 5
   m_Name: BambooSlider
   m_TagString: Untagged
@@ -39968,6 +40043,7 @@ RectTransform:
   - {fileID: 2107011383}
   - {fileID: 1489309916}
   - {fileID: 1235178296}
+  - {fileID: 518015154}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -39975,6 +40051,33 @@ RectTransform:
   m_AnchoredPosition: {x: -302, y: -128.3}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1084733770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084733767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb956e65f522e4567b2a6cd2e796b818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooLowWarning
+  environmentUI: {fileID: 1927953433}
+  resource: 0
+  outlineGraphics:
+  - {fileID: 518015155}
+  pulseTarget: {fileID: 1235178296}
+  warningColor: {r: 0.8509804, g: 0.14901961, b: 0.12156863, a: 0.6509804}
+  lowThreshold: 25
+  recoverThreshold: 30
+  pulsesPerSecond: 0.8
+  minAlpha: 0.25
+  maxAlpha: 1
+  scaleAmount: 0.04
+  fadeSpeed: 4
+  urgencyScaling: 1
+  syncPulse: 1
 --- !u!1001 &1087703499
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40330,6 +40433,81 @@ MonoBehaviour:
   existingBamboo: {fileID: 0}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 2079388591}
+--- !u!1 &1101428571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1101428574}
+  - component: {fileID: 1101428573}
+  - component: {fileID: 1101428572}
+  m_Layer: 5
+  m_Name: WarningUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1101428572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101428571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1101428573
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101428571}
+  m_CullTransparentMesh: 1
+--- !u!224 &1101428574
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101428571}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1235136939}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -72.83174, y: -0.000001430511}
+  m_SizeDelta: {x: 44.6473, y: 44.6473}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1112581723 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6ea1dacb1aa664b628de6ecc06f2c48d, type: 3}
@@ -46733,6 +46911,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1235136939}
   - component: {fileID: 1235136938}
+  - component: {fileID: 1235136940}
   m_Layer: 5
   m_Name: WaterSlider
   m_TagString: Untagged
@@ -46807,6 +46986,7 @@ RectTransform:
   - {fileID: 1240274511}
   - {fileID: 1279251137}
   - {fileID: 505385966}
+  - {fileID: 1101428574}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -46814,6 +46994,33 @@ RectTransform:
   m_AnchoredPosition: {x: -302, y: -184}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1235136940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235136937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb956e65f522e4567b2a6cd2e796b818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BambooLowWarning
+  environmentUI: {fileID: 1927953433}
+  resource: 1
+  outlineGraphics:
+  - {fileID: 1101428572}
+  pulseTarget: {fileID: 505385966}
+  warningColor: {r: 0.85, g: 0.15, b: 0.12, a: 0.6509804}
+  lowThreshold: 25
+  recoverThreshold: 30
+  pulsesPerSecond: 0.8
+  minAlpha: 0.25
+  maxAlpha: 1
+  scaleAmount: 0.04
+  fadeSpeed: 4
+  urgencyScaling: 1
+  syncPulse: 1
 --- !u!1 &1235178295
 GameObject:
   m_ObjectHideFlags: 0
