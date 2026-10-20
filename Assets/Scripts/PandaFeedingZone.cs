@@ -46,6 +46,32 @@ public class PandaFeedingZone : MonoBehaviour
     public bool IsEating => isEating;
 
     /// <summary>
+    /// True when FeedPanda() would succeed right now
+    /// (same checks, but nothing is consumed).
+    /// </summary>
+    public bool CanFeed
+    {
+        get
+        {
+            if (pathMover != null &&
+                (pathMover.IsTravelling || pathMover.HasPendingTravel))
+                return false;
+
+            if (isEating || Time.time < nextAllowedEatingTime)
+                return false;
+
+            if (pandaSystem == null || BambooManager.Instance == null)
+                return false;
+
+            if (EnvironmentSystem.Instance == null ||
+                EnvironmentSystem.Instance.ActiveZone == null)
+                return false;
+
+            return BambooManager.Instance.HasAvailableBambooInCurrentZone();
+        }
+    }
+
+    /// <summary>
     /// True while the panda is visibly eating: from the moment it is fed
     /// until the bamboo is gone AND the Animator has left the eat state.
     /// (The feeding cooldown afterwards does not count.)

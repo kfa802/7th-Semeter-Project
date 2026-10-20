@@ -13186,7 +13186,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   pandaDetectionRadius: 0.5
+  pandaFeedingZone: {fileID: 725808056}
   dragHeight: 0.5
+  availableAnimator: {fileID: 358437395}
+  canFeedParameter: CanFeed
 --- !u!114 &358437392
 MonoBehaviour:
   m_ObjectHideFlags: 0

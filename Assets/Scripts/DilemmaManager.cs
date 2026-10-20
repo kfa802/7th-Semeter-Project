@@ -295,15 +295,6 @@ public class DilemmaManager : MonoBehaviour
         if (!conditionIsMet)
             return;
 
-        Debug.Log(
-            "DilemmaManager: Temperature condition met for " +
-            dilemma.name +
-            " | Type = " + dilemma.triggerType +
-            " | Current = " + environment.Temperature +
-            " | Threshold = " + dilemma.temperatureThreshold +
-            " | Required duration = " +
-            dilemma.temperatureDurationSeconds + " seconds"
-        );
     }
 
     private bool CheckTemperatureDuration(
