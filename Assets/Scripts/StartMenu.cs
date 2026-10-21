@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 /// <summary>
 /// Startmenu: flagene vælger sprog (gemmes), START åbner den valgte scene.
@@ -19,6 +20,9 @@ public class StartMenu : MonoBehaviour
     [SerializeField] private GameObject danishSelected;
     [SerializeField] private GameObject englishSelected;
 
+    [Header("Participant")]
+    [SerializeField] private TMP_Text nextIdLabel;
+
     private const string PrefKey = "language"; // "da" eller "en"
 
     private string Current => PlayerPrefs.GetString(PrefKey, "da");
@@ -27,6 +31,7 @@ public class StartMenu : MonoBehaviour
     {
         Debug.Log($"[StartMenu] Scriptet kører på '{name}'. Gemt sprog: {Current}", this);
         UpdateSelection();
+        UpdateIdLabel();
     }
 
     public void SelectDanish() => Select("da");
@@ -34,6 +39,11 @@ public class StartMenu : MonoBehaviour
 
     public void StartGame()
     {
+        if (TelemetryManager.Instance != null)
+            TelemetryManager.Instance.BeginSession(Current);
+        else
+            Debug.LogError("[StartMenu] No TelemetryManager in the scene. Nothing will be logged.");
+
         SceneManager.LoadScene(Current == "en" ? englishScene : danishScene);
     }
 
@@ -43,6 +53,12 @@ public class StartMenu : MonoBehaviour
         PlayerPrefs.Save();
         Debug.Log($"[StartMenu] Sprog valgt: {language} (på objektet '{name}')", this);
         UpdateSelection();
+    }
+
+    private void UpdateIdLabel()
+    {
+        if (nextIdLabel != null && TelemetryManager.Instance != null)
+            nextIdLabel.text = "Participant: " + TelemetryManager.Instance.PeekNextId();
     }
 
     private void UpdateSelection()

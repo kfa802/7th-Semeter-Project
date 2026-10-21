@@ -874,6 +874,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 928899969}
   m_CullTransparentMesh: 1
+--- !u!1 &979916918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 979916920}
+  - component: {fileID: 979916919}
+  m_Layer: 0
+  m_Name: Telemetry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &979916919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979916918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1efc9393369934f368ba24e8b1626f0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TelemetryManager
+  decimalComma: 1
+--- !u!4 &979916920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979916918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.43735, y: 0.19039, z: 38.74202}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1148864625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,6 +1133,7 @@ MonoBehaviour:
   englishScene: MainKrissy
   danishSelected: {fileID: 890513975}
   englishSelected: {fileID: 1148864625}
+  nextIdLabel: {fileID: 0}
 --- !u!4 &1511427492
 Transform:
   m_ObjectHideFlags: 0
@@ -1503,6 +1549,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 979916920}
   - {fileID: 1728899604}
   - {fileID: 647026562}
   - {fileID: 1190613747}

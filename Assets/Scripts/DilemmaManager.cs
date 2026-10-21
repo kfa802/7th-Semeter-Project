@@ -99,6 +99,7 @@ public class DilemmaManager : MonoBehaviour
 
     private bool gameEnded;
     private Ending pendingEnding;
+    private int activeDilemmaNumber;
 
     private void Awake()
     {
@@ -139,6 +140,11 @@ public class DilemmaManager : MonoBehaviour
                 " Inspector listener(s)."
             );
         }
+    }
+
+    private void Start()
+    {
+        TelemetryManager.Instance?.DeclareDilemmas(dilemmas.Count);
     }
 
     private void Update()
@@ -278,68 +284,68 @@ public class DilemmaManager : MonoBehaviour
                 return environment.Pollution > dilemma.threshold;
 
             case DilemmaTriggerType.BambooBelow:
-            {
-                if (BambooManager.Instance == null ||
-                    environment.ActiveZone == null)
                 {
-                    return false;
+                    if (BambooManager.Instance == null ||
+                        environment.ActiveZone == null)
+                    {
+                        return false;
+                    }
+
+                    EcosystemZone zone = environment.ActiveZone;
+
+                    int capacity =
+                        BambooManager.Instance.GetCapacityForZone(zone);
+
+                    if (capacity <= 0)
+                    {
+                        Debug.LogWarning(
+                            "BambooBelow: No growth spots registered for zone " +
+                            zone.zoneName
+                        );
+
+                        return false;
+                    }
+
+                    float bambooPercent =
+                        BambooManager.Instance.GetPercentForZone(zone);
+
+                    return bambooPercent < dilemma.threshold;
                 }
-
-                EcosystemZone zone = environment.ActiveZone;
-
-                int capacity =
-                    BambooManager.Instance.GetCapacityForZone(zone);
-
-                if (capacity <= 0)
-                {
-                    Debug.LogWarning(
-                        "BambooBelow: No growth spots registered for zone " +
-                        zone.zoneName
-                    );
-
-                    return false;
-                }
-
-                float bambooPercent =
-                    BambooManager.Instance.GetPercentForZone(zone);
-
-                return bambooPercent < dilemma.threshold;
-            }
 
             case DilemmaTriggerType.TemperatureTooLow:
-            {
-                bool belowThreshold =
-                    environment.Temperature < dilemma.temperatureThreshold;
+                {
+                    bool belowThreshold =
+                        environment.Temperature < dilemma.temperatureThreshold;
 
-                DebugTemperatureCondition(dilemma, belowThreshold);
+                    DebugTemperatureCondition(dilemma, belowThreshold);
 
-                return CheckTemperatureDuration(
-                    dilemma,
-                    belowThreshold
-                );
-            }
+                    return CheckTemperatureDuration(
+                        dilemma,
+                        belowThreshold
+                    );
+                }
 
             case DilemmaTriggerType.TemperatureTooHigh:
-            {
-                bool aboveThreshold =
-                    environment.Temperature > dilemma.temperatureThreshold;
+                {
+                    bool aboveThreshold =
+                        environment.Temperature > dilemma.temperatureThreshold;
 
-                DebugTemperatureCondition(dilemma, aboveThreshold);
+                    DebugTemperatureCondition(dilemma, aboveThreshold);
 
-                return CheckTemperatureDuration(
-                    dilemma,
-                    aboveThreshold
-                );
-            }
+                    return CheckTemperatureDuration(
+                        dilemma,
+                        aboveThreshold
+                    );
+                }
 
             case DilemmaTriggerType.TemperatureModerate:
-            {
-                bool isModerate =
-                    environment.Temperature >= dilemma.temperatureThreshold &&
-                    environment.Temperature <= dilemma.temperatureHighThreshold;
+                {
+                    bool isModerate =
+                        environment.Temperature >= dilemma.temperatureThreshold &&
+                        environment.Temperature <= dilemma.temperatureHighThreshold;
 
-                return CheckTemperatureDuration(dilemma, isModerate);
-            }
+                    return CheckTemperatureDuration(dilemma, isModerate);
+                }
 
             default:
                 return false;
@@ -380,10 +386,17 @@ public class DilemmaManager : MonoBehaviour
     private void ShowDilemma(Dilemma dilemma)
     {
         activeDilemma = dilemma;
+        activeDilemmaNumber = dilemmas.IndexOf(dilemma) + 1;
 
         Debug.Log("DilemmaManager: Showing " + dilemma.name);
 
         dilemmaUI.ShowDilemma(dilemma, this);
+
+        TelemetryManager.Instance?.DilemmaShown(activeDilemmaNumber, dilemma.name);
+
+        // The buttons are live immediately for now. When narration gates the
+        // buttons, call LogChoicesAvailable() instead; it overwrites this value.
+        TelemetryManager.Instance?.DilemmaChoiceAvailable(activeDilemmaNumber);
 
         // Scene changes set to "When Shown".
         ApplySceneChanges(dilemma, -1);
@@ -403,6 +416,15 @@ public class DilemmaManager : MonoBehaviour
     {
         ResolveDilemma(2);
     }
+
+    public void LogNarrationStarted() =>
+    TelemetryManager.Instance?.DilemmaNarrationStart(activeDilemmaNumber);
+
+    public void LogNarrationEnded() =>
+        TelemetryManager.Instance?.DilemmaNarrationEnd(activeDilemmaNumber);
+
+    public void LogChoicesAvailable() =>
+        TelemetryManager.Instance?.DilemmaChoiceAvailable(activeDilemmaNumber);
 
     private void ResolveDilemma(int choice)
     {
@@ -433,6 +455,13 @@ public class DilemmaManager : MonoBehaviour
             " resolved with Choice " + choiceName
         );
 
+        int number = activeDilemmaNumber;
+        string choiceText = choice == 0 ? resolvedDilemma.choiceA
+                  : choice == 1 ? resolvedDilemma.choiceB
+                  : resolvedDilemma.choiceC;
+
+        TelemetryManager.Instance?.DilemmaChoice(number, choiceText);
+
         completedDilemmas.Add(resolvedDilemma);
         resolvedChoices[resolvedDilemma] = choice;
 
@@ -453,6 +482,8 @@ public class DilemmaManager : MonoBehaviour
 
         activeDilemma = null;
         dilemmaUI.HideDilemma();
+
+        TelemetryManager.Instance?.DilemmaEnded(number);
 
         // Scene changes for this choice (e.g. city and roads).
         ApplySceneChanges(resolvedDilemma, choice);
@@ -706,6 +737,7 @@ public class DilemmaManager : MonoBehaviour
 
     private void BeginEnding(Ending ending)
     {
+        TelemetryManager.Instance?.EndingReached(ending.endingTitle);
         gameEnded = true;
         pendingEnding = ending;
 
@@ -722,6 +754,9 @@ public class DilemmaManager : MonoBehaviour
 
     private void ShowSelectedEnding()
     {
+        // TEMPORARY: replace with the end of the quiz / back-to-start button later.
+        TelemetryManager.Instance?.EndSession("ending shown");
+
         if (pendingEnding == null)
         {
             Debug.LogError("DilemmaManager: No ending was selected.");
@@ -766,7 +801,7 @@ public class DilemmaManager : MonoBehaviour
 
         if (environment != null)
         {
-            environment.ChangeTemperature(gameEvent.temperatureChange);
+            environment.ChangeTemperature(gameEvent.temperatureChange, "event");
             environment.ChangePollution(gameEvent.pollutionChange);
         }
         else

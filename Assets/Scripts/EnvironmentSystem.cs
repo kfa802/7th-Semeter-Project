@@ -137,13 +137,18 @@ private void Update()
 {
     // Only transition temperature while travelling.
     if (isTravelling)
-    {
-        temperature = Mathf.MoveTowards(
-            temperature,
-            targetTemperature,
-            temperatureChangeSpeed * Time.deltaTime
-        );
-    }
+{
+    float before = temperature;
+
+    temperature = Mathf.MoveTowards(
+        temperature,
+        targetTemperature,
+        temperatureChangeSpeed * Time.deltaTime
+    );
+
+    if (!Mathf.Approximately(before, temperature))
+        TelemetryManager.Instance?.LogTemperature(temperature, "travel");
+}
 
     UpdateWater();
 
@@ -240,7 +245,7 @@ public void ExitZone(EcosystemZone zone)
     // TEMPERATURE
     // =========================================================
 
-public void SetTemperature(float newTemperature)
+public void SetTemperature(float newTemperature, string source = "player")
 {
     temperature = Mathf.Clamp(
         newTemperature,
@@ -251,11 +256,14 @@ public void SetTemperature(float newTemperature)
     targetTemperature = temperature;
 
     TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+
+    TelemetryManager.Instance?.LogTemperature(temperature, source);
 }
-    public void ChangeTemperature(float amount)
-    {
-        SetTemperature(temperature + amount);
-    }
+
+public void ChangeTemperature(float amount, string source = "player")
+{
+    SetTemperature(temperature + amount, source);
+}
 
     private float GetTemperatureGrowthFactor()
     {
