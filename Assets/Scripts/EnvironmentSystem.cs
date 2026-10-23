@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class EnvironmentSystem : MonoBehaviour
@@ -9,24 +8,22 @@ public class EnvironmentSystem : MonoBehaviour
     // ACTIVE ZONE
     // =========================================================
 
-public string ActiveZoneName { get; private set; } = "Travelling";
+    public string ActiveZoneName { get; private set; } = "Travelling";
 
-private EcosystemZone activeZone;
+    private EcosystemZone activeZone;
 
-public EcosystemZone ActiveZone => activeZone;    // =========================================================
+    public EcosystemZone ActiveZone => activeZone;
+
+    // =========================================================
     // TEMPERATURE
     // =========================================================
 
     private float minTemperature = -15f;
     private float maxTemperature = 40f;
 
-[Header("Temperature")]
-[SerializeField] private float temperature = 20f;
-
-[SerializeField] private float temperatureChangeSpeed = 2f;
-
-private float targetTemperature = 20f;
-private bool isTravelling = false;
+    [Header("Temperature")]
+    [SerializeField] private float temperature = 20f;
+    [SerializeField] private float temperatureChangeSpeed = 2f;
     [SerializeField] private float idealTemperature = 20f;
     [SerializeField] private float temperatureThreshold = 3f;
     [SerializeField] private float freezingPoint = 0f;
@@ -35,9 +32,8 @@ private bool isTravelling = false;
     [SerializeField, Range(0.05f, 0.5f)]
     private float minGrowthWhenCold = 0.2f;
 
-    // =========================================================
-    // HEAT
-    // =========================================================
+    private float targetTemperature = 20f;
+    private bool isTravelling = false;
 
     [Header("Heat")]
     [SerializeField, Range(0f, 1f)]
@@ -60,8 +56,10 @@ private bool isTravelling = false;
     [SerializeField] private float comfortableWaterMaxTemperature = 24f;
     [SerializeField] private float coldWaterMinTemperature = 0f;
     [SerializeField] private float coldWaterMaxTemperature = 15f;
+
     [SerializeField, Range(0f, 1f)]
     private float coldWaterMinRecoveryMultiplier = 0.2f;
+
     [SerializeField] private float hotWaterStartTemperature = 25f;
 
     // =========================================================
@@ -83,21 +81,21 @@ private bool isTravelling = false;
     public float Water => water;
     public float Pollution => pollution;
 
-public float Bamboo
-{
-    get
-    {
-        if (activeZone == null)
-            return 0f;
-
-        if (BambooManager.Instance == null)
-            return 0f;
-
-        return BambooManager.Instance.GetPercentForZone(activeZone);
-    }
-}
-
     public float TemperatureGrowthFactor { get; private set; } = 1f;
+
+    public float Bamboo
+    {
+        get
+        {
+            if (activeZone == null)
+                return 0f;
+
+            if (BambooManager.Instance == null)
+                return 0f;
+
+            return BambooManager.Instance.GetPercentForZone(activeZone);
+        }
+    }
 
     // =========================================================
     // UNITY
@@ -115,45 +113,54 @@ public float Bamboo
         Instance = this;
     }
 
-private void Start()
-{
-    if (activeZone != null)
-        ApplyZoneSettings(activeZone);
-    else
+    private void Start()
     {
-        water = Mathf.Clamp(water, 0f, 100f);
-        pollution = Mathf.Clamp01(pollution);
-        temperature = Mathf.Clamp(
-            temperature,
-            minTemperature,
-            maxTemperature
-        );
+        if (activeZone != null)
+        {
+            ApplyZoneSettings(activeZone);
+        }
+        else
+        {
+            water = Mathf.Clamp(water, 0f, 100f);
+            pollution = Mathf.Clamp01(pollution);
+
+            temperature = Mathf.Clamp(
+                temperature,
+                minTemperature,
+                maxTemperature
+            );
+        }
+
+        targetTemperature = temperature;
     }
 
-    targetTemperature = temperature;
-}
+    private void Update()
+    {
+        // Temperaturen bevæger sig automatisk mod destinationens
+        // temperatur, mens pandaen rejser.
+        if (isTravelling)
+        {
+            float before = temperature;
 
-private void Update()
-{
-    // Only transition temperature while travelling.
-    if (isTravelling)
-{
-    float before = temperature;
+            temperature = Mathf.MoveTowards(
+                temperature,
+                targetTemperature,
+                temperatureChangeSpeed * Time.deltaTime
+            );
 
-    temperature = Mathf.MoveTowards(
-        temperature,
-        targetTemperature,
-        temperatureChangeSpeed * Time.deltaTime
-    );
+            if (!Mathf.Approximately(before, temperature))
+            {
+                TelemetryManager.Instance?.LogTemperature(
+                    temperature,
+                    "travel"
+                );
+            }
+        }
 
-    if (!Mathf.Approximately(before, temperature))
-        TelemetryManager.Instance?.LogTemperature(temperature, "travel");
-}
+        UpdateWater();
 
-    UpdateWater();
-
-    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
-}
+        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+    }
 
     private void OnDestroy()
     {
@@ -165,105 +172,110 @@ private void Update()
     // APPLY ZONE SETTINGS
     // =========================================================
 
+    public void ApplyZoneSettings(EcosystemZone zone)
+    {
+        if (zone == null)
+            return;
 
-public void ApplyZoneSettings(EcosystemZone zone)
-{
-    if (zone == null)
-        return;
+        activeZone = zone;
+        ActiveZoneName = zone.zoneName;
 
-    // Set the active ecosystem.
-    activeZone = zone;
-    ActiveZoneName = zone.zoneName;
+        // Temperaturindstillinger.
+        minTemperature = zone.minTemperature;
+        maxTemperature = zone.maxTemperature;
+        idealTemperature = zone.idealTemperature;
+        temperatureThreshold = zone.temperatureThreshold;
+        freezingPoint = zone.freezingPoint;
+        coldSlowdownPower = zone.coldSlowdownPower;
+        minGrowthWhenCold = zone.minGrowthWhenCold;
+        minGrowthWhenHot = zone.minGrowthWhenHot;
 
-    // Apply temperature settings.
-    minTemperature = zone.minTemperature;
-    maxTemperature = zone.maxTemperature;
-    idealTemperature = zone.idealTemperature;
-    temperatureThreshold = zone.temperatureThreshold;
-    freezingPoint = zone.freezingPoint;
-    coldSlowdownPower = zone.coldSlowdownPower;
-    minGrowthWhenCold = zone.minGrowthWhenCold;
-    minGrowthWhenHot = zone.minGrowthWhenHot;
+        // Vandindstillinger.
+        waterReactionSpeed = zone.waterReactionSpeed;
+        waterRecoverySpeed = zone.waterRecoverySpeed;
 
-    // Apply water settings.
-    waterReactionSpeed = zone.waterReactionSpeed;
-    waterRecoverySpeed = zone.waterRecoverySpeed;
+        comfortableWaterMinTemperature =
+            zone.comfortableWaterMinTemperature;
 
-    comfortableWaterMinTemperature =
-        zone.comfortableWaterMinTemperature;
+        comfortableWaterMaxTemperature =
+            zone.comfortableWaterMaxTemperature;
 
-    comfortableWaterMaxTemperature =
-        zone.comfortableWaterMaxTemperature;
+        coldWaterMinTemperature =
+            zone.coldWaterMinTemperature;
 
-    coldWaterMinTemperature =
-        zone.coldWaterMinTemperature;
+        coldWaterMaxTemperature =
+            zone.coldWaterMaxTemperature;
 
-    coldWaterMaxTemperature =
-        zone.coldWaterMaxTemperature;
+        coldWaterMinRecoveryMultiplier =
+            zone.coldWaterMinRecoveryMultiplier;
 
-    coldWaterMinRecoveryMultiplier =
-        zone.coldWaterMinRecoveryMultiplier;
+        hotWaterStartTemperature =
+            zone.hotWaterStartTemperature;
 
-    hotWaterStartTemperature =
-        zone.hotWaterStartTemperature;
+        // Stop temperaturens automatiske overgang ved ankomst.
+        isTravelling = false;
 
-// Stop the automatic temperature transition upon arrival.
-isTravelling = false;
+        // Behold den aktuelle temperatur, så spilleren kan justere den.
+        targetTemperature = temperature;
 
-// Keep the temperature where it currently is.
-// The player can now adjust it freely.
-targetTemperature = temperature;
+        // Den nye zone starter med sine egne værdier.
+        water = Mathf.Clamp(zone.water, 0f, 100f);
+        pollution = Mathf.Clamp01(zone.pollution);
 
-    // Apply the new zone's water and pollution.
-    water = Mathf.Clamp(zone.water, 0f, 100f);
-    pollution = Mathf.Clamp01(zone.pollution);
+        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
 
-    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+        Debug.Log(
+            "Active ecosystem: " + ActiveZoneName +
+            ". Temperature target: " + targetTemperature + "°C"
+        );
+    }
 
-    Debug.Log(
-        "Active ecosystem: " + ActiveZoneName +
-        ". Temperature target: " + targetTemperature + "°C"
-    );
-}
+    public void ExitZone(EcosystemZone zone)
+    {
+        if (activeZone != zone)
+            return;
 
-public void ExitZone(EcosystemZone zone)
-{
-    // Only exit if this is still the active zone.
-    if (activeZone != zone)
-        return;
+        activeZone = null;
+        ActiveZoneName = "Travelling";
 
-    activeZone = null;
-    ActiveZoneName = "Travelling";
+        // Ingen tilgængelig vandressource under rejsen.
+        water = 0f;
 
-    // No water is available while travelling.
-    water = 0f;
-
-    Debug.Log("Panda is travelling between zones. Water: 0");
-}
+        Debug.Log("Panda is travelling between zones. Water: 0");
+    }
 
     // =========================================================
     // TEMPERATURE
     // =========================================================
 
-public void SetTemperature(float newTemperature, string source = "player")
-{
-    temperature = Mathf.Clamp(
-        newTemperature,
-        minTemperature,
-        maxTemperature
-    );
+    public void SetTemperature(
+        float newTemperature,
+        string source = "player"
+    )
+    {
+        temperature = Mathf.Clamp(
+            newTemperature,
+            minTemperature,
+            maxTemperature
+        );
 
-    targetTemperature = temperature;
+        targetTemperature = temperature;
 
-    TemperatureGrowthFactor = GetTemperatureGrowthFactor();
+        TemperatureGrowthFactor = GetTemperatureGrowthFactor();
 
-    TelemetryManager.Instance?.LogTemperature(temperature, source);
-}
+        TelemetryManager.Instance?.LogTemperature(
+            temperature,
+            source
+        );
+    }
 
-public void ChangeTemperature(float amount, string source = "player")
-{
-    SetTemperature(temperature + amount, source);
-}
+    public void ChangeTemperature(
+        float amount,
+        string source = "player"
+    )
+    {
+        SetTemperature(temperature + amount, source);
+    }
 
     private float GetTemperatureGrowthFactor()
     {
@@ -310,19 +322,26 @@ public void ChangeTemperature(float amount, string source = "player")
 
     private void UpdateWater()
     {
-            // No active zone means the panda is travelling.
-    if (activeZone == null)
-    {
-        water = 0f;
-        return;
-    }
-        // Comfortable temperatures: water recovers quickly.
+        if (activeZone == null)
+        {
+            water = 0f;
+            return;
+        }
+
+        // Frost ændrer vandets tilstand, men bevarer vandmængden.
+        if (temperature <= freezingPoint)
+        {
+            water = Mathf.Clamp(water, 0f, 100f);
+            return;
+        }
+
+        // Behagelig temperatur: vandet genopfyldes.
         if (temperature >= comfortableWaterMinTemperature &&
             temperature <= comfortableWaterMaxTemperature)
         {
             water += waterRecoverySpeed * Time.deltaTime;
         }
-        // Slightly cold: water recovers more slowly.
+        // Køligt: langsommere genopfyldning.
         else if (temperature > coldWaterMinTemperature &&
                  temperature < coldWaterMaxTemperature)
         {
@@ -342,7 +361,7 @@ public void ChangeTemperature(float amount, string source = "player")
                      recoveryMultiplier *
                      Time.deltaTime;
         }
-        // Hot: water decreases increasingly quickly.
+        // Varmt: vandet fordamper.
         else if (temperature >= hotWaterStartTemperature)
         {
             float hotRange = Mathf.Max(
@@ -358,22 +377,6 @@ public void ChangeTemperature(float amount, string source = "player")
                      waterReactionSpeed *
                      Time.deltaTime;
         }
-        // Freezing: water decreases increasingly quickly.
-        else if (temperature <= freezingPoint)
-        {
-            float coldRange = Mathf.Max(
-                0.01f,
-                freezingPoint - minTemperature
-            );
-
-            float coldSeverity = Mathf.Clamp01(
-                (freezingPoint - temperature) / coldRange
-            );
-
-            water -= Mathf.Pow(coldSeverity, 2f) *
-                     waterReactionSpeed *
-                     Time.deltaTime;
-        }
 
         water = Mathf.Clamp(water, 0f, 100f);
     }
@@ -384,6 +387,10 @@ public void ChangeTemperature(float amount, string source = "player")
 
     public void SetWater(float value)
     {
+        // Lås også vandtilførsel fra eksempelvis regn under frost.
+        if (temperature <= freezingPoint)
+            return;
+
         water = Mathf.Clamp(value, 0f, 100f);
     }
 
@@ -406,47 +413,53 @@ public void ChangeTemperature(float amount, string source = "player")
         SetPollution(pollution + amount);
     }
 
-    
-public void BeginTravelToZone(string zoneName)
-{
-    if (string.IsNullOrWhiteSpace(zoneName))
-        return;
+    // =========================================================
+    // TRAVEL
+    // =========================================================
 
-    EcosystemZone[] zones = FindObjectsOfType<EcosystemZone>();
-
-    foreach (EcosystemZone zone in zones)
+    public void BeginTravelToZone(string zoneName)
     {
-        if (zone == null)
-            continue;
+        if (string.IsNullOrWhiteSpace(zoneName))
+            return;
 
-        if (string.Equals(
-            zone.zoneName?.Trim(),
-            zoneName.Trim(),
-            System.StringComparison.OrdinalIgnoreCase))
-        {
-// Start the automatic temperature transition during travel.
-isTravelling = true;
-
-targetTemperature = Mathf.Clamp(
-    zone.temperature,
-    zone.minTemperature,
-    zone.maxTemperature
-);
-
-            Debug.Log(
-                "EnvironmentSystem: Temperature transition started. " +
-                "Current = " + temperature.ToString("F1") +
-                "°C, destination = " +
-                targetTemperature.ToString("F1") + "°C."
+        EcosystemZone[] zones =
+            FindObjectsByType<EcosystemZone>(
+                FindObjectsSortMode.None
             );
 
-            return;
-        }
-    }
+        foreach (EcosystemZone zone in zones)
+        {
+            if (zone == null)
+                continue;
 
-    Debug.LogWarning(
-        "EnvironmentSystem: Could not find destination zone '" +
-        zoneName + "' for the temperature transition."
-    );
-}
+            if (string.Equals(
+                zone.zoneName?.Trim(),
+                zoneName.Trim(),
+                System.StringComparison.OrdinalIgnoreCase
+            ))
+            {
+                isTravelling = true;
+
+                targetTemperature = Mathf.Clamp(
+                    zone.temperature,
+                    zone.minTemperature,
+                    zone.maxTemperature
+                );
+
+                Debug.Log(
+                    "EnvironmentSystem: Temperature transition started. " +
+                    "Current = " + temperature.ToString("F1") +
+                    "°C, destination = " +
+                    targetTemperature.ToString("F1") + "°C."
+                );
+
+                return;
+            }
+        }
+
+        Debug.LogWarning(
+            "EnvironmentSystem: Could not find destination zone '" +
+            zoneName + "' for the temperature transition."
+        );
+    }
 }

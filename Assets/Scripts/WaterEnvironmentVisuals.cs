@@ -43,22 +43,26 @@ public class WaterEnvironmentVisuals : MonoBehaviour
     [SerializeField] private float fullyFrozenTemperature = -5f;
     [SerializeField] private Color iceColor = new Color(0.72f, 0.88f, 0.95f, 1f);
     [SerializeField, Min(0.01f)] private float freezeSeconds = 3f;
-    [SerializeField, Min(0.01f)] private float drySecondsAtMaxHeat = 20f;
-    [SerializeField, Min(0.01f)] private float refillSeconds = 30f;
     [Tooltip("Water level drop in local units when completely dry. Adjust to the lake bed.")]
     [SerializeField, Min(0f)] private float dryLevelDrop = 1f;
+    [Tooltip("Below this water percentage, liquid water gradually fades to transparent. Requires the updated WaterShader2.")]
+    [SerializeField, Range(1f, 100f)] private float fadeStartWaterPercent = 30f;
 
     public float IceAmount => iceAmount;
     public float VisibleWater => visibleWater;
 
     private float iceAmount;
     private float visibleWater = 1f;
+    private bool waterLevelInitialized;
+    private EcosystemZone previousWaterZone;
     private Vector3 fullPosition;
     private bool originalRendererEnabled;
     private float originalWaveAmplitude;
     private float originalSpecularSpeed;
+    private float originalWaterOpacity = 1f;
     private static readonly int WaveAmplitudeId = Shader.PropertyToID("_Wave_Amplitude");
     private static readonly int SpecularSpeedId = Shader.PropertyToID("_Specular_Speed");
+    private static readonly int WaterOpacityId = Shader.PropertyToID("_WaterOpacity");
 
     private Renderer waterRenderer;
     private Material originalMaterial;
@@ -104,8 +108,14 @@ public class WaterEnvironmentVisuals : MonoBehaviour
             ? runtimeMaterial.GetFloat(WaveAmplitudeId) : 0f;
         originalSpecularSpeed = runtimeMaterial.HasProperty(SpecularSpeedId)
             ? runtimeMaterial.GetFloat(SpecularSpeedId) : 0f;
+        originalWaterOpacity = runtimeMaterial.HasProperty(WaterOpacityId)
+            ? runtimeMaterial.GetFloat(WaterOpacityId) : 1f;
+        if (!runtimeMaterial.HasProperty(WaterOpacityId))
+            Debug.LogWarning("Update WaterShader2.shadergraph to enable gradual water fading (_WaterOpacity is missing).", this);
         iceAmount = 0f;
         visibleWater = 1f;
+        waterLevelInitialized = false;
+        previousWaterZone = null;
         initialized = false;
     }
 
@@ -148,33 +158,71 @@ public class WaterEnvironmentVisuals : MonoBehaviour
     private void UpdateWaterState()
     {
         float temperature = environment.Temperature;
-        float targetIce = Mathf.InverseLerp(freezeStartTemperature,
-            Mathf.Min(fullyFrozenTemperature, freezeStartTemperature - 0.01f), temperature);
-        iceAmount = Mathf.MoveTowards(iceAmount, targetIce,
-            Time.deltaTime / Mathf.Max(0.01f, freezeSeconds));
+        EcosystemZone currentZone = environment.ActiveZone;
 
-        // Keep physical-looking volume separate from the gameplay Water value:
-        // gameplay also removes usable water in cold weather and while travelling.
-        if (temperature > hotStartTemperature)
+        if (!waterLevelInitialized || currentZone != previousWaterZone)
         {
-            float heat = Mathf.Clamp01((temperature - hotStartTemperature) /
-                Mathf.Max(0.01f, environment.MaxTemperature - hotStartTemperature));
-            visibleWater = Mathf.Max(0f, visibleWater - heat * heat *
-                (1f - iceAmount) * Time.deltaTime / Mathf.Max(0.01f, drySecondsAtMaxHeat));
+            iceAmount = 0f;
+            previousWaterZone = currentZone;
+            waterLevelInitialized = true;
         }
-        else if (temperature > freezeStartTemperature)
-        {
-            visibleWater = Mathf.Min(1f, visibleWater + (1f - iceAmount) *
-                Time.deltaTime / Mathf.Max(0.01f, refillSeconds));
-        }
+
+        // Temperaturen styrer frysning og optøning.
+        float targetIce = Mathf.InverseLerp(
+            freezeStartTemperature,
+            Mathf.Min(
+                fullyFrozenTemperature,
+                freezeStartTemperature - 0.01f
+            ),
+            temperature
+        );
+
+        iceAmount = Mathf.MoveTowards(
+            iceAmount,
+            targetIce,
+            Time.deltaTime / Mathf.Max(0.01f, freezeSeconds)
+        );
+
+        // Vandstanden følger altid den faktiske vandmængde.
+        visibleWater = Mathf.Clamp01(environment.Water / 100f);
 
         transform.localPosition = fullPosition - Vector3.up *
             (Mathf.Max(0f, dryLevelDrop) * (1f - visibleWater));
-        waterRenderer.enabled = originalRendererEnabled && visibleWater > 0.001f;
+
+        waterRenderer.enabled =
+            originalRendererEnabled && visibleWater > 0.001f;
+
+        if (runtimeMaterial.HasProperty(WaterOpacityId))
+        {
+            float fadeStart =
+                Mathf.Clamp(fadeStartWaterPercent, 1f, 100f) / 100f;
+
+            float opacity = Mathf.Clamp01(visibleWater / fadeStart);
+
+            // Isen forbliver synlig.
+            opacity = Mathf.Lerp(opacity, 1f, iceAmount);
+
+            runtimeMaterial.SetFloat(
+                WaterOpacityId,
+                originalWaterOpacity * opacity
+            );
+        }
+
         if (runtimeMaterial.HasProperty(WaveAmplitudeId))
-            runtimeMaterial.SetFloat(WaveAmplitudeId, originalWaveAmplitude * Mathf.Pow(1f - iceAmount, 4f));
+        {
+            runtimeMaterial.SetFloat(
+                WaveAmplitudeId,
+                originalWaveAmplitude * Mathf.Pow(1f - iceAmount, 4f)
+            );
+        }
+
         if (runtimeMaterial.HasProperty(SpecularSpeedId))
-            runtimeMaterial.SetFloat(SpecularSpeedId, originalSpecularSpeed * (1f - iceAmount));
+        {
+            runtimeMaterial.SetFloat(
+                SpecularSpeedId,
+                originalSpecularSpeed * (1f - iceAmount)
+            );
+        }
     }
 
     private Color GetColor(Color normal, Color cold, Color hot, Color polluted)
