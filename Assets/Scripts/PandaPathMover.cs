@@ -160,27 +160,44 @@ public class PandaPathMover : MonoBehaviour
     [Tooltip("Extra Y rotation if the model doesn't face forward. Try 0, 180, 90 or -90.")]
     [SerializeField] private float facingCorrection = 180f;
 
-    [Tooltip("How quickly the panda turns to follow its path while walking.")]
-    [SerializeField] private float turnSpeed = 6f;
+    [Tooltip("How softly the panda turns while walking. Higher = gentler, wider turns.")]
+    [SerializeField] private float walkTurnSmoothTime = 0.35f;
 
-    [Header("Smooth Turning")]
-    [Tooltip("Seconds the panda spends turning from its sitting angle toward the path before it starts walking forward.")]
-    [SerializeField] private float startTurnDuration = 0.7f;
+    [Tooltip("Fastest the panda may turn, in degrees per second.")]
+    [SerializeField] private float maxTurnSpeed = 180f;
 
-    [Tooltip("Seconds the panda spends turning to face the camera before it sits down.")]
-    [SerializeField] private float arrivalTurnDuration = 0.9f;
+    [Header("Starting To Walk")]
+    [Tooltip("The panda walks at full speed once it faces within this angle of the path.")]
+    [SerializeField] private float fullSpeedAngle = 25f;
 
-    [Tooltip("What the panda looks at when it sits. Empty = the main camera.")]
+    [Tooltip("When facing more than this angle away from the path, the panda turns before moving forward. In between, it walks slower while it turns, so it curves onto the path.")]
+    [SerializeField] private float noMoveAngle = 100f;
+
+    [Header("Arriving")]
+    [Tooltip("Over the last this-many units, the panda gradually turns toward its sitting direction, so it arrives already facing the camera. 0 = off.")]
+    [SerializeField] private float arrivalBlendDistance = 1.5f;
+
+    [Tooltip("How softly the panda finishes its last bit of turning while sitting down.")]
+    [SerializeField] private float sitTurnSmoothTime = 0.3f;
+
+    [Tooltip("On: the panda always sits square to the main camera's view, so it looks straight into the shot. Ignores every Sit Facing Target. Off: the panda faces the Sit Facing Target.")]
+    [SerializeField] private bool sitSquareToCamera = true;
+
+    [Tooltip("What the panda looks at when it sits. Empty = the main camera. Only used when Sit Square To Camera is off.")]
     [SerializeField] private Transform sitFacingTarget;
 
     [Tooltip("Extra angle when sitting, so the panda sits slightly turned (e.g. 20 or -20). 0 = looks straight at the target.")]
     [SerializeField] private float sitAngleOffset = 0f;
 
-    private enum TurnPhase { None, TowardPath, TowardCamera }
-    private TurnPhase turnPhase = TurnPhase.None;
-    private float turnTimer;
-    private Quaternion turnStartRotation;
     private Transform currentSitFacingTarget;
+    private bool turningToSit;
+    private float yawVelocity;
+    private float baseAgentSpeed;
+
+    // Near the end, the path direction becomes unreliable (the steering
+    // target is almost on top of the panda), so it is frozen here.
+    private bool pathDirectionLocked;
+    private Quaternion lockedPathRotation;
 
     private bool isMoving;
     private bool returningCamera;
@@ -195,11 +212,14 @@ public class PandaPathMover : MonoBehaviour
 
         if (agent != null)
         {
-            // This script handles the rotation itself (see CorrectPandaFacingDirection).
+            // This script handles the rotation itself.
             agent.updateRotation = false;
 
             // Remember the normal height so we can return to it when not walking.
             originalBaseOffset = agent.baseOffset;
+
+            // Remember the normal speed; it is lowered while the panda turns.
+            baseAgentSpeed = agent.speed;
         }
 
         // Root motion makes the animation move the panda on its own,
@@ -277,52 +297,38 @@ public class PandaPathMover : MonoBehaviour
 
         if (isMoving)
         {
-            // Turn IsWalking on once the stand-up animation is done.
-            UpdateWalkingState();
-
-            if (IsWalkingActive())
+            if (turningToSit)
             {
-                if (!cinematicStarted)
-                    StartCinematicCamera();
+                // Arrived and sitting down: finish the small remaining turn.
+                HoldAgent();
 
-                if (turnPhase == TurnPhase.TowardPath)
+                Quaternion sitRotation = GetSitFacingRotation();
+
+                if (TurnModelToward(sitRotation, sitTurnSmoothTime) < 1f)
                 {
-                    // Turn gently from the sitting angle toward the path,
-                    // stepping in place, before walking forward.
-                    HoldAgent();
-
-                    if (UpdateTurn(GetPathFacingRotation(), startTurnDuration))
-                    {
-                        turnPhase = TurnPhase.None;
-                        agent.isStopped = false;
-                        Debug.Log("PandaPathMover: Facing the path. Panda starts moving.");
-                    }
-                }
-                else if (turnPhase == TurnPhase.TowardCamera)
-                {
-                    // Arrived: turn to face the camera, then sit down.
-                    HoldAgent();
-
-                    if (UpdateTurn(GetSitFacingRotation(), arrivalTurnDuration))
-                    {
-                        turnPhase = TurnPhase.None;
-                        FinishMovement();
-                    }
-                }
-                else
-                {
-                    // Walking along the path.
-                    if (agent.isStopped)
-                        agent.isStopped = false;
-
-                    CorrectPandaFacingDirection();
-                    CheckPandaArrival();
+                    SetModelYaw(sitRotation.eulerAngles.y);
+                    turningToSit = false;
+                    FinishMovement();
                 }
             }
             else
             {
-                // Eating or standing up: hold the panda still.
-                HoldAgent();
+                // Turn IsWalking on once the stand-up animation is done.
+                UpdateWalkingState();
+
+                if (IsWalkingActive())
+                {
+                    if (!cinematicStarted)
+                        StartCinematicCamera();
+
+                    WalkAlongPath();
+                    CheckPandaArrival();
+                }
+                else
+                {
+                    // Eating or standing up: hold the panda still.
+                    HoldAgent();
+                }
             }
         }
 
@@ -347,7 +353,7 @@ public class PandaPathMover : MonoBehaviour
         if (agent == null)
             return;
 
-        bool walking = isMoving && IsWalkingActive();
+        bool walking = isMoving && !turningToSit && IsWalkingActive();
 
         float targetOffset = walking
             ? originalBaseOffset + walkingBaseOffset
@@ -420,7 +426,7 @@ public class PandaPathMover : MonoBehaviour
             $"PandaPathMover: About to move. " +
             $"Destination={destination.position}, " +
             $"Agent position={agent.transform.position}, " +
-            $"Speed={agent.speed}, " +
+            $"Speed={baseAgentSpeed}, " +
             $"Stopping distance={agent.stoppingDistance}"
         );
 
@@ -431,10 +437,12 @@ public class PandaPathMover : MonoBehaviour
         forcedStandUp = false;
         movementStartTime = Time.time;
 
-        // When walking begins, first turn smoothly toward the path.
-        BeginTurn(startTurnDuration > 0f ? TurnPhase.TowardPath : TurnPhase.None);
+        turningToSit = false;
+        pathDirectionLocked = false;
+        yawVelocity = 0f;
 
         // Calculate the path now, but don't move until IsWalking is true.
+        agent.speed = baseAgentSpeed;
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
 
@@ -918,6 +926,69 @@ public class PandaPathMover : MonoBehaviour
         return false;
     }
 
+    // Turns the panda toward where it should face and sets the walking
+    // speed: slow (or zero) while facing away from the path, full speed
+    // once lined up. This makes the panda curve onto the path instead of
+    // spinning in place and then lurching forward.
+    private void WalkAlongPath()
+    {
+        if (agent == null)
+            return;
+
+        if (agent.pathPending || !agent.hasPath)
+        {
+            HoldAgent();
+            return;
+        }
+
+        float angleOff = TurnModelToward(
+            GetWalkFacingRotation(),
+            walkTurnSmoothTime
+        );
+
+        float speedFactor =
+            1f - Mathf.InverseLerp(fullSpeedAngle, noMoveAngle, angleOff);
+
+        agent.speed = baseAgentSpeed * speedFactor;
+
+        if (agent.isStopped)
+            agent.isStopped = false;
+    }
+
+    // Normally faces along the path. In the last stretch it blends toward
+    // the sitting direction, so the panda arrives already facing the camera
+    // instead of spinning around after it sits down.
+    private Quaternion GetWalkFacingRotation()
+    {
+        float remaining = agent.remainingDistance;
+        float lockDistance = Mathf.Max(arrivalBlendDistance, 0.3f);
+
+        bool nearEnd =
+            !float.IsInfinity(remaining) && remaining <= lockDistance;
+
+        if (!nearEnd)
+            return GetPathFacingRotation();
+
+        if (!pathDirectionLocked)
+        {
+            lockedPathRotation = GetPathFacingRotation();
+            pathDirectionLocked = true;
+        }
+
+        if (arrivalBlendDistance <= 0f)
+            return lockedPathRotation;
+
+        float span = Mathf.Max(
+            arrivalBlendDistance - agent.stoppingDistance, 0.01f);
+
+        float t = 1f - Mathf.Clamp01(
+            (remaining - agent.stoppingDistance) / span);
+
+        t = t * t * (3f - 2f * t);
+
+        return Quaternion.Slerp(lockedPathRotation, GetSitFacingRotation(), t);
+    }
+
     private void CheckPandaArrival()
     {
         if (agent == null)
@@ -958,20 +1029,34 @@ public class PandaPathMover : MonoBehaviour
         if (agent.remainingDistance <= agent.stoppingDistance + 0.05f)
         {
             Debug.Log(
-                "PandaPathMover: Panda reached its destination. " +
-                "Turning to face the camera before sitting."
+                $"PandaPathMover: Panda reached its destination. " +
+                $"Sitting down with " +
+                $"{Quaternion.Angle(GetModel().rotation, GetSitFacingRotation()):F0}° " +
+                $"left to turn to face " +
+                (sitSquareToCamera ? "straight into the main camera's view." :
+                 currentSitFacingTarget != null ? $"the zone target '{currentSitFacingTarget.name}'." :
+                 sitFacingTarget != null ? $"the default target '{sitFacingTarget.name}'." :
+                 "the main camera's position.")
             );
 
             HoldAgent();
+            StartSitDownAnimation();
 
-            if (arrivalTurnDuration > 0f)
-                BeginTurn(TurnPhase.TowardCamera);
-            else
-            {
-                GetModel().rotation = GetSitFacingRotation();
-                FinishMovement();
-            }
+            // Finish whatever little turning is left while sitting.
+            turningToSit = true;
         }
+    }
+
+    private void StartSitDownAnimation()
+    {
+        if (animator == null)
+            return;
+
+        animator.SetBool(walkingParameter, false);
+        animator.ResetTrigger(standUpTrigger);
+        animator.SetTrigger(sitDownTrigger);
+
+        Debug.Log("PandaPathMover: Sit-down trigger activated.");
     }
 
     private void FinishMovement()
@@ -979,17 +1064,14 @@ public class PandaPathMover : MonoBehaviour
         isMoving = false;
 
         if (agent != null)
-            agent.isStopped = true;
-
-        // Stop walking and begin sitting down.
-        if (animator != null)
         {
-            animator.SetBool(walkingParameter, false);
-            animator.ResetTrigger(standUpTrigger);
-            animator.SetTrigger(sitDownTrigger);
-
-            Debug.Log("PandaPathMover: Sit-down trigger activated.");
+            agent.isStopped = true;
+            agent.speed = baseAgentSpeed;
         }
+
+        // The sit-down was already started on arrival.
+        if (animator != null)
+            animator.SetBool(walkingParameter, false);
 
         Debug.Log(
             "PandaPathMover: Travel finished. Returning camera to main view."
@@ -1192,7 +1274,7 @@ public class PandaPathMover : MonoBehaviour
         );
     }
 
-    // ---------- Smooth turning helpers ----------
+    // ---------- Turning helpers ----------
 
     private Transform GetModel()
     {
@@ -1209,29 +1291,34 @@ public class PandaPathMover : MonoBehaviour
         }
     }
 
-    private void BeginTurn(TurnPhase phase)
+    // Smoothly turns the model's yaw toward the target. It speeds up and
+    // slows down naturally, and copes with a target that keeps moving
+    // (no jumps when the path direction changes mid-turn).
+    // Returns how many degrees are still left to turn.
+    private float TurnModelToward(Quaternion target, float smoothTime)
     {
-        turnPhase = phase;
-        turnTimer = 0f;
-        turnStartRotation = GetModel().rotation;
-    }
+        Transform model = GetModel();
+        float currentYaw = model.eulerAngles.y;
+        float targetYaw = target.eulerAngles.y;
 
-    // Eases the model from where the turn started to the target.
-    // Returns true when the turn is complete.
-    private bool UpdateTurn(Quaternion targetRotation, float duration)
-    {
-        turnTimer += Time.deltaTime / Mathf.Max(duration, 0.01f);
-
-        float t = Mathf.Clamp01(turnTimer);
-        float smoothT = t * t * (3f - 2f * t);
-
-        GetModel().rotation = Quaternion.Slerp(
-            turnStartRotation,
-            targetRotation,
-            smoothT
+        float yaw = Mathf.SmoothDampAngle(
+            currentYaw,
+            targetYaw,
+            ref yawVelocity,
+            Mathf.Max(smoothTime, 0.01f),
+            Mathf.Max(maxTurnSpeed, 1f)
         );
 
-        return t >= 1f;
+        SetModelYaw(yaw);
+
+        return Mathf.Abs(Mathf.DeltaAngle(yaw, targetYaw));
+    }
+
+    private void SetModelYaw(float yaw)
+    {
+        Transform model = GetModel();
+        Vector3 euler = model.eulerAngles;
+        model.rotation = Quaternion.Euler(euler.x, yaw, euler.z);
     }
 
     private Quaternion FacingRotation(Vector3 direction, float extraAngle)
@@ -1261,6 +1348,11 @@ public class PandaPathMover : MonoBehaviour
 
     private Quaternion GetSitFacingRotation()
     {
+        // Face back along the camera's view direction, so the panda
+        // looks straight into the shot wherever it is in the frame.
+        if (sitSquareToCamera && mainCamera != null)
+            return FacingRotation(-mainCamera.transform.forward, sitAngleOffset);
+
         Transform target = currentSitFacingTarget != null
             ? currentSitFacingTarget
             : sitFacingTarget != null
@@ -1271,35 +1363,5 @@ public class PandaPathMover : MonoBehaviour
             return GetModel().rotation;
 
         return FacingRotation(target.position - transform.position, sitAngleOffset);
-    }
-
-    // Rotates the panda (or its model) to face the way it is walking.
-    private void CorrectPandaFacingDirection()
-    {
-        if (agent == null)
-            return;
-
-        Transform model = GetModel();
-
-        // Use real movement; fall back to the path direction when moving slowly.
-        Vector3 movementDirection = agent.velocity;
-
-        if (movementDirection.sqrMagnitude < 0.0025f && agent.hasPath)
-            movementDirection = agent.steeringTarget - transform.position;
-
-        movementDirection.y = 0f;
-
-        if (movementDirection.sqrMagnitude < 0.0001f)
-            return;
-
-        Quaternion targetRotation =
-            Quaternion.LookRotation(movementDirection) *
-            Quaternion.Euler(0f, facingCorrection, 0f);
-
-        model.rotation = Quaternion.Slerp(
-            model.rotation,
-            targetRotation,
-            turnSpeed * Time.deltaTime
-        );
     }
 }
