@@ -218,7 +218,8 @@ public class EnvironmentSystem : MonoBehaviour
         // Behold den aktuelle temperatur, så spilleren kan justere den.
         targetTemperature = temperature;
 
-        // Den nye zone starter med sine egne værdier.
+        // Zonen indlæser sine egne gemte værdier
+        // (gemt i ExitZone, sidst pandaen var her).
         water = Mathf.Clamp(zone.water, 0f, 100f);
         pollution = Mathf.Clamp01(zone.pollution);
 
@@ -226,6 +227,7 @@ public class EnvironmentSystem : MonoBehaviour
 
         Debug.Log(
             "Active ecosystem: " + ActiveZoneName +
+            ". Water: " + water.ToString("F0") +
             ". Temperature target: " + targetTemperature + "°C"
         );
     }
@@ -235,13 +237,20 @@ public class EnvironmentSystem : MonoBehaviour
         if (activeZone != zone)
             return;
 
+        // Gem zonens nuværende tilstand, så den er der,
+        // når pandaen vender tilbage.
+        zone.water = water;
+        zone.pollution = pollution;
+
         activeZone = null;
         ActiveZoneName = "Travelling";
 
-        // Ingen tilgængelig vandressource under rejsen.
-        water = 0f;
-
-        Debug.Log("Panda is travelling between zones. Water: 0");
+        // Vandet nulstilles ikke: bjælken viser den sidste zones
+        // værdi, indtil pandaen ankommer til den næste zone.
+        Debug.Log(
+            "Panda is travelling between zones. Water kept at " +
+            water.ToString("F0")
+        );
     }
 
     // =========================================================
@@ -322,11 +331,9 @@ public class EnvironmentSystem : MonoBehaviour
 
     private void UpdateWater()
     {
+        // Under rejsen: frys vandværdien i stedet for at tømme den.
         if (activeZone == null)
-        {
-            water = 0f;
             return;
-        }
 
         // Frost ændrer vandets tilstand, men bevarer vandmængden.
         if (temperature <= freezingPoint)
