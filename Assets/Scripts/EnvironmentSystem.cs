@@ -115,11 +115,9 @@ public class EnvironmentSystem : MonoBehaviour
 
     private void Start()
     {
-        if (activeZone != null)
-        {
-            ApplyZoneSettings(activeZone);
-        }
-        else
+        // If a zone was already entered before Start,
+        // its settings are already applied.
+        if (activeZone == null)
         {
             water = Mathf.Clamp(water, 0f, 100f);
             pollution = Mathf.Clamp01(pollution);
@@ -175,6 +173,12 @@ public class EnvironmentSystem : MonoBehaviour
     public void ApplyZoneSettings(EcosystemZone zone)
     {
         if (zone == null)
+            return;
+
+        // Already in this zone: do NOT reload the saved values.
+        // Reloading would reset water to the value saved the last
+        // time the panda left, undoing all changes since arrival.
+        if (zone == activeZone)
             return;
 
         activeZone = zone;
@@ -245,11 +249,11 @@ public class EnvironmentSystem : MonoBehaviour
         activeZone = null;
         ActiveZoneName = "Travelling";
 
-        // Vandet nulstilles ikke: bjælken viser den sidste zones
-        // værdi, indtil pandaen ankommer til den næste zone.
+        // Den rigtige vandværdi gemmes i zonen. Bjælken viser 0
+        // under rejsen (håndteres i EnvironmentUI).
         Debug.Log(
-            "Panda is travelling between zones. Water kept at " +
-            water.ToString("F0")
+            "Panda is travelling between zones. Saved water for " +
+            zone.zoneName + ": " + water.ToString("F0")
         );
     }
 

@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +9,13 @@ public class EcosystemZone : MonoBehaviour
 
     [Header("Panda Detection")]
     [SerializeField] private string pandaTag = "Panda";
+
+    // Every panda collider (body parts, held bamboo, etc.)
+    // currently inside this zone. The zone is only entered when
+    // the first one arrives and only left when the last one leaves,
+    // so extra colliders on the panda can't re-trigger the zone.
+    private readonly HashSet<Collider> pandaCollidersInside =
+        new HashSet<Collider>();
 
     // =========================================================
     // BAMBOO
@@ -127,45 +133,74 @@ public class EcosystemZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Transform current = other.transform;
+        if (!BelongsToPanda(other))
+            return;
 
-        while (current != null)
+        // Forget colliders that were destroyed or disabled while
+        // inside (Unity does not send OnTriggerExit for those).
+        RemoveStaleColliders();
+
+        bool wasEmpty = pandaCollidersInside.Count == 0;
+        pandaCollidersInside.Add(other);
+
+        // Only the first panda collider actually enters the zone.
+        if (!wasEmpty)
+            return;
+
+        if (EnvironmentSystem.Instance == null)
         {
-            if (current.CompareTag(pandaTag))
-            {
-                if (EnvironmentSystem.Instance == null)
-                {
-                    Debug.LogError(
-                        "No EnvironmentSystem found in the scene!"
-                    );
-                    return;
-                }
-
-                EnvironmentSystem.Instance.ApplyZoneSettings(this);
-                return;
-            }
-
-            current = current.parent;
+            Debug.LogError(
+                "No EnvironmentSystem found in the scene!"
+            );
+            return;
         }
+
+        EnvironmentSystem.Instance.ApplyZoneSettings(this);
     }
 
     private void OnTriggerExit(Collider other)
+    {
+        if (!BelongsToPanda(other))
+            return;
+
+        pandaCollidersInside.Remove(other);
+        RemoveStaleColliders();
+
+        // Only leave the zone when no part of the panda is inside.
+        if (pandaCollidersInside.Count > 0)
+            return;
+
+        if (EnvironmentSystem.Instance != null)
+        {
+            EnvironmentSystem.Instance.ExitZone(this);
+        }
+    }
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private bool BelongsToPanda(Collider other)
     {
         Transform current = other.transform;
 
         while (current != null)
         {
             if (current.CompareTag(pandaTag))
-            {
-                if (EnvironmentSystem.Instance != null)
-                {
-                    EnvironmentSystem.Instance.ExitZone(this);
-                }
-
-                return;
-            }
+                return true;
 
             current = current.parent;
         }
+
+        return false;
+    }
+
+    private void RemoveStaleColliders()
+    {
+        pandaCollidersInside.RemoveWhere(
+            c => c == null ||
+                 !c.enabled ||
+                 !c.gameObject.activeInHierarchy
+        );
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Pulses a red outline around a resource bar (bamboo, water or health) when it is low.
 /// Put one on each bar's root object and pick the resource to watch.
+/// Bamboo and water also count as low (0%) while the panda travels between zones.
 /// </summary>
 public class BambooLowWarning : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class BambooLowWarning : MonoBehaviour
     [Tooltip("Red outline images placed BEHIND the bar and the icon circle.")]
     [SerializeField] private Graphic[] outlineGraphics;
 
-    [Tooltip("Optional: the whole bamboo bar, gently scaled with the pulse.")]
+    [Tooltip("Optional: the whole bar, gently scaled with the pulse.")]
     [SerializeField] private RectTransform pulseTarget;
 
     [SerializeField] private Color warningColor = new Color(0.85f, 0.15f, 0.12f, 1f);
@@ -42,7 +43,7 @@ public class BambooLowWarning : MonoBehaviour
     [SerializeField] private float scaleAmount = 0.04f;
     [Tooltip("How fast the warning fades in and out.")]
     [SerializeField] private float fadeSpeed = 4f;
-    [Tooltip("Pulse faster as bamboo gets closer to zero. Ignored when Sync Pulse is on.")]
+    [Tooltip("Pulse faster as the value gets closer to zero. Ignored when Sync Pulse is on.")]
     [SerializeField] private bool urgencyScaling = true;
     [Tooltip("All warnings with this ON pulse in step with each other " +
              "(they must use the same Pulses Per Second).")]
@@ -89,7 +90,10 @@ public class BambooLowWarning : MonoBehaviour
         {
             case WatchedResource.Water:
                 percent = environmentUI.WaterPercent;
-                hasData = environmentUI.HasActiveZone;
+                // While travelling, water is shown as 0%,
+                // so the warning should be active too.
+                hasData = environmentUI.HasActiveZone ||
+                          environmentUI.IsBetweenZones;
                 break;
 
             case WatchedResource.Health:
@@ -99,7 +103,10 @@ public class BambooLowWarning : MonoBehaviour
 
             default:
                 percent = environmentUI.BambooPercent;
-                hasData = environmentUI.HasBambooZone;
+                // While travelling, bamboo is shown as 0%,
+                // so the warning should be active too.
+                hasData = environmentUI.HasBambooZone ||
+                          environmentUI.IsBetweenZones;
                 break;
         }
 
@@ -140,7 +147,7 @@ public class BambooLowWarning : MonoBehaviour
         }
         else
         {
-            // Pulse faster the emptier the zone is.
+            // Pulse faster the emptier the bar is.
             float speed = pulsesPerSecond;
 
             if (urgencyScaling && isLow && lowThreshold > 0f)

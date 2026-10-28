@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -27,8 +26,11 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private float bambooSliderSpeed = 4f;
     [SerializeField] private float pandaHealthSliderSpeed = 20f;
 
-    private bool waterSliderInitialized = false;
-    private EcosystemZone previousWaterZone;
+    [Tooltip("How fast the water bar slides, in % per second " +
+             "(e.g. down to 0 when travelling, up again on arrival).")]
+    [SerializeField] private float waterSliderSpeed = 15f;
+
+    private EcosystemZone lastWaterZone;
 
     private bool bambooInitialized;
     private EcosystemZone lastBambooZone;
@@ -96,11 +98,10 @@ public class EnvironmentUI : MonoBehaviour
             waterSlider.wholeNumbers = false;
             waterSlider.interactable = false;
 
-            // Start at the current water level immediately.
-            waterSlider.SetValueWithoutNotify(environment.Water);
-
-            waterSliderInitialized = true;
-            previousWaterZone = environment.ActiveZone;
+            // Start at the current water level immediately
+            // (0 if the panda is not in a zone).
+            waterSlider.SetValueWithoutNotify(GetTargetWater());
+            lastWaterZone = environment.ActiveZone;
         }
 
         // BAMBOO
@@ -139,7 +140,7 @@ public class EnvironmentUI : MonoBehaviour
             return;
 
         // WATER
-        // Immediately follows the value from EnvironmentSystem.
+        // Slides gradually towards the value from EnvironmentSystem.
         UpdateWaterDisplay();
 
         // BAMBOO
@@ -201,29 +202,38 @@ public class EnvironmentUI : MonoBehaviour
             return;
 
         EcosystemZone currentZone = environment.ActiveZone;
+        float targetWater = GetTargetWater();
 
-        float targetWater = Mathf.Clamp(
-            environment.Water,
-            0f,
-            100f
-        );
-
-        // Set the correct value immediately at startup
-        // and whenever the panda enters or leaves a zone.
-        if (!waterSliderInitialized ||
-            currentZone != previousWaterZone)
+        if (currentZone != null && currentZone != lastWaterZone)
         {
+            // Arrived in a zone (also the first zone at game start):
+            // jump straight to that zone's water, like the bamboo bar.
             waterSlider.SetValueWithoutNotify(targetWater);
-
-            waterSliderInitialized = true;
-            previousWaterZone = currentZone;
         }
         else
         {
-            // No animation: the slider immediately matches the
-            // current water value from EnvironmentSystem.
-            waterSlider.SetValueWithoutNotify(targetWater);
+            // Slide gradually: down to 0 while travelling,
+            // and along with temperature changes inside a zone.
+            waterSlider.SetValueWithoutNotify(
+                Mathf.MoveTowards(
+                    waterSlider.value,
+                    targetWater,
+                    waterSliderSpeed * Time.deltaTime
+                )
+            );
         }
+
+        lastWaterZone = currentZone;
+    }
+
+    // The real water value of the active zone, or 0 while travelling.
+    // The zone's actual water is still kept in EnvironmentSystem / the zone.
+    private float GetTargetWater()
+    {
+        if (environment == null || environment.ActiveZone == null)
+            return 0f;
+
+        return Mathf.Clamp(environment.Water, 0f, 100f);
     }
 
     // =====================================================
@@ -322,9 +332,7 @@ public class EnvironmentUI : MonoBehaviour
 
         if (waterText != null)
         {
-            float displayedWater = waterSlider != null
-                ? waterSlider.value
-                : environment.Water;
+            float displayedWater = WaterPercent;
 
             waterText.text =
                 "Clean Water: " +
@@ -363,20 +371,32 @@ public class EnvironmentUI : MonoBehaviour
             );
         }
     }
+
+    // =====================================================
+    // PUBLIC VALUES (used by BambooLowWarning)
+    // =====================================================
+
+    // True while the panda is between zones.
+    public bool IsBetweenZones =>
+        environment != null && environment.ActiveZone == null;
+
     public float BambooPercent =>
-    totalBambooCount > 0
-        ? (float)currentBambooCount / totalBambooCount * 100f
-        : 0f;
+        totalBambooCount > 0
+            ? (float)currentBambooCount / totalBambooCount * 100f
+            : 0f;
 
-public bool HasBambooZone => totalBambooCount > 0;
-public float WaterPercent =>
-    environment != null ? Mathf.Clamp(environment.Water, 0f, 100f) : 0f;
+    public bool HasBambooZone => totalBambooCount > 0;
 
-public bool HasActiveZone =>
-    environment != null && environment.ActiveZone != null;
+    // What the water bar currently shows, so the warning
+    // follows the bar as it slides (0 while travelling).
+    public float WaterPercent =>
+        waterSlider != null ? waterSlider.value : GetTargetWater();
 
-public float HealthPercent =>
-    panda != null ? Mathf.Clamp(panda.Health, 0f, 100f) : 0f;
+    public bool HasActiveZone =>
+        environment != null && environment.ActiveZone != null;
 
-public bool HasPanda => panda != null;
+    public float HealthPercent =>
+        panda != null ? Mathf.Clamp(panda.Health, 0f, 100f) : 0f;
+
+    public bool HasPanda => panda != null;
 }
