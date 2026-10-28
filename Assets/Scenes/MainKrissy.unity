@@ -16113,6 +16113,8 @@ MonoBehaviour:
   coldWaterMaxTemperature: 15
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
+  coldWaterLossStartTemperature: 0
+  coldWaterLossSpeed: 5
   pollution: 0
 --- !u!114 &439519104
 MonoBehaviour:
@@ -30203,8 +30205,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282939035
-  m_fontColor: {r: 0.60784316, g: 0.46274513, b: 0.28235295, a: 1}
+    rgba: 4282739850
+  m_fontColor: {r: 0.5411765, g: 0.42352942, b: 0.27058825, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -46665,8 +46667,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282939035
-  m_fontColor: {r: 0.60784316, g: 0.4627451, b: 0.28235295, a: 1}
+    rgba: 4282739594
+  m_fontColor: {r: 0.54088044, g: 0.42032272, b: 0.27044016, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -46722,7 +46724,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 6.9451656}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -54614,6 +54616,8 @@ MonoBehaviour:
   coldWaterMaxTemperature: 15
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
+  coldWaterLossStartTemperature: 0
+  coldWaterLossSpeed: 5
   pollution: 0
 --- !u!136 &1231037626
 CapsuleCollider:
@@ -58117,6 +58121,8 @@ MonoBehaviour:
   coldWaterMaxTemperature: 15
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
+  coldWaterLossStartTemperature: 0
+  coldWaterLossSpeed: 5
   pollution: 0
 --- !u!4 &1431297041
 Transform:
@@ -78495,6 +78501,8 @@ MonoBehaviour:
   coldWaterMaxTemperature: 15
   coldWaterMinRecoveryMultiplier: 0.2
   hotWaterStartTemperature: 25
+  coldWaterLossStartTemperature: 0
+  coldWaterLossSpeed: 5
   pollution: 0
 --- !u!114 &2079388592
 MonoBehaviour:

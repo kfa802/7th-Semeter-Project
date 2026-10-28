@@ -96,6 +96,13 @@ public class EcosystemZone : MonoBehaviour
 
     public float hotWaterStartTemperature = 25f;
 
+    [Header("Cold Water Loss")]
+    [Tooltip("At or below this temperature the clean water starts to drop.")]
+    public float coldWaterLossStartTemperature = 0f;
+
+    [Tooltip("Water lost per second at this zone's minimum temperature.")]
+    public float coldWaterLossSpeed = 5f;
+
     // =========================================================
     // POLLUTION
     // =========================================================

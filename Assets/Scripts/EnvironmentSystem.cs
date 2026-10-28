@@ -62,6 +62,15 @@ public class EnvironmentSystem : MonoBehaviour
 
     [SerializeField] private float hotWaterStartTemperature = 25f;
 
+    [Header("Cold Water Loss")]
+    [Tooltip("At or below this temperature the clean water starts to " +
+             "drop (it freezes and can't be used).")]
+    [SerializeField] private float coldWaterLossStartTemperature = 0f;
+
+    [Tooltip("Water lost per second at the coldest temperature. " +
+             "Like the heat, the loss grows the colder it gets.")]
+    [SerializeField] private float coldWaterLossSpeed = 5f;
+
     // =========================================================
     // POLLUTION
     // =========================================================
@@ -216,6 +225,12 @@ public class EnvironmentSystem : MonoBehaviour
         hotWaterStartTemperature =
             zone.hotWaterStartTemperature;
 
+        coldWaterLossStartTemperature =
+            zone.coldWaterLossStartTemperature;
+
+        coldWaterLossSpeed =
+            zone.coldWaterLossSpeed;
+
         // Stop temperaturens automatiske overgang ved ankomst.
         isTravelling = false;
 
@@ -339,15 +354,25 @@ public class EnvironmentSystem : MonoBehaviour
         if (activeZone == null)
             return;
 
-        // Frost ændrer vandets tilstand, men bevarer vandmængden.
-        if (temperature <= freezingPoint)
+        // Frost: det rene vand fryser til, så mængden falder.
+        // Jo koldere, jo hurtigere (samme kurve som ved varme).
+        if (temperature <= coldWaterLossStartTemperature)
         {
-            water = Mathf.Clamp(water, 0f, 100f);
-            return;
-        }
+            float coldRange = Mathf.Max(
+                0.01f,
+                coldWaterLossStartTemperature - minTemperature
+            );
 
+            float coldSeverity = Mathf.Clamp01(
+                (coldWaterLossStartTemperature - temperature) / coldRange
+            );
+
+            water -= Mathf.Pow(coldSeverity, 2f) *
+                     coldWaterLossSpeed *
+                     Time.deltaTime;
+        }
         // Behagelig temperatur: vandet genopfyldes.
-        if (temperature >= comfortableWaterMinTemperature &&
+        else if (temperature >= comfortableWaterMinTemperature &&
             temperature <= comfortableWaterMaxTemperature)
         {
             water += waterRecoverySpeed * Time.deltaTime;
