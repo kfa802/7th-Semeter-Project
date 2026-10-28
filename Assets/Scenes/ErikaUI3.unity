@@ -64997,15 +64997,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: MOUNTAIN
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ef7eb95bd21d4450c8e020835b245fbb, type: 2}
-  m_sharedMaterial: {fileID: 2615740554635975137, guid: ef7eb95bd21d4450c8e020835b245fbb, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 78104ab004745476dac5ad3fda2654c1, type: 2}
+  m_sharedMaterial: {fileID: -141008162320865714, guid: 78104ab004745476dac5ad3fda2654c1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278789711
+  m_fontColor: {r: 0.31132078, g: 0.14941928, b: 0.033775374, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
