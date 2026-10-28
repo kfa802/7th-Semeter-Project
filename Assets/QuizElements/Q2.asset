@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q2
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q2
+  textDA: "Hvorfor kan det v\xE6re sv\xE6rt for to pandaer at bo sammen i l\xE6ngere
+    tid? "
+  textEN: Why can it be difficult for pandas to live toghether for longer periods
+    of time?
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: "De sk\xE6ndes hele tiden."
+    textEN: They fight all of the time.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: 'De spiser forskellig slags bambus. '
+    textEN: They eat different kinds of bamboo.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: De deler den samme bambus, som hurtigt bliver brugt op.
+    textEN: They share the same bamboo, which gets used up quickly.
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: 'De kan ikke se hinanden i skoven. '
+    textEN: They can't see each other in the forest.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 4
+  dilemma: {fileID: 0}
+  requiredChoice: 0
+  ending: {fileID: 0}
+  gameEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}

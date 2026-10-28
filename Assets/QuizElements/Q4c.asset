@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q4c
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q4c
+  textDA: Hvad skal der til, for at mennesker og pandaer kan dele plads i dalene?
+  textEN: What is needed for humans and pandas to share the space in the valleys?
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: " At pandaerne v\xE6nner sig til st\xF8j."
+    textEN: That the panda gets used to noise.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "At nogle omr\xE5der beskyttes, og skoven forbliver sammenh\xE6ngende."
+    textEN: 'That some areas gets protected and the forrest remains connected. '
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: At landsbyer ikke bruger veje.
+    textEN: That villages don't use roads.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "At pandaerne flytter op p\xE5 bjerget."
+    textEN: That pandas move up the mountain.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 3
+  dilemma: {fileID: 0}
+  requiredChoice: 0
+  ending: {fileID: 11400000, guid: 310cae3e4c3c7884da67466812a9a250, type: 2}
+  gameEvent: {fileID: 0}

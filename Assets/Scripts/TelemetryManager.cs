@@ -15,11 +15,13 @@ public class TelemetryManager : MonoBehaviour
 
     private const string ParticipantsFile = "participants.csv";
     private const string SeriesFile = "timeseries.csv";
+    private const string QuizFile = "quiz_answers.csv";
     private const char Sep = ';';
     private const float FlushInterval = 10f;          // append time-series rows
     private const float SaveInterval = 30f;           // rewrite participants.csv
     private const float TemperatureSettleTime = 0.5f; // no change for 0.5 s = a "setting"
     private const string CounterKey = "telemetry_next_participant";
+    private float quizPageShownAt;
 
     private static readonly string[] CoreColumns =
     {
@@ -31,6 +33,8 @@ public class TelemetryManager : MonoBehaviour
 
     private static readonly string[] SeriesHeader =
         { "ParticipantID", "TimeSec", "Type", "Value", "Source", "DurationSec" };
+    private static readonly string[] QuizHeader =
+        { "ParticipantID", "QuestionID", "Answer", "OptionCorrect", "QuestionCorrect", "TimeSec" };
 
     private class OpenEntry
     {
@@ -74,6 +78,9 @@ public class TelemetryManager : MonoBehaviour
 
     private string SeriesPath =>
         Path.Combine(Application.persistentDataPath, SeriesFile);
+
+    private string QuizPath =>
+        Path.Combine(Application.persistentDataPath, QuizFile);
 
     private void Awake()
     {
@@ -171,6 +178,7 @@ public class TelemetryManager : MonoBehaviour
     {
         if (File.Exists(ParticipantsPath)) File.Delete(ParticipantsPath);
         if (File.Exists(SeriesPath)) File.Delete(SeriesPath);
+        if (File.Exists(QuizPath)) File.Delete(QuizPath);
         Debug.Log("[Telemetry] Deleted telemetry files in " + Application.persistentDataPath);
     }
 
@@ -281,7 +289,7 @@ public class TelemetryManager : MonoBehaviour
     }
 
     // =====================================================
-    // QUIZ (participants.csv)
+    // QUIZ (quiz_answers.csv)
     // =====================================================
 
     public void DeclareQuiz(IEnumerable<string> questionIds)
@@ -313,6 +321,64 @@ public class TelemetryManager : MonoBehaviour
 
         SaveParticipants();
     }
+
+    public void QuizPageShown()
+    {
+        if (!SessionActive) return;
+
+        quizPageShownAt = Now;
+        Set("Quiz_ShownAtSec", Num(Now));
+    }
+
+    /// <summary>Writes the final answer and the seconds from the page
+    /// appearing until the answer was last changed.</summary>
+    public void QuizAnswerFinal(string questionId, string answer, float secondsFromShown)
+    {
+        if (!SessionActive) return;
+
+        Set(questionId + "_Answer", answer);
+        Set(questionId + "_Time", Num(secondsFromShown));
+    }
+
+    public void QuizSubmitted()
+    {
+        if (!SessionActive) return;
+
+        Set("Quiz_TotalSec", Num(Now - quizPageShownAt));
+    }
+
+    /// <summary>Writes one row per chosen option for a question.</summary>
+public void QuizAnswerRows(string questionId,
+                           IEnumerable<(string answer, string optionCorrect)> answers,
+                           string questionCorrect, float seconds)
+{
+    if (!SessionActive) return;
+
+    try
+    {
+        if (!File.Exists(QuizPath))
+        {
+            File.WriteAllText(QuizPath,
+                string.Join(Sep.ToString(), QuizHeader) + Environment.NewLine,
+                new UTF8Encoding(true));
+        }
+
+        StringBuilder sb = new();
+
+        foreach (var a in answers)
+        {
+            sb.AppendLine(string.Join(Sep.ToString(),
+                ParticipantId, questionId, a.answer,
+                a.optionCorrect, questionCorrect, Num(seconds)));
+        }
+
+        File.AppendAllText(QuizPath, sb.ToString(), new UTF8Encoding(false));
+    }
+    catch (Exception e)
+    {
+        Debug.LogError("[Telemetry] Could not write quiz_answers.csv: " + e.Message);
+    }
+}
 
     // =====================================================
     // TIME SERIES (timeseries.csv)

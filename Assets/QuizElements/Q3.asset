@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q3
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q3
+  textDA: "Hvad g\xF8r en vej gennem eller n\xE6r skoven ved pandaens levested? "
+  textEN: What does a road through or near the forest do the the pandas habitats
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: "Den skaber st\xF8j og forurening."
+    textEN: It creates noise and polution.
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Den g\xF8r skoven st\xF8rre. "
+    textEN: It makes the forest bigger.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: Den giver pandaen mere vand.
+    textEN: It gives the Pandas more water.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: Pandaer bekymrer sig ikke om veje
+    textEN: The pandas don't care about roads
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 2
+  dilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
+  requiredChoice: 0
+  ending: {fileID: 0}
+  gameEvent: {fileID: 0}

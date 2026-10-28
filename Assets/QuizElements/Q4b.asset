@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q4b
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q4b
+  textDA: "Hvorfor er sammenh\xE6ngende skov vigtig for sm\xE5 pandabestande? "
+  textEN: Why is connected forest important for small panda populations?
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: "S\xE5 pandaer kan finde hinanden, og der er plads og bambus nok"
+    textEN: So pandas can find eachother, and there is room and bamboo enough
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "S\xE5 der er flere tr\xE6er at klatre i "
+    textEN: So there are more trees to climb
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "S\xE5 pandaer kan bo sammen hele \xE5ret"
+    textEN: So pandas can live together all year around
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "S\xE5 mennesker kan se pandaerne "
+    textEN: So humans can see the pandas
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 3
+  dilemma: {fileID: 0}
+  requiredChoice: 0
+  ending: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
+  gameEvent: {fileID: 0}

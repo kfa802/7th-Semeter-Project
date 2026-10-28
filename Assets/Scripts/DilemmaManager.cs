@@ -100,6 +100,20 @@ public class DilemmaManager : MonoBehaviour
     private bool gameEnded;
     private Ending pendingEnding;
     private int activeDilemmaNumber;
+    private readonly HashSet<GameEvent> executedEvents = new();
+    public Ending ReachedEnding => pendingEnding;
+
+    public bool HasResolved(Dilemma dilemma) =>
+        dilemma != null && resolvedChoices.ContainsKey(dilemma);
+
+    public bool TryGetChoice(Dilemma dilemma, out int choice)
+    {
+        choice = -1;
+        return dilemma != null && resolvedChoices.TryGetValue(dilemma, out choice);
+    }
+
+    public bool HasExecuted(GameEvent gameEvent) =>
+        gameEvent != null && executedEvents.Contains(gameEvent);
 
     private void Awake()
     {
@@ -754,8 +768,6 @@ public class DilemmaManager : MonoBehaviour
 
     private void ShowSelectedEnding()
     {
-        // TEMPORARY: replace with the end of the quiz / back-to-start button later.
-        TelemetryManager.Instance?.EndSession("ending shown");
 
         if (pendingEnding == null)
         {
@@ -792,6 +804,8 @@ public class DilemmaManager : MonoBehaviour
             );
             return;
         }
+
+        executedEvents.Add(gameEvent);
 
         Debug.Log(
             "DilemmaManager: Executing GameEvent '" + gameEvent.name +

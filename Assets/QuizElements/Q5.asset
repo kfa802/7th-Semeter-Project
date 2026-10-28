@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q5
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q5
+  textDA: "Hvad kan du g\xF8re for at hj\xE6lpe pandaerne og deres levesteder? V\xE6lg
+    alt, der passer."
+  textEN: What can you do to help the pandas and their habitats? choose everything
+    that fits.
+  multiSelect: 1
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: "Give pandaer mad, hvis jeg m\xF8der dem i naturen."
+    textEN: Give pandas food, if I meet them in nature.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Bes\xF8ge zoo, som st\xF8tter avlsprogrammer for pandaer."
+    textEN: 'Visit zoo, who supports breeding programs for pandas. '
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "K\xF8be bambusprodukter."
+    textEN: Buy bamboo products.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Kigge efter FSC-m\xE6rket, hvis jeg k\xF8ber bambusprodukter."
+    textEN: Look for the FSC-mark, if I'm buying bamboo products.
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Der er ikke noget, jeg kan g\xF8re"
+    textEN: There is nothing I can do
+    correct: 0
+    exclusive: 1
+    icon: {fileID: 0}
+  - textDA: Ved ikke
+    textEN: Don't know
+    correct: 0
+    exclusive: 1
+    icon: {fileID: 0}
+  condition: 0
+  dilemma: {fileID: 0}
+  requiredChoice: 0
+  ending: {fileID: 0}
+  gameEvent: {fileID: 0}

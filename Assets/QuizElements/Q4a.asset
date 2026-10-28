@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q4a
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q4a
+  textDA: Hvorfor rejser pandaer ned i dalene om vinteren?
+  textEN: Why do pandas travel down in the valleys in winter?
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: Fordi der er mere bambus nede i dalene.
+    textEN: Because there is more bamboo in the valleys.
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: 'Fordi de er bange for sne. '
+    textEN: Because they are scared of snow.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: Fordi de leder efter en makker
+    textEN: Because they are looking for a buddy.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Fordi der ikke er vand p\xE5 bjerget. "
+    textEN: Because there is no water on the mountain.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 3
+  dilemma: {fileID: 0}
+  requiredChoice: 0
+  ending: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  gameEvent: {fileID: 0}
