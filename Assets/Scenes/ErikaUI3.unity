@@ -12330,7 +12330,7 @@ RectTransform:
   m_Father: {fileID: 524704586}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -26794,9 +26794,13 @@ MonoBehaviour:
     sitFacingTarget: {fileID: 0}
   pandaModel: {fileID: 1462404988}
   facingCorrection: 0
-  turnSpeed: 12
-  startTurnDuration: 0.7
-  arrivalTurnDuration: 0.9
+  walkTurnSmoothTime: 0.35
+  maxTurnSpeed: 180
+  fullSpeedAngle: 25
+  noMoveAngle: 100
+  arrivalBlendDistance: 1.5
+  sitTurnSmoothTime: 0.3
+  sitSquareToCamera: 1
   sitFacingTarget: {fileID: 0}
   sitAngleOffset: 0
 --- !u!195 &725808059
@@ -56757,7 +56761,7 @@ RectTransform:
   m_Father: {fileID: 1768031070}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -63700,7 +63704,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2033208196
 RectTransform:
   m_ObjectHideFlags: 0
