@@ -22,27 +22,27 @@ MonoBehaviour:
   horizontalLayout: 1
   logAsNumber: 1
   options:
-  - textDA: 1
+  - textDA: 
     textEN: 
     correct: 0
     exclusive: 0
     icon: {fileID: 21300000, guid: ad95c57e88a664fd8bce61f5ecc31ec5, type: 3}
-  - textDA: 2
+  - textDA: 
     textEN: 
     correct: 0
     exclusive: 0
     icon: {fileID: 21300000, guid: 42cdd9faf22c84431ad14a8eae502689, type: 3}
-  - textDA: 3
+  - textDA: 
     textEN: 
     correct: 0
     exclusive: 0
     icon: {fileID: 21300000, guid: 11d7ba2bdc2774c7d859090ec5f735c8, type: 3}
-  - textDA: 4
+  - textDA: 
     textEN: 
     correct: 0
     exclusive: 0
     icon: {fileID: 21300000, guid: 21d4437761faa42648d1217611774b0a, type: 3}
-  - textDA: 5
+  - textDA: 
     textEN: 
     correct: 0
     exclusive: 0
