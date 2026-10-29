@@ -65,33 +65,56 @@ public class BambooManager : MonoBehaviour
     [SerializeField] private string bambooTag = "";
 
     // =========================================================
-// NATURAL BAMBOO GROWTH
-// =========================================================
+    // NATURAL BAMBOO GROWTH
+    // =========================================================
 
-[Header("Natural Bamboo Growth")]
-[SerializeField, Range(0f, 100f)]
-private float naturalGrowthWaterThreshold = 80f;
+    [Header("Natural Bamboo Growth")]
+    [SerializeField, Range(0f, 100f)]
+    private float naturalGrowthWaterThreshold = 80f;
 
-[SerializeField]
-private float minimumNaturalGrowthInterval = 10f;
+    [SerializeField]
+    private float minimumNaturalGrowthInterval = 10f;
 
-[SerializeField]
-private float maximumNaturalGrowthInterval = 20f;
+    [SerializeField]
+    private float maximumNaturalGrowthInterval = 20f;
 
-[Header("Water-Based Growth Difficulty")]
-[SerializeField, Range(0f, 100f)]
-private float bambooWaterThreshold = 30f;
+    [Header("Water-Based Growth Difficulty")]
+    [SerializeField, Range(0f, 100f)]
+    private float bambooWaterThreshold = 30f;
 
-[Tooltip("Growth speed multiplier when water is at the threshold.")]
-[SerializeField, Range(0.01f, 1f)]
-private float growthMultiplierAtThreshold = 1f;
+    [Tooltip("Growth speed multiplier when water is at the threshold.")]
+    [SerializeField, Range(0.01f, 1f)]
+    private float growthMultiplierAtThreshold = 1f;
 
-[Tooltip("Growth speed multiplier when water is almost empty.")]
-[SerializeField, Range(0.01f, 1f)]
-private float growthMultiplierAtZeroWater = 0.05f;
+    [Tooltip("Growth speed multiplier when water is almost empty.")]
+    [SerializeField, Range(0.01f, 1f)]
+    private float growthMultiplierAtZeroWater = 0.05f;
 
-private float naturalGrowthTimer;
-private float naturalGrowthTargetTime;
+    private float naturalGrowthTimer;
+    private float naturalGrowthTargetTime;
+
+    // =========================================================
+    // PANDA POOP
+    // =========================================================
+
+    [Header("Panda Poop")]
+    [Tooltip("Fewest bamboo that start growing per poop.")]
+    [SerializeField, Min(1)]
+    private int minBambooPerPoop = 1;
+
+    [Tooltip("Most bamboo that start growing per poop. A random amount " +
+             "between Min and Max is picked each time (both included). " +
+             "Limited by the free growth spots in the zone.")]
+    [SerializeField, Min(1)]
+    private int maxBambooPerPoop = 2;
+
+    [Tooltip("Extra delay (seconds) added to each bamboo after the first, " +
+             "so they don't appear and grow at exactly the same time.")]
+    [SerializeField, Min(0f)]
+    private float minExtraDelay = 0.5f;
+
+    [SerializeField, Min(0f)]
+    private float maxExtraDelay = 2f;
 
     // =========================================================
     // POLLUTION
@@ -150,24 +173,23 @@ private float naturalGrowthTargetTime;
         keptSpots =
             new List<KeyValuePair<GameObject, BambooGrowthSpot>>();
 
-private readonly List<RotState> rotting =
-    new List<RotState>();
+    private readonly List<RotState> rotting =
+        new List<RotState>();
 
+    private readonly HashSet<GameObject> rottingSet =
+        new HashSet<GameObject>();
 
-private readonly HashSet<GameObject> rottingSet =
-    new HashSet<GameObject>();
+    private readonly HashSet<GameObject> bambooBeingEaten =
+        new HashSet<GameObject>();
 
-private readonly HashSet<GameObject> bambooBeingEaten =
-    new HashSet<GameObject>();
+    private MaterialPropertyBlock block;
+    private bool initialized;
 
-private MaterialPropertyBlock block;
-private bool initialized;
+    private static readonly int BaseColorId =
+        Shader.PropertyToID("_BaseColor");
 
-private static readonly int BaseColorId =
-    Shader.PropertyToID("_BaseColor");
-
-private static readonly int ColorId =
-    Shader.PropertyToID("_Color");
+    private static readonly int ColorId =
+        Shader.PropertyToID("_Color");
 
     // =========================================================
     // TOTAL COUNTERS
@@ -650,6 +672,85 @@ private static readonly int ColorId =
 
         List<BambooGrowthSpot> available = GetFreeSpotsForZone(zone);
 
+        // Random amount between min and max (both included),
+        // but never more than there are free spots in this zone.
+        int min = Mathf.Max(1, minBambooPerPoop);
+        int max = Mathf.Max(min, maxBambooPerPoop);
+
+        int amount = Mathf.Min(
+            Random.Range(min, max + 1),
+            available.Count
+        );
+
+        float extraDelay = 0f;
+
+        for (int i = 0; i < amount; i++)
+        {
+            // The first bamboo comes on time; each following one
+            // gets an extra random delay on top of the previous one.
+            if (i > 0)
+            {
+                extraDelay += Random.Range(
+                    minExtraDelay,
+                    Mathf.Max(minExtraDelay, maxExtraDelay)
+                );
+            }
+
+            int index = Random.Range(0, available.Count);
+
+            available[index].GrowBamboo(extraDelay);
+
+            // Remove it so the same spot isn't picked twice.
+            available.RemoveAt(index);
+        }
+    }
+
+    // =========================================================
+    // NATURAL BAMBOO GROWTH
+    // =========================================================
+
+    private void UpdateNaturalBambooGrowth()
+    {
+        if (environment == null ||
+            EnvironmentSystem.Instance == null)
+            return;
+
+        EcosystemZone zone = EnvironmentSystem.Instance.ActiveZone;
+
+        if (zone == null)
+        {
+            naturalGrowthTimer = 0f;
+            return;
+        }
+
+        float water = environment.Water;
+
+        // Keep your existing minimum water requirement.
+        if (water < naturalGrowthWaterThreshold)
+        {
+            naturalGrowthTimer = 0f;
+            return;
+        }
+
+        float growthMultiplier = GetWaterGrowthMultiplier();
+
+        if (growthMultiplier <= 0f)
+            return;
+
+        // Slower growth means more time is required.
+        naturalGrowthTimer += Time.deltaTime * growthMultiplier;
+
+        if (naturalGrowthTimer < naturalGrowthTargetTime)
+            return;
+
+        naturalGrowthTimer = 0f;
+        SetNaturalGrowthTimer();
+
+        if (!CanGrowInZone(zone))
+            return;
+
+        List<BambooGrowthSpot> available = GetFreeSpotsForZone(zone);
+
         if (available.Count == 0)
             return;
 
@@ -658,61 +759,6 @@ private static readonly int ColorId =
 
         selected.GrowBamboo();
     }
-
-    // =========================================================
-    // NATURAL BAMBOO GROWTH
-    // =========================================================
-
-    private void UpdateNaturalBambooGrowth()
-{
-    if (environment == null ||
-        EnvironmentSystem.Instance == null)
-        return;
-
-    EcosystemZone zone = EnvironmentSystem.Instance.ActiveZone;
-
-    if (zone == null)
-    {
-        naturalGrowthTimer = 0f;
-        return;
-    }
-
-    float water = environment.Water;
-
-    // Keep your existing minimum water requirement.
-    if (water < naturalGrowthWaterThreshold)
-    {
-        naturalGrowthTimer = 0f;
-        return;
-    }
-
-    float growthMultiplier = GetWaterGrowthMultiplier();
-
-    if (growthMultiplier <= 0f)
-        return;
-
-    // Slower growth means more time is required.
-    naturalGrowthTimer += Time.deltaTime * growthMultiplier;
-
-    if (naturalGrowthTimer < naturalGrowthTargetTime)
-        return;
-
-    naturalGrowthTimer = 0f;
-    SetNaturalGrowthTimer();
-
-    if (!CanGrowInZone(zone))
-        return;
-
-    List<BambooGrowthSpot> available = GetFreeSpotsForZone(zone);
-
-    if (available.Count == 0)
-        return;
-
-    BambooGrowthSpot selected =
-        available[Random.Range(0, available.Count)];
-
-    selected.GrowBamboo();
-}
 
     private void SetNaturalGrowthTimer()
     {
@@ -727,64 +773,60 @@ private static readonly int ColorId =
     // CONSUME BAMBOO
     // =========================================================
 
-   
-
-
-public bool ConsumeBamboo()
-{
-    Prune();
-
-    if (EnvironmentSystem.Instance == null ||
-        EnvironmentSystem.Instance.ActiveZone == null)
+    public bool ConsumeBamboo()
     {
-        Debug.Log(
-            "Cannot eat: The panda is not inside an ecosystem zone."
-        );
+        Prune();
+
+        if (EnvironmentSystem.Instance == null ||
+            EnvironmentSystem.Instance.ActiveZone == null)
+        {
+            Debug.Log(
+                "Cannot eat: The panda is not inside an ecosystem zone."
+            );
+            return false;
+        }
+
+        EcosystemZone activeZone =
+            EnvironmentSystem.Instance.ActiveZone;
+
+        // Make a copy because bamboo will be removed after its animation.
+        List<GameObject> bambooList =
+            new List<GameObject>(activeBamboo);
+
+        foreach (GameObject bamboo in bambooList)
+        {
+            if (bamboo == null || !bamboo.activeInHierarchy)
+                continue;
+
+            // Skip rotting, already-eaten and still-growing bamboo.
+            if (rottingSet.Contains(bamboo) ||
+                bambooBeingEaten.Contains(bamboo) ||
+                IsStillGrowing(bamboo))
+                continue;
+
+            if (!spotOf.TryGetValue(
+                    bamboo,
+                    out BambooGrowthSpot spot))
+                continue;
+
+            if (spot == null || spot.Zone != activeZone)
+                continue;
+
+            // Reserve this bamboo so it cannot be eaten twice.
+            bambooBeingEaten.Add(bamboo);
+
+            // Update the count right away, before the break animation plays.
+            RefreshZoneStatistics();
+
+            StartCoroutine(BreakAndRemoveBamboo(bamboo));
+
+            Debug.Log("Panda ate bamboo in " + activeZone.zoneName);
+            return true;
+        }
+
+        Debug.Log("No available bamboo in " + activeZone.zoneName);
         return false;
     }
-
-    EcosystemZone activeZone =
-        EnvironmentSystem.Instance.ActiveZone;
-
-    // Make a copy because bamboo will be removed after its animation.
-    List<GameObject> bambooList =
-        new List<GameObject>(activeBamboo);
-
-    foreach (GameObject bamboo in bambooList)
-    {
-        if (bamboo == null || !bamboo.activeInHierarchy)
-            continue;
-
-        // Skip rotting, already-eaten and still-growing bamboo.
-        if (rottingSet.Contains(bamboo) ||
-            bambooBeingEaten.Contains(bamboo) ||
-            IsStillGrowing(bamboo))
-            continue;
-
-        if (!spotOf.TryGetValue(
-                bamboo,
-                out BambooGrowthSpot spot))
-            continue;
-
-        if (spot == null || spot.Zone != activeZone)
-            continue;
-
-        // Reserve this bamboo so it cannot be eaten twice.
-        bambooBeingEaten.Add(bamboo);
-
-        // Update the count right away, before the break animation plays.
-        RefreshZoneStatistics();
-
-        StartCoroutine(BreakAndRemoveBamboo(bamboo));
-
-        Debug.Log("Panda ate bamboo in " + activeZone.zoneName);
-        return true;
-    }
-
-    Debug.Log("No available bamboo in " + activeZone.zoneName);
-    return false;
-}
-
 
     // =========================================================
     // REMOVE BAMBOO
@@ -1241,189 +1283,160 @@ public bool ConsumeBamboo()
         }
     }
 
-    
-public bool HasAvailableBambooInCurrentZone()
-{
-    Prune();
-
-    if (EnvironmentSystem.Instance == null ||
-        EnvironmentSystem.Instance.ActiveZone == null)
+    public bool HasAvailableBambooInCurrentZone()
     {
-        return false;
-    }
+        Prune();
 
-    EcosystemZone activeZone =
-        EnvironmentSystem.Instance.ActiveZone;
-
-    foreach (GameObject bamboo in activeBamboo)
-    {
-        if (bamboo == null || !bamboo.activeInHierarchy)
-            continue;
-
-        // Skip rotting bamboo and bamboo already being eaten.
-        // Skip rotting, already-eaten and still-growing bamboo.
-        if (rottingSet.Contains(bamboo) ||
-            bambooBeingEaten.Contains(bamboo) ||
-            IsStillGrowing(bamboo))
-            continue;
-
-        if (!spotOf.TryGetValue(
-                bamboo,
-                out BambooGrowthSpot spot))
+        if (EnvironmentSystem.Instance == null ||
+            EnvironmentSystem.Instance.ActiveZone == null)
         {
-            continue;
+            return false;
         }
 
-        if (spot != null && spot.Zone == activeZone)
-            return true;
+        EcosystemZone activeZone =
+            EnvironmentSystem.Instance.ActiveZone;
+
+        foreach (GameObject bamboo in activeBamboo)
+        {
+            if (bamboo == null || !bamboo.activeInHierarchy)
+                continue;
+
+            // Skip rotting, already-eaten and still-growing bamboo.
+            if (rottingSet.Contains(bamboo) ||
+                bambooBeingEaten.Contains(bamboo) ||
+                IsStillGrowing(bamboo))
+                continue;
+
+            if (!spotOf.TryGetValue(
+                    bamboo,
+                    out BambooGrowthSpot spot))
+            {
+                continue;
+            }
+
+            if (spot != null && spot.Zone == activeZone)
+                return true;
+        }
+
+        return false;
     }
 
-    return false;
-}
-
-public float GetWaterGrowthMultiplier()
-{
-    if (EnvironmentSystem.Instance == null)
-        return 0f;
-
-    float water = EnvironmentSystem.Instance.Water;
-
-    // No water means no bamboo growth.
-    if (water <= 0f)
-        return 0f;
-
-    // At or above the threshold, growth is normal.
-    if (water >= bambooWaterThreshold)
-        return 1f;
-
-    // Progressively slow growth as water drops below the threshold.
-    float waterFactor = Mathf.InverseLerp(
-        0f,
-        bambooWaterThreshold,
-        water
-    );
-
-    return Mathf.Lerp(
-        growthMultiplierAtZeroWater,
-        growthMultiplierAtThreshold,
-        waterFactor
-    );
-}
-
-
-public bool ConsumeBambooInZone(EcosystemZone zone)
-{
-    Prune();
-
-    if (zone == null)
-        return false;
-
-    List<GameObject> bambooList =
-        new List<GameObject>(activeBamboo);
-
-    foreach (GameObject bamboo in bambooList)
+    public float GetWaterGrowthMultiplier()
     {
-        if (bamboo == null || !bamboo.activeInHierarchy)
-            continue;
+        if (EnvironmentSystem.Instance == null)
+            return 0f;
 
-        // Skip rotting, already-eaten and still-growing bamboo.
-        if (rottingSet.Contains(bamboo) ||
-            bambooBeingEaten.Contains(bamboo) ||
-            IsStillGrowing(bamboo))
-            continue;
+        float water = EnvironmentSystem.Instance.Water;
 
-        if (!spotOf.TryGetValue(
-                bamboo,
-                out BambooGrowthSpot spot))
-            continue;
+        // No water means no bamboo growth.
+        if (water <= 0f)
+            return 0f;
 
-        if (spot == null || spot.Zone != zone)
-            continue;
+        // At or above the threshold, growth is normal.
+        if (water >= bambooWaterThreshold)
+            return 1f;
 
-        bambooBeingEaten.Add(bamboo);
+        // Progressively slow growth as water drops below the threshold.
+        float waterFactor = Mathf.InverseLerp(
+            0f,
+            bambooWaterThreshold,
+            water
+        );
 
-        // Update the count right away, before the break animation plays.
-        RefreshZoneStatistics();
+        return Mathf.Lerp(
+            growthMultiplierAtZeroWater,
+            growthMultiplierAtThreshold,
+            waterFactor
+        );
+    }
 
-        StartCoroutine(BreakAndRemoveBamboo(bamboo));
+    public bool ConsumeBambooInZone(EcosystemZone zone)
+    {
+        Prune();
 
-        Debug.Log("Other panda ate bamboo in " + zone.zoneName);
+        if (zone == null)
+            return false;
+
+        List<GameObject> bambooList =
+            new List<GameObject>(activeBamboo);
+
+        foreach (GameObject bamboo in bambooList)
+        {
+            if (bamboo == null || !bamboo.activeInHierarchy)
+                continue;
+
+            // Skip rotting, already-eaten and still-growing bamboo.
+            if (rottingSet.Contains(bamboo) ||
+                bambooBeingEaten.Contains(bamboo) ||
+                IsStillGrowing(bamboo))
+                continue;
+
+            if (!spotOf.TryGetValue(
+                    bamboo,
+                    out BambooGrowthSpot spot))
+                continue;
+
+            if (spot == null || spot.Zone != zone)
+                continue;
+
+            bambooBeingEaten.Add(bamboo);
+
+            // Update the count right away, before the break animation plays.
+            RefreshZoneStatistics();
+
+            StartCoroutine(BreakAndRemoveBamboo(bamboo));
+
+            Debug.Log("Other panda ate bamboo in " + zone.zoneName);
+            return true;
+        }
+
+        Debug.Log("Other panda found no bamboo in " + zone.zoneName);
+        return false;
+    }
+
+    public bool OtherPandaPooped(EcosystemZone zone)
+    {
+        if (zone == null || !CanGrowInZone(zone))
+            return false;
+
+        List<BambooGrowthSpot> available =
+            GetFreeSpotsForZone(zone);
+
+        if (available.Count == 0)
+            return false;
+
+        BambooGrowthSpot selected =
+            available[Random.Range(0, available.Count)];
+
+        selected.GrowBamboo();
+
+        Debug.Log("Other panda grew bamboo in " + zone.zoneName);
+
         return true;
     }
 
-    Debug.Log("Other panda found no bamboo in " + zone.zoneName);
-    return false;
-}
-
-
-
-public bool OtherPandaPooped(EcosystemZone zone)
-{
-    if (zone == null || !CanGrowInZone(zone))
-        return false;
-
-    List<BambooGrowthSpot> available =
-        GetFreeSpotsForZone(zone);
-
-    if (available.Count == 0)
-        return false;
-
-    BambooGrowthSpot selected =
-        available[Random.Range(0, available.Count)];
-
-    selected.GrowBamboo();
-
-    Debug.Log("Other panda grew bamboo in " + zone.zoneName);
-
-    return true;
-}
-
-
-private System.Collections.IEnumerator BreakAndRemoveBamboo(
-    GameObject bamboo)
-{
-    if (bamboo == null)
-        yield break;
-
-    Animator bambooAnimator =
-        bamboo.GetComponentInChildren<Animator>(true);
-
-    if (bambooAnimator != null &&
-        bambooAnimator.runtimeAnimatorController != null)
+    private System.Collections.IEnumerator BreakAndRemoveBamboo(
+        GameObject bamboo)
     {
-        bambooAnimator.speed = 1f;
-        bambooAnimator.ResetTrigger("Break");
-        bambooAnimator.SetTrigger("Break");
+        if (bamboo == null)
+            yield break;
 
-        float elapsed = 0f;
-        const float startTimeout = 2f;
-        bool breakStarted = false;
+        Animator bambooAnimator =
+            bamboo.GetComponentInChildren<Animator>(true);
 
-        // Wait for the Break state to begin.
-        while (elapsed < startTimeout)
+        if (bambooAnimator != null &&
+            bambooAnimator.runtimeAnimatorController != null)
         {
-            if (bamboo == null || bambooAnimator == null)
-                break;
+            bambooAnimator.speed = 1f;
+            bambooAnimator.ResetTrigger("Break");
+            bambooAnimator.SetTrigger("Break");
 
-            AnimatorStateInfo state =
-                bambooAnimator.GetCurrentAnimatorStateInfo(0);
+            float elapsed = 0f;
+            const float startTimeout = 2f;
+            bool breakStarted = false;
 
-            if (state.IsName("Break"))
-            {
-                breakStarted = true;
-                break;
-            }
-
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        // Wait until the Break animation has finished.
-        if (breakStarted && bamboo != null)
-        {
-            elapsed = 0f;
-
-            while (elapsed < 10f)
+            // Wait for the Break state to begin.
+            while (elapsed < startTimeout)
             {
                 if (bamboo == null || bambooAnimator == null)
                     break;
@@ -1431,138 +1444,154 @@ private System.Collections.IEnumerator BreakAndRemoveBamboo(
                 AnimatorStateInfo state =
                     bambooAnimator.GetCurrentAnimatorStateInfo(0);
 
-                if (state.IsName("Break") &&
-                    !bambooAnimator.IsInTransition(0) &&
-                    state.normalizedTime >= 1f)
+                if (state.IsName("Break"))
                 {
+                    breakStarted = true;
                     break;
                 }
 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
+
+            // Wait until the Break animation has finished.
+            if (breakStarted && bamboo != null)
+            {
+                elapsed = 0f;
+
+                while (elapsed < 10f)
+                {
+                    if (bamboo == null || bambooAnimator == null)
+                        break;
+
+                    AnimatorStateInfo state =
+                        bambooAnimator.GetCurrentAnimatorStateInfo(0);
+
+                    if (state.IsName("Break") &&
+                        !bambooAnimator.IsInTransition(0) &&
+                        state.normalizedTime >= 1f)
+                    {
+                        break;
+                    }
+
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+            }
+            else if (bamboo != null)
+            {
+                Debug.LogWarning(
+                    "The Break animation did not start for " + bamboo.name,
+                    bamboo
+                );
+            }
         }
-        else if (bamboo != null)
+        else
         {
             Debug.LogWarning(
-                "The Break animation did not start for " + bamboo.name,
+                "No Animator Controller assigned to bamboo: " + bamboo.name,
                 bamboo
             );
         }
-    }
-    else
-    {
-        Debug.LogWarning(
-            "No Animator Controller assigned to bamboo: " + bamboo.name,
-            bamboo
-        );
-    }
 
-
-    // Fade out the bamboo after the break animation.
-    if (bamboo != null)
-    {
-        bambooBeingEaten.Remove(bamboo);
-        Forget(bamboo);
-
-        yield return StartCoroutine(
-            FadeOutAndRemoveBamboo(bamboo, 1.2f)
-        );
-    }
-
-}
-
-
-private System.Collections.IEnumerator FadeOutAndRemoveBamboo(
-    GameObject bamboo,
-    float fadeDuration)
-{
-    if (bamboo == null)
-        yield break;
-
-    Renderer[] renderers =
-        bamboo.GetComponentsInChildren<Renderer>(true);
-
-    List<Material> materials = new List<Material>();
-    List<Color> originalColors = new List<Color>();
-    List<string> colorProperties = new List<string>();
-
-    foreach (Renderer renderer in renderers)
-    {
-        foreach (Material material in renderer.materials)
+        // Fade out the bamboo after the break animation.
+        if (bamboo != null)
         {
-            if (material == null)
-                continue;
+            bambooBeingEaten.Remove(bamboo);
+            Forget(bamboo);
 
-            string property = material.HasProperty("_BaseColor")
-                ? "_BaseColor"
-                : material.HasProperty("_Color")
-                    ? "_Color"
-                    : "";
-
-            if (property == "")
-                continue;
-
-            // Make a unique material instance for this bamboo.
-            materials.Add(material);
-            originalColors.Add(material.GetColor(property));
-            colorProperties.Add(property);
-
-            // Enable transparency for common Unity shaders.
-            if (material.HasProperty("_Surface"))
-                material.SetFloat("_Surface", 1f);
-
-            if (material.HasProperty("_Mode"))
-                material.SetFloat("_Mode", 2f);
-
-            material.SetOverrideTag("RenderType", "Transparent");
-            material.SetInt("_SrcBlend",
-                (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            material.SetInt("_DstBlend",
-                (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            material.SetInt("_ZWrite", 0);
-
-            material.DisableKeyword("_SURFACE_TYPE_OPAQUE");
-            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            material.DisableKeyword("_ALPHATEST_ON");
-            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.renderQueue = 3000;
+            yield return StartCoroutine(
+                FadeOutAndRemoveBamboo(bamboo, 1.2f)
+            );
         }
     }
 
-    fadeDuration = Mathf.Max(0.01f, fadeDuration);
-    float elapsed = 0f;
-
-    while (elapsed < fadeDuration)
+    private System.Collections.IEnumerator FadeOutAndRemoveBamboo(
+        GameObject bamboo,
+        float fadeDuration)
     {
         if (bamboo == null)
             yield break;
 
-        elapsed += Time.deltaTime;
+        Renderer[] renderers =
+            bamboo.GetComponentsInChildren<Renderer>(true);
 
-        float t = Mathf.Clamp01(elapsed / fadeDuration);
+        List<Material> materials = new List<Material>();
+        List<Color> originalColors = new List<Color>();
+        List<string> colorProperties = new List<string>();
 
-        // Smooth fade: gradual at the start and end.
-        float alpha = 1f - t * t * (3f - 2f * t);
-
-        for (int i = 0; i < materials.Count; i++)
+        foreach (Renderer renderer in renderers)
         {
-            if (materials[i] == null)
-                continue;
+            foreach (Material material in renderer.materials)
+            {
+                if (material == null)
+                    continue;
 
-            Color color = originalColors[i];
-            color.a *= alpha;
+                string property = material.HasProperty("_BaseColor")
+                    ? "_BaseColor"
+                    : material.HasProperty("_Color")
+                        ? "_Color"
+                        : "";
 
-            materials[i].SetColor(colorProperties[i], color);
+                if (property == "")
+                    continue;
+
+                // Make a unique material instance for this bamboo.
+                materials.Add(material);
+                originalColors.Add(material.GetColor(property));
+                colorProperties.Add(property);
+
+                // Enable transparency for common Unity shaders.
+                if (material.HasProperty("_Surface"))
+                    material.SetFloat("_Surface", 1f);
+
+                if (material.HasProperty("_Mode"))
+                    material.SetFloat("_Mode", 2f);
+
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetInt("_SrcBlend",
+                    (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend",
+                    (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+
+                material.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+                material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 3000;
+            }
         }
 
-        yield return null;
+        fadeDuration = Mathf.Max(0.01f, fadeDuration);
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            if (bamboo == null)
+                yield break;
+
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+
+            // Smooth fade: gradual at the start and end.
+            float alpha = 1f - t * t * (3f - 2f * t);
+
+            for (int i = 0; i < materials.Count; i++)
+            {
+                if (materials[i] == null)
+                    continue;
+
+                Color color = originalColors[i];
+                color.a *= alpha;
+
+                materials[i].SetColor(colorProperties[i], color);
+            }
+
+            yield return null;
+        }
+
+        Destroy(bamboo);
     }
-
-    Destroy(bamboo);
-}
-
-
-
-    
 }

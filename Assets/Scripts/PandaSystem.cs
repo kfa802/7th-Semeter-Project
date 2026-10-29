@@ -1,9 +1,20 @@
-
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PandaSystem : MonoBehaviour
 {
+    // =========================================================
+    // EVENTS (used by ResourceFeedback)
+    // =========================================================
+
+    /// <summary>Normal feeding. Passes the health gained.</summary>
+    public event Action<float> Fed;
+
+    // OVERFEEDING DISABLED
+    // /// <summary>Overfeeding. Passes the health lost.</summary>
+    // public event Action<float> Overfed;
+
     // =========================================================
     // HEALTH
     // =========================================================
@@ -42,30 +53,30 @@ public class PandaSystem : MonoBehaviour
 
 
     // =========================================================
-    // OVERFEEDING
+    // OVERFEEDING (DISABLED)
     // =========================================================
 
-    [Header("Overfeeding")]
-    [Tooltip("Number of recent feedings that makes the panda overfed.")]
-    [SerializeField]
-    private int maximumFeedingsInWindow = 3;
-
-    [Tooltip("How long feeding history is remembered.")]
-    [SerializeField]
-    private float overfeedingWindow = 30f;
-
-    [Tooltip("How many seconds the panda remains overfed after a feeding that causes overfeeding.")]
-    [SerializeField]
-    private float overfedDuration = 5f;
-
-    [Tooltip("Health lost when trying to feed an already overfed panda.")]
-    [SerializeField]
-    private float overfeedingDamage = 10f;
-
-    private List<float> feedingTimes = new List<float>();
-
-    private bool isOverfed = false;
-    private float overfedTimer = 0f;
+    // [Header("Overfeeding")]
+    // [Tooltip("Number of recent feedings that makes the panda overfed.")]
+    // [SerializeField]
+    // private int maximumFeedingsInWindow = 3;
+    //
+    // [Tooltip("How long feeding history is remembered.")]
+    // [SerializeField]
+    // private float overfeedingWindow = 30f;
+    //
+    // [Tooltip("How many seconds the panda remains overfed after a feeding that causes overfeeding.")]
+    // [SerializeField]
+    // private float overfedDuration = 5f;
+    //
+    // [Tooltip("Health lost when trying to feed an already overfed panda.")]
+    // [SerializeField]
+    // private float overfeedingDamage = 10f;
+    //
+    // private List<float> feedingTimes = new List<float>();
+    //
+    // private bool isOverfed = false;
+    // private float overfedTimer = 0f;
 
 
     // =========================================================
@@ -159,13 +170,17 @@ public class PandaSystem : MonoBehaviour
         }
     }
 
-    public bool IsOverfed
-    {
-        get
-        {
-            return isOverfed;
-        }
-    }
+    // OVERFEEDING DISABLED: always false. Kept so other scripts that
+    // still check IsOverfed (e.g. status/mood UI) keep compiling.
+    public bool IsOverfed => false;
+
+    // public bool IsOverfed
+    // {
+    //     get
+    //     {
+    //         return isOverfed;
+    //     }
+    // }
 
     public bool IsThirsty
     {
@@ -200,6 +215,18 @@ public class PandaSystem : MonoBehaviour
         }
     }
 
+    /// <summary>True while extreme heat is damaging the panda.</summary>
+    public bool IsInExtremeHeat
+    {
+        get
+        {
+            if (environment == null)
+                return false;
+
+            return environment.Temperature > extremeHeatTemperature;
+        }
+    }
+
     public bool IsStressed
     {
         get
@@ -216,8 +243,10 @@ public class PandaSystem : MonoBehaviour
     private void Update()
     {
         UpdateHunger();
-        UpdateFeedingHistory();
-        UpdateOverfedTimer();
+
+        // OVERFEEDING DISABLED
+        // UpdateFeedingHistory();
+        // UpdateOverfedTimer();
 
         if (environment == null)
             return;
@@ -241,46 +270,46 @@ public class PandaSystem : MonoBehaviour
 
 
     // =========================================================
-    // FEEDING HISTORY
+    // FEEDING HISTORY (DISABLED - only used for overfeeding)
     // =========================================================
 
-    private void UpdateFeedingHistory()
-    {
-        float currentTime = Time.time;
-
-        for (int i = feedingTimes.Count - 1; i >= 0; i--)
-        {
-            if (currentTime - feedingTimes[i] > overfeedingWindow)
-            {
-                feedingTimes.RemoveAt(i);
-            }
-        }
-    }
+    // private void UpdateFeedingHistory()
+    // {
+    //     float currentTime = Time.time;
+    //
+    //     for (int i = feedingTimes.Count - 1; i >= 0; i--)
+    //     {
+    //         if (currentTime - feedingTimes[i] > overfeedingWindow)
+    //         {
+    //             feedingTimes.RemoveAt(i);
+    //         }
+    //     }
+    // }
 
 
     // =========================================================
-    // OVERFED TIMER
+    // OVERFED TIMER (DISABLED)
     // =========================================================
 
-    private void UpdateOverfedTimer()
-    {
-        if (!isOverfed)
-            return;
-
-        overfedTimer -= Time.deltaTime;
-
-        if (overfedTimer <= 0f)
-        {
-            isOverfed = false;
-            overfedTimer = 0f;
-
-            // Clear old feeding history so the panda can
-            // return to normal feeding after recovering.
-            feedingTimes.Clear();
-
-            Debug.Log("Panda is no longer overfed.");
-        }
-    }
+    // private void UpdateOverfedTimer()
+    // {
+    //     if (!isOverfed)
+    //         return;
+    //
+    //     overfedTimer -= Time.deltaTime;
+    //
+    //     if (overfedTimer <= 0f)
+    //     {
+    //         isOverfed = false;
+    //         overfedTimer = 0f;
+    //
+    //         // Clear old feeding history so the panda can
+    //         // return to normal feeding after recovering.
+    //         feedingTimes.Clear();
+    //
+    //         Debug.Log("Panda is no longer overfed.");
+    //     }
+    // }
 
 
     // =========================================================
@@ -337,56 +366,64 @@ public class PandaSystem : MonoBehaviour
 
     public void FeedPanda()
     {
-        // Update feeding history before checking overfeeding.
-        UpdateFeedingHistory();
-
-        // If the panda is already overfed, apply damage
-        // and restart the overfeeding timer.
-        if (isOverfed)
-        {
-            health -= overfeedingDamage;
-
-            overfedTimer = overfedDuration;
-
-            ClampHealth();
-
-            Debug.Log(
-                "Panda is overfed! Health lost: "
-                + overfeedingDamage
-                + ". Overfeeding timer restarted."
-            );
-
-            return;
-        }
-
-        // Check whether this feeding exceeds the normal limit.
-        if (feedingTimes.Count >= maximumFeedingsInWindow)
-        {
-            isOverfed = true;
-            overfedTimer = overfedDuration;
-
-            health -= overfeedingDamage;
-
-            ClampHealth();
-
-            Debug.Log(
-                "Panda became overfed! Health lost: "
-                + overfeedingDamage
-            );
-
-            return;
-        }
+        // OVERFEEDING DISABLED
+        // // Update feeding history before checking overfeeding.
+        // UpdateFeedingHistory();
+        //
+        // // If the panda is already overfed, apply damage
+        // // and restart the overfeeding timer.
+        // if (isOverfed)
+        // {
+        //     health -= overfeedingDamage;
+        //
+        //     overfedTimer = overfedDuration;
+        //
+        //     ClampHealth();
+        //
+        //     Overfed?.Invoke(overfeedingDamage);
+        //
+        //     Debug.Log(
+        //         "Panda is overfed! Health lost: "
+        //         + overfeedingDamage
+        //         + ". Overfeeding timer restarted."
+        //     );
+        //
+        //     return;
+        // }
+        //
+        // // Check whether this feeding exceeds the normal limit.
+        // if (feedingTimes.Count >= maximumFeedingsInWindow)
+        // {
+        //     isOverfed = true;
+        //     overfedTimer = overfedDuration;
+        //
+        //     health -= overfeedingDamage;
+        //
+        //     ClampHealth();
+        //
+        //     Overfed?.Invoke(overfeedingDamage);
+        //
+        //     Debug.Log(
+        //         "Panda became overfed! Health lost: "
+        //         + overfeedingDamage
+        //     );
+        //
+        //     return;
+        // }
 
         // Normal feeding.
         hungerTimer = 0f;
 
-        // Record the feeding.
-        feedingTimes.Add(Time.time);
+        // OVERFEEDING DISABLED
+        // // Record the feeding.
+        // feedingTimes.Add(Time.time);
 
         // Restore health.
         health += healthPerFeeding;
 
         ClampHealth();
+
+        Fed?.Invoke(healthPerFeeding);
 
         Debug.Log("Panda fed successfully.");
     }

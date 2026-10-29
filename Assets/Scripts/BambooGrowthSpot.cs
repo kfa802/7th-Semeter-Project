@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,6 +30,11 @@ public class BambooGrowthSpot : MonoBehaviour
     [Header("Timing")]
     [SerializeField] private float poopToBambooDelay = 5f;
     [SerializeField] private float growTime = 10f;
+
+    [Tooltip("Random variation of the grow time, so bamboo don't grow " +
+             "identically. 0.15 = up to 15% faster or slower.")]
+    [SerializeField, Range(0f, 0.5f)]
+    private float growTimeVariation = 0.15f;
 
 
     // =========================================================
@@ -209,7 +213,11 @@ public class BambooGrowthSpot : MonoBehaviour
     // GROW BAMBOO
     // =========================================================
 
-    public void GrowBamboo()
+    /// <param name="extraDelay">
+    /// Extra seconds added to the poop-to-bamboo delay, used to
+    /// stagger several bamboo from the same poop.
+    /// </param>
+    public void GrowBamboo(float extraDelay = 0f)
     {
         if (!IsAvailable)
             return;
@@ -225,7 +233,6 @@ public class BambooGrowthSpot : MonoBehaviour
 
             return;
         }
-
 
         // Check the zone's maximum bamboo capacity.
         if (BambooManager.Instance != null &&
@@ -244,7 +251,9 @@ public class BambooGrowthSpot : MonoBehaviour
         occupied = true;
         isGrowing = true;
 
-        growthCoroutine = StartCoroutine(GrowthSequence());
+        growthCoroutine = StartCoroutine(
+            GrowthSequence(Mathf.Max(0f, extraDelay))
+        );
     }
 
 
@@ -271,7 +280,7 @@ public class BambooGrowthSpot : MonoBehaviour
     // GROWTH SEQUENCE
     // =========================================================
 
-    private IEnumerator GrowthSequence()
+    private IEnumerator GrowthSequence(float extraDelay)
     {
         GameObject poop = null;
 
@@ -285,31 +294,32 @@ public class BambooGrowthSpot : MonoBehaviour
             );
         }
 
-        // Wait before creating bamboo.
+        // Wait before creating bamboo (plus any stagger delay).
+        float totalDelay = poopToBambooDelay + extraDelay;
         float waited = 0f;
 
-while (waited < poopToBambooDelay)
-{
-    float waterMultiplier =
-        BambooManager.Instance != null
-            ? BambooManager.Instance.GetWaterGrowthMultiplier()
-            : 0f;
+        while (waited < totalDelay)
+        {
+            float waterMultiplier =
+                BambooManager.Instance != null
+                    ? BambooManager.Instance.GetWaterGrowthMultiplier()
+                    : 0f;
 
-    float temperatureMultiplier =
-        EnvironmentSystem.Instance != null
-            ? EnvironmentSystem.Instance.TemperatureGrowthFactor
-            : 1f;
+            float temperatureMultiplier =
+                EnvironmentSystem.Instance != null
+                    ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+                    : 1f;
 
-    // Only progress when water is available.
-    if (waterMultiplier > 0f)
-    {
-        waited += Time.deltaTime
-                  * temperatureMultiplier
-                  * waterMultiplier;
-    }
+            // Only progress when water is available.
+            if (waterMultiplier > 0f)
+            {
+                waited += Time.deltaTime
+                          * temperatureMultiplier
+                          * waterMultiplier;
+            }
 
-    yield return null;
-}
+            yield return null;
+        }
 
         if (poop != null)
         {
@@ -346,9 +356,15 @@ while (waited < poopToBambooDelay)
         bamboo.transform.localPosition = Vector3.zero;
         bamboo.transform.localRotation = Quaternion.identity;
 
+        // Slightly different grow time for every bamboo.
+        float variedGrowTime = growTime * Random.Range(
+            1f - growTimeVariation,
+            1f + growTimeVariation
+        );
+
         // BambooManager tracks the holder.
         BambooPlant plant = holder.AddComponent<BambooPlant>();
-        plant.Init(growTime);
+        plant.Init(variedGrowTime);
 
         // Assign the new bamboo to this spot.
         existingBamboo = holder;

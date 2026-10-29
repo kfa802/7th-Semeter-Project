@@ -1,8 +1,23 @@
 using UnityEngine;
 
+/// <summary>
+/// Runs the environment for the zone the panda is currently in.
+/// ALL settings (start temperature, water, growth, thresholds...) live on
+/// each EcosystemZone. This script only holds the active zone's values at
+/// runtime, so there is nothing to tune here except the travel speed.
+/// </summary>
 public class EnvironmentSystem : MonoBehaviour
 {
     public static EnvironmentSystem Instance { get; private set; }
+
+    // =========================================================
+    // GLOBAL SETTING
+    // =========================================================
+
+    [Header("Travel")]
+    [Tooltip("How fast (°C per second) the temperature moves towards " +
+             "the destination zone's temperature while travelling.")]
+    [SerializeField] private float temperatureChangeSpeed = 2f;
 
     // =========================================================
     // ACTIVE ZONE
@@ -15,68 +30,40 @@ public class EnvironmentSystem : MonoBehaviour
     public EcosystemZone ActiveZone => activeZone;
 
     // =========================================================
-    // TEMPERATURE
+    // RUNTIME VALUES (copied from the active zone - not tuned here)
     // =========================================================
 
+    // Temperature.
     private float minTemperature = -15f;
     private float maxTemperature = 40f;
-
-    [Header("Temperature")]
-    [SerializeField] private float temperature = 20f;
-    [SerializeField] private float temperatureChangeSpeed = 2f;
-    [SerializeField] private float idealTemperature = 20f;
-    [SerializeField] private float temperatureThreshold = 3f;
-    [SerializeField] private float freezingPoint = 0f;
-    [SerializeField] private float coldSlowdownPower = 1.5f;
-
-    [SerializeField, Range(0.05f, 0.5f)]
+    private float temperature = 20f;
+    private float idealTemperature = 20f;
+    private float temperatureThreshold = 3f;
+    private float freezingPoint = 0f;
+    private float coldSlowdownPower = 1.5f;
     private float minGrowthWhenCold = 0.2f;
+    private float minGrowthWhenHot = 0.2f;
 
     private float targetTemperature = 20f;
     private bool isTravelling = false;
 
-    [Header("Heat")]
-    [SerializeField, Range(0f, 1f)]
-    private float minGrowthWhenHot = 0.2f;
-
-    // =========================================================
-    // WATER
-    // =========================================================
-
-    [Header("Water")]
-    [SerializeField, Range(0f, 100f)]
-    private float water = 100f;
-
-    [Header("Water Rates")]
-    [SerializeField] private float waterReactionSpeed = 5f;
-    [SerializeField] private float waterRecoverySpeed = 1f;
-
-    [Header("Water Temperature Ranges")]
-    [SerializeField] private float comfortableWaterMinTemperature = 15f;
-    [SerializeField] private float comfortableWaterMaxTemperature = 24f;
-    [SerializeField] private float coldWaterMinTemperature = 0f;
-    [SerializeField] private float coldWaterMaxTemperature = 15f;
-
-    [SerializeField, Range(0f, 1f)]
+    // Water.
+    private float water = 0f;
+    private float waterReactionSpeed = 5f;
+    private float waterRecoverySpeed = 1f;
+    private float comfortableWaterMinTemperature = 15f;
+    private float comfortableWaterMaxTemperature = 24f;
+    private float idealWaterTemperature = 20f;
+    private float comfortableEdgeRecoveryMultiplier = 0.5f;
+    private float coldWaterMinTemperature = 0f;
+    private float coldWaterMaxTemperature = 15f;
     private float coldWaterMinRecoveryMultiplier = 0.2f;
+    private float hotWaterStartTemperature = 25f;
+    private float coldWaterLossStartTemperature = 0f;
+    private float coldWaterLossSpeed = 5f;
+    private float coldWaterLossPower = 1f;
 
-    [SerializeField] private float hotWaterStartTemperature = 25f;
-
-    [Header("Cold Water Loss")]
-    [Tooltip("At or below this temperature the clean water starts to " +
-             "drop (it freezes and can't be used).")]
-    [SerializeField] private float coldWaterLossStartTemperature = 0f;
-
-    [Tooltip("Water lost per second at the coldest temperature. " +
-             "Like the heat, the loss grows the colder it gets.")]
-    [SerializeField] private float coldWaterLossSpeed = 5f;
-
-    // =========================================================
-    // POLLUTION
-    // =========================================================
-
-    [Header("Pollution")]
-    [SerializeField, Range(0f, 1f)]
+    // Pollution.
     private float pollution = 0f;
 
     // =========================================================
@@ -91,6 +78,44 @@ public class EnvironmentSystem : MonoBehaviour
     public float Pollution => pollution;
 
     public float TemperatureGrowthFactor { get; private set; } = 1f;
+
+    // =========================================================
+    // FEEDBACK STATES (read by ResourceFeedback)
+    // =========================================================
+
+    public enum WaterTrendType
+    {
+        None,
+        Evaporating,
+        Freezing,
+        RefillingSlow,
+        Refilling
+    }
+
+    public enum GrowthConditionType
+    {
+        Ideal,
+        TooCold,
+        TooHot
+    }
+
+    /// <summary>What is happening to the water right now (set in UpdateWater).</summary>
+    public WaterTrendType WaterTrend { get; private set; } = WaterTrendType.None;
+
+    /// <summary>How the temperature affects bamboo growth right now.</summary>
+    public GrowthConditionType GrowthCondition
+    {
+        get
+        {
+            if (temperature < idealTemperature - temperatureThreshold)
+                return GrowthConditionType.TooCold;
+
+            if (temperature > idealTemperature + temperatureThreshold)
+                return GrowthConditionType.TooHot;
+
+            return GrowthConditionType.Ideal;
+        }
+    }
 
     public float Bamboo
     {
@@ -124,20 +149,6 @@ public class EnvironmentSystem : MonoBehaviour
 
     private void Start()
     {
-        // If a zone was already entered before Start,
-        // its settings are already applied.
-        if (activeZone == null)
-        {
-            water = Mathf.Clamp(water, 0f, 100f);
-            pollution = Mathf.Clamp01(pollution);
-
-            temperature = Mathf.Clamp(
-                temperature,
-                minTemperature,
-                maxTemperature
-            );
-        }
-
         targetTemperature = temperature;
     }
 
@@ -185,8 +196,6 @@ public class EnvironmentSystem : MonoBehaviour
             return;
 
         // Already in this zone: do NOT reload the saved values.
-        // Reloading would reset water to the value saved the last
-        // time the panda left, undoing all changes since arrival.
         if (zone == activeZone)
             return;
 
@@ -206,39 +215,34 @@ public class EnvironmentSystem : MonoBehaviour
         // Vandindstillinger.
         waterReactionSpeed = zone.waterReactionSpeed;
         waterRecoverySpeed = zone.waterRecoverySpeed;
-
-        comfortableWaterMinTemperature =
-            zone.comfortableWaterMinTemperature;
-
-        comfortableWaterMaxTemperature =
-            zone.comfortableWaterMaxTemperature;
-
-        coldWaterMinTemperature =
-            zone.coldWaterMinTemperature;
-
-        coldWaterMaxTemperature =
-            zone.coldWaterMaxTemperature;
-
-        coldWaterMinRecoveryMultiplier =
-            zone.coldWaterMinRecoveryMultiplier;
-
-        hotWaterStartTemperature =
-            zone.hotWaterStartTemperature;
-
-        coldWaterLossStartTemperature =
-            zone.coldWaterLossStartTemperature;
-
-        coldWaterLossSpeed =
-            zone.coldWaterLossSpeed;
+        comfortableWaterMinTemperature = zone.comfortableWaterMinTemperature;
+        comfortableWaterMaxTemperature = zone.comfortableWaterMaxTemperature;
+        idealWaterTemperature = zone.idealWaterTemperature;
+        comfortableEdgeRecoveryMultiplier = zone.comfortableEdgeRecoveryMultiplier;
+        coldWaterMinTemperature = zone.coldWaterMinTemperature;
+        coldWaterMaxTemperature = zone.coldWaterMaxTemperature;
+        coldWaterMinRecoveryMultiplier = zone.coldWaterMinRecoveryMultiplier;
+        hotWaterStartTemperature = zone.hotWaterStartTemperature;
+        coldWaterLossStartTemperature = zone.coldWaterLossStartTemperature;
+        coldWaterLossSpeed = zone.coldWaterLossSpeed;
+        coldWaterLossPower = zone.coldWaterLossPower;
 
         // Stop temperaturens automatiske overgang ved ankomst.
         isTravelling = false;
 
-        // Behold den aktuelle temperatur, så spilleren kan justere den.
+        // Zonen bestemmer temperaturen: dens starttemperatur første gang,
+        // og derefter den temperatur spilleren efterlod den med.
+        temperature = Mathf.Clamp(
+            zone.temperature,
+            minTemperature,
+            maxTemperature
+        );
+
         targetTemperature = temperature;
 
-        // Zonen indlæser sine egne gemte værdier
-        // (gemt i ExitZone, sidst pandaen var her).
+        TelemetryManager.Instance?.LogTemperature(temperature, "zone");
+
+        // Zonen indlæser sine egne gemte værdier.
         water = Mathf.Clamp(zone.water, 0f, 100f);
         pollution = Mathf.Clamp01(zone.pollution);
 
@@ -247,7 +251,7 @@ public class EnvironmentSystem : MonoBehaviour
         Debug.Log(
             "Active ecosystem: " + ActiveZoneName +
             ". Water: " + water.ToString("F0") +
-            ". Temperature target: " + targetTemperature + "°C"
+            ". Temperature: " + temperature.ToString("F1") + "°C"
         );
     }
 
@@ -261,14 +265,18 @@ public class EnvironmentSystem : MonoBehaviour
         zone.water = water;
         zone.pollution = pollution;
 
+        // Temperaturen gemmes allerede i BeginTravelToZone, før den
+        // begynder at ændre sig. Gem kun her, hvis der ikke rejses.
+        if (!isTravelling)
+            zone.temperature = temperature;
+
         activeZone = null;
         ActiveZoneName = "Travelling";
 
-        // Den rigtige vandværdi gemmes i zonen. Bjælken viser 0
-        // under rejsen (håndteres i EnvironmentUI).
         Debug.Log(
-            "Panda is travelling between zones. Saved water for " +
-            zone.zoneName + ": " + water.ToString("F0")
+            "Panda left " + zone.zoneName +
+            ". Saved water: " + water.ToString("F0") +
+            ", temperature: " + zone.temperature.ToString("F1") + "°C"
         );
     }
 
@@ -350,6 +358,8 @@ public class EnvironmentSystem : MonoBehaviour
 
     private void UpdateWater()
     {
+        WaterTrend = WaterTrendType.None;
+
         // Under rejsen: frys vandværdien i stedet for at tømme den.
         if (activeZone == null)
             return;
@@ -367,15 +377,41 @@ public class EnvironmentSystem : MonoBehaviour
                 (coldWaterLossStartTemperature - temperature) / coldRange
             );
 
-            water -= Mathf.Pow(coldSeverity, 2f) *
+            water -= Mathf.Pow(coldSeverity, Mathf.Max(0.01f, coldWaterLossPower)) *
                      coldWaterLossSpeed *
                      Time.deltaTime;
+
+            if (water > 0f)
+                WaterTrend = WaterTrendType.Freezing;
         }
-        // Behagelig temperatur: vandet genopfyldes.
+        // Behagelig temperatur: vandet genopfyldes, hurtigst ved
+        // den ideelle vandtemperatur og langsommere mod kanterne.
         else if (temperature >= comfortableWaterMinTemperature &&
-            temperature <= comfortableWaterMaxTemperature)
+                 temperature <= comfortableWaterMaxTemperature)
         {
-            water += waterRecoverySpeed * Time.deltaTime;
+            float ideal = Mathf.Clamp(
+                idealWaterTemperature,
+                comfortableWaterMinTemperature,
+                comfortableWaterMaxTemperature
+            );
+
+            // 0 at the edge of the range, 1 at the ideal temperature.
+            float closeness = temperature <= ideal
+                ? Mathf.InverseLerp(comfortableWaterMinTemperature, ideal, temperature)
+                : Mathf.InverseLerp(comfortableWaterMaxTemperature, ideal, temperature);
+
+            float recoveryMultiplier = Mathf.Lerp(
+                comfortableEdgeRecoveryMultiplier,
+                1f,
+                closeness
+            );
+
+            water += waterRecoverySpeed *
+                     recoveryMultiplier *
+                     Time.deltaTime;
+
+            if (water < 100f)
+                WaterTrend = WaterTrendType.Refilling;
         }
         // Køligt: langsommere genopfyldning.
         else if (temperature > coldWaterMinTemperature &&
@@ -387,8 +423,9 @@ public class EnvironmentSystem : MonoBehaviour
                 temperature
             );
 
+            // Continues smoothly from the comfortable range's edge speed.
             float recoveryMultiplier = Mathf.Lerp(
-                1f,
+                comfortableEdgeRecoveryMultiplier,
                 coldWaterMinRecoveryMultiplier,
                 coldDistance
             );
@@ -396,6 +433,9 @@ public class EnvironmentSystem : MonoBehaviour
             water += waterRecoverySpeed *
                      recoveryMultiplier *
                      Time.deltaTime;
+
+            if (water < 100f)
+                WaterTrend = WaterTrendType.RefillingSlow;
         }
         // Varmt: vandet fordamper.
         else if (temperature >= hotWaterStartTemperature)
@@ -412,6 +452,9 @@ public class EnvironmentSystem : MonoBehaviour
             water -= Mathf.Pow(hotSeverity, 2f) *
                      waterReactionSpeed *
                      Time.deltaTime;
+
+            if (water > 0f)
+                WaterTrend = WaterTrendType.Evaporating;
         }
 
         water = Mathf.Clamp(water, 0f, 100f);
@@ -474,6 +517,11 @@ public class EnvironmentSystem : MonoBehaviour
                 System.StringComparison.OrdinalIgnoreCase
             ))
             {
+                // Gem den temperatur spilleren efterlod zonen med,
+                // før overgangen begynder at ændre den.
+                if (activeZone != null)
+                    activeZone.temperature = temperature;
+
                 isTravelling = true;
 
                 targetTemperature = Mathf.Clamp(

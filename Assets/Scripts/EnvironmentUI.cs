@@ -32,6 +32,8 @@ public class EnvironmentUI : MonoBehaviour
 
     private EcosystemZone lastWaterZone;
 
+    private bool ignoreSliderCallback;
+
     private bool bambooInitialized;
     private EcosystemZone lastBambooZone;
 
@@ -168,6 +170,20 @@ public class EnvironmentUI : MonoBehaviour
         if (environment == null || temperatureSlider == null)
             return;
 
+        // Each zone has its own min/max temperature, so keep the
+        // slider range in sync with the active zone.
+        if (!Mathf.Approximately(temperatureSlider.minValue, environment.MinTemperature) ||
+            !Mathf.Approximately(temperatureSlider.maxValue, environment.MaxTemperature))
+        {
+            // Changing the range can clamp the value and fire the
+            // slider's callback; ignore that so it isn't logged
+            // as a player change.
+            ignoreSliderCallback = true;
+            temperatureSlider.minValue = environment.MinTemperature;
+            temperatureSlider.maxValue = environment.MaxTemperature;
+            ignoreSliderCallback = false;
+        }
+
         // Keep the slider synchronized with the actual environment.
         // SetValueWithoutNotify prevents the slider from changing
         // the environment again through its own callback.
@@ -301,7 +317,7 @@ public class EnvironmentUI : MonoBehaviour
 
     private void OnTemperatureChanged(float value)
     {
-        if (environment == null)
+        if (environment == null || ignoreSliderCallback)
             return;
 
         // Extra protection: ignore slider changes during a dilemma

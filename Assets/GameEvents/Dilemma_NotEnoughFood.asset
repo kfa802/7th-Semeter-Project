@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: "There isn\u2019t enough food"
+  title: "There Isn\u2019t Enough Food"
   description: "Dilemma: The two pandas have now been together for a long time. But
     the bamboo in the valley is almost gone, and there isn\u2019t enough food for
     two pandas. Should they go to separate areas, or stay? "
@@ -22,7 +22,7 @@ MonoBehaviour:
   triggerType: 4
   requiredZoneName: Midway
   delaySeconds: 0
-  threshold: 50
+  threshold: 40
   temperatureThreshold: 30
   temperatureHighThreshold: 25
   temperatureDurationSeconds: 20

@@ -1,6 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// One ecosystem (Mountain, Midway, Valley...). Every environment setting
+/// lives here, so each zone can be tuned on its own. When the panda enters,
+/// EnvironmentSystem copies these values; when it leaves, the zone's
+/// current water, pollution and temperature are saved back here.
+/// </summary>
 [RequireComponent(typeof(Collider))]
 public class EcosystemZone : MonoBehaviour
 {
@@ -60,17 +66,36 @@ public class EcosystemZone : MonoBehaviour
     // =========================================================
 
     [Header("Temperature")]
+    [Tooltip("Lowest temperature the slider can reach in this zone.")]
     public float minTemperature = -15f;
+
+    [Tooltip("Highest temperature the slider can reach in this zone.")]
     public float maxTemperature = 40f;
+
+    [Tooltip("Start temperature of this zone. During play it is updated " +
+             "with the temperature the player leaves the zone at.")]
     public float temperature = 5f;
+
+    [Header("Bamboo Growth")]
+    [Tooltip("Bamboo grows fastest at this temperature.")]
     public float idealTemperature = 20f;
+
+    [Tooltip("± degrees around the ideal that still count as perfect.")]
     public float temperatureThreshold = 3f;
+
+    [Tooltip("At this temperature cold growth reaches its minimum.")]
     public float freezingPoint = 0f;
+
+    [Tooltip("Shape of the cold slowdown. 1 = even drop. Above 1 = growth drops " +
+             "quickly as soon as it is below the perfect range. Below 1 = growth " +
+             "stays fast longer and drops sharply near freezing.")]
     public float coldSlowdownPower = 1.5f;
 
+    [Tooltip("Growth speed at the freezing point (0.2 = 20%).")]
     [Range(0.05f, 0.5f)]
     public float minGrowthWhenCold = 0.2f;
 
+    [Tooltip("Growth speed at the max temperature (0.2 = 20%).")]
     [Range(0f, 1f)]
     public float minGrowthWhenHot = 0.2f;
 
@@ -79,21 +104,45 @@ public class EcosystemZone : MonoBehaviour
     // =========================================================
 
     [Header("Water")]
+    [Tooltip("Start water of this zone. During play it is updated " +
+             "with the water the zone has when the panda leaves.")]
     [Range(0f, 100f)]
     public float water = 100f;
 
+    [Tooltip("Water lost per second (evaporation) at the max temperature.")]
     public float waterReactionSpeed = 5f;
+
+    [Tooltip("Water gained per second in the comfortable range.")]
     public float waterRecoverySpeed = 1f;
 
     [Header("Water Temperature Ranges")]
+    [Tooltip("Full-speed refill from this temperature...")]
     public float comfortableWaterMinTemperature = 15f;
+
+    [Tooltip("...up to this temperature.")]
     public float comfortableWaterMaxTemperature = 24f;
+
+    [Tooltip("Water refills fastest (full Water Recovery Speed) at this " +
+             "temperature. Should be inside the comfortable range.")]
+    public float idealWaterTemperature = 20f;
+
+    [Tooltip("Refill speed at the edges of the comfortable range " +
+             "(0.5 = half speed). It rises smoothly to full speed at " +
+             "the Ideal Water Temperature.")]
+    [Range(0f, 1f)]
+    public float comfortableEdgeRecoveryMultiplier = 0.5f;
+
+    [Tooltip("Slow refill from this temperature...")]
     public float coldWaterMinTemperature = 0f;
+
+    [Tooltip("...up to this one (should equal Comfortable Water Min).")]
     public float coldWaterMaxTemperature = 15f;
 
+    [Tooltip("Refill speed at the cold end of the slow range (0.2 = 20%).")]
     [Range(0f, 1f)]
     public float coldWaterMinRecoveryMultiplier = 0.2f;
 
+    [Tooltip("Evaporation starts at this temperature.")]
     public float hotWaterStartTemperature = 25f;
 
     [Header("Cold Water Loss")]
@@ -102,6 +151,12 @@ public class EcosystemZone : MonoBehaviour
 
     [Tooltip("Water lost per second at this zone's minimum temperature.")]
     public float coldWaterLossSpeed = 5f;
+
+    [Tooltip("Shape of the freezing curve. 2 = slow just below the start " +
+             "temperature, fast near the minimum. 1 = even increase. " +
+             "Below 1 = freezes fast as soon as it is below the start temperature.")]
+    [Range(0.25f, 3f)]
+    public float coldWaterLossPower = 1f;
 
     // =========================================================
     // POLLUTION
