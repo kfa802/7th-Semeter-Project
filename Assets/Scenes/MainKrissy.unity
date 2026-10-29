@@ -33579,6 +33579,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   zoneDestinations:
   - zoneName: Midway
+    routeName: 
     destination: {fileID: 1599928678}
     cameraShots:
     - point: {fileID: 1851566701}
@@ -33617,6 +33618,7 @@ MonoBehaviour:
     cameraPoints: []
     sitFacingTarget: {fileID: 1599928678}
   - zoneName: Valley
+    routeName: 
     destination: {fileID: 1143116278}
     cameraShots:
     - point: {fileID: 51422573}
@@ -33645,6 +33647,42 @@ MonoBehaviour:
     - {fileID: 51422573}
     sitFacingTarget: {fileID: 0}
   - zoneName: Mountain
+    routeName: 
+    destination: {fileID: 440457960}
+    cameraShots:
+    - point: {fileID: 1642788169}
+      moveDuration: 3
+      ease:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      holdDuration: 0
+      lookAtPanda: 0
+      fieldOfView: 0
+    cameraPoints: []
+    sitFacingTarget: {fileID: 0}
+  - zoneName: Midway
+    routeName: Midway2
     destination: {fileID: 440457960}
     cameraShots:
     - point: {fileID: 1642788169}

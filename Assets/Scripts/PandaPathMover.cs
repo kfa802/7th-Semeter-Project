@@ -30,7 +30,13 @@ public class PandaPathMover : MonoBehaviour
     [Serializable]
     public class ZoneDestination
     {
+        [Tooltip("The REAL zone name (must match the EcosystemZone), e.g. 'Midway'.")]
         public string zoneName;
+
+        [Tooltip("Optional unique name for this route, e.g. 'Midway2'. " +
+                 "Put this name in a GameEvent's Target Zone Name to use exactly this route. " +
+                 "Leave empty for the normal route to this zone.")]
+        public string routeName;
 
         [Tooltip("The panda's destination in this zone.")]
         public Transform destination;
@@ -1190,88 +1196,88 @@ public class PandaPathMover : MonoBehaviour
         BeginTravel(zoneName);
     }
 
-    private void BeginTravel(string zoneName)
+    private void BeginTravel(string requestedName)
     {
-        Debug.Log(
-            $"PandaPathMover: Checking {zoneDestinations.Count} " +
-            "configured zone destinations."
-        );
+        ZoneDestination zone = FindRoute(requestedName);
 
-        foreach (ZoneDestination zone in zoneDestinations)
+        if (zone == null)
         {
-            if (zone == null)
-            {
-                Debug.LogWarning(
-                    "PandaPathMover: Found an empty destination entry."
-                );
-                continue;
-            }
-
-            Debug.Log(
-                $"PandaPathMover: Checking entry '{zone.zoneName}'."
+            Debug.LogError(
+                $"PandaPathMover: NO ROUTE FOUND for '{requestedName}'. " +
+                "Check Route Name / Zone Name in the Zone Destinations list."
             );
-
-            if (!string.Equals(
-                zone.zoneName?.Trim(),
-                zoneName.Trim(),
-                StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            Debug.Log(
-                $"PandaPathMover: MATCH FOUND for '{zone.zoneName}'."
-            );
-
-            if (zone.destination == null)
-            {
-                Debug.LogError(
-                    $"PandaPathMover: Destination Transform is missing " +
-                    $"for '{zone.zoneName}'."
-                );
-                return;
-            }
-
-            List<CameraShot> shots = BuildShots(zone);
-
-            if (shots.Count == 0)
-            {
-                Debug.LogError(
-                    $"PandaPathMover: No camera shots (or camera points) " +
-                    $"assigned for '{zone.zoneName}'."
-                );
-                return;
-            }
-
-            destination = zone.destination;
-            activeShots = shots;
-            currentSitFacingTarget = zone.sitFacingTarget;
-
-            Debug.Log(
-                $"PandaPathMover: Destination position = " +
-                $"{zone.destination.position}; " +
-                $"camera shots = {shots.Count}."
-            );
-
-            StartMovement();
-
-            // Begin the temperature transition only if movement started.
-            if (isMoving && EnvironmentSystem.Instance != null)
-            {
-                EnvironmentSystem.Instance.BeginTravelToZone(zone.zoneName);
-            }
-
-            Debug.Log(
-                $"PandaPathMover: StartMovement called for '{zone.zoneName}'."
-            );
-
             return;
         }
 
-        Debug.LogError(
-            $"PandaPathMover: NO MATCH FOUND for zone '{zoneName}'. " +
-            "Check the Zone Destinations list in the Inspector."
+        string routeLabel = string.IsNullOrWhiteSpace(zone.routeName)
+            ? zone.zoneName
+            : zone.routeName;
+
+        Debug.Log(
+            $"PandaPathMover: Using route '{routeLabel}' to zone '{zone.zoneName}'."
         );
+
+        if (zone.destination == null)
+        {
+            Debug.LogError(
+                $"PandaPathMover: Destination Transform is missing for route '{routeLabel}'."
+            );
+            return;
+        }
+
+        List<CameraShot> shots = BuildShots(zone);
+
+        if (shots.Count == 0)
+        {
+            Debug.LogError(
+                $"PandaPathMover: No camera shots (or camera points) assigned for route '{routeLabel}'."
+            );
+            return;
+        }
+
+        destination = zone.destination;
+        activeShots = shots;
+        currentSitFacingTarget = zone.sitFacingTarget;
+
+        StartMovement();
+
+        // The environment always uses the REAL zone name, never the route name.
+        if (isMoving && EnvironmentSystem.Instance != null)
+            EnvironmentSystem.Instance.BeginTravelToZone(zone.zoneName);
+    }
+
+    // 1. An entry whose Route Name matches exactly (e.g. 'Midway2').
+    // 2. Otherwise the entry whose Zone Name matches and has NO Route Name
+    //    (the normal route). Entries with a Route Name are only used when
+    //    asked for by that name.
+    private ZoneDestination FindRoute(string requestedName)
+    {
+        if (string.IsNullOrWhiteSpace(requestedName))
+            return null;
+
+        string name = requestedName.Trim();
+
+        foreach (ZoneDestination zone in zoneDestinations)
+        {
+            if (zone != null &&
+                !string.IsNullOrWhiteSpace(zone.routeName) &&
+                string.Equals(zone.routeName.Trim(), name, StringComparison.OrdinalIgnoreCase))
+            {
+                return zone;
+            }
+        }
+
+        foreach (ZoneDestination zone in zoneDestinations)
+        {
+            if (zone != null &&
+                string.IsNullOrWhiteSpace(zone.routeName) &&
+                string.Equals(zone.zoneName?.Trim(), name, StringComparison.OrdinalIgnoreCase))
+            {
+                return zone;
+            }
+        }
+
+        return null;
     }
 
     // ---------- Turning helpers ----------
