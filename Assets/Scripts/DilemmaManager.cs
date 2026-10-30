@@ -15,8 +15,17 @@ public enum SceneChangeTiming
 public enum RevealStyle
 {
     Instant,
-    RiseFromGround,
-    GrowUp
+    RiseFromGround,   // Rises up and settles with a small bounce.
+    GrowUp,           // Scales up from nothing with a little overshoot.
+    PopUp,            // Quick, bouncy pop (good for small props).
+    SproutUp          // Stretches up from the ground like a plant/building growing.
+}
+
+public enum RevealOrder
+{
+    ListOrder,        // In the order of the list / hierarchy.
+    Random,           // Shuffled.
+    FromCenterOut     // Nearest to the group's centre first, spreading outwards.
 }
 
 [System.Serializable]
@@ -55,6 +64,28 @@ public class DilemmaSceneChange
 
     [Tooltip("Seconds between each object or child starting to appear.")]
     public float delayBetweenObjects = 0.15f;
+
+    [Header("Reveal Feel")]
+    [Tooltip("Order the objects/children appear in.")]
+    public RevealOrder revealOrder = RevealOrder.FromCenterOut;
+
+    [Tooltip("How much it overshoots before settling. 0 = no bounce, 1.7 = normal, 3 = very bouncy.")]
+    [Range(0f, 4f)]
+    public float overshoot = 1.7f;
+
+    [Tooltip("Random variation of duration and spacing, so objects don't all move identically. 0.25 = ±25%.")]
+    [Range(0f, 0.6f)]
+    public float randomness = 0.25f;
+
+    [Tooltip("Small wobble (degrees) that fades out as the object settles. 0 = off.")]
+    [Range(0f, 20f)]
+    public float wobbleAngle = 4f;
+
+    [Tooltip("Optional: effect spawned at each object's base when it appears (e.g. a dust puff or leaves).")]
+    public GameObject spawnEffectPrefab;
+
+    [Tooltip("Seconds before the spawned effect is removed.")]
+    public float spawnEffectLifetime = 3f;
 }
 
 public class DilemmaManager : MonoBehaviour
@@ -612,6 +643,9 @@ public class DilemmaManager : MonoBehaviour
                 obj.SetActive(false);
         }
 
+        // Collect everything that should appear, one entry per object/child.
+        List<GameObject> toReveal = new List<GameObject>();
+
         foreach (GameObject obj in change.objectsToShow)
         {
             if (obj == null || obj.activeSelf)
@@ -621,34 +655,66 @@ public class DilemmaManager : MonoBehaviour
             {
                 // Hide the children, show the parent, then reveal
                 // each child in turn (e.g. building by building).
-                List<GameObject> children = new List<GameObject>();
-
                 foreach (Transform child in obj.transform)
                 {
                     if (!child.gameObject.activeSelf)
                         continue;
 
-                    children.Add(child.gameObject);
+                    toReveal.Add(child.gameObject);
                     child.gameObject.SetActive(false);
                 }
 
                 obj.SetActive(true);
-
-                foreach (GameObject child in children)
-                {
-                    StartCoroutine(RevealObject(child, change));
-
-                    if (change.delayBetweenObjects > 0f)
-                        yield return new WaitForSeconds(change.delayBetweenObjects);
-                }
             }
             else
             {
-                StartCoroutine(RevealObject(obj, change));
-
-                if (change.delayBetweenObjects > 0f)
-                    yield return new WaitForSeconds(change.delayBetweenObjects);
+                toReveal.Add(obj);
             }
+        }
+
+        SortForReveal(toReveal, change.revealOrder);
+
+        foreach (GameObject obj in toReveal)
+        {
+            StartCoroutine(RevealObject(obj, change));
+
+            if (change.delayBetweenObjects > 0f)
+            {
+                float spacing = change.delayBetweenObjects * Random.Range(
+                    1f - change.randomness,
+                    1f + change.randomness
+                );
+
+                yield return new WaitForSeconds(Mathf.Max(0f, spacing));
+            }
+        }
+    }
+
+    private void SortForReveal(List<GameObject> objects, RevealOrder order)
+    {
+        if (objects.Count < 2)
+            return;
+
+        if (order == RevealOrder.Random)
+        {
+            for (int i = objects.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (objects[i], objects[j]) = (objects[j], objects[i]);
+            }
+        }
+        else if (order == RevealOrder.FromCenterOut)
+        {
+            Vector3 center = Vector3.zero;
+
+            foreach (GameObject obj in objects)
+                center += obj.transform.position;
+
+            center /= objects.Count;
+
+            objects.Sort((a, b) =>
+                (a.transform.position - center).sqrMagnitude.CompareTo(
+                (b.transform.position - center).sqrMagnitude));
         }
     }
 
@@ -660,38 +726,47 @@ public class DilemmaManager : MonoBehaviour
             change.revealDuration <= 0f)
         {
             obj.SetActive(true);
+            SpawnRevealEffect(change, target.position);
             yield break;
         }
 
         Vector3 endPosition = target.position;
         Vector3 endScale = target.localScale;
+        Quaternion endRotation = target.localRotation;
 
-        Vector3 startPosition = endPosition;
-        Vector3 startScale = endScale;
+        // Every object gets a slightly different duration and wobble direction.
+        float duration = change.revealDuration * Random.Range(
+            1f - change.randomness,
+            1f + change.randomness
+        );
 
-        if (change.revealStyle == RevealStyle.RiseFromGround)
-            startPosition = endPosition - Vector3.up * change.riseDistance;
-        else if (change.revealStyle == RevealStyle.GrowUp)
-            startScale = endScale * 0.001f;
+        duration = Mathf.Max(0.05f, duration);
 
-        target.position = startPosition;
-        target.localScale = startScale;
+        Vector3 wobbleAxis = new Vector3(
+            Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)
+        ).normalized;
+
+        if (wobbleAxis == Vector3.zero)
+            wobbleAxis = Vector3.right;
+
+        // Apply the first frame before showing, so nothing flashes at full size.
+        ApplyReveal(target, change, 0f, endPosition, endScale, endRotation, wobbleAxis);
         obj.SetActive(true);
+
+        SpawnRevealEffect(change, endPosition);
 
         float elapsed = 0f;
 
-        while (elapsed < change.revealDuration)
+        while (elapsed < duration)
         {
             if (obj == null)
                 yield break;
 
             elapsed += Time.deltaTime;
 
-            float t = Mathf.Clamp01(elapsed / change.revealDuration);
-            float smoothT = t * t * (3f - 2f * t);
+            float t = Mathf.Clamp01(elapsed / duration);
 
-            target.position = Vector3.Lerp(startPosition, endPosition, smoothT);
-            target.localScale = Vector3.Lerp(startScale, endScale, smoothT);
+            ApplyReveal(target, change, t, endPosition, endScale, endRotation, wobbleAxis);
 
             yield return null;
         }
@@ -700,7 +775,104 @@ public class DilemmaManager : MonoBehaviour
         {
             target.position = endPosition;
             target.localScale = endScale;
+            target.localRotation = endRotation;
         }
+    }
+
+    // Sets position/scale/rotation for a point t (0..1) in the reveal.
+    private void ApplyReveal(
+        Transform target,
+        DilemmaSceneChange change,
+        float t,
+        Vector3 endPosition,
+        Vector3 endScale,
+        Quaternion endRotation,
+        Vector3 wobbleAxis)
+    {
+        float s = change.overshoot;
+
+        Vector3 position = endPosition;
+        Vector3 scale = endScale;
+
+        switch (change.revealStyle)
+        {
+            case RevealStyle.RiseFromGround:
+            {
+                // Rises past its spot a little, then settles down.
+                float rise = EaseOutBack(t, s * 0.6f);
+                position = endPosition - Vector3.up * change.riseDistance * (1f - rise);
+                break;
+            }
+
+            case RevealStyle.GrowUp:
+            {
+                // Smooth grow with a soft overshoot.
+                float grow = EaseOutBack(t, s * 0.7f);
+                scale = endScale * Mathf.Max(0.001f, grow);
+                break;
+            }
+
+            case RevealStyle.PopUp:
+            {
+                // Fast and bouncy: most of the growth happens early.
+                float pop = EaseOutBack(EaseOutCubic(t), s * 1.4f);
+                scale = endScale * Mathf.Max(0.001f, pop);
+                break;
+            }
+
+            case RevealStyle.SproutUp:
+            {
+                // Height shoots up first, width follows a little later,
+                // which reads as "growing out of the ground".
+                float height = EaseOutBack(t, s);
+                float width = EaseOutBack(Mathf.Clamp01(t * 1.15f - 0.1f), s * 0.5f);
+
+                scale = new Vector3(
+                    endScale.x * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width)),
+                    endScale.y * Mathf.Max(0.001f, height),
+                    endScale.z * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width))
+                );
+                break;
+            }
+        }
+
+        target.position = position;
+        target.localScale = scale;
+
+        // Wobble that fades out as the object settles.
+        float wobble = change.wobbleAngle *
+                       Mathf.Sin(t * Mathf.PI * 3f) *
+                       (1f - t);
+
+        target.localRotation = endRotation * Quaternion.AngleAxis(wobble, wobbleAxis);
+    }
+
+    private void SpawnRevealEffect(DilemmaSceneChange change, Vector3 position)
+    {
+        if (change.spawnEffectPrefab == null)
+            return;
+
+        GameObject effect = Instantiate(
+            change.spawnEffectPrefab,
+            position,
+            Quaternion.identity
+        );
+
+        if (change.spawnEffectLifetime > 0f)
+            Destroy(effect, change.spawnEffectLifetime);
+    }
+
+    // Goes slightly past 1 and comes back: a natural "settle" bounce.
+    private static float EaseOutBack(float t, float overshoot)
+    {
+        float u = t - 1f;
+        return 1f + (overshoot + 1f) * u * u * u + overshoot * u * u;
+    }
+
+    private static float EaseOutCubic(float t)
+    {
+        float u = 1f - t;
+        return 1f - u * u * u;
     }
 
     // =========================================================

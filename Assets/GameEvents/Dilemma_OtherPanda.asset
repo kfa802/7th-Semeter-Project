@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: A new panda
-  description: 'Dilemma: The panda is on its way down into the valley, but along
-    the way it meets a new panda. Should they go their separate ways, or stay together? '
+  title: A NEW PANDA
+  description: 'The panda is on its way down into the valley, but along the way it
+    meets a new panda. Should they go their separate ways, or stay together? '
   choiceA: Stay
   choiceB: Go
   choiceC: 

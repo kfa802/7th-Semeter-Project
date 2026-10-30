@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: "There isn\u2019t enough food"
-  description: "Dilemma: The two pandas have now been together for a long time. But
-    the bamboo in the valley is almost gone, and there isn\u2019t enough food for
-    two pandas. Should they go to separate areas, or stay? "
+  title: THERE ISN'T ENOUGH FOOD
+  description: "The two pandas have now been together for a long time. But the bamboo
+    in the valley is almost gone, and there isn\u2019t enough food for two pandas.
+    Should they go to separate areas, or stay? "
   choiceA: Stay
   choiceB: Go
   choiceC: 

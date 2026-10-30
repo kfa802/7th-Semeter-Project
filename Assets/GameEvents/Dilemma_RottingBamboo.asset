@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: The bamboo is withering
-  description: 'Dilemma: The bamboo in the valley has begun to wither, so the panda
-    has to look for new paths and must choose where to be next season. '
+  title: THE BAMBOO IS WITHERING
+  description: 'The bamboo in the valley has begun to wither, so the panda has to
+    look for new paths and must choose where to be next season. '
   choiceA: Stay
   choiceB: Other panda
   choiceC: Mountains
   triggerType: 4
   requiredZoneName: Valley
-  delaySeconds: 30
-  threshold: 30
+  delaySeconds: 0
+  threshold: 20
   temperatureThreshold: 30
   temperatureHighThreshold: 25
   temperatureDurationSeconds: 20

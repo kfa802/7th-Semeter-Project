@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Hot2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: 'High temperature '
-  description: 'Dilemma: High up on the mountain, the panda is searching for food.
-    The heat has caused a drought, and the bamboo is withering. There is less and
-    less to eat. '
+  title: HIGH TEMPATURE
+  description: 'High up on the mountain, the panda is searching for food. The heat
+    has caused a drought, and the bamboo is withering. There is less and less to
+    eat. '
   choiceA: Travel
   choiceB: Stay
   choiceC: 
