@@ -12,6 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb79ad394217b4bb00b616185b7793, type: 3}
   m_Name: Ending_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Ending
-  endingTitle: Ending Other panda
-  endingDescription: dadadad
+  endingTitle: Panda
+  titleDA: 'Sammen Med Den Anden Panda '
+  descriptionDA: "Pandaerne deler omr\xE5det. Bambussen er knap, og de holder sandsynligvis
+    ikke sammen l\xE6nge endnu, Men mens de er sammen, har de en chance for at f\xE5
+    unger. \n\n   \nPandaer lever for det meste alene og m\xF8des kun kort om for\xE5ret
+    for at parre sig. N\xE5r skoven bliver delt op, kan dyrene ikke n\xE5 hinanden,
+    og bestanden bliver mere ensartet og mere s\xE5rbar. Sammenh\xE6ngende skov g\xF8r
+    en forskel.\n\nN\xE5r du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et
+    avls program af China Wildlife Conservation Association som er del i at sikre
+    pandaens langsigtede overlevelse. Hvis du skal k\xF8be bambus produkter kan du
+    selv kigge efter FSC-m\xE6rkede produkter som garantere at vigtige levesteder
+    ikke er blevet \xF8delagt. "
+  titleEN: Together With The Other Panda
+  descriptionEN: 'The pandas are sharing the area. The bamboo is limited, and they
+    will likely not stay together for long, but while they are together, they have
+    a chance to get cubs.
+
+
+    Pandas usually live alone and only meet for a short
+    period in spring to mate. When the forest is split up, the animals cannot reach
+    each other, and the population becomes more uniform and more vulnerable. Connected
+    forest makes a difference.
+
+
+    When you go to the zoo you are supporting the
+    pandas, as they are a part of a breeding program for CHina Wildlife Conservation
+    Association which ensures the pandas longterm survival. If you have to buy bamboo
+    products, then you can look for FSC-labled products which gaurentee that important
+    habitats do not get destroyed.'
   endingImage: {fileID: 0}
+  endingDescription: dadadad

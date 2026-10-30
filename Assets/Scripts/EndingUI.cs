@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -13,12 +12,17 @@ public class EndingUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private Image endingImage;
 
+    [Header("Continue button (temporary until narration exists)")]
+    [SerializeField] private TMP_Text continueLabel;
+    [SerializeField] private string continueTextDA = "Fortsæt";
+    [SerializeField] private string continueTextEN = "Continue";
+
+    private bool English => PlayerPrefs.GetString("language", "da") == "en";
+
     private void Awake()
     {
         if (panel != null)
-        {
             panel.SetActive(false);
-        }
     }
 
     public void ShowEnding(Ending ending)
@@ -29,27 +33,24 @@ public class EndingUI : MonoBehaviour
             return;
         }
 
+        bool english = English;
+
         if (titleText != null)
-        {
-            titleText.text = ending.endingTitle;
-        }
+            titleText.text = ending.GetTitle(english);
 
         if (descriptionText != null)
-        {
-            descriptionText.text = ending.endingDescription;
-        }
+            descriptionText.text = ending.GetDescription(english);
+
+        if (continueLabel != null)
+            continueLabel.text = english ? continueTextEN : continueTextDA;
 
         if (endingImage != null)
         {
             endingImage.sprite = ending.endingImage;
-            endingImage.gameObject.SetActive(
-                ending.endingImage != null
-            );
+            endingImage.gameObject.SetActive(ending.endingImage != null);
         }
 
         if (panel != null)
-        {
             panel.SetActive(true);
-        }
     }
 }

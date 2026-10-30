@@ -12,6 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb79ad394217b4bb00b616185b7793, type: 3}
   m_Name: Ending_StayInValley
   m_EditorClassIdentifier: Assembly-CSharp::Ending
-  endingTitle: Stay In Valley
-  endingDescription: 
+  endingTitle: Valley
+  titleDA: Bliver I Dalen
+  descriptionDA: "Pandaen bliver i dalen, hvor skov og landsby m\xF8des. Der er bambus
+    og vand nok til at klare sig, men der er ogs\xE5 st\xF8j, trafik og mennesker
+    t\xE6t p\xE5. Hver ny forstyrrelse g\xF8r det sv\xE6rere at finde ro. \n\n \nI
+    dalene konkurrerer mennesker og vilde dyr om pladsen. Det er ogs\xE5 de steder,
+    hvor der er mest bambus, s\xE5 her m\xF8des dyrenes behov og menneskers behov.
+    Det kan lade sig g\xF8re at dele plads, hvis nogle omr\xE5der beskyttes, og skoven
+    forbliver sammenh\xE6ngende, men det kr\xE6ver, at man planl\xE6gger for det.\n\nN\xE5r
+    du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et avls program af China
+    Wildlife Conservation Association som er del i at sikre pandaens langsigtede
+    overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
+    produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
+  titleEN: Staying In The Valley
+  descriptionEN: 'The panda stays in the valley, where the forrest and the village
+    meets. There is bamboo and water enough to get by, but there is also, noise,
+    trafik and humans near by. Every new disturbance, makes it more difficult to
+    find peace.
+
+
+    In the valley humans and vild animals compete for the space.
+    It is also these places where there is the most bamboo, so the animals and the
+    humans needs meet here. It is possible to share the space, if some areas are
+    protected, and the forest stays connected, but it reqires that is is palaned
+    for.
+
+
+    When you go to the zoo you are supporting the pandas, as they are
+    a part of a breeding program for CHina Wildlife Conservation Association which
+    ensures the pandas longterm survival. If you have to buy bamboo products, then
+    you can look for FSC-labled products which gaurentee that important habitats
+    do not get destroyed. '
   endingImage: {fileID: 0}
+  endingDescription: 

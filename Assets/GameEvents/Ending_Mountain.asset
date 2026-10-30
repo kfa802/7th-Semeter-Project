@@ -12,6 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb79ad394217b4bb00b616185b7793, type: 3}
   m_Name: Ending_Mountain
   m_EditorClassIdentifier: Assembly-CSharp::Ending
-  endingTitle: Mountain Ending
-  endingDescription: mbsdmbsdb
+  endingTitle: Mountain
+  titleDA: "P\xE5 Bjerget"
+  descriptionDA: "Pandaen er i bjergene, hvor vandet er knapt, og bambussen vokser
+    langsomt. Her er der fredeligt, men der er langt mellem bambusskuddene, og pandaen
+    m\xE5 bruge meget tid og energi p\xE5 at finde nok at spise. \n\nDet er ikke
+    n\xF8dvendigvis en d\xE5rlig ting for pandaer at leve i bjergene. Om sommeren,
+    n\xE5r varmen er moderat, trives de bedst heroppe. Om vinteren finder de mere
+    bambus nede i dalene, og derfor rejser pandaer op og ned ad bjergene gennem \xE5ret.\n\nN\xE5r
+    du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et avls program af China
+    Wildlife Conservation Association som er del i at sikre pandaens langsigtede
+    overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
+    produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
+  titleEN: On The Mountain
+  descriptionEN: 'The Panda is in the Mountain, where the water is limited, and the
+    bamboo grows slowly. It is peaceful here, but there is far between the bamboo
+    shoots and the panda has to spend a lot of time and energy to find enough to
+    eat.
+
+
+    It is not nessecerily a bad idea for pandas to live in the mountains.
+    In the summer, when the heat is moderate, they thrive best up here. In the winter
+    they can find more bamboo in the valleys and therefor the pandas travel up and
+    down the mountains throughout the year.
+
+
+    When you go to the zoo you are
+    supporting the pandas, as they are a part of a breeding program for CHina Wildlife
+    Conservation Association which ensures the pandas longterm survival. If you have
+    to buy bamboo products, then you can look for FSC-labled products which gaurentee
+    that important habitats do not get destroyed. '
   endingImage: {fileID: 0}
+  endingDescription: mbsdmbsdb
