@@ -13106,7 +13106,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 378.6, y: -20}
+  m_AnchoredPosition: {x: 378.6, y: -38.8}
   m_SizeDelta: {x: 20, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &199028894
@@ -34453,6 +34453,15 @@ MonoBehaviour:
   rotDuration: 8
   shrinkDuration: 1.5
   rottenColor: {r: 0.35, g: 0.25, b: 0.1, a: 1}
+  sproutSounds: []
+  fullyGrownSounds:
+  - {fileID: 8300000, guid: edf3e4773fc7f9a4e8a70408a51a92a4, type: 3}
+  soundVolume: 0.8
+  pitchVariation: 0.1
+  spatialBlend: 0.5
+  maxHearingDistance: 60
+  onlyInActiveZone: 1
+  mixerGroup: {fileID: 0}
 --- !u!4 &755028009
 Transform:
   m_ObjectHideFlags: 0

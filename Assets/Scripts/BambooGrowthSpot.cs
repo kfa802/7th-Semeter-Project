@@ -366,6 +366,17 @@ public class BambooGrowthSpot : MonoBehaviour
         BambooPlant plant = holder.AddComponent<BambooPlant>();
         plant.Init(variedGrowTime);
 
+        // Sounds: one when it pops out, one when it has finished growing.
+        if (BambooManager.Instance != null)
+        {
+            BambooManager.Instance.PlayBambooSproutSound(
+                transform.position,
+                ecosystemZone
+            );
+
+            StartCoroutine(PlayGrownSoundWhenReady(plant));
+        }
+
         // Assign the new bamboo to this spot.
         existingBamboo = holder;
 
@@ -383,6 +394,21 @@ public class BambooGrowthSpot : MonoBehaviour
             );
 
             BambooManager.Instance.RefreshZoneStatistics();
+        }
+    }
+
+
+    private IEnumerator PlayGrownSoundWhenReady(BambooPlant plant)
+    {
+        while (plant != null && !plant.IsFullyGrown)
+            yield return null;
+
+        if (plant != null && BambooManager.Instance != null)
+        {
+            BambooManager.Instance.PlayBambooGrownSound(
+                plant.transform.position,
+                ecosystemZone
+            );
         }
     }
 

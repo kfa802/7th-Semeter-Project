@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class BambooManager : MonoBehaviour
 {
@@ -141,6 +142,38 @@ public class BambooManager : MonoBehaviour
 
     [SerializeField]
     private Color rottenColor = new Color(0.35f, 0.25f, 0.1f);
+
+    // =========================================================
+    // SOUND
+    // =========================================================
+
+    [Header("Bamboo Sounds")]
+    [Tooltip("Played when a new bamboo pops out of the ground. One is picked at random each time.")]
+    [SerializeField] private AudioClip[] sproutSounds;
+
+    [Tooltip("Optional: played when a bamboo has finished growing. One is picked at random.")]
+    [SerializeField] private AudioClip[] fullyGrownSounds;
+
+    [SerializeField, Range(0f, 1f)]
+    private float soundVolume = 0.8f;
+
+    [Tooltip("Random pitch change so repeated sounds don't sound identical. 0.1 = ±10%.")]
+    [SerializeField, Range(0f, 0.5f)]
+    private float pitchVariation = 0.1f;
+
+    [Tooltip("0 = same volume everywhere (2D). 1 = fully 3D (quieter the further the bamboo is from the camera).")]
+    [SerializeField, Range(0f, 1f)]
+    private float spatialBlend = 0.5f;
+
+    [Tooltip("Beyond this distance a 3D sound can't be heard.")]
+    [SerializeField, Min(1f)]
+    private float maxHearingDistance = 60f;
+
+    [Tooltip("Only play sounds for bamboo in the zone the panda is in (e.g. not for the other panda's zone).")]
+    [SerializeField] private bool onlyInActiveZone = true;
+
+    [Tooltip("Optional: send the sounds through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup mixerGroup;
 
     private class RotState
     {
@@ -1413,6 +1446,56 @@ public class BambooManager : MonoBehaviour
         Debug.Log("Other panda grew bamboo in " + zone.zoneName);
 
         return true;
+    }
+
+    // =========================================================
+    // SOUND PLAYBACK (called by BambooGrowthSpot)
+    // =========================================================
+
+    public void PlayBambooSproutSound(Vector3 position, EcosystemZone zone)
+    {
+        PlayBambooSound(sproutSounds, position, zone);
+    }
+
+    public void PlayBambooGrownSound(Vector3 position, EcosystemZone zone)
+    {
+        PlayBambooSound(fullyGrownSounds, position, zone);
+    }
+
+    private void PlayBambooSound(AudioClip[] clips, Vector3 position, EcosystemZone zone)
+    {
+        if (clips == null || clips.Length == 0)
+            return;
+
+        if (onlyInActiveZone &&
+            (EnvironmentSystem.Instance == null ||
+             EnvironmentSystem.Instance.ActiveZone != zone))
+            return;
+
+        AudioClip clip = clips[Random.Range(0, clips.Length)];
+
+        if (clip == null)
+            return;
+
+        // A short-lived object at the bamboo, so 3D sound comes from the right place.
+        GameObject soundObject = new GameObject("BambooSound");
+        soundObject.transform.position = position;
+
+        AudioSource source = soundObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.clip = clip;
+        source.volume = soundVolume;
+        source.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
+        source.spatialBlend = spatialBlend;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 1f;
+        source.maxDistance = maxHearingDistance;
+        source.dopplerLevel = 0f;
+        source.outputAudioMixerGroup = mixerGroup;
+
+        source.Play();
+
+        Destroy(soundObject, clip.length / Mathf.Max(0.05f, source.pitch) + 0.1f);
     }
 
     private System.Collections.IEnumerator BreakAndRemoveBamboo(
