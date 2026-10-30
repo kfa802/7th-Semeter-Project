@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// One ecosystem (Mountain, Midway, Valley...). Every environment setting
@@ -167,6 +168,82 @@ public class EcosystemZone : MonoBehaviour
     public float pollution = 0f;
 
     // =========================================================
+    // ENTER SOUND
+    // =========================================================
+
+    [Header("Enter Sound")]
+    [Tooltip("Optional: played the moment the panda walks into this zone " +
+             "(e.g. a bear in Midway). One is picked at random.")]
+    [SerializeField] private AudioClip[] enterSounds;
+
+    [SerializeField, Range(0f, 1f)] private float enterSoundVolume = 0.8f;
+
+    [Tooltip("Seconds after entering before the sound plays (0 = right away).")]
+    [SerializeField, Min(0f)] private float enterSoundDelay = 0f;
+
+    [Tooltip("0-1 chance it plays each time the panda enters (1 = always).")]
+    [SerializeField, Range(0f, 1f)] private float enterSoundChance = 1f;
+
+    [Tooltip("On: only the first time the panda enters this zone.")]
+    [SerializeField] private bool enterSoundOnlyFirstTime = false;
+
+    [Tooltip("Optional: where the sound comes from (e.g. a point in the forest). " +
+             "Empty = heard the same everywhere.")]
+    [SerializeField] private Transform enterSoundPosition;
+
+    [Tooltip("Optional: send the sound through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup enterSoundMixerGroup;
+
+    // The panda starts inside a zone; don't play the sound for that.
+    private const float IgnoreEnterAtStartSeconds = 1f;
+    private bool enterSoundPlayed;
+
+    private void PlayEnterSound()
+    {
+        if (enterSounds == null || enterSounds.Length == 0)
+            return;
+
+        if (Time.timeSinceLevelLoad < IgnoreEnterAtStartSeconds)
+            return;
+
+        if (enterSoundOnlyFirstTime && enterSoundPlayed)
+            return;
+
+        if (Random.value > enterSoundChance)
+            return;
+
+        AudioClip clip = enterSounds[Random.Range(0, enterSounds.Length)];
+
+        if (clip == null)
+            return;
+
+        enterSoundPlayed = true;
+
+        bool positioned = enterSoundPosition != null;
+
+        GameObject soundObject = new GameObject("EnterSound_" + clip.name);
+        soundObject.transform.position = positioned
+            ? enterSoundPosition.position
+            : transform.position;
+
+        AudioSource source = soundObject.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = enterSoundVolume;
+        source.playOnAwake = false;
+        source.spatialBlend = positioned ? 1f : 0f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 5f;
+        source.maxDistance = 100f;
+        source.dopplerLevel = 0f;
+        source.outputAudioMixerGroup = enterSoundMixerGroup;
+        source.PlayDelayed(enterSoundDelay);
+
+        Destroy(soundObject, enterSoundDelay + clip.length + 0.5f);
+
+        Debug.Log("Zone " + zoneName + ": enter sound '" + clip.name + "'.", this);
+    }
+
+    // =========================================================
     // UNITY
     // =========================================================
 
@@ -216,6 +293,8 @@ public class EcosystemZone : MonoBehaviour
             );
             return;
         }
+
+        PlayEnterSound();
 
         EnvironmentSystem.Instance.ApplyZoneSettings(this);
     }

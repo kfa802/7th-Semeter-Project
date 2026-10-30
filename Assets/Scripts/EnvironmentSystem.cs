@@ -15,9 +15,26 @@ public class EnvironmentSystem : MonoBehaviour
     // =========================================================
 
     [Header("Travel")]
-    [Tooltip("How fast (°C per second) the temperature moves towards " +
-             "the destination zone's temperature while travelling.")]
-    [SerializeField] private float temperatureChangeSpeed = 2f;
+    [Tooltip("The panda. The temperature follows how far it has walked, so it " +
+             "reaches the new zone's temperature exactly when the panda enters " +
+             "that zone. Empty = found automatically.")]
+    [SerializeField] private Transform panda;
+
+    [Tooltip("How the change is spread over the walk. Straight line = even " +
+             "all the way. Default: changes gently at the start and end, most " +
+             "in the middle.")]
+    [SerializeField] private AnimationCurve temperatureTransitionCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    [Tooltip("Backup only: used if the panda or the zone's collider can't be " +
+             "found. Seconds the change takes.")]
+    [SerializeField, Min(0.1f)] private float temperatureTransitionTime = 8f;
+
+    private float transitionStartTemperature;
+    private float transitionTimer;
+    private Collider transitionTargetCollider;
+    private float transitionStartDistance;
+    private float transitionProgress;
 
     // =========================================================
     // ACTIVE ZONE
@@ -160,10 +177,17 @@ public class EnvironmentSystem : MonoBehaviour
         {
             float before = temperature;
 
-            temperature = Mathf.MoveTowards(
-                temperature,
+            float t = GetTransitionProgress();
+
+            float eased = temperatureTransitionCurve != null &&
+                          temperatureTransitionCurve.length >= 2
+                ? temperatureTransitionCurve.Evaluate(t)
+                : t * t * (3f - 2f * t);
+
+            temperature = Mathf.LerpUnclamped(
+                transitionStartTemperature,
                 targetTemperature,
-                temperatureChangeSpeed * Time.deltaTime
+                eased
             );
 
             if (!Mathf.Approximately(before, temperature))
@@ -496,6 +520,45 @@ public class EnvironmentSystem : MonoBehaviour
     // TRAVEL
     // =========================================================
 
+    // 0 when the journey starts, 1 the moment the panda reaches the
+    // edge of the destination zone.
+    private float GetTransitionProgress()
+    {
+        float distance = DistanceToTargetZone();
+
+        if (distance < 0f || transitionStartDistance <= 0.01f)
+        {
+            // Backup: time-based.
+            transitionTimer += Time.deltaTime;
+            return Mathf.Clamp01(transitionTimer / temperatureTransitionTime);
+        }
+
+        float progress = 1f - Mathf.Clamp01(distance / transitionStartDistance);
+
+        // Never go backwards (e.g. if the path curves away for a moment).
+        transitionProgress = Mathf.Max(transitionProgress, progress);
+        return transitionProgress;
+    }
+
+    // Straight-line distance from the panda to the destination zone's edge.
+    // -1 if it can't be measured.
+    private float DistanceToTargetZone()
+    {
+        if (panda == null)
+        {
+            PandaPathMover mover = FindFirstObjectByType<PandaPathMover>();
+
+            if (mover != null)
+                panda = mover.transform;
+        }
+
+        if (panda == null || transitionTargetCollider == null)
+            return -1f;
+
+        Vector3 edge = transitionTargetCollider.ClosestPoint(panda.position);
+        return Vector3.Distance(panda.position, edge);
+    }
+
     public void BeginTravelToZone(string zoneName)
     {
         if (string.IsNullOrWhiteSpace(zoneName))
@@ -523,6 +586,11 @@ public class EnvironmentSystem : MonoBehaviour
                     activeZone.temperature = temperature;
 
                 isTravelling = true;
+                transitionStartTemperature = temperature;
+                transitionTimer = 0f;
+                transitionProgress = 0f;
+                transitionTargetCollider = zone.GetComponent<Collider>();
+                transitionStartDistance = DistanceToTargetZone();
 
                 targetTemperature = Mathf.Clamp(
                     zone.temperature,

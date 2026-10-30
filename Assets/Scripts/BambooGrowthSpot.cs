@@ -396,34 +396,85 @@ public class BambooGrowthSpot : MonoBehaviour
     {
         BambooManager manager = BambooManager.Instance;
 
-        // Follows the plant's progress the same way BambooPlant does:
-        // progress grows with time x temperature growth speed.
-        float progress = 0f;
         bool soundStarted = false;
         bool loggedSlow = false;
+        bool sawGrowState = false;
+        float furthestAnimation = 0f;
         AudioSource growingSource = null;
 
+        // Wait one frame so BambooPlant has started its Grow animation.
+        yield return null;
+
+        Animator animator = plant != null
+            ? plant.GetComponentInChildren<Animator>(true)
+            : null;
+
+        bool hasAnimator =
+            animator != null && animator.runtimeAnimatorController != null;
+
         if (manager.DebugSounds)
-            Debug.Log("BambooSound: '" + name + "' started growing.", this);
+        {
+            Debug.Log(
+                "BambooSound: '" + name + "' appeared. " +
+                (hasAnimator ? "Following its '" + manager.GrowStateName + "' animation."
+                             : "No Animator found: using the growth speed only."),
+                this);
+        }
 
         while (plant != null && !plant.IsFullyGrown)
         {
+            // How fast it grows right now (BambooPlant also sets the
+            // animation speed to this value).
             float speed = EnvironmentSystem.Instance != null
                 ? Mathf.Max(0f, EnvironmentSystem.Instance.TemperatureGrowthFactor)
                 : 1f;
 
-            progress += Time.deltaTime * speed / Mathf.Max(0.1f, plantGrowTime);
-
             bool fastEnough = speed >= manager.MinGrowthSpeedForSound;
 
-            // Start the sound once we're far enough in, but only while
-            // growth is fast enough, and not too late in the growth.
+            // Is the grow animation playing, and how far is it?
+            bool inGrowAnimation;
+            float animationProgress;
+
+            if (hasAnimator)
+            {
+                AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+                inGrowAnimation =
+                    state.IsName(manager.GrowStateName) && state.normalizedTime < 1f;
+
+                animationProgress = state.IsName(manager.GrowStateName)
+                    ? state.normalizedTime
+                    : (sawGrowState ? 1f : 0f);
+
+                if (inGrowAnimation)
+                {
+                    sawGrowState = true;
+                    furthestAnimation = Mathf.Max(furthestAnimation, animationProgress);
+                }
+            }
+            else
+            {
+                inGrowAnimation = true;
+                animationProgress = 0f;
+            }
+
+            // Start: the grow animation is playing at a good speed,
+            // and we're not too far into it.
             if (!soundStarted &&
-                progress >= manager.GrowingSoundStartAt &&
-                progress <= manager.GrowingSoundLatestStart &&
-                fastEnough)
+                inGrowAnimation &&
+                fastEnough &&
+                animationProgress >= manager.GrowSoundStartInAnimation &&
+                animationProgress <= manager.GrowSoundLatestStartInAnimation)
             {
                 soundStarted = true;
+
+                if (manager.DebugSounds)
+                {
+                    Debug.Log(
+                        "BambooSound: '" + name + "' grow animation at " +
+                        (animationProgress * 100f).ToString("F0") + "% -> starting growing sound.",
+                        this);
+                }
 
                 growingSource = manager.PlayBambooGrowingSound(
                     plant.transform.position,
@@ -432,7 +483,7 @@ public class BambooGrowthSpot : MonoBehaviour
             }
 
             if (manager.DebugSounds && !soundStarted && !loggedSlow &&
-                progress >= manager.GrowingSoundStartAt && !fastEnough)
+                inGrowAnimation && !fastEnough)
             {
                 loggedSlow = true;
                 Debug.Log(
@@ -441,21 +492,33 @@ public class BambooGrowthSpot : MonoBehaviour
                     manager.MinGrowthSpeedForSound.ToString("F2") + ").", this);
             }
 
-            // Growth slowed down while the sound plays: fade it out.
-            if (growingSource != null &&
-                growingSource.isPlaying &&
-                manager.StopWhenGrowthSlows &&
-                !fastEnough)
+            // Stop: growth slowed down, or the grow animation has ended.
+            if (growingSource != null && growingSource.isPlaying)
             {
-                StartCoroutine(FadeOutSound(growingSource, manager.StopFadeDuration));
-                growingSource = null;
+                bool slowedDown = manager.StopWhenGrowthSlows && !fastEnough;
+                bool animationEnded = manager.StopWhenGrowAnimationEnds &&
+                                      hasAnimator && sawGrowState && !inGrowAnimation;
+
+                if (slowedDown || animationEnded)
+                {
+                    StartCoroutine(FadeOutSound(growingSource, manager.StopFadeDuration));
+                    growingSource = null;
+                }
             }
 
             yield return null;
         }
 
         if (manager.DebugSounds && !soundStarted)
-            Debug.Log("BambooSound: '" + name + "' finished growing without a growing sound.", this);
+        {
+            Debug.Log(
+                "BambooSound: '" + name + "' finished growing without a growing sound. " +
+                "The grow animation got to " + (furthestAnimation * 100f).ToString("F0") +
+                "% (sound starts at " + (manager.GrowSoundStartInAnimation * 100f).ToString("F0") +
+                "%). If it never reaches that, the animation is cut short: lower " +
+                "'Grow Sound Start In Animation' or raise 'Grow Time' on the growth spots.",
+                this);
+        }
 
         if (plant != null && BambooManager.Instance != null)
         {

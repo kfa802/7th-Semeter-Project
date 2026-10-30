@@ -165,20 +165,38 @@ public class BambooManager : MonoBehaviour
     [FormerlySerializedAs("sproutSounds")]
     [SerializeField] private AudioClip[] growingSounds;
 
-    [Tooltip("How far through growing (0-1) the sound starts. 0.15 = 15% in.")]
-    [SerializeField, Range(0f, 1f)]
-    private float growingSoundStartAt = 0.15f;
+    [Tooltip("Name of the grow state in the bamboo's Animator. The sound only plays " +
+             "while this animation is playing.")]
+    [SerializeField] private string growStateName = "Grow";
 
-    [Tooltip("If growth was too slow at the start point, the sound may still start " +
-             "later, but not after this point (0-1). After it, the bamboo stays silent.")]
+    [Tooltip("How much of the grow animation must have played before the sound starts " +
+             "(0-1). 0.3 = when 30% of the animation has played.")]
     [SerializeField, Range(0f, 1f)]
-    private float growingSoundLatestStart = 0.6f;
+    private float growSoundStartInAnimation = 0f;
+
+    [Tooltip("If the animation was too slow at the start, the sound may still start later, " +
+             "but not after this point of the animation (0-1).")]
+    [SerializeField, Range(0f, 1f)]
+    private float growSoundLatestStartInAnimation = 0.3f;
+
+    [Tooltip("Fade the sound out when the grow animation has finished.")]
+    [SerializeField] private bool stopWhenGrowAnimationEnds = true;
 
     [Tooltip("Growth speed needed for the sound (1 = perfect temperature, 0.2 = very slow). " +
              "Below this the bamboo grows silently, because a normal-speed sound " +
              "doesn't match a slow-motion animation.")]
     [SerializeField, Range(0f, 1f)]
-    private float minGrowthSpeedForSound = 0.75f;
+    private float minGrowthSpeedForGrowingSound = 0.4f;
+
+    [Tooltip("Skip a growing sound if a break sound played less than this many " +
+             "seconds ago, so they don't play on top of each other. 0 = off.")]
+    [SerializeField, Min(0f)]
+    private float noGrowSoundAfterBreak = 1.5f;
+
+    [Tooltip("Only play the growing sound if the bamboo is on screen.")]
+    [SerializeField] private bool growSoundOnlyWhenOnScreen = true;
+
+    private float lastBreakSoundTime = -999f;
 
     [Tooltip("If growth slows down below the minimum while the sound plays " +
              "(e.g. the player makes it colder), fade the sound out.")]
@@ -190,6 +208,18 @@ public class BambooManager : MonoBehaviour
 
     [Tooltip("Optional: played when a bamboo has finished growing. One is picked at random.")]
     [SerializeField] private AudioClip[] fullyGrownSounds;
+
+    [Tooltip("Played when a bamboo breaks (is eaten). One is picked at random each time.")]
+    [SerializeField] private AudioClip[] breakSounds;
+
+    [Tooltip("Seconds after the break animation starts before the sound plays. " +
+             "Use it to line the crack up with the snap in the animation.")]
+    [SerializeField, Min(0f)]
+    private float breakSoundDelay = 0f;
+
+    [Tooltip("Volume of the break sound (the other bamboo sounds use 'Sound Volume').")]
+    [SerializeField, Range(0f, 1f)]
+    private float breakSoundVolume = 0.8f;
 
     [SerializeField, Range(0f, 1f)]
     private float soundVolume = 0.8f;
@@ -1506,16 +1536,50 @@ public class BambooManager : MonoBehaviour
     // SOUND PLAYBACK (called by BambooGrowthSpot)
     // =========================================================
 
-    public float GrowingSoundStartAt => growingSoundStartAt;
-    public float GrowingSoundLatestStart => Mathf.Max(growingSoundStartAt, growingSoundLatestStart);
-    public float MinGrowthSpeedForSound => minGrowthSpeedForSound;
+    public string GrowStateName => growStateName;
+    public float GrowSoundStartInAnimation => growSoundStartInAnimation;
+    // Always leave at least 10% of the animation to start in, so a
+    // frame can't jump over a too-small window.
+    public float GrowSoundLatestStartInAnimation =>
+        Mathf.Min(1f, Mathf.Max(growSoundStartInAnimation + 0.1f, growSoundLatestStartInAnimation));
+    public bool StopWhenGrowAnimationEnds => stopWhenGrowAnimationEnds;
+    public float MinGrowthSpeedForSound => minGrowthSpeedForGrowingSound;
     public bool StopWhenGrowthSlows => stopWhenGrowthSlows;
     public float StopFadeDuration => stopFadeDuration;
 
     /// <summary>Returns the playing AudioSource (or null), so it can be faded out.</summary>
     public AudioSource PlayBambooGrowingSound(Vector3 position, EcosystemZone zone)
     {
+        if (Time.time - lastBreakSoundTime < noGrowSoundAfterBreak)
+        {
+            if (debugSounds)
+                Debug.Log("BambooSound: Growing sound skipped (a bamboo just broke).", this);
+            return null;
+        }
+
+        if (growSoundOnlyWhenOnScreen && !IsOnScreen(position))
+        {
+            if (debugSounds)
+                Debug.Log("BambooSound: Growing sound skipped (bamboo is off screen).", this);
+            return null;
+        }
+
         return PlayBambooSound(growingSounds, position, zone);
+    }
+
+    private static bool IsOnScreen(Vector3 position)
+    {
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return true;
+
+        // Check a point a little above the base, where the bamboo is.
+        Vector3 v = cam.WorldToViewportPoint(position + Vector3.up * 0.5f);
+
+        return v.z > 0f &&
+               v.x > -0.05f && v.x < 1.05f &&
+               v.y > -0.05f && v.y < 1.05f;
     }
 
     public void PlayBambooGrownSound(Vector3 position, EcosystemZone zone)
@@ -1542,7 +1606,8 @@ public class BambooManager : MonoBehaviour
         Vector3 position,
         EcosystemZone zone,
         bool ignoreZone = false,
-        float delay = 0f)
+        float delay = 0f,
+        float volumeOverride = -1f)
     {
         if (clips == null || clips.Length == 0)
         {
@@ -1601,7 +1666,7 @@ public class BambooManager : MonoBehaviour
         AudioSource source = soundObject.AddComponent<AudioSource>();
         source.playOnAwake = false;
         source.clip = clip;
-        source.volume = soundVolume;
+        source.volume = volumeOverride >= 0f ? volumeOverride : soundVolume;
         source.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
         source.spatialBlend = spatialBlend;
         source.rolloffMode = AudioRolloffMode.Linear;
@@ -1625,6 +1690,21 @@ public class BambooManager : MonoBehaviour
     {
         if (bamboo == null)
             yield break;
+
+        // Break sound (a random one of the clips).
+        spotOf.TryGetValue(bamboo, out BambooGrowthSpot breakSpot);
+
+        AudioSource breakSource = PlayBambooSound(
+            breakSounds,
+            bamboo.transform.position,
+            breakSpot != null ? breakSpot.Zone : null,
+            false,
+            breakSoundDelay,
+            breakSoundVolume
+        );
+
+        if (breakSource != null)
+            lastBreakSoundTime = Time.time + breakSoundDelay;
 
         Animator bambooAnimator =
             bamboo.GetComponentInChildren<Animator>(true);
