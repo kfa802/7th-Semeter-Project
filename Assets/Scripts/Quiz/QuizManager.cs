@@ -85,6 +85,16 @@ public class QuizManager : MonoBehaviour
         TelemetryManager.Instance?.QuizPageShown();
     }
 
+    /// <summary>Skips the quiz: saves the data, ends the session and
+    /// returns to the start screen. Used for the usability test.</summary>
+    public void SkipQuizAndReturn()
+    {
+        if (submitted) return;
+        submitted = true;
+
+        EndAndReturn();
+    }
+
     private bool IsApplicable(QuizQuestion q)
     {
         if (dilemmaManager == null)
