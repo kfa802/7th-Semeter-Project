@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 
 public enum SceneChangeTiming
@@ -26,6 +27,43 @@ public enum RevealOrder
     ListOrder,        // In the order of the list / hierarchy.
     Random,           // Shuffled.
     FromCenterOut     // Nearest to the group's centre first, spreading outwards.
+}
+
+[System.Serializable]
+public class SceneChangeSound
+{
+    [Tooltip("A note for yourself, e.g. 'City hum' or 'Road traffic'.")]
+    public string label;
+
+    public AudioClip clip;
+
+    [Tooltip("On: keeps playing after it appears (e.g. city/traffic ambience). Off: plays once.")]
+    public bool loop = true;
+
+    [Tooltip("Where the sound comes from (e.g. the City or Road object). Empty = heard the same everywhere.")]
+    public Transform playAt;
+
+    [Tooltip("Seconds after the scene change starts before the sound begins.")]
+    [Min(0f)]
+    public float delay = 0f;
+
+    [Range(0f, 1f)]
+    public float volume = 0.6f;
+
+    [Tooltip("Seconds to fade the sound in, so it grows with the city/road.")]
+    [Min(0f)]
+    public float fadeInTime = 3f;
+
+    [Tooltip("0 = same volume everywhere (2D). 1 = fully 3D (quieter the further the camera is from 'Play At').")]
+    [Range(0f, 1f)]
+    public float spatialBlend = 0.6f;
+
+    [Tooltip("Beyond this distance the 3D part of the sound can't be heard.")]
+    [Min(1f)]
+    public float maxDistance = 120f;
+
+    [Tooltip("Optional: send the sound through a group in your Audio Mixer.")]
+    public AudioMixerGroup mixerGroup;
 }
 
 [System.Serializable]
@@ -86,6 +124,10 @@ public class DilemmaSceneChange
 
     [Tooltip("Seconds before the spawned effect is removed.")]
     public float spawnEffectLifetime = 3f;
+
+    [Header("Sounds")]
+    [Tooltip("Sounds that start with this scene change, e.g. a city hum and road traffic.")]
+    public List<SceneChangeSound> sounds = new List<SceneChangeSound>();
 }
 
 public class DilemmaManager : MonoBehaviour
@@ -643,6 +685,16 @@ public class DilemmaManager : MonoBehaviour
                 obj.SetActive(false);
         }
 
+        // Start this change's sounds (city, road, ...).
+        if (change.sounds != null)
+        {
+            foreach (SceneChangeSound sound in change.sounds)
+            {
+                if (sound != null && sound.clip != null)
+                    StartCoroutine(PlaySceneSound(sound));
+            }
+        }
+
         // Collect everything that should appear, one entry per object/child.
         List<GameObject> toReveal = new List<GameObject>();
 
@@ -688,6 +740,57 @@ public class DilemmaManager : MonoBehaviour
                 yield return new WaitForSeconds(Mathf.Max(0f, spacing));
             }
         }
+    }
+
+    private IEnumerator PlaySceneSound(SceneChangeSound sound)
+    {
+        if (sound.delay > 0f)
+            yield return new WaitForSeconds(sound.delay);
+
+        // A separate sound object at the city/road position. It is not a
+        // child of the city/road, so hiding/revealing them can't stop it.
+        GameObject soundObject = new GameObject(
+            "SceneSound_" + (string.IsNullOrEmpty(sound.label) ? sound.clip.name : sound.label)
+        );
+
+        soundObject.transform.SetParent(transform, false);
+
+        if (sound.playAt != null)
+            soundObject.transform.position = sound.playAt.position;
+
+        AudioSource source = soundObject.AddComponent<AudioSource>();
+        source.clip = sound.clip;
+        source.loop = sound.loop;
+        source.playOnAwake = false;
+        source.spatialBlend = sound.playAt != null ? sound.spatialBlend : 0f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 5f;
+        source.maxDistance = sound.maxDistance;
+        source.dopplerLevel = 0f;
+        source.outputAudioMixerGroup = sound.mixerGroup;
+        source.volume = sound.fadeInTime > 0f ? 0f : sound.volume;
+
+        // Loops start at a random point so they don't sound "restarted".
+        if (sound.loop)
+            source.time = Random.Range(0f, sound.clip.length * 0.9f);
+
+        source.Play();
+
+        if (!sound.loop)
+            Destroy(soundObject, sound.clip.length + 0.1f);
+
+        // Fade in.
+        float elapsed = 0f;
+
+        while (sound.fadeInTime > 0f && elapsed < sound.fadeInTime && source != null)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(0f, sound.volume, elapsed / sound.fadeInTime);
+            yield return null;
+        }
+
+        if (source != null)
+            source.volume = sound.volume;
     }
 
     private void SortForReveal(List<GameObject> objects, RevealOrder order)

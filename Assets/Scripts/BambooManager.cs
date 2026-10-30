@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 
 public class BambooManager : MonoBehaviour
 {
@@ -117,6 +118,18 @@ public class BambooManager : MonoBehaviour
     [SerializeField, Min(0f)]
     private float maxExtraDelay = 2f;
 
+    [Header("Poop Sound")]
+    [Tooltip("Sounds for when the panda poops. One is picked at random.")]
+    [SerializeField] private AudioClip[] poopSounds;
+
+    [Tooltip("Chance (0-1) that a poop makes a sound. 0.3 = about 1 in 3 poops.")]
+    [SerializeField, Range(0f, 1f)]
+    private float poopSoundChance = 0.3f;
+
+    [Tooltip("Seconds after feeding before the poop sound plays.")]
+    [SerializeField, Min(0f)]
+    private float poopSoundDelay = 0.5f;
+
     // =========================================================
     // POLLUTION
     // =========================================================
@@ -148,8 +161,32 @@ public class BambooManager : MonoBehaviour
     // =========================================================
 
     [Header("Bamboo Sounds")]
-    [Tooltip("Played when a new bamboo pops out of the ground. One is picked at random each time.")]
-    [SerializeField] private AudioClip[] sproutSounds;
+    [Tooltip("Played while a new bamboo is growing. One is picked at random each time.")]
+    [FormerlySerializedAs("sproutSounds")]
+    [SerializeField] private AudioClip[] growingSounds;
+
+    [Tooltip("How far through growing (0-1) the sound starts. 0.15 = 15% in.")]
+    [SerializeField, Range(0f, 1f)]
+    private float growingSoundStartAt = 0.15f;
+
+    [Tooltip("If growth was too slow at the start point, the sound may still start " +
+             "later, but not after this point (0-1). After it, the bamboo stays silent.")]
+    [SerializeField, Range(0f, 1f)]
+    private float growingSoundLatestStart = 0.6f;
+
+    [Tooltip("Growth speed needed for the sound (1 = perfect temperature, 0.2 = very slow). " +
+             "Below this the bamboo grows silently, because a normal-speed sound " +
+             "doesn't match a slow-motion animation.")]
+    [SerializeField, Range(0f, 1f)]
+    private float minGrowthSpeedForSound = 0.75f;
+
+    [Tooltip("If growth slows down below the minimum while the sound plays " +
+             "(e.g. the player makes it colder), fade the sound out.")]
+    [SerializeField] private bool stopWhenGrowthSlows = true;
+
+    [Tooltip("Seconds the fade-out takes.")]
+    [SerializeField, Min(0.01f)]
+    private float stopFadeDuration = 0.3f;
 
     [Tooltip("Optional: played when a bamboo has finished growing. One is picked at random.")]
     [SerializeField] private AudioClip[] fullyGrownSounds;
@@ -174,6 +211,11 @@ public class BambooManager : MonoBehaviour
 
     [Tooltip("Optional: send the sounds through a group in your Audio Mixer.")]
     [SerializeField] private AudioMixerGroup mixerGroup;
+
+    [Tooltip("Write to the Console why each bamboo does or doesn't play a sound.")]
+    [SerializeField] private bool debugSounds = false;
+
+    public bool DebugSounds => debugSounds;
 
     private class RotState
     {
@@ -716,6 +758,18 @@ public class BambooManager : MonoBehaviour
         );
 
         float extraDelay = 0f;
+
+        // Only sometimes: roll the chance once per poop (not per bamboo).
+        if (amount > 0 && Random.value < poopSoundChance)
+        {
+            PlayBambooSound(
+                poopSounds,
+                available[0].transform.position,
+                zone,
+                false,
+                poopSoundDelay
+            );
+        }
 
         for (int i = 0; i < amount; i++)
         {
@@ -1452,9 +1506,16 @@ public class BambooManager : MonoBehaviour
     // SOUND PLAYBACK (called by BambooGrowthSpot)
     // =========================================================
 
-    public void PlayBambooSproutSound(Vector3 position, EcosystemZone zone)
+    public float GrowingSoundStartAt => growingSoundStartAt;
+    public float GrowingSoundLatestStart => Mathf.Max(growingSoundStartAt, growingSoundLatestStart);
+    public float MinGrowthSpeedForSound => minGrowthSpeedForSound;
+    public bool StopWhenGrowthSlows => stopWhenGrowthSlows;
+    public float StopFadeDuration => stopFadeDuration;
+
+    /// <summary>Returns the playing AudioSource (or null), so it can be faded out.</summary>
+    public AudioSource PlayBambooGrowingSound(Vector3 position, EcosystemZone zone)
     {
-        PlayBambooSound(sproutSounds, position, zone);
+        return PlayBambooSound(growingSounds, position, zone);
     }
 
     public void PlayBambooGrownSound(Vector3 position, EcosystemZone zone)
@@ -1462,20 +1523,76 @@ public class BambooManager : MonoBehaviour
         PlayBambooSound(fullyGrownSounds, position, zone);
     }
 
-    private void PlayBambooSound(AudioClip[] clips, Vector3 position, EcosystemZone zone)
+    // Right-click the BambooManager component (in Play mode) to test.
+    [ContextMenu("Test Growing Sound (at camera)")]
+    private void TestGrowingSound()
+    {
+        Camera cam = Camera.main;
+        Vector3 position = cam != null ? cam.transform.position : transform.position;
+
+        AudioSource source = PlayBambooSound(growingSounds, position, null, true);
+
+        Debug.Log(source != null
+            ? "BambooManager: Test sound playing (" + source.clip.name + ")."
+            : "BambooManager: Test sound did NOT play. Is Growing Sounds empty?", this);
+    }
+
+    private AudioSource PlayBambooSound(
+        AudioClip[] clips,
+        Vector3 position,
+        EcosystemZone zone,
+        bool ignoreZone = false,
+        float delay = 0f)
     {
         if (clips == null || clips.Length == 0)
-            return;
+        {
+            if (debugSounds)
+                Debug.LogWarning("BambooSound: No clips assigned in the sound list.", this);
+            return null;
+        }
 
-        if (onlyInActiveZone &&
+        if (!ignoreZone && onlyInActiveZone &&
             (EnvironmentSystem.Instance == null ||
              EnvironmentSystem.Instance.ActiveZone != zone))
-            return;
+        {
+            if (debugSounds)
+            {
+                string active = EnvironmentSystem.Instance != null &&
+                                EnvironmentSystem.Instance.ActiveZone != null
+                    ? EnvironmentSystem.Instance.ActiveZone.name
+                    : "none";
+
+                Debug.LogWarning(
+                    "BambooSound: Skipped. Bamboo's zone = '" +
+                    (zone != null ? zone.name : "none") +
+                    "', active zone = '" + active +
+                    "'. Turn off 'Only In Active Zone' or check the growth spot's zone.",
+                    this);
+            }
+            return null;
+        }
 
         AudioClip clip = clips[Random.Range(0, clips.Length)];
 
         if (clip == null)
-            return;
+        {
+            if (debugSounds)
+                Debug.LogWarning("BambooSound: An empty slot was picked in the sound list.", this);
+            return null;
+        }
+
+        if (debugSounds)
+        {
+            Camera cam = Camera.main;
+            float distance = cam != null
+                ? Vector3.Distance(cam.transform.position, position)
+                : -1f;
+
+            Debug.Log(
+                "BambooSound: Playing '" + clip.name + "' " +
+                (distance >= 0f ? distance.ToString("F0") + " units from the camera." : "(no Main Camera found)."),
+                this);
+        }
 
         // A short-lived object at the bamboo, so 3D sound comes from the right place.
         GameObject soundObject = new GameObject("BambooSound");
@@ -1493,9 +1610,14 @@ public class BambooManager : MonoBehaviour
         source.dopplerLevel = 0f;
         source.outputAudioMixerGroup = mixerGroup;
 
-        source.Play();
+        if (delay > 0f)
+            source.PlayDelayed(delay);
+        else
+            source.Play();
 
-        Destroy(soundObject, clip.length / Mathf.Max(0.05f, source.pitch) + 0.1f);
+        Destroy(soundObject, delay + clip.length / Mathf.Max(0.05f, source.pitch) + 0.1f);
+
+        return source;
     }
 
     private System.Collections.IEnumerator BreakAndRemoveBamboo(

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PandaFeedingZone : MonoBehaviour
 {
@@ -36,6 +37,27 @@ public class PandaFeedingZone : MonoBehaviour
     [SerializeField] private string eatStateName = "Eat";
 
     [SerializeField] private float eatingCooldown = 3f;
+
+    [Header("Eating Sound")]
+    [Tooltip("Chewing/crunching sounds. One is picked at random each time the panda eats.")]
+    [SerializeField] private AudioClip[] eatingSounds;
+
+    [Tooltip("Seconds after the bamboo reaches the paw before the sound starts. " +
+             "Use this to line the sound up with the bite in the animation.")]
+    [SerializeField, Min(0f)] private float eatingSoundDelay = 0f;
+
+    [SerializeField, Range(0f, 1f)] private float eatingSoundVolume = 0.8f;
+
+    [Tooltip("Random pitch change so repeated bites don't sound identical. 0.08 = ±8%.")]
+    [SerializeField, Range(0f, 0.5f)] private float eatingPitchVariation = 0.08f;
+
+    [Tooltip("0 = same volume everywhere (2D). 1 = fully 3D (quieter further from the camera).")]
+    [SerializeField, Range(0f, 1f)] private float eatingSpatialBlend = 0.3f;
+
+    [Tooltip("Optional: send the sound through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup eatingMixerGroup;
+
+    private AudioSource eatingAudio;
 
     private bool eatingAnimationPhase;
     private bool isEating;
@@ -190,6 +212,10 @@ public class PandaFeedingZone : MonoBehaviour
         if (pandaAnimator != null && !string.IsNullOrEmpty(eatTrigger))
             pandaAnimator.ResetTrigger(eatTrigger);
 
+        // Stop the chewing sound too.
+        if (eatingAudio != null)
+            eatingAudio.Stop();
+
         if (isEating)
             Debug.Log("PandaFeedingZone: Eating cancelled.");
 
@@ -291,6 +317,10 @@ public class PandaFeedingZone : MonoBehaviour
             );
         }
 
+        // The bamboo is at the paw now (or there is no bamboo visual):
+        // start the chewing sound.
+        PlayEatingSound();
+
         // Keep the bamboo visible for the configured total duration.
         float remainingVisibleTime = Mathf.Max(
             0f,
@@ -321,6 +351,50 @@ public class PandaFeedingZone : MonoBehaviour
         eatingCoroutine = null;
 
         Debug.Log("PandaFeedingZone: Panda can eat again.");
+    }
+
+    // =========================================================
+    // EATING SOUND
+    // =========================================================
+
+    private void PlayEatingSound()
+    {
+        if (eatingSounds == null || eatingSounds.Length == 0)
+            return;
+
+        AudioClip clip = eatingSounds[Random.Range(0, eatingSounds.Length)];
+
+        if (clip == null)
+            return;
+
+        if (eatingAudio == null)
+        {
+            // A sound object on the panda, so the sound comes from the panda.
+            Transform pandaTransform = pandaAnimator != null
+                ? pandaAnimator.transform
+                : transform;
+
+            GameObject soundObject = new GameObject("EatingSound");
+            soundObject.transform.SetParent(pandaTransform, false);
+
+            eatingAudio = soundObject.AddComponent<AudioSource>();
+            eatingAudio.playOnAwake = false;
+            eatingAudio.rolloffMode = AudioRolloffMode.Linear;
+            eatingAudio.minDistance = 1f;
+            eatingAudio.maxDistance = 60f;
+            eatingAudio.dopplerLevel = 0f;
+        }
+
+        eatingAudio.clip = clip;
+        eatingAudio.volume = eatingSoundVolume;
+        eatingAudio.pitch = 1f + Random.Range(-eatingPitchVariation, eatingPitchVariation);
+        eatingAudio.spatialBlend = eatingSpatialBlend;
+        eatingAudio.outputAudioMixerGroup = eatingMixerGroup;
+
+        if (eatingSoundDelay > 0f)
+            eatingAudio.PlayDelayed(eatingSoundDelay);
+        else
+            eatingAudio.Play();
     }
 
     private void OnDisable()

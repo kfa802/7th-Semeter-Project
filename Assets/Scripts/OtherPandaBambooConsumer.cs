@@ -1,6 +1,6 @@
-
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class OtherPandaBambooConsumer : MonoBehaviour
 {
@@ -63,6 +63,44 @@ public class OtherPandaBambooConsumer : MonoBehaviour
     [Header("Bamboo Regrowth")]
     [Min(1)]
     [SerializeField] private int mealsBeforePooping = 3;
+
+    // =========================================================
+    // SOUNDS
+    // =========================================================
+
+    [Header("Eating Sound")]
+    [Tooltip("Chewing sounds. One is picked at random for each bamboo eaten.")]
+    [SerializeField] private AudioClip[] eatingSounds;
+
+    [Tooltip("Seconds after the bamboo reaches the paw before the sound starts.")]
+    [SerializeField, Min(0f)] private float eatingSoundDelay = 0f;
+
+    [SerializeField, Range(0f, 1f)] private float eatingSoundVolume = 0.7f;
+
+    [Header("Poop Sound")]
+    [Tooltip("Sounds for when the other panda poops. One is picked at random.")]
+    [SerializeField] private AudioClip[] poopSounds;
+
+    [Tooltip("Chance (0-1) that a poop makes a sound. 1 = every time, 0.3 = about 1 in 3.")]
+    [SerializeField, Range(0f, 1f)] private float poopSoundChance = 1f;
+
+    [Tooltip("Seconds after the meal starts before the poop sound plays.")]
+    [SerializeField, Min(0f)] private float poopSoundDelay = 1f;
+
+    [SerializeField, Range(0f, 1f)] private float poopSoundVolume = 0.7f;
+
+    [Header("Sound Settings (both)")]
+    [Tooltip("Random pitch change so repeated sounds don't sound identical. 0.08 = ±8%.")]
+    [SerializeField, Range(0f, 0.5f)] private float pitchVariation = 0.08f;
+
+    [Tooltip("0 = same volume everywhere (2D). 1 = fully 3D (quieter further from the camera).")]
+    [SerializeField, Range(0f, 1f)] private float spatialBlend = 0.5f;
+
+    [Tooltip("Optional: send the sounds through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup mixerGroup;
+
+    private AudioSource eatingAudio;
+    private AudioSource poopAudio;
 
     // =========================================================
     // PRIVATE VARIABLES
@@ -176,6 +214,18 @@ public class OtherPandaBambooConsumer : MonoBehaviour
             {
                 successfulMeals = 0;
 
+                // Only sometimes, depending on the chance setting.
+                if (Random.value < poopSoundChance)
+                {
+                    PlaySound(
+                        ref poopAudio,
+                        "OtherPandaPoopSound",
+                        poopSounds,
+                        poopSoundVolume,
+                        poopSoundDelay
+                    );
+                }
+
                 Debug.Log("Other panda helped regrow bamboo!");
             }
             else
@@ -279,6 +329,15 @@ public class OtherPandaBambooConsumer : MonoBehaviour
                 );
             }
 
+            // The bamboo is at the paw: start the chewing sound.
+            PlaySound(
+                ref eatingAudio,
+                "OtherPandaEatingSound",
+                eatingSounds,
+                eatingSoundVolume,
+                eatingSoundDelay
+            );
+
             // Keep the bamboo visible before removing it.
             float remainingVisibleTime = Mathf.Max(
                 0f,
@@ -300,11 +359,63 @@ public class OtherPandaBambooConsumer : MonoBehaviour
     }
 
     // =========================================================
+    // SOUND
+    // =========================================================
+
+    private void PlaySound(
+        ref AudioSource source,
+        string objectName,
+        AudioClip[] clips,
+        float volume,
+        float delay)
+    {
+        if (clips == null || clips.Length == 0)
+            return;
+
+        AudioClip clip = clips[Random.Range(0, clips.Length)];
+
+        if (clip == null)
+            return;
+
+        if (source == null)
+        {
+            // A sound object on the other panda, so the sound comes from it.
+            Transform pandaTransform = pandaAnimator != null
+                ? pandaAnimator.transform
+                : transform;
+
+            GameObject soundObject = new GameObject(objectName);
+            soundObject.transform.SetParent(pandaTransform, false);
+
+            source = soundObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = 1f;
+            source.maxDistance = 60f;
+            source.dopplerLevel = 0f;
+        }
+
+        source.clip = clip;
+        source.volume = volume;
+        source.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
+        source.spatialBlend = spatialBlend;
+        source.outputAudioMixerGroup = mixerGroup;
+
+        if (delay > 0f)
+            source.PlayDelayed(delay);
+        else
+            source.Play();
+    }
+
+    // =========================================================
     // CLEANUP
     // =========================================================
 
     private void OnDisable()
     {
+        if (eatingAudio != null)
+            eatingAudio.Stop();
+
         if (spawnedBamboo != null)
         {
             Destroy(spawnedBamboo);

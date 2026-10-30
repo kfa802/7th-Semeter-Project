@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Audio;
 
 public class PandaPathMover : MonoBehaviour
 {
@@ -93,6 +94,27 @@ public class PandaPathMover : MonoBehaviour
     private float movementStartTime;
     private bool cinematicStarted;
     private float cinematicFieldOfView;
+
+    [Header("Walking Sound")]
+    [Tooltip("Looping footstep/walking sound played while the panda walks.")]
+    [SerializeField] private AudioClip walkingLoop;
+
+    [SerializeField, Range(0f, 1f)] private float walkingVolume = 0.7f;
+
+    [Tooltip("Seconds to fade the sound in when walking starts and out when it stops.")]
+    [SerializeField, Min(0.01f)] private float walkingFadeTime = 0.3f;
+
+    [Tooltip("On: the sound gets quieter when the panda slows down (e.g. while turning) " +
+             "and is silent when it stands still. Off: always full volume while walking.")]
+    [SerializeField] private bool volumeFollowsSpeed = true;
+
+    [Tooltip("0 = same volume everywhere (2D). 1 = fully 3D (quieter further from the camera).")]
+    [SerializeField, Range(0f, 1f)] private float walkingSpatialBlend = 0.3f;
+
+    [Tooltip("Optional: send the sound through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup walkingMixerGroup;
+
+    private AudioSource walkingAudio;
 
     [Header("Feeding")]
     [Tooltip("Travel waits until the eating animation has finished.")]
@@ -253,6 +275,17 @@ public class PandaPathMover : MonoBehaviour
 
         if (cinematicCamera != null)
         {
+            // The main camera is switched off while travelling, so the
+            // cinematic camera needs its own Audio Listener, or nothing
+            // (walking sound included) can be heard during the journey.
+            if (cinematicCamera.GetComponent<AudioListener>() == null &&
+                mainCamera != null &&
+                mainCamera.GetComponent<AudioListener>() != null)
+            {
+                cinematicCamera.gameObject.AddComponent<AudioListener>();
+                Debug.Log("PandaPathMover: Added an Audio Listener to the cinematic camera.");
+            }
+
             // Remember the cinematic camera's own zoom as the default.
             cinematicFieldOfView = cinematicCamera.fieldOfView;
             cinematicCamera.gameObject.SetActive(false);
@@ -339,6 +372,71 @@ public class PandaPathMover : MonoBehaviour
         }
 
         UpdateBaseOffset();
+        UpdateWalkingSound();
+    }
+
+    // =========================================================
+    // WALKING SOUND
+    // =========================================================
+
+    private void UpdateWalkingSound()
+    {
+        if (walkingLoop == null)
+            return;
+
+        bool walking = isMoving && !turningToSit && IsWalkingActive();
+
+        float target = 0f;
+
+        if (walking)
+        {
+            float speedFactor = 1f;
+
+            if (volumeFollowsSpeed && agent != null && baseAgentSpeed > 0f)
+                speedFactor = Mathf.Clamp01(agent.velocity.magnitude / baseAgentSpeed);
+
+            target = walkingVolume * speedFactor;
+        }
+
+        if (walkingAudio == null)
+        {
+            if (target <= 0f)
+                return;
+
+            // A looping sound object on the panda.
+            GameObject soundObject = new GameObject("WalkingSound");
+            soundObject.transform.SetParent(transform, false);
+
+            walkingAudio = soundObject.AddComponent<AudioSource>();
+            walkingAudio.playOnAwake = false;
+            walkingAudio.loop = true;
+            walkingAudio.volume = 0f;
+            walkingAudio.rolloffMode = AudioRolloffMode.Linear;
+            walkingAudio.minDistance = 1f;
+            walkingAudio.maxDistance = 60f;
+            walkingAudio.dopplerLevel = 0f;
+        }
+
+        walkingAudio.clip = walkingLoop;
+        walkingAudio.spatialBlend = walkingSpatialBlend;
+        walkingAudio.outputAudioMixerGroup = walkingMixerGroup;
+
+        if (target > 0f && !walkingAudio.isPlaying)
+        {
+            // Start somewhere random in the loop so it doesn't always
+            // begin with the same step.
+            walkingAudio.time = UnityEngine.Random.Range(0f, walkingLoop.length * 0.9f);
+            walkingAudio.Play();
+        }
+
+        walkingAudio.volume = Mathf.MoveTowards(
+            walkingAudio.volume,
+            target,
+            Mathf.Max(walkingVolume, 0.01f) / walkingFadeTime * Time.deltaTime
+        );
+
+        if (target <= 0f && walkingAudio.volume <= 0.001f && walkingAudio.isPlaying)
+            walkingAudio.Stop();
     }
 
     // The camera runs in LateUpdate, after the NavMeshAgent has moved

@@ -366,16 +366,10 @@ public class BambooGrowthSpot : MonoBehaviour
         BambooPlant plant = holder.AddComponent<BambooPlant>();
         plant.Init(variedGrowTime);
 
-        // Sounds: one when it pops out, one when it has finished growing.
+        // Growing sound partway through (only when growth isn't slow),
+        // and an optional sound when it has finished growing.
         if (BambooManager.Instance != null)
-        {
-            BambooManager.Instance.PlayBambooSproutSound(
-                transform.position,
-                ecosystemZone
-            );
-
-            StartCoroutine(PlayGrownSoundWhenReady(plant));
-        }
+            StartCoroutine(GrowthSoundRoutine(plant, variedGrowTime));
 
         // Assign the new bamboo to this spot.
         existingBamboo = holder;
@@ -398,10 +392,70 @@ public class BambooGrowthSpot : MonoBehaviour
     }
 
 
-    private IEnumerator PlayGrownSoundWhenReady(BambooPlant plant)
+    private IEnumerator GrowthSoundRoutine(BambooPlant plant, float plantGrowTime)
     {
+        BambooManager manager = BambooManager.Instance;
+
+        // Follows the plant's progress the same way BambooPlant does:
+        // progress grows with time x temperature growth speed.
+        float progress = 0f;
+        bool soundStarted = false;
+        bool loggedSlow = false;
+        AudioSource growingSource = null;
+
+        if (manager.DebugSounds)
+            Debug.Log("BambooSound: '" + name + "' started growing.", this);
+
         while (plant != null && !plant.IsFullyGrown)
+        {
+            float speed = EnvironmentSystem.Instance != null
+                ? Mathf.Max(0f, EnvironmentSystem.Instance.TemperatureGrowthFactor)
+                : 1f;
+
+            progress += Time.deltaTime * speed / Mathf.Max(0.1f, plantGrowTime);
+
+            bool fastEnough = speed >= manager.MinGrowthSpeedForSound;
+
+            // Start the sound once we're far enough in, but only while
+            // growth is fast enough, and not too late in the growth.
+            if (!soundStarted &&
+                progress >= manager.GrowingSoundStartAt &&
+                progress <= manager.GrowingSoundLatestStart &&
+                fastEnough)
+            {
+                soundStarted = true;
+
+                growingSource = manager.PlayBambooGrowingSound(
+                    plant.transform.position,
+                    ecosystemZone
+                );
+            }
+
+            if (manager.DebugSounds && !soundStarted && !loggedSlow &&
+                progress >= manager.GrowingSoundStartAt && !fastEnough)
+            {
+                loggedSlow = true;
+                Debug.Log(
+                    "BambooSound: '" + name + "' grows too slowly for the sound " +
+                    "(speed " + speed.ToString("F2") + ", needs " +
+                    manager.MinGrowthSpeedForSound.ToString("F2") + ").", this);
+            }
+
+            // Growth slowed down while the sound plays: fade it out.
+            if (growingSource != null &&
+                growingSource.isPlaying &&
+                manager.StopWhenGrowthSlows &&
+                !fastEnough)
+            {
+                StartCoroutine(FadeOutSound(growingSource, manager.StopFadeDuration));
+                growingSource = null;
+            }
+
             yield return null;
+        }
+
+        if (manager.DebugSounds && !soundStarted)
+            Debug.Log("BambooSound: '" + name + "' finished growing without a growing sound.", this);
 
         if (plant != null && BambooManager.Instance != null)
         {
@@ -410,6 +464,22 @@ public class BambooGrowthSpot : MonoBehaviour
                 ecosystemZone
             );
         }
+    }
+
+    private IEnumerator FadeOutSound(AudioSource source, float duration)
+    {
+        float startVolume = source != null ? source.volume : 0f;
+        float elapsed = 0f;
+
+        while (source != null && elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        if (source != null)
+            source.Stop();
     }
 
 

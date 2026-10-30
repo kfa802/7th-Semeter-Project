@@ -26055,6 +26055,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 592813951}
   m_CullTransparentMesh: 1
+--- !u!4 &601088496 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3eeb394f965f544f897cad744306141d, type: 3}
+  m_PrefabInstance: {fileID: 59449190}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &611277611
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33387,6 +33392,23 @@ MonoBehaviour:
   waterHealthThreshold: 15
   maximumHealthLossPerSecond: 2
   waterDamagePower: 3
+  drinkingSounds:
+  - {fileID: 8300000, guid: c1ac61038f18a804285f54bd259519c2, type: 3}
+  drinkingVolume: 0.25
+  drinkingPitchVariation: 0.08
+  drinkingSpatialBlend: 0.3
+  drinkingSoundCooldown: 15
+  playWhenArrivingInZone: 0
+  drinkingMixerGroup: {fileID: 0}
+  heartbeatLoop: {fileID: 8300000, guid: 65ff13a6c2132b44194b600aa063bb04, type: 3}
+  heartbeatStartBelowHealth: 60
+  heartbeatFullAtHealth: 5
+  heartbeatMaxVolume: 0.9
+  heartbeatVolumeCurve: 1.5
+  heartbeatSpeedUp: 1
+  heartbeatMaxSpeed: 1.4
+  heartbeatSmoothSpeed: 1.5
+  heartbeatMixerGroup: {fileID: 0}
   hotTemperature: 25
   coldTemperature: 0
   stress: 0
@@ -33518,6 +33540,13 @@ MonoBehaviour:
   eatTrigger: Eat
   eatStateName: Eat
   eatingCooldown: 2.5
+  eatingSounds:
+  - {fileID: 8300000, guid: 74ab9f1dbbb4b774282d46f6f2b1d9be, type: 3}
+  eatingSoundDelay: 1
+  eatingSoundVolume: 0.3
+  eatingPitchVariation: 0.08
+  eatingSpatialBlend: 0.3
+  eatingMixerGroup: {fileID: 0}
 --- !u!114 &725808057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33544,6 +33573,12 @@ MonoBehaviour:
   maxStandUpWait: 1
   walkStateName: PandaRig|Panda_Walk
   forceStandUpAfter: 0.3
+  walkingLoop: {fileID: 8300000, guid: 337eeac024e86ef4ca8a0f8937e93399, type: 3}
+  walkingVolume: 1
+  walkingFadeTime: 0.3
+  volumeFollowsSpeed: 1
+  walkingSpatialBlend: 0.3
+  walkingMixerGroup: {fileID: 0}
   feedingZone: {fileID: 725808056}
   maxWaitForEating: 10
   mainCamera: {fileID: 2122670353}
@@ -34446,6 +34481,10 @@ MonoBehaviour:
   maxBambooPerPoop: 2
   minExtraDelay: 0.5
   maxExtraDelay: 2
+  poopSounds:
+  - {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  poopSoundChance: 0.5
+  poopSoundDelay: 3.8
   environment: {fileID: 1431297040}
   rotStartsAbovePollution: 0.3
   slowestRotInterval: 20
@@ -34453,15 +34492,22 @@ MonoBehaviour:
   rotDuration: 8
   shrinkDuration: 1.5
   rottenColor: {r: 0.35, g: 0.25, b: 0.1, a: 1}
-  sproutSounds: []
+  growingSounds:
+  - {fileID: 8300000, guid: 312941cbf82da704b850776fd47cd6ed, type: 3}
+  growingSoundStartAt: 0.15
+  growingSoundLatestStart: 0.9
+  minGrowthSpeedForSound: 0.5
+  stopWhenGrowthSlows: 1
+  stopFadeDuration: 0.3
   fullyGrownSounds:
-  - {fileID: 8300000, guid: edf3e4773fc7f9a4e8a70408a51a92a4, type: 3}
-  soundVolume: 0.8
+  - {fileID: 0}
+  soundVolume: 0.1
   pitchVariation: 0.1
   spatialBlend: 0.5
   maxHearingDistance: 60
   onlyInActiveZone: 1
   mixerGroup: {fileID: 0}
+  debugSounds: 0
 --- !u!4 &755028009
 Transform:
   m_ObjectHideFlags: 0
@@ -51763,6 +51809,9 @@ MonoBehaviour:
   titleText: {fileID: 484415167}
   descriptionText: {fileID: 260026411}
   endingImage: {fileID: 0}
+  continueLabel: {fileID: 0}
+  continueTextDA: "Forts\xE6t"
+  continueTextEN: Continue
 --- !u!1001 &1154981067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61687,6 +61736,27 @@ MonoBehaviour:
     wobbleAngle: 0
     spawnEffectPrefab: {fileID: 0}
     spawnEffectLifetime: 3
+    sounds:
+    - label: City
+      clip: {fileID: 8300000, guid: 0971921de83de5d4c9b6e02ab24c327b, type: 3}
+      loop: 1
+      playAt: {fileID: 1184080810}
+      delay: 0
+      volume: 1
+      fadeInTime: 0
+      spatialBlend: 0
+      maxDistance: 120
+      mixerGroup: {fileID: 0}
+    - label: Road
+      clip: {fileID: 8300000, guid: b39ae1c45b0ea664fa2b1728dbc7a74e, type: 3}
+      loop: 1
+      playAt: {fileID: 2052093885}
+      delay: 0
+      volume: 1
+      fadeInTime: 0
+      spatialBlend: 0
+      maxDistance: 120
+      mixerGroup: {fileID: 0}
   - label: 
     dilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
     when: 2
@@ -61708,6 +61778,27 @@ MonoBehaviour:
     wobbleAngle: 0
     spawnEffectPrefab: {fileID: 0}
     spawnEffectLifetime: 3
+    sounds:
+    - label: City
+      clip: {fileID: 8300000, guid: 0971921de83de5d4c9b6e02ab24c327b, type: 3}
+      loop: 1
+      playAt: {fileID: 1184080810}
+      delay: 0
+      volume: 0
+      fadeInTime: 0
+      spatialBlend: 0
+      maxDistance: 0
+      mixerGroup: {fileID: 0}
+    - label: Road
+      clip: {fileID: 8300000, guid: b39ae1c45b0ea664fa2b1728dbc7a74e, type: 3}
+      loop: 1
+      playAt: {fileID: 601088496}
+      delay: 0
+      volume: 0
+      fadeInTime: 0
+      spatialBlend: 0
+      maxDistance: 0
+      mixerGroup: {fileID: 0}
   onTravelRequested:
     m_PersistentCalls:
       m_Calls:
@@ -62082,6 +62173,7 @@ GameObject:
   - component: {fileID: 1431297041}
   - component: {fileID: 1431297040}
   - component: {fileID: 1431297042}
+  - component: {fileID: 1431297043}
   m_Layer: 0
   m_Name: Envoironment
   m_TagString: Untagged
@@ -62158,6 +62250,42 @@ MonoBehaviour:
   snowFadeOutSpeedPerDegree: 0.15
   coldVolume: {fileID: 1513267756}
   hotVolume: {fileID: 342025089}
+--- !u!114 &1431297043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431297039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235928a6419616940821e59d88663520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemperatureAmbience
+  winterWind: {fileID: 8300000, guid: 7ba31513bc3f9f049a0bf4d52190a38b, type: 3}
+  birds: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
+  deadlyHeat: {fileID: 8300000, guid: b1beca47ba023cf4a976305a8b0af3ef, type: 3}
+  coldFullAt: -5
+  coldGoneAt: 8
+  heatStartsAt: 28
+  heatFullAt: 36
+  windVolume: 0.7
+  birdsVolume: 0.4
+  heatVolume: 0.7
+  blendSpeed: 0.6
+  startFadeIn: 2
+  mixerGroup: {fileID: 0}
+  pandaPathMover: {fileID: 725808057}
+  travellingVolume: 0.24
+  travellingFadeTime: 1.5
+  birdsOffAbovePollution: 0.164
+  birdsFadeOutTime: 5
+  currentTemperature: 0
+  travelling: 0
+  currentPollution: 0
+  windLevel: 0
+  birdsLevel: 0
+  heatLevel: 0
 --- !u!43 &1431457386
 Mesh:
   m_ObjectHideFlags: 0
@@ -71500,6 +71628,18 @@ MonoBehaviour:
   bambooMoveDuration: 0.6
   bambooVisibleDuration: 2
   mealsBeforePooping: 2
+  eatingSounds:
+  - {fileID: 8300000, guid: 74ab9f1dbbb4b774282d46f6f2b1d9be, type: 3}
+  eatingSoundDelay: 1
+  eatingSoundVolume: 0.5
+  poopSounds:
+  - {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  poopSoundChance: 0.3
+  poopSoundDelay: 3.8
+  poopSoundVolume: 0.5
+  pitchVariation: 0.08
+  spatialBlend: 0.5
+  mixerGroup: {fileID: 0}
 --- !u!1 &1696362169
 GameObject:
   m_ObjectHideFlags: 0
@@ -75231,7 +75371,7 @@ Transform:
   m_GameObject: {fileID: 1897832078}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -10.389999, y: 6.86, z: 33.64}
+  m_LocalPosition: {x: -9.631, y: 6.86, z: 35.77}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -82656,6 +82796,11 @@ MonoBehaviour:
   - {fileID: -1955622211172337990, guid: 3eeb394f965f544f897cad744306141d, type: 3}
   - {fileID: -1258688628208935688, guid: 3eeb394f965f544f897cad744306141d, type: 3}
   - {fileID: -3641657454110203857, guid: 3eeb394f965f544f897cad744306141d, type: 3}
+--- !u!4 &2052093885 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3eeb394f965f544f897cad744306141d, type: 3}
+  m_PrefabInstance: {fileID: 1261443033}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2062916258
 GameObject:
   m_ObjectHideFlags: 0
