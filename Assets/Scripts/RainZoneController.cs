@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class RainZoneController : MonoBehaviour
 {
@@ -21,6 +22,29 @@ public class RainZoneController : MonoBehaviour
     [Tooltip("Extra water added per second while it rains.")]
     [SerializeField] private float extraWaterPerSecond = 1f;
 
+    [Header("Rain Sound")]
+    [Tooltip("A looping rain sound. Plays while it rains.")]
+    [SerializeField] private AudioClip rainLoop;
+
+    [SerializeField, Range(0f, 1f)] private float rainVolume = 0.7f;
+
+    [Tooltip("Seconds for the rain sound to fade in when the rain starts.")]
+    [SerializeField, Min(0.01f)] private float rainFadeIn = 3f;
+
+    [Tooltip("Seconds for the rain sound to fade out when the rain stops.")]
+    [SerializeField, Min(0.01f)] private float rainFadeOut = 4f;
+
+    [Tooltip("Optional: thunder sounds played now and then while it rains.")]
+    [SerializeField] private AudioClip[] thunderSounds;
+
+    [SerializeField, Range(0f, 1f)] private float thunderVolume = 0.6f;
+
+    [Tooltip("Random seconds between thunder (min and max).")]
+    [SerializeField] private Vector2 thunderInterval = new Vector2(8f, 20f);
+
+    [Tooltip("Optional: send the rain sounds through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup mixerGroup;
+
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
@@ -34,6 +58,10 @@ public class RainZoneController : MonoBehaviour
 
     private bool isRaining;
     private bool wasActiveZone;
+
+    private AudioSource rainSource;
+    private AudioSource thunderSource;
+    private float thunderTimer;
 
     private void Awake()
     {
@@ -86,6 +114,7 @@ public class RainZoneController : MonoBehaviour
         }
 
         ResetRainTimer();
+        CreateSoundSources();
 
         if (showDebugLogs)
         {
@@ -101,6 +130,8 @@ public class RainZoneController : MonoBehaviour
 
     private void Update()
     {
+        UpdateRainSound();
+
         if (EnvironmentSystem.Instance == null)
         {
             return;
@@ -258,6 +289,15 @@ public class RainZoneController : MonoBehaviour
 
         rainParticles.Play(true);
 
+        if (rainSource != null && !rainSource.isPlaying)
+        {
+            // Start at a random point so it doesn't always sound the same.
+            rainSource.time = Random.Range(0f, rainLoop.length * 0.9f);
+            rainSource.Play();
+        }
+
+        thunderTimer = Random.Range(thunderInterval.x, thunderInterval.y);
+
         if (showDebugLogs)
         {
             Debug.Log(
@@ -283,6 +323,70 @@ public class RainZoneController : MonoBehaviour
         }
     }
 
+    // =========================================================
+    // SOUND
+    // =========================================================
+
+    private void CreateSoundSources()
+    {
+        if (rainLoop != null)
+        {
+            rainSource = gameObject.AddComponent<AudioSource>();
+            rainSource.clip = rainLoop;
+            rainSource.loop = true;
+            rainSource.playOnAwake = false;
+            rainSource.spatialBlend = 0f;   // all around you
+            rainSource.volume = 0f;
+            rainSource.outputAudioMixerGroup = mixerGroup;
+        }
+
+        if (thunderSounds != null && thunderSounds.Length > 0)
+        {
+            thunderSource = gameObject.AddComponent<AudioSource>();
+            thunderSource.playOnAwake = false;
+            thunderSource.spatialBlend = 0f;
+            thunderSource.outputAudioMixerGroup = mixerGroup;
+        }
+    }
+
+    private void UpdateRainSound()
+    {
+        if (rainSource != null)
+        {
+            // Fade in while raining, fade out when it stops (also when leaving the zone).
+            float target = isRaining ? rainVolume : 0f;
+            float fadeTime = isRaining ? rainFadeIn : rainFadeOut;
+
+            rainSource.volume = Mathf.MoveTowards(
+                rainSource.volume,
+                target,
+                Mathf.Max(rainVolume, 0.01f) / fadeTime * Time.deltaTime
+            );
+
+            if (!isRaining && rainSource.volume <= 0.001f && rainSource.isPlaying)
+                rainSource.Stop();
+        }
+
+        // Thunder now and then while it rains.
+        if (isRaining && thunderSource != null)
+        {
+            thunderTimer -= Time.deltaTime;
+
+            if (thunderTimer <= 0f)
+            {
+                AudioClip clip = thunderSounds[Random.Range(0, thunderSounds.Length)];
+
+                if (clip != null)
+                {
+                    thunderSource.pitch = Random.Range(0.9f, 1.1f);
+                    thunderSource.PlayOneShot(clip, thunderVolume);
+                }
+
+                thunderTimer = Random.Range(thunderInterval.x, Mathf.Max(thunderInterval.x, thunderInterval.y));
+            }
+        }
+    }
+
     private void ResetRainTimer()
     {
         rainTimer = Random.Range(
@@ -294,6 +398,13 @@ public class RainZoneController : MonoBehaviour
     private void OnDisable()
     {
         StopRain();
+
+        if (rainSource != null)
+        {
+            rainSource.Stop();
+            rainSource.volume = 0f;
+        }
+
         wasActiveZone = false;
     }
 }

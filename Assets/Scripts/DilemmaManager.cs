@@ -151,8 +151,28 @@ public class DilemmaManager : MonoBehaviour
     [Header("Travel Integration")]
     public UnityEvent<string> onTravelRequested;
 
+    [Header("Temperature Dilemmas")]
+    [Tooltip("ON: a temperature dilemma waits its 'Temperature Duration Seconds' " +
+             "(counting from when it becomes possible in its zone), then checks the " +
+             "temperature ONCE at that moment. Whichever dilemma matches the " +
+             "temperature then (too hot / too cold / moderate) triggers.\n" +
+             "OFF: the temperature must stay past the threshold for the whole time " +
+             "(the timer restarts every time it crosses back).")]
+    [SerializeField] private bool checkTemperatureAfterWaiting = true;
+
     [Header("Ending Settings")]
     [SerializeField] private float endingDelay = 3f;
+
+    [Header("Choice Click Sound")]
+    [Tooltip("Played when the player clicks a choice button (A, B or C).")]
+    [SerializeField] private AudioClip choiceClickSound;
+
+    [SerializeField, Range(0f, 1f)] private float choiceClickVolume = 0.8f;
+
+    [Tooltip("Optional: send the click through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup choiceClickMixerGroup;
+
+    private AudioSource clickSource;
 
     private DilemmaUI dilemmaUI;
     private EndingUI endingUI;
@@ -451,6 +471,25 @@ public class DilemmaManager : MonoBehaviour
         Dilemma dilemma,
         bool conditionIsMet)
     {
+        if (checkTemperatureAfterWaiting)
+        {
+            // Start the clock once, whatever the temperature is.
+            if (!temperatureStartTimes.TryGetValue(dilemma, out float since))
+            {
+                since = Time.time;
+                temperatureStartTimes[dilemma] = since;
+
+                Debug.Log(
+                    "DilemmaManager: " + dilemma.name + " will check the temperature in " +
+                    dilemma.temperatureDurationSeconds + " seconds."
+                );
+            }
+
+            // Time's up: trigger if the temperature matches right now.
+            return Time.time - since >= dilemma.temperatureDurationSeconds &&
+                   conditionIsMet;
+        }
+
         if (!conditionIsMet)
         {
             temperatureStartTimes.Remove(dilemma);
@@ -531,6 +570,8 @@ public class DilemmaManager : MonoBehaviour
             );
             return;
         }
+
+        PlayChoiceClick();
 
         Dilemma resolvedDilemma = activeDilemma;
 
@@ -637,6 +678,23 @@ public class DilemmaManager : MonoBehaviour
                 nextDilemma.delaySeconds + " seconds."
             );
         }
+    }
+
+    private void PlayChoiceClick()
+    {
+        if (choiceClickSound == null)
+            return;
+
+        if (clickSource == null)
+        {
+            clickSource = gameObject.AddComponent<AudioSource>();
+            clickSource.playOnAwake = false;
+            clickSource.spatialBlend = 0f;   // UI sound: same volume everywhere
+            clickSource.outputAudioMixerGroup = choiceClickMixerGroup;
+        }
+
+        clickSource.pitch = Random.Range(0.97f, 1.03f);
+        clickSource.PlayOneShot(choiceClickSound, choiceClickVolume);
     }
 
     // =========================================================

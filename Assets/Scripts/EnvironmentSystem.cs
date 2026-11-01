@@ -96,6 +96,19 @@ public class EnvironmentSystem : MonoBehaviour
 
     public float TemperatureGrowthFactor { get; private set; } = 1f;
 
+    // Temperature limits of the active zone (used by TemperatureFeedback).
+    /// <summary>Above this, bamboo grows slower.</summary>
+    public float BambooIdealMax => idealTemperature + temperatureThreshold;
+    /// <summary>Below this, bamboo grows slower.</summary>
+    public float BambooIdealMin => idealTemperature - temperatureThreshold;
+    /// <summary>At or above this, water evaporates.</summary>
+    public float WaterEvaporatesAbove => hotWaterStartTemperature;
+    /// <summary>At or below this, water freezes.</summary>
+    public float WaterFreezesBelow => coldWaterLossStartTemperature;
+    /// <summary>Water refills at full speed between these two.</summary>
+    public float WaterComfortMin => comfortableWaterMinTemperature;
+    public float WaterComfortMax => comfortableWaterMaxTemperature;
+
     // =========================================================
     // FEEDBACK STATES (read by ResourceFeedback)
     // =========================================================

@@ -7,7 +7,7 @@ using TMPro;
 /// Put one next to the water bar, one next to the bamboo bar and one
 /// under the health bar, and pick the resource to explain.
 /// </summary>
-[RequireComponent(typeof(CanvasGroup))]
+/*[RequireComponent(typeof(CanvasGroup))]
 public class ResourceFeedback : MonoBehaviour
 {
     public enum WatchedResource
@@ -325,4 +325,4 @@ public class ResourceFeedback : MonoBehaviour
         alpha = Mathf.MoveTowards(alpha, target, speed * Time.unscaledDeltaTime);
         canvasGroup.alpha = alpha;
     }
-}
+}*/
