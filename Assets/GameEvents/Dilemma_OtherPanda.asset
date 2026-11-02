@@ -18,6 +18,7 @@ MonoBehaviour:
   choiceA: Stay
   choiceB: Go
   choiceC: 
+  narrationClip: {fileID: 8300000, guid: 1042f2c0eea014ca581323976c5d955b, type: 3}
   triggerType: 0
   requiredZoneName: Midway
   delaySeconds: 10

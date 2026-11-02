@@ -18,6 +18,7 @@ MonoBehaviour:
   choiceA: Through
   choiceB: Around
   choiceC: 
+  narrationClip: {fileID: 8300000, guid: f0d79d471698a4b3eaed39550d183bb1, type: 3}
   triggerType: 0
   requiredZoneName: Valley
   delaySeconds: 10

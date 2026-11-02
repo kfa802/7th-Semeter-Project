@@ -16,5 +16,12 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 7dd65e7d03d32204f8f8e83694222e90, type: 3}
+  narrationClip: {fileID: 8300000, guid: 2b11a0bd592904f0092048f33bbdf1e2, type: 3}
   narrationDelay: 0.5
+  subtitles:
+  - startTime: 0
+    endTime: 2
+    text: Bambussen har brug for vand for at vokse
+  - startTime: 2
+    endTime: 3
+    text: "i t\xF8rke visner den"

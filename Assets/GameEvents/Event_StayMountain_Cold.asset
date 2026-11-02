@@ -16,12 +16,15 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 7dd65e7d03d32204f8f8e83694222e90, type: 3}
+  narrationClip: {fileID: 8300000, guid: 9b73154bc58ae4f46bd13bfd7c80cc1b, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
     endTime: 4
-    text: ffsmnsmfbs n fvbfs
+    text: Bambus har brug for vand for at vokse
   - startTime: 4
-    endTime: 2
-    text: fhhhhhhhhhhhhhhh
+    endTime: 6
+    text: frosset vand kan den ikke bruge
+  - startTime: 6
+    endTime: 8
+    text: er der mindre og mindre mad

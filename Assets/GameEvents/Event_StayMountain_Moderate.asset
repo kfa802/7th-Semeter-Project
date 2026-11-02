@@ -16,5 +16,12 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 7dd65e7d03d32204f8f8e83694222e90, type: 3}
+  narrationClip: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
   narrationDelay: 0.5
+  subtitles:
+  - startTime: 0
+    endTime: 3
+    text: bambussen har brug for vand for at vokse
+  - startTime: 3
+    endTime: 6
+    text: "men en panda spiser store m\xE6ngder"

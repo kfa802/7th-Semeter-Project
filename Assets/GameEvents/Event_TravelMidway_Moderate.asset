@@ -16,3 +16,6 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Midway
+  narrationClip: {fileID: 8300000, guid: a9a7e5b27f2194378aa54b0367956f03, type: 3}
+  narrationDelay: 0.5
+  subtitles: []

@@ -19,6 +19,7 @@ MonoBehaviour:
   choiceA: Travel
   choiceB: Stay
   choiceC: 
+  narrationClip: {fileID: 8300000, guid: d2e8bcdd8098144dd862334d3afa4ece, type: 3}
   triggerType: 5
   requiredZoneName: Mountain
   delaySeconds: 0
