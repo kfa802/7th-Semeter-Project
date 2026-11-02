@@ -19,6 +19,7 @@ MonoBehaviour:
   choiceA: Travel
   choiceB: Stay
   choiceC: 
+  narrationClip: {fileID: 0}
   triggerType: 6
   requiredZoneName: Mountain
   delaySeconds: 0
@@ -34,8 +35,8 @@ MonoBehaviour:
     requiredChoice: 0
   prerequisiteDilemma: {fileID: 0}
   prerequisiteChoice: 0
-  choiceAEvent: {fileID: 11400000, guid: 2739bc9f7c5f13f4c81758813fe706b2, type: 2}
-  choiceBEvent: {fileID: 11400000, guid: c2d72d562eaf44b469bf76115dda1e2e, type: 2}
+  choiceAEvent: {fileID: 11400000, guid: b9940a80d2427f5458053dc698f7ece1, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: daa2251cc6e0bad43a72059d4e7a6ac0, type: 2}
   choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 0}

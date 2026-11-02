@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
 
 public enum SceneChangeTiming
 {
@@ -163,6 +165,55 @@ public class DilemmaManager : MonoBehaviour
     [Header("Ending Settings")]
     [SerializeField] private float endingDelay = 3f;
 
+    [Header("Narration")]
+    // Each Dilemma asset has its own 'Narration Clip'. It plays when the
+    // panel appears; the choice buttons stay locked until it has finished.
+
+    [Tooltip("Optional: the choice buttons to lock. Empty = every Button inside the Dilemma Panel.")]
+    [SerializeField] private List<Button> choiceButtons = new();
+
+    [Tooltip("Seconds after the panel appears before the narration starts (e.g. to let it animate in).")]
+    [SerializeField, Min(0f)] private float narrationDelay = 0.3f;
+
+    [Tooltip("Extra seconds after the narration ends before the buttons unlock.")]
+    [SerializeField, Min(0f)] private float unlockAfterNarration = 0.2f;
+
+    [SerializeField, Range(0f, 1f)] private float narrationVolume = 1f;
+
+    [Tooltip("Optional: send the narration through a group in your Audio Mixer.")]
+    [SerializeField] private AudioMixerGroup narrationMixerGroup;
+
+    [Tooltip("Optional: shown while the buttons are locked (e.g. a 'Listen...' text or icon).")]
+    [SerializeField] private GameObject listeningIndicator;
+
+    [Tooltip("Wait until a choice's narration has finished before the next " +
+             "dilemma may appear (so two voices never overlap).")]
+    [SerializeField] private bool waitForEventNarration = true;
+
+    [Header("Subtitles")]
+    [Tooltip("The subtitle bar (hidden when no line is showing).")]
+    [SerializeField] private GameObject subtitlePanel;
+
+    [Tooltip("The text inside the subtitle bar.")]
+    [SerializeField] private TMP_Text subtitleText;
+
+    [Tooltip("Seconds to fade a line in/out (needs a CanvasGroup on the panel; one is added automatically).")]
+    [SerializeField, Min(0.01f)] private float subtitleFadeTime = 0.15f;
+
+    private CanvasGroup subtitleGroup;
+
+    private AudioSource narrationSource;
+    private Coroutine narrationRoutine;
+    private Coroutine eventNarrationRoutine;
+    private bool choicesLocked;
+    private bool eventNarrationPlaying;
+
+    /// <summary>True while the narration about the player's last choice plays.</summary>
+    public bool EventNarrationPlaying => eventNarrationPlaying;
+
+    /// <summary>True while the narration plays and the choices are locked.</summary>
+    public bool ChoicesLocked => choicesLocked;
+
     [Header("Choice Click Sound")]
     [Tooltip("Played when the player clicks a choice button (A, B or C).")]
     [SerializeField] private AudioClip choiceClickSound;
@@ -251,6 +302,17 @@ public class DilemmaManager : MonoBehaviour
 
     private void Start()
     {
+        if (subtitlePanel != null)
+        {
+            subtitleGroup = subtitlePanel.GetComponent<CanvasGroup>();
+            if (subtitleGroup == null)
+                subtitleGroup = subtitlePanel.AddComponent<CanvasGroup>();
+
+            subtitleGroup.blocksRaycasts = false;
+            subtitleGroup.alpha = 0f;
+            subtitlePanel.SetActive(false);
+        }
+
         TelemetryManager.Instance?.DeclareDilemmas(dilemmas.Count);
     }
 
@@ -260,6 +322,10 @@ public class DilemmaManager : MonoBehaviour
             return;
 
         if (activeDilemma != null)
+            return;
+
+        // Let the narration about the last choice finish first.
+        if (waitForEventNarration && eventNarrationPlaying)
             return;
 
         string zoneName = environment.ActiveZoneName;
@@ -520,9 +586,22 @@ public class DilemmaManager : MonoBehaviour
 
         TelemetryManager.Instance?.DilemmaShown(activeDilemmaNumber, dilemma.name);
 
-        // The buttons are live immediately for now. When narration gates the
-        // buttons, call LogChoicesAvailable() instead; it overwrites this value.
-        TelemetryManager.Instance?.DilemmaChoiceAvailable(activeDilemmaNumber);
+        // Narration: lock the buttons until it has played. Without a clip
+        // the buttons are available straight away.
+        AudioClip narration = GetNarration(dilemma);
+
+        if (narrationRoutine != null)
+            StopCoroutine(narrationRoutine);
+
+        if (narration != null)
+        {
+            narrationRoutine = StartCoroutine(PlayNarration(narration));
+        }
+        else
+        {
+            SetChoicesLocked(false);
+            TelemetryManager.Instance?.DilemmaChoiceAvailable(activeDilemmaNumber);
+        }
 
         // Scene changes set to "When Shown".
         ApplySceneChanges(dilemma, -1);
@@ -571,7 +650,14 @@ public class DilemmaManager : MonoBehaviour
             return;
         }
 
+        if (choicesLocked)
+        {
+            Debug.Log("DilemmaManager: Choice ignored, the narration is still playing.");
+            return;
+        }
+
         PlayChoiceClick();
+        StopNarration();
 
         Dilemma resolvedDilemma = activeDilemma;
 
@@ -678,6 +764,206 @@ public class DilemmaManager : MonoBehaviour
                 nextDilemma.delaySeconds + " seconds."
             );
         }
+    }
+
+    // =========================================================
+    // NARRATION
+    // =========================================================
+
+    private AudioClip GetNarration(Dilemma dilemma)
+    {
+        return dilemma != null ? dilemma.narrationClip : null;
+    }
+
+    private IEnumerator PlayNarration(AudioClip clip)
+    {
+        SetChoicesLocked(true);
+
+        // Keep the buttons locked even if the panel turns them on while it animates in.
+        float wait = 0f;
+
+        while (wait < narrationDelay)
+        {
+            wait += Time.unscaledDeltaTime;
+            SetChoicesLocked(true);
+            yield return null;
+        }
+
+        GetNarrationSource();
+        narrationSource.clip = clip;
+        narrationSource.volume = narrationVolume;
+        narrationSource.Play();
+
+        LogNarrationStarted();
+        Debug.Log("DilemmaManager: Narration '" + clip.name + "' playing (" +
+                  clip.length.ToString("F1") + " s). Choices locked.");
+
+        // Wait for the clip to finish (with a time limit, in case audio is muted/paused).
+        float played = 0f;
+
+        while (played < clip.length + 1f &&
+               (narrationSource.isPlaying || played < 0.1f))
+        {
+            played += Time.unscaledDeltaTime;
+            SetChoicesLocked(true);
+            yield return null;
+        }
+
+        LogNarrationEnded();
+
+        wait = 0f;
+
+        while (wait < unlockAfterNarration)
+        {
+            wait += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        SetChoicesLocked(false);
+        LogChoicesAvailable();
+
+        Debug.Log("DilemmaManager: Narration finished. Choices unlocked.");
+        narrationRoutine = null;
+    }
+
+    private IEnumerator PlayEventNarration(AudioClip clip, float delay, List<SubtitleLine> subtitles)
+    {
+        eventNarrationPlaying = true;
+
+        if (delay > 0f)
+            yield return new WaitForSecondsRealtime(delay);
+
+        AudioSource source = GetNarrationSource();
+        source.clip = clip;
+        source.volume = narrationVolume;
+        source.Play();
+
+        Debug.Log("DilemmaManager: Choice narration '" + clip.name + "' playing (" +
+                  clip.length.ToString("F1") + " s).");
+
+        float played = 0f;
+
+        while (played < clip.length + 1f && (source.isPlaying || played < 0.1f))
+        {
+            played += Time.unscaledDeltaTime;
+
+            // Follow the clip's own playback time, so subtitles stay in sync.
+            UpdateSubtitle(subtitles, source.isPlaying ? source.time : clip.length, clip.length);
+            yield return null;
+        }
+
+        // Fade the last line out.
+        UpdateSubtitle(null, 0f, 0f);
+
+        while (subtitleGroup != null && subtitleGroup.alpha > 0f)
+        {
+            UpdateSubtitle(null, 0f, 0f);
+            yield return null;
+        }
+
+        if (subtitlePanel != null)
+            subtitlePanel.SetActive(false);
+
+        eventNarrationPlaying = false;
+        eventNarrationRoutine = null;
+    }
+
+    // Shows the line that belongs to this moment of the clip (or nothing).
+    private void UpdateSubtitle(List<SubtitleLine> lines, float time, float clipLength)
+    {
+        if (subtitlePanel == null || subtitleText == null)
+            return;
+
+        string current = null;
+
+        if (lines != null)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                SubtitleLine line = lines[i];
+
+                if (line == null || string.IsNullOrWhiteSpace(line.text))
+                    continue;
+
+                float end = line.endTime > line.startTime
+                    ? line.endTime
+                    : (i + 1 < lines.Count && lines[i + 1] != null
+                        ? lines[i + 1].startTime
+                        : clipLength);
+
+                if (time >= line.startTime && time < end)
+                {
+                    current = line.text;
+                    break;
+                }
+            }
+        }
+
+        if (current != null)
+        {
+            if (!subtitlePanel.activeSelf)
+                subtitlePanel.SetActive(true);
+
+            if (subtitleText.text != current)
+                subtitleText.text = current;
+        }
+
+        // Fade in when there is a line, out when there isn't.
+        if (subtitleGroup != null)
+        {
+            subtitleGroup.alpha = Mathf.MoveTowards(
+                subtitleGroup.alpha,
+                current != null ? 1f : 0f,
+                Time.unscaledDeltaTime / subtitleFadeTime);
+        }
+    }
+
+    private AudioSource GetNarrationSource()
+    {
+        if (narrationSource == null)
+        {
+            narrationSource = gameObject.AddComponent<AudioSource>();
+            narrationSource.playOnAwake = false;
+            narrationSource.spatialBlend = 0f;   // voice: same volume everywhere
+            narrationSource.ignoreListenerPause = true;
+        }
+
+        narrationSource.outputAudioMixerGroup = narrationMixerGroup;
+        return narrationSource;
+    }
+
+    private void StopNarration()
+    {
+        if (narrationRoutine != null)
+        {
+            StopCoroutine(narrationRoutine);
+            narrationRoutine = null;
+        }
+
+        if (narrationSource != null && narrationSource.isPlaying)
+            narrationSource.Stop();
+
+        SetChoicesLocked(false);
+    }
+
+    private void SetChoicesLocked(bool locked)
+    {
+        choicesLocked = locked;
+
+        // Which buttons: the ones listed, or every Button in the dilemma panel.
+        if (choiceButtons != null && choiceButtons.Count > 0)
+        {
+            foreach (Button b in choiceButtons)
+                if (b != null) b.interactable = !locked;
+        }
+        else if (dilemmaPanel != null)
+        {
+            foreach (Button b in dilemmaPanel.GetComponentsInChildren<Button>(true))
+                b.interactable = !locked;
+        }
+
+        if (listeningIndicator != null)
+            listeningIndicator.SetActive(locked);
     }
 
     private void PlayChoiceClick()
@@ -1139,6 +1425,16 @@ public class DilemmaManager : MonoBehaviour
         }
 
         executedEvents.Add(gameEvent);
+
+        // Narration explaining the choice the player made.
+        if (gameEvent.narrationClip != null)
+        {
+            if (eventNarrationRoutine != null)
+                StopCoroutine(eventNarrationRoutine);
+
+            eventNarrationRoutine = StartCoroutine(
+                PlayEventNarration(gameEvent.narrationClip, gameEvent.narrationDelay, gameEvent.subtitles));
+        }
 
         Debug.Log(
             "DilemmaManager: Executing GameEvent '" + gameEvent.name +

@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,6 +54,11 @@ public class Dilemma : ScriptableObject
     public string choiceB;
     public string choiceC;
 
+    [Header("Narration")]
+    [Tooltip("Voice-over played when this dilemma appears. " +
+             "The choice buttons unlock when it has finished. Empty = no narration.")]
+    public AudioClip narrationClip;
+
     [Header("Trigger")]
     public DilemmaTriggerType triggerType;
     public string requiredZoneName;
@@ -71,7 +75,7 @@ public class Dilemma : ScriptableObject
     public float temperatureThreshold = 30f;
 
     [Tooltip("Upper temperature boundary for a moderate-temperature dilemma.")]
-public float temperatureHighThreshold = 25f;
+    public float temperatureHighThreshold = 25f;
 
     [Tooltip("How long the temperature condition must persist, in seconds.")]
     [Min(0f)]
