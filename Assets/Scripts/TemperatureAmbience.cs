@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Looping background sounds that blend with the temperature:
@@ -59,6 +60,19 @@ public class TemperatureAmbience : MonoBehaviour
     [Tooltip("Seconds to fade between the normal and the travelling volume.")]
     [SerializeField, Min(0.01f)] private float travellingFadeTime = 1.5f;
 
+    [Header("While Narration Plays")]
+    [Tooltip("Optional: the DilemmaManager. Found automatically if empty.")]
+    [SerializeField] private DilemmaManager dilemmaManager;
+
+    [Tooltip("How loud the BACKGROUND sounds (wind, birds, heat) are while a " +
+             "narration plays. This does NOT change the voice. " +
+             "1 = not quieter at all, 0.4 = 40% (quieter), 0 = silent.")]
+    [FormerlySerializedAs("narrationVolume")]
+    [SerializeField, Range(0f, 1f)] private float backgroundVolumeDuringNarration = 0.4f;
+
+    [Tooltip("Seconds to fade down when a narration starts, and back up after.")]
+    [SerializeField, Min(0.01f)] private float narrationFadeTime = 0.6f;
+
     [Header("Pollution Silences The Birds")]
     [Tooltip("When pollution (0-1) is above this, the birds fade out completely. " +
              "0 = any pollution at all silences them.")]
@@ -70,6 +84,7 @@ public class TemperatureAmbience : MonoBehaviour
     [Header("Live Values (read only)")]
     [SerializeField] private float currentTemperature;
     [SerializeField] private bool travelling;
+    [SerializeField] private bool narrating;
     [SerializeField, Range(0f, 1f)] private float currentPollution;
     [SerializeField, Range(0f, 1f)] private float windLevel;
     [SerializeField, Range(0f, 1f)] private float birdsLevel;
@@ -81,6 +96,7 @@ public class TemperatureAmbience : MonoBehaviour
 
     private float startTime;
     private float travelMultiplier = 1f;
+    private float narrationMultiplier = 1f;
     private float birdsPollutionMultiplier = 1f;
 
     // =========================================================
@@ -94,6 +110,9 @@ public class TemperatureAmbience : MonoBehaviour
         heatSource = CreateLoop("DeadlyHeat", deadlyHeat);
 
         startTime = Time.time;
+
+        if (dilemmaManager == null)
+            dilemmaManager = FindFirstObjectByType<DilemmaManager>();
 
         // Start at the right mix (silent), so it fades in correctly.
         CalculateTargets(out windLevel, out birdsLevel, out heatLevel);
@@ -142,8 +161,9 @@ public class TemperatureAmbience : MonoBehaviour
 
         UpdateTravelling();
         UpdatePollution();
+        UpdateNarration();
 
-        float overall = fadeIn * travelMultiplier;
+        float overall = fadeIn * travelMultiplier * narrationMultiplier;
 
         // Square root = "equal power" blend: the total loudness stays
         // even while two sounds cross-fade (no dip in the middle).
@@ -165,6 +185,20 @@ public class TemperatureAmbience : MonoBehaviour
             travelMultiplier,
             target,
             Mathf.Max(Mathf.Abs(1f - travellingVolume), 0.01f) / travellingFadeTime * Time.deltaTime
+        );
+    }
+
+    // Duck the ambience while a narration plays, so the voice is clear.
+    private void UpdateNarration()
+    {
+        narrating = dilemmaManager != null && dilemmaManager.IsNarrating;
+
+        float target = narrating ? backgroundVolumeDuringNarration : 1f;
+
+        narrationMultiplier = Mathf.MoveTowards(
+            narrationMultiplier,
+            target,
+            Mathf.Max(1f - backgroundVolumeDuringNarration, 0.01f) / narrationFadeTime * Time.deltaTime
         );
     }
 

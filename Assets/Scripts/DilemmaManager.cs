@@ -190,6 +190,24 @@ public class DilemmaManager : MonoBehaviour
              "dilemma may appear (so two voices never overlap).")]
     [SerializeField] private bool waitForEventNarration = true;
 
+    [Header("Background During Narration")]
+    [Tooltip("How loud the scene-change sounds (city, road...) are while a " +
+             "narration plays. This does NOT change the voice. " +
+             "1 = not quieter, 0.4 = 40%, 0 = silent.")]
+    [SerializeField, Range(0f, 1f)] private float sceneSoundsDuringNarration = 0.4f;
+
+    [Tooltip("Seconds to fade the scene sounds down/up around a narration.")]
+    [SerializeField, Min(0.01f)] private float sceneSoundsFadeTime = 0.6f;
+
+    private class PlayingSceneSound
+    {
+        public AudioSource source;
+        public float volume;   // its own volume (incl. fade-in), before ducking
+    }
+
+    private readonly List<PlayingSceneSound> playingSceneSounds = new();
+    private float sceneSoundsDuck = 1f;
+
     [Header("Subtitles")]
     [Tooltip("The subtitle bar (hidden when no line is showing).")]
     [SerializeField] private GameObject subtitlePanel;
@@ -210,6 +228,9 @@ public class DilemmaManager : MonoBehaviour
 
     /// <summary>True while the narration about the player's last choice plays.</summary>
     public bool EventNarrationPlaying => eventNarrationPlaying;
+
+    /// <summary>True while ANY narration (dilemma or choice) is playing.</summary>
+    public bool IsNarrating => narrationSource != null && narrationSource.isPlaying;
 
     /// <summary>True while the narration plays and the choices are locked.</summary>
     public bool ChoicesLocked => choicesLocked;
@@ -1112,7 +1133,14 @@ public class DilemmaManager : MonoBehaviour
         source.maxDistance = sound.maxDistance;
         source.dopplerLevel = 0f;
         source.outputAudioMixerGroup = sound.mixerGroup;
-        source.volume = sound.fadeInTime > 0f ? 0f : sound.volume;
+        PlayingSceneSound playing = new PlayingSceneSound
+        {
+            source = source,
+            volume = sound.fadeInTime > 0f ? 0f : sound.volume
+        };
+
+        playingSceneSounds.Add(playing);
+        source.volume = playing.volume * sceneSoundsDuck;
 
         // Loops start at a random point so they don't sound "restarted".
         if (sound.loop)
@@ -1129,12 +1157,36 @@ public class DilemmaManager : MonoBehaviour
         while (sound.fadeInTime > 0f && elapsed < sound.fadeInTime && source != null)
         {
             elapsed += Time.deltaTime;
-            source.volume = Mathf.Lerp(0f, sound.volume, elapsed / sound.fadeInTime);
+            playing.volume = Mathf.Lerp(0f, sound.volume, elapsed / sound.fadeInTime);
             yield return null;
         }
 
-        if (source != null)
-            source.volume = sound.volume;
+        playing.volume = sound.volume;
+    }
+
+    // City/road sounds get quieter while any narration plays.
+    private void LateUpdate()
+    {
+        float target = IsNarrating ? sceneSoundsDuringNarration : 1f;
+
+        sceneSoundsDuck = Mathf.MoveTowards(
+            sceneSoundsDuck,
+            target,
+            Mathf.Max(1f - sceneSoundsDuringNarration, 0.01f) / sceneSoundsFadeTime * Time.unscaledDeltaTime
+        );
+
+        for (int i = playingSceneSounds.Count - 1; i >= 0; i--)
+        {
+            PlayingSceneSound s = playingSceneSounds[i];
+
+            if (s.source == null)
+            {
+                playingSceneSounds.RemoveAt(i);
+                continue;
+            }
+
+            s.source.volume = s.volume * sceneSoundsDuck;
+        }
     }
 
     private void SortForReveal(List<GameObject> objects, RevealOrder order)
