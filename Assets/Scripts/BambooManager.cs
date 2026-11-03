@@ -156,6 +156,24 @@ public class BambooManager : MonoBehaviour
     [SerializeField]
     private Color rottenColor = new Color(0.35f, 0.25f, 0.1f);
 
+    public enum RotSoundMoment
+    {
+        WhenRottingStarts,   // as it starts turning brown
+        WhenItCollapses      // as it shrinks away at the end
+    }
+
+    [Header("Rotting Sound")]
+    [Tooltip("Played when a bamboo rots. One is picked at random.")]
+    [SerializeField] private AudioClip[] rotSounds;
+
+    [Tooltip("When the rot sound plays.")]
+    [SerializeField] private RotSoundMoment rotSoundMoment = RotSoundMoment.WhenRottingStarts;
+
+    [SerializeField, Range(0f, 1f)] private float rotSoundVolume = 0.8f;
+
+    [Tooltip("Seconds after that moment before the sound plays.")]
+    [SerializeField, Min(0f)] private float rotSoundDelay = 0f;
+
     // =========================================================
     // SOUND
     // =========================================================
@@ -164,6 +182,12 @@ public class BambooManager : MonoBehaviour
     [Tooltip("Played while a new bamboo is growing. One is picked at random each time.")]
     [FormerlySerializedAs("sproutSounds")]
     [SerializeField] private AudioClip[] growingSounds;
+
+    [Tooltip("ON (recommended): the growing sound is started by an Animation Event " +
+             "you place on the exact frame of the Grow animation where the bamboo " +
+             "visibly grows (needs BambooGrowSoundEvent on the bamboo's Animator object). " +
+             "OFF: it starts at 'Grow Sound Start In Animation' % of the animation.")]
+    [SerializeField] private bool useAnimationEventForGrowSound = true;
 
     [Tooltip("Name of the grow state in the bamboo's Animator. The sound only plays " +
              "while this animation is playing.")]
@@ -1310,7 +1334,27 @@ public class BambooManager : MonoBehaviour
 
         rottingSet.Add(bamboo);
 
+        if (rotSoundMoment == RotSoundMoment.WhenRottingStarts)
+            PlayRotSound(bamboo);
+
         RefreshZoneStatistics();
+    }
+
+    private void PlayRotSound(GameObject bamboo)
+    {
+        if (bamboo == null)
+            return;
+
+        spotOf.TryGetValue(bamboo, out BambooGrowthSpot spot);
+
+        PlayBambooSound(
+            rotSounds,
+            bamboo.transform.position,
+            spot != null ? spot.Zone : null,
+            false,
+            rotSoundDelay,
+            rotSoundVolume
+        );
     }
 
     // =========================================================
@@ -1342,6 +1386,9 @@ public class BambooManager : MonoBehaviour
 
                 if (state.timer >= rotDuration)
                 {
+                    if (rotSoundMoment == RotSoundMoment.WhenItCollapses)
+                        PlayRotSound(state.bamboo);
+
                     state.shrinking = true;
                     state.timer = 0f;
                     state.startScale = state.bamboo.transform.localScale;
@@ -1537,6 +1584,104 @@ public class BambooManager : MonoBehaviour
     // =========================================================
 
     public string GrowStateName => growStateName;
+    public bool UseAnimationEventForGrowSound => useAnimationEventForGrowSound;
+
+    /// <summary>
+    /// Called by BambooGrowSoundEvent (an Animation Event on the Grow clip).
+    /// Plays the growing sound only for a bamboo that is really growing,
+    /// at a good speed.
+    /// </summary>
+    public void PlayGrowSoundFromAnimation(Transform from, bool log = false)
+    {
+        log |= debugSounds;
+
+        if (from == null)
+            return;
+
+        if (!useAnimationEventForGrowSound)
+        {
+            if (log)
+                Debug.LogWarning("BambooSound: Event ignored, 'Use Animation Event For Grow Sound' is OFF on BambooManager.", this);
+            return;
+        }
+
+        // Find the registered bamboo (the holder) this animation belongs to.
+        Transform current = from;
+        BambooGrowthSpot spot = null;
+
+        while (current != null && !spotOf.TryGetValue(current.gameObject, out spot))
+            current = current.parent;
+
+        if (current == null || spot == null)
+        {
+            if (log)
+                Debug.Log("BambooSound: Event ignored, '" + from.name +
+                          "' is not a growing bamboo (e.g. a starting bamboo or the eating bamboo).", from);
+            return;
+        }
+
+        if (!IsStillGrowing(current.gameObject))
+        {
+            if (log)
+                Debug.Log("BambooSound: Event ignored, '" + spot.name + "' is already fully grown " +
+                          "(the marker may be later than the bamboo's Grow Time).", from);
+            return;
+        }
+
+        float speed = EnvironmentSystem.Instance != null
+            ? EnvironmentSystem.Instance.TemperatureGrowthFactor
+            : 1f;
+
+        if (speed < minGrowthSpeedForGrowingSound)
+        {
+            if (log)
+                Debug.Log("BambooSound: Event skipped, growing too slowly (speed " +
+                          speed.ToString("F2") + ", needs " +
+                          minGrowthSpeedForGrowingSound.ToString("F2") + ").", from);
+            return;
+        }
+
+        if (growingSounds == null || growingSounds.Length == 0)
+        {
+            if (log)
+                Debug.LogWarning("BambooSound: Event fired, but 'Growing Sounds' on BambooManager is EMPTY.", this);
+            return;
+        }
+
+        if (Time.time - lastBreakSoundTime < noGrowSoundAfterBreak)
+        {
+            if (log)
+                Debug.Log("BambooSound: Event skipped, a bamboo broke less than " +
+                          noGrowSoundAfterBreak + " s ago ('No Grow Sound After Break').", this);
+            return;
+        }
+
+        if (growSoundOnlyWhenOnScreen && !IsOnScreen(current.position))
+        {
+            if (log)
+                Debug.Log("BambooSound: Event skipped, the bamboo is off screen ('Grow Sound Only When On Screen').", this);
+            return;
+        }
+
+        if (onlyInActiveZone &&
+            (EnvironmentSystem.Instance == null || EnvironmentSystem.Instance.ActiveZone != spot.Zone))
+        {
+            if (log)
+                Debug.Log("BambooSound: Event skipped, the bamboo is not in the panda's zone ('Only In Active Zone').", this);
+            return;
+        }
+
+        AudioSource source = PlayBambooSound(growingSounds, current.position, spot.Zone);
+
+        if (log)
+            Debug.Log(source != null
+                ? "BambooSound: PLAYING growing sound '" + source.clip.name + "' for '" + spot.name + "'."
+                : "BambooSound: Sound could not play (empty slot in Growing Sounds?).", this);
+
+        if (source != null)
+            spot.AttachGrowingSound(source);
+    }
+
     public float GrowSoundStartInAnimation => growSoundStartInAnimation;
     // Always leave at least 10% of the animation to start in, so a
     // frame can't jump over a too-small window.

@@ -67,6 +67,15 @@ public class BambooGrowthSpot : MonoBehaviour
 
     private Coroutine growthCoroutine;
 
+    // Growing sound started by the Animation Event, handed over so it
+    // can still be faded out if growth slows or the animation ends.
+    private AudioSource eventGrowingSource;
+
+    public void AttachGrowingSound(AudioSource source)
+    {
+        eventGrowingSource = source;
+    }
+
     private static readonly HashSet<GameObject> claimed =
         new HashSet<GameObject>();
 
@@ -461,6 +470,7 @@ public class BambooGrowthSpot : MonoBehaviour
             // Start: the grow animation is playing at a good speed,
             // and we're not too far into it.
             if (!soundStarted &&
+                !manager.UseAnimationEventForGrowSound &&
                 inGrowAnimation &&
                 fastEnough &&
                 animationProgress >= manager.GrowSoundStartInAnimation &&
@@ -492,6 +502,14 @@ public class BambooGrowthSpot : MonoBehaviour
                     manager.MinGrowthSpeedForSound.ToString("F2") + ").", this);
             }
 
+            // Pick up a sound started by the Animation Event.
+            if (eventGrowingSource != null)
+            {
+                growingSource = eventGrowingSource;
+                eventGrowingSource = null;
+                soundStarted = true;
+            }
+
             // Stop: growth slowed down, or the grow animation has ended.
             if (growingSource != null && growingSource.isPlaying)
             {
@@ -509,7 +527,16 @@ public class BambooGrowthSpot : MonoBehaviour
             yield return null;
         }
 
-        if (manager.DebugSounds && !soundStarted)
+        if (manager.DebugSounds && !soundStarted && manager.UseAnimationEventForGrowSound)
+        {
+            Debug.Log(
+                "BambooSound: '" + name + "' finished growing without a growing sound. " +
+                "Check that the Grow clip has an Animation Event calling PlayGrowSound, " +
+                "and that BambooGrowSoundEvent sits on the same object as the Animator " +
+                "(or growth was too slow).",
+                this);
+        }
+        else if (manager.DebugSounds && !soundStarted)
         {
             Debug.Log(
                 "BambooSound: '" + name + "' finished growing without a growing sound. " +
