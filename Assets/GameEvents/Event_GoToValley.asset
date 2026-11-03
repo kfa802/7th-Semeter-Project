@@ -20,14 +20,14 @@ MonoBehaviour:
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2
     text: 'Pandas need a lot of space. '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 4
     text: 'Each one eats huge amounts of bamboo,  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 4
+    endTime: 6
     text: 'and there has to be enough for both.  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 6
+    endTime: 8
     text: 'Pandas only come together for a few days a year to mate. '

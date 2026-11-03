@@ -31,8 +31,8 @@ MonoBehaviour:
   blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: 0cb605a0320b23d48bfe81902b4d41bb, type: 2}
   prerequisiteChoice: 1
-  choiceAEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
-  choiceBEvent: {fileID: 11400000, guid: 77487f0415bae2c40a923b39edfe1137, type: 2}
+  choiceAEvent: {fileID: 11400000, guid: bf4054c51b7a948e492c5c79aadddc06, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 1155dc223c8ac415cb703ce8aa5e6691, type: 2}
   choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 0}
   choiceBEnding: {fileID: 0}

@@ -20,11 +20,11 @@ MonoBehaviour:
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2
     text: 'The two pandas share the same bamboo, '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 4
     text: 'and it is quickly used up.  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 4
     text: 'Pandas only come together for a few days a year to mate. '
