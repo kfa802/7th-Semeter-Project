@@ -16,3 +16,15 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
+  narrationClip: {fileID: 0}
+  narrationDelay: 0.5
+  subtitles:
+  - startTime: 0
+    endTime: 0
+    text: 'The two pandas share the same bamboo, '
+  - startTime: 0
+    endTime: 0
+    text: 'and it is quickly used up.  '
+  - startTime: 0
+    endTime: 0
+    text: 'Pandas only come together for a few days a year to mate. '

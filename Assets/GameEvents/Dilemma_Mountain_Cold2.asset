@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Cold2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: LOW TEMPATURE
-  description: 'High up on the mountain, the panda is searching for food. The cold
-    has frozen the water, and the bamboo is growing more slowly. There is less and
-    less to eat. '
+  description: "The amount of bamboo has dropped drastically. Only a few scattered
+    bamboo shoots remain on the mountain, and there don\u2019t seem to be any more
+    coming. "
   choiceA: Travel
   choiceB: Stay
   choiceC: 

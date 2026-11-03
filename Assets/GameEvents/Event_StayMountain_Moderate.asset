@@ -21,7 +21,19 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 3
-    text: bambussen har brug for vand for at vokse
+    text: 'Bamboo needs water to grow, '
   - startTime: 3
     endTime: 6
-    text: "men en panda spiser store m\xE6ngder"
+    text: 'and there is enough water here. '
+  - startTime: 3
+    endTime: 6
+    text: 'But a panda eats huge amounts, '
+  - startTime: 3
+    endTime: 6
+    text: 'and the bamboo is being eaten faster than it grows. '
+  - startTime: 3
+    endTime: 6
+    text: 'Pandas normally follow the bamboo '
+  - startTime: 3
+    endTime: 6
+    text: and travel down the mountain when it becomes scarce.

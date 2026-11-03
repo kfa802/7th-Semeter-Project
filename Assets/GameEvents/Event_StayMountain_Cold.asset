@@ -21,10 +21,19 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 4
-    text: Bambus har brug for vand for at vokse
+    text: Bamboo needs water to grow,
   - startTime: 4
     endTime: 6
-    text: frosset vand kan den ikke bruge
+    text: "and it can\u2019t use frozen water."
   - startTime: 6
     endTime: 8
-    text: er der mindre og mindre mad
+    text: That means there is less and less food.
+  - startTime: 6
+    endTime: 8
+    text: Pandas normally follow the bamboo
+  - startTime: 6
+    endTime: 8
+    text: and travel down the mountain
+  - startTime: 6
+    endTime: 8
+    text: when it becomes scarce.

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Moderate
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: MODERATE TEMPATURE
-  description: 'High up on the mountain, the panda is searching for food. The weather
-    is mild, and the water is flowing. But there is only a little bamboo on the mountain,
-    and the panda has been eating it for several days. '
+  description: High up on the mountain, the panda is searching for food. The weather
+    is mild and the water is flowing. But there is only a little bamboo on the mountain,
+    and the panda has been eating it for several days.
   choiceA: Travel
   choiceB: Stay
   choiceC: 

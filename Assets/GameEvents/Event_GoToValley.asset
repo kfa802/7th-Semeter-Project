@@ -16,3 +16,18 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Valley
+  narrationClip: {fileID: 0}
+  narrationDelay: 0.5
+  subtitles:
+  - startTime: 0
+    endTime: 0
+    text: 'Pandas need a lot of space. '
+  - startTime: 0
+    endTime: 0
+    text: 'Each one eats huge amounts of bamboo,  '
+  - startTime: 0
+    endTime: 0
+    text: 'and there has to be enough for both.  '
+  - startTime: 0
+    endTime: 0
+    text: 'Pandas only come together for a few days a year to mate. '

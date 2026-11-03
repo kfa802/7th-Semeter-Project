@@ -18,4 +18,19 @@ MonoBehaviour:
   targetZoneName: Midway
   narrationClip: {fileID: 8300000, guid: e7b4d9cbc036c422abba4669fe73afac, type: 3}
   narrationDelay: 0.5
-  subtitles: []
+  subtitles:
+  - startTime: 0
+    endTime: 0
+    text: 'Bamboo needs water to grow, '
+  - startTime: 0
+    endTime: 0
+    text: "and it can\u2019t use frozen water. "
+  - startTime: 0
+    endTime: 0
+    text: 'The valley is warmer, so there is more bamboo.  '
+  - startTime: 0
+    endTime: 0
+    text: 'Pandas follow the bamboo and travel up  '
+  - startTime: 0
+    endTime: 0
+    text: 'and down the mountains throughout the year. '

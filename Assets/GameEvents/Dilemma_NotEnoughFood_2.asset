@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: THERE ISN'T ENOUGH FOOD
-  description: "The two pandas have now been together for a long time. But the bamboo
-    in the valley is almost gone, and there isn\u2019t enough food for two pandas.
-    Should they go to separate areas, or stay? "
+  description: 'Now that the pandas have been together for so long, there is no food
+    left. The pandas are stressed and will no longer get the nutrition they need
+    if they stay together. Should they each go to their own area, or stay? '
   choiceA: Stay
   choiceB: Go
   choiceC: 

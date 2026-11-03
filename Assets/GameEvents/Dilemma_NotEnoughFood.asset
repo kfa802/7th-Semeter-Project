@@ -15,7 +15,7 @@ MonoBehaviour:
   title: THERE ISN'T ENOUGH FOOD
   description: "The two pandas have now been together for a long time. But the bamboo
     in the valley is almost gone, and there isn\u2019t enough food for two pandas.
-    Should they go to separate areas, or stay? "
+    Should they each go to their own area, or stay? "
   choiceA: Stay
   choiceB: Go
   choiceC: 

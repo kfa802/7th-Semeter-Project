@@ -26,23 +26,15 @@ MonoBehaviour:
     overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
     produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
   titleEN: Staying In The Valley
-  descriptionEN: 'The panda stays in the valley, where the forrest and the village
-    meets. There is bamboo and water enough to get by, but there is also, noise,
-    trafik and humans near by. Every new disturbance, makes it more difficult to
-    find peace.
-
-
-    In the valley humans and vild animals compete for the space.
-    It is also these places where there is the most bamboo, so the animals and the
-    humans needs meet here. It is possible to share the space, if some areas are
-    protected, and the forest stays connected, but it reqires that is is palaned
-    for.
-
-
-    When you go to the zoo you are supporting the pandas, as they are
-    a part of a breeding program for CHina Wildlife Conservation Association which
-    ensures the pandas longterm survival. If you have to buy bamboo products, then
-    you can look for FSC-labled products which gaurentee that important habitats
-    do not get destroyed. '
+  descriptionEN: "The panda stays in the valley, where forest and village meet. There
+    is enough bamboo and water, but also noise, traffic, and people nearby. Every
+    new disturbance makes it harder to find peace. \n\nIn the valleys, people and
+    wild animals compete for space. These are also the places with the most bamboo,
+    so human and animal needs meet here. Sharing space is possible if some areas
+    are protected and the forest stays connected, but it takes planning. \n\nWhen
+    you visit the zoo, you support the pandas. They are part of a breeding program
+    run by the China Wildlife Conservation Association, which helps secure the panda\u2019s
+    long-term survival. When buying bamboo products, look for the FSC label, which
+    guarantees that important habitats haven\u2019t been destroyed. "
   endingImage: {fileID: 0}
   endingDescription: 

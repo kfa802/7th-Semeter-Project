@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Hot2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: HIGH TEMPATURE
-  description: 'High up on the mountain, the panda is searching for food. The heat
-    has caused a drought, and the bamboo is withering. There is less and less to
-    eat. '
+  description: "The amount of bamboo has dropped drastically. Only a few scattered
+    bamboo shoots remain on the mountain, and there don\u2019t seem to be any more
+    coming. "
   choiceA: Travel
   choiceB: Stay
   choiceC: 

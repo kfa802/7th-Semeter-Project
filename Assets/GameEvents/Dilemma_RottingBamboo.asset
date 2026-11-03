@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: THE BAMBOO IS WITHERING
-  description: 'The bamboo in the valley has begun to wither, so the panda has to
-    look for new paths and must choose where to be next season. '
+  description: The bamboo in the valley has started to wither, so the panda has to
+    look for new paths and decide where to be next season.
   choiceA: Stay
   choiceB: Other panda
   choiceC: Mountains

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: THE ROAD
-  description: 'A nearby village needs a road. It can go straight through the forest
-    or around it, which is longer and more expensive. '
+  description: A nearby village needs a road. It can go straight through the forest,
+    or around it, which is longer and more expensive.
   choiceA: Through
   choiceB: Around
   choiceC: 

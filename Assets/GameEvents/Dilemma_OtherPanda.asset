@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: A NEW PANDA
-  description: 'The panda is on its way down into the valley, but along the way it
+  description: 'The panda is on its way down to the valley, but along the way it
     meets a new panda. Should they go their separate ways, or stay together? '
   choiceA: Stay
   choiceB: Go
