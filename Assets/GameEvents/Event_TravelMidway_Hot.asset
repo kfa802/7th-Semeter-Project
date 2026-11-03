@@ -16,21 +16,21 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Midway
-  narrationClip: {fileID: 8300000, guid: 34ea22934c5d44193a97d961bd0acb6e, type: 3}
+  narrationClip: {fileID: 8300000, guid: c12719a84a36a4c198bfacf6bbc55a4b, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2
     text: 'Bamboo needs water to grow, '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 3.5
     text: 'and in a drought it withers.  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 3.5
+    endTime: 6.5
     text: 'The valley is damper, so there is more bamboo.  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 6.5
+    endTime: 8.5
     text: 'Pandas follow the bamboo and travel up  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 8.5
+    endTime: 11
     text: 'and down the mountains throughout the year. '

@@ -16,24 +16,24 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Midway
-  narrationClip: {fileID: 8300000, guid: a9a7e5b27f2194378aa54b0367956f03, type: 3}
+  narrationClip: {fileID: 8300000, guid: 2fb7842c352c24e11a7b25547fd74022, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2
     text: 'Bamboo needs water to grow, '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 4
     text: 'and there is enough water here.  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 4
+    endTime: 6.5
     text: 'But a panda eats huge amounts, and the '
-  - startTime: 0
-    endTime: 0
+  - startTime: 6.5
+    endTime: 9
     text: 'bamboo is being eaten faster than it grows. '
-  - startTime: 0
-    endTime: 0
+  - startTime: 9
+    endTime: 11.5
     text: 'Pandas follow the bamboo and travel up  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 11.5
+    endTime: 14
     text: and down the mountains throughout the year.

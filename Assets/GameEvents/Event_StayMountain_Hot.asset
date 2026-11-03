@@ -16,24 +16,24 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 2b11a0bd592904f0092048f33bbdf1e2, type: 3}
+  narrationClip: {fileID: 8300000, guid: 832748022708c491986dc2f665c1bdb3, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 2
+    endTime: 1.8
     text: Bamboo needs water to grow,
-  - startTime: 2
-    endTime: 3
+  - startTime: 1.8
+    endTime: 3.8
     text: and in a drought it withers.
-  - startTime: 2
-    endTime: 3
+  - startTime: 3.8
+    endTime: 6
     text: That means there is less and less food.
-  - startTime: 2
-    endTime: 3
+  - startTime: 6
+    endTime: 8
     text: Pandas normally follow the bamboo
-  - startTime: 2
-    endTime: 3
+  - startTime: 8
+    endTime: 9.5
     text: and travel down the mountain
-  - startTime: 2
-    endTime: 3
+  - startTime: 9.5
+    endTime: 11
     text: when it becomes scarce.
