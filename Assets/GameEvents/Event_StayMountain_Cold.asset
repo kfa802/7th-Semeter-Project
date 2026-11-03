@@ -31,9 +31,9 @@ MonoBehaviour:
   - startTime: 6
     endTime: 8
     text: Pandas normally follow the bamboo
-  - startTime: 6
-    endTime: 8.5
+  - startTime: 8
+    endTime: 9.5
     text: and travel down the mountain
-  - startTime: 8.5
+  - startTime: 9.5
     endTime: 11
     text: when it becomes scarce.
