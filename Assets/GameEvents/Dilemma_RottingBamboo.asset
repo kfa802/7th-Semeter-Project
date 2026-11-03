@@ -18,7 +18,7 @@ MonoBehaviour:
   choiceA: Stay
   choiceB: Other panda
   choiceC: Mountains
-  narrationClip: {fileID: 8300000, guid: 504ffce74ab644bf1872d9fa9faa48a9, type: 3}
+  narrationClip: {fileID: 8300000, guid: 39a72621db63d4167ac6cc486843a1f3, type: 3}
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 0

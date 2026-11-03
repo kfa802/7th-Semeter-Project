@@ -16,18 +16,18 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Valley
-  narrationClip: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 43ee4e51555c54dc4a1564716072a1ec, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 2
+    endTime: 3
     text: 'A panda eats huge amounts of bamboo every day. '
-  - startTime: 2
-    endTime: 4
+  - startTime: 3
+    endTime: 5
     text: 'When the bamboo runs out, '
-  - startTime: 4
-    endTime: 6
+  - startTime: 5
+    endTime: 6.5
     text: 'the best solution is to spread out  '
-  - startTime: 6
-    endTime: 8
+  - startTime: 6.5
+    endTime: 9
     text: 'so there is enough food for each of them.  '

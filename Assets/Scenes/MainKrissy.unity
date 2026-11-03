@@ -34932,8 +34932,13 @@ MonoBehaviour:
   rotDuration: 8
   shrinkDuration: 1.5
   rottenColor: {r: 0.35, g: 0.25, b: 0.1, a: 1}
+  rotSounds: []
+  rotSoundMoment: 0
+  rotSoundVolume: 0.8
+  rotSoundDelay: 0
   growingSounds:
   - {fileID: 8300000, guid: 7228a7f2a8d436b44bd4c4c24ad86ad3, type: 3}
+  useAnimationEventForGrowSound: 1
   growStateName: Grow
   growSoundStartInAnimation: 0.2
   growSoundLatestStartInAnimation: 0.5
@@ -62391,7 +62396,7 @@ MonoBehaviour:
   narrationDelay: 0.3
   unlockAfterNarration: 0.2
   narrationVolume: 1
-  narrationMixerGroup: {fileID: 0}
+  narrationMixerGroup: {fileID: -340433604882751907, guid: a3324b4d8bba841209aa949f4bef45a1, type: 2}
   listeningIndicator: {fileID: 0}
   waitForEventNarration: 1
   sceneSoundsDuringNarration: 0.4
@@ -73761,7 +73766,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1773304994
 MonoBehaviour:
   m_ObjectHideFlags: 0

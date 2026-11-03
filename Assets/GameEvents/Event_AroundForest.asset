@@ -16,15 +16,15 @@ MonoBehaviour:
   pollutionChange: 0.8
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 73abe953687e143f2ab2fa15b2a8e857, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2
     text: 'The forest stays intact. '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2
+    endTime: 4
     text: 'Construction noise stresses the panda, '
-  - startTime: 0
-    endTime: 0
+  - startTime: 4
+    endTime: 6
     text: 'but the bamboo is still there.  '

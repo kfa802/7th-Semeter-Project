@@ -16,15 +16,15 @@ MonoBehaviour:
   pollutionChange: 1
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 61d2a73c3526f4459a6a142d94bc1a8d, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 0
+    endTime: 2.5
     text: 'The road splits the forest in two. '
-  - startTime: 0
-    endTime: 0
+  - startTime: 2.5
+    endTime: 3.8
     text: 'Bamboo is cleared,  '
-  - startTime: 0
-    endTime: 0
+  - startTime: 3.8
+    endTime: 7
     text: 'and noise and pollution reach the animals. '
