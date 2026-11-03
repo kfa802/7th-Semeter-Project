@@ -35,4 +35,8 @@ MonoBehaviour:
     survival. When buying bamboo products, look for the FSC label, which guarantees
     that important habitats haven\u2019t been destroyed. "
   endingImage: {fileID: 0}
+  narrationDA1: {fileID: 0}
+  narrationDA2: {fileID: 0}
+  narrationEN1: {fileID: 8300000, guid: 04e44fefe84f640388cd781fbee7b62a, type: 3}
+  narrationEN2: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
   endingDescription: dadadad

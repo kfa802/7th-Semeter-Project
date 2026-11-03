@@ -27,13 +27,17 @@ MonoBehaviour:
   titleEN: On The Mountain
   descriptionEN: "The panda is high in the mountains, where water is scarce and bamboo
     grows slowly. It\u2019s peaceful, but the shoots are far apart, and finding enough
-    food takes a lot of time and energy.\n\nInfo: Living in the mountains isn\u2019t
-    necessarily bad for pandas. They thrive best here in summer, when the heat is
-    moderate. In winter they find more bamboo in the valleys, which is why they travel
-    up and down the mountains through the year.\n\nWhen you visit the zoo, you support
-    the pandas. They are part of a breeding program run by the China Wildlife Conservation
+    food takes a lot of time and energy.\n\nLiving in the mountains isn\u2019t necessarily
+    bad for pandas. They thrive best here in summer, when the heat is moderate. In
+    winter they find more bamboo in the valleys, which is why they travel up and
+    down the mountains through the year.\n\nWhen you visit the zoo, you support the
+    pandas. They are part of a breeding program run by the China Wildlife Conservation
     Association, which helps secure the panda\u2019s long-term survival. When buying
     bamboo products, look for the FSC label, which guarantees that important habitats
     haven\u2019t been destroyed."
   endingImage: {fileID: 0}
+  narrationDA1: {fileID: 0}
+  narrationDA2: {fileID: 0}
+  narrationEN1: {fileID: 8300000, guid: 923e66d4a4d7844c9aceab860462accc, type: 3}
+  narrationEN2: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
   endingDescription: mbsdmbsdb

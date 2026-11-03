@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "New Ending", menuName = "Panda/Ending")]
 public class Ending : ScriptableObject
@@ -16,6 +17,24 @@ public class Ending : ScriptableObject
 
     [Header("Image")]
     public Sprite endingImage;
+
+    [Header("Narration (Danish): played in order")]
+    public AudioClip narrationDA1;
+    public AudioClip narrationDA2;
+
+    [Header("Narration (English): played in order")]
+    public AudioClip narrationEN1;
+    public AudioClip narrationEN2;
+
+    public List<AudioClip> GetNarrations(bool english)
+    {
+        var clips = new List<AudioClip>();
+        AudioClip a = english ? narrationEN1 : narrationDA1;
+        AudioClip b = english ? narrationEN2 : narrationDA2;
+        if (a != null) clips.Add(a);
+        if (b != null) clips.Add(b);
+        return clips;   // no fallback to the other language on purpose
+    }
 
     // Old single-language field, kept so existing assets still work.
     [HideInInspector] public string endingDescription;

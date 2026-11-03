@@ -75274,6 +75274,12 @@ MonoBehaviour:
   continueLabel: {fileID: 0}
   continueTextDA: "Forts\xE6t"
   continueTextEN: Continue
+  narrationMixerGroup: {fileID: -340433604882751907, guid: a3324b4d8bba841209aa949f4bef45a1, type: 2}
+  narrationVolume: 1
+  delayBeforeFirstClip: 0.5
+  gapBetweenClips: 0.5
+  continueButton: {fileID: 0}
+  lockContinueUntilNarrationDone: 0
 --- !u!114 &1830591902
 MonoBehaviour:
   m_ObjectHideFlags: 0
