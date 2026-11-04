@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameEvent
   temperatureChange: 0
   pollutionChange: 0
-  requestTravel: 0
+  requestTravel: 1
   targetZoneName: Valley
   narrationClip: {fileID: 8300000, guid: 5b0c51c863faa4aa3acd80f864b2c31c, type: 3}
   narrationDelay: 0.5
