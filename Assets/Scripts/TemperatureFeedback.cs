@@ -73,6 +73,11 @@ public class TemperatureFeedback : MonoBehaviour
 
     private string shownText;
     private string candidateText;
+
+    // Does the line on screen tell the player something is wrong (orange)?
+    private bool builtBad;
+    private bool candidateBad;
+    private bool shownBad;
     private float candidateSince;
 
     private bool bambooProblemShown;
@@ -125,6 +130,8 @@ public class TemperatureFeedback : MonoBehaviour
 
         string text = null;
 
+        builtBad = false;
+
         if (env != null && env.ActiveZone != null && !IsBusy())
             text = BuildText(env);
 
@@ -134,6 +141,7 @@ public class TemperatureFeedback : MonoBehaviour
         if (text != candidateText)
         {
             candidateText = text;
+            candidateBad = builtBad;
             candidateSince = Time.unscaledTime;
         }
 
@@ -142,6 +150,7 @@ public class TemperatureFeedback : MonoBehaviour
         if (settled && candidateText != shownText)
         {
             shownText = candidateText;
+            shownBad = candidateBad;
 
             if (shownText != null && messageText != null)
             {
@@ -151,6 +160,9 @@ public class TemperatureFeedback : MonoBehaviour
         }
 
         UpdateVisuals();
+
+        // A warning on screen = ask the player to adjust the temperature.
+        SliderHintArrow.SetTemperaturePrompt(this, shownText != null && shownBad);
     }
 
     // =========================================================
@@ -242,8 +254,11 @@ public class TemperatureFeedback : MonoBehaviour
         goodUntil = Time.unscaledTime + goodMessageTime;
     }
 
-    private static string Colour(string text, Color colour)
+    private string Colour(string text, Color colour)
     {
+        if (colour == badColor && !string.IsNullOrWhiteSpace(text))
+            builtBad = true;
+
         if (string.IsNullOrWhiteSpace(text))
             return null;
 

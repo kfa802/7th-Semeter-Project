@@ -30,6 +30,22 @@ public class EnvironmentSystem : MonoBehaviour
              "found. Seconds the change takes.")]
     [SerializeField, Min(0.1f)] private float temperatureTransitionTime = 8f;
 
+    [Header("Human Disturbance (Pollution)")]
+    [Tooltip("How fast pollution moves towards its new value at a comfortable " +
+             "temperature, in % per second. Lower = slower, calmer shifts.")]
+    [SerializeField, Min(0.01f)] private float pollutionChangeSpeed = 0.5f;
+
+    [Tooltip("Temperature where pollution changes slowest. The further the " +
+             "temperature is from this (hotter or colder), the faster it changes.")]
+    [SerializeField] private float calmTemperature = 20f;
+
+    [Tooltip("How much faster pollution changes at the zone's hottest/coldest " +
+             "temperature (4 = four times faster than at the calm temperature).")]
+    [SerializeField, Range(1f, 10f)] private float extremeTemperatureSpeed = 4f;
+
+    [Tooltip("Live: current pollution change speed in % per second (read only).")]
+    [SerializeField] private float currentPollutionSpeed;
+
     [Header("Bamboo Growth By Temperature")]
     [Tooltip("Overall speed of ALL bamboo growth (normal, slow and fast). " +
              "1 = as now, 0.5 = everything twice as slow, 0.25 = four times as slow.")]
@@ -236,6 +252,7 @@ public class EnvironmentSystem : MonoBehaviour
         }
 
         UpdateWater();
+        UpdatePollution();
 
         TemperatureGrowthFactor = GetTemperatureGrowthFactor();
     }
@@ -304,7 +321,8 @@ public class EnvironmentSystem : MonoBehaviour
 
         // Zonen indlæser sine egne gemte værdier.
         water = Mathf.Clamp(zone.water, 0f, 100f);
-        pollution = Mathf.Clamp01(zone.pollution);
+        // Pollution comes from the zone's baseline for this temperature.
+        pollution = zone.GetTargetPollution(temperature);
 
         TemperatureGrowthFactor = GetTemperatureGrowthFactor();
 
@@ -527,14 +545,59 @@ public class EnvironmentSystem : MonoBehaviour
     // POLLUTION
     // =========================================================
 
-    public void SetPollution(float value)
+    // Pollution follows the zone's baseline for the current temperature
+    // (plus any extra from events), moving there gradually.
+    private void UpdatePollution()
     {
-        pollution = Mathf.Clamp01(value);
+        if (activeZone == null)
+            return;
+
+        float target = activeZone.GetTargetPollution(temperature);
+
+        // How extreme is the temperature? 0 at the calm temperature,
+        // 1 at the zone's hottest or coldest end.
+        float extreme = temperature >= calmTemperature
+            ? Mathf.InverseLerp(calmTemperature, Mathf.Max(maxTemperature, calmTemperature + 0.01f), temperature)
+            : Mathf.InverseLerp(calmTemperature, Mathf.Min(minTemperature, calmTemperature - 0.01f), temperature);
+
+        currentPollutionSpeed =
+            pollutionChangeSpeed * Mathf.Lerp(1f, extremeTemperatureSpeed, extreme);
+
+        pollution = Mathf.MoveTowards(
+            pollution,
+            target,
+            currentPollutionSpeed / 100f * Time.deltaTime);
     }
 
+    /// <summary>Sets the extra disturbance so the current pollution becomes 'value' (0-1).</summary>
+    public void SetPollution(float value)
+    {
+        if (activeZone == null)
+        {
+            pollution = Mathf.Clamp01(value);
+            return;
+        }
+
+        float baselineNow = activeZone.GetTargetPollution(temperature) * 100f -
+                            activeZone.disturbanceFromEvents;
+
+        activeZone.disturbanceFromEvents = Mathf.Clamp01(value) * 100f - baselineNow;
+    }
+
+    /// <summary>
+    /// Adds extra disturbance to the zone (amount in 0-1, e.g. 0.3 = +30%),
+    /// on top of its temperature baseline. Used by GameEvents.
+    /// </summary>
     public void ChangePollution(float amount)
     {
-        SetPollution(pollution + amount);
+        if (activeZone == null)
+        {
+            pollution = Mathf.Clamp01(pollution + amount);
+            return;
+        }
+
+        activeZone.disturbanceFromEvents = Mathf.Clamp(
+            activeZone.disturbanceFromEvents + amount * 100f, -100f, 100f);
     }
 
     // =========================================================

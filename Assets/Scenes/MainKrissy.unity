@@ -6814,6 +6814,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1159956426}
@@ -6882,6 +6886,7 @@ MonoBehaviour:
   bobDirection: {x: 0, y: -1}
   reverseDirection: 0
   hideWhenSliderLocked: 1
+  onlyAtStartAndWhenPrompted: 1
   hideAfterFirstUse: 0
   hideWhileUsing: 1
   showAgainAfter: 5
@@ -12548,8 +12553,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -13091,6 +13096,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1811299578}
@@ -13721,6 +13730,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 878965563}
@@ -13851,6 +13864,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 465312413}
@@ -14260,6 +14277,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -14585,6 +14606,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -14879,6 +14904,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -15130,81 +15159,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d2b6568820d4946eb9d686b5307abf02, type: 3}
   m_PrefabInstance: {fileID: 272878363}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &276492871
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 276492872}
-  - component: {fileID: 276492874}
-  - component: {fileID: 276492873}
-  m_Layer: 5
-  m_Name: Fill
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &276492872
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276492871}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 524704586}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &276492873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276492871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &276492874
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276492871}
-  m_CullTransparentMesh: 1
 --- !u!1001 &277329873
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16275,6 +16229,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 346005704}
@@ -17014,97 +16972,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &377163655
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 377163656}
-  - component: {fileID: 377163657}
-  m_Layer: 5
-  m_Name: PollutionSlider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &377163656
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 377163655}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1878688207}
-  - {fileID: 524704586}
-  - {fileID: 1768031070}
-  - {fileID: 901206170}
-  m_Father: {fileID: 2033208196}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 45.4, y: 26.4}
-  m_SizeDelta: {x: 160, y: 19}
-  m_Pivot: {x: 0.5, y: 0}
---- !u!114 &377163657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 377163655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.8901961}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1784890876}
-  m_FillRect: {fileID: 276492872}
-  m_HandleRect: {fileID: 1784890875}
-  m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 0
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &379122032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17581,6 +17448,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -17710,6 +17581,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 981375680}
@@ -17822,6 +17697,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 0
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
   enterSoundVolume: 0.8
@@ -18292,6 +18173,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -19474,42 +19359,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 524577865}
   m_CullTransparentMesh: 1
---- !u!1 &524704585
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 524704586}
-  m_Layer: 5
-  m_Name: Fill Area
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &524704586
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524704585}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 276492872}
-  m_Father: {fileID: 377163656}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.25}
-  m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 8.279997, y: 3.9}
-  m_SizeDelta: {x: -54.439995, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &534428187
 GameObject:
   m_ObjectHideFlags: 0
@@ -19573,6 +19422,7 @@ MonoBehaviour:
   bobDirection: {x: 0, y: 1}
   reverseDirection: 0
   hideWhenSliderLocked: 1
+  onlyAtStartAndWhenPrompted: 1
   hideAfterFirstUse: 0
   hideWhileUsing: 1
   showAgainAfter: 5
@@ -25359,6 +25209,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1555685248}
@@ -26331,6 +26185,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 184346167}
@@ -32696,6 +32554,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1509108731}
@@ -33467,6 +33329,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 783751337}
@@ -33830,6 +33696,7 @@ MonoBehaviour:
   hungryHealthLossPerSecond: 1
   veryHungryHealthLossPerSecond: 3
   waterAffectsHealth: 0
+  canBeThirsty: 0
   waterHealthThreshold: 15
   maximumHealthLossPerSecond: 2
   waterDamagePower: 3
@@ -33851,6 +33718,8 @@ MonoBehaviour:
   heartbeatSmoothSpeed: 1.5
   heartbeatMixerGroup: {fileID: 0}
   hotTemperature: 25
+  secondsUntilHot: 6.5
+  canBeCold: 0
   coldTemperature: 0
   stress: 0
   stressedThreshold: 50
@@ -34808,6 +34677,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 100241671}
@@ -34912,6 +34785,8 @@ MonoBehaviour:
   autoFindSpots: 1
   autoFindBamboo: 1
   bambooTag: Bamboo
+  waterAffectsGrowth: 0
+  naturalGrowthEnabled: 0
   naturalGrowthWaterThreshold: 15
   minimumNaturalGrowthInterval: 10
   maximumNaturalGrowthInterval: 30
@@ -36110,6 +35985,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -36165,6 +36044,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 223310763}
@@ -36516,6 +36399,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1434885578}
@@ -37642,16 +37529,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901206169}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 377163656}
+  m_Father: {fileID: 2033208196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 143.1}
+  m_AnchoredPosition: {x: 332.39996, y: -162.66444}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &901206171
@@ -37674,7 +37561,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Pollution: 100%'
+  m_text: 100%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
@@ -37683,8 +37570,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4282996314
+  m_fontColor: {r: 0.3529412, g: 0.3372549, b: 0.28627452, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -37701,13 +37588,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 8
+  m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -37740,7 +37627,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 48.577072, y: 0, z: 40.133057, w: 25.742453}
+  m_margin: {x: 69.36086, y: 0, z: 58.391624, w: 25.742453}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -37804,6 +37691,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -37859,6 +37750,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -38313,6 +38208,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d2b6568820d4946eb9d686b5307abf02, type: 3}
   m_PrefabInstance: {fileID: 926004062}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &932857012
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 932857013}
+  - component: {fileID: 932857015}
+  - component: {fileID: 932857014}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &932857013
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932857012}
+  m_LocalRotation: {x: -0, y: -0, z: 0.3017226, w: 0.95339584}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5739729, y: 0.611827, z: 0.14}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2033208196}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 35.122}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 373, y: -102.6}
+  m_SizeDelta: {x: 44, y: 44}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &932857014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932857012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 94419bc58765d4199a994956ed671eb0, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &932857015
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932857012}
+  m_CullTransparentMesh: 1
 --- !u!1 &939691832
 GameObject:
   m_ObjectHideFlags: 0
@@ -49970,9 +49940,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PollutionUI
   pollutionPanel: {fileID: 2033208195}
-  pollutionSlider: {fileID: 377163657}
+  pollutionSlider: {fileID: 0}
   pollutionText: {fileID: 901206171}
+  needle: {fileID: 1784890875}
+  angleAtZero: 110
+  angleAtFull: -110
   environment: {fileID: 1431297040}
+  prefix: 
+  alwaysVisible: 1
   visibilityThreshold: 0.04
   fillSpeed: 0.5
 --- !u!4 &1074660712
@@ -50187,7 +50162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -17.9}
+  m_AnchoredPosition: {x: 0, y: -16.7}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1080516760
@@ -50237,8 +50212,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -50276,7 +50251,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 6.9451656}
+  m_margin: {x: 0, y: 0, z: 29.235428, w: 6.9451656}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -50845,6 +50820,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -57650,6 +57629,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1797190664}
@@ -57705,6 +57688,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -58154,6 +58141,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 540722184}
@@ -58738,6 +58729,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 0
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
   enterSoundVolume: 0.8
@@ -60394,6 +60391,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1546074941}
@@ -61092,6 +61093,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -61839,6 +61844,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1264384120}
@@ -62749,6 +62758,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -62785,7 +62798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 956fe993738f0b9469a0c5834412cb83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentSystem
-  panda: {fileID: 0}
+  panda: {fileID: 725808055}
   temperatureTransitionCurve:
     serializedVersion: 2
     m_Curve:
@@ -62811,6 +62824,17 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   temperatureTransitionTime: 8
+  pollutionChangeSpeed: 0.5
+  calmTemperature: 20
+  extremeTemperatureSpeed: 4
+  currentPollutionSpeed: 0
+  overallGrowthSpeed: 0.25
+  slowBelow: 0
+  fastAbove: 25
+  slowestSpeed: 0.1
+  fastestSpeed: 1.5
+  coldDropCurve: 0.5
+  heatBoostCurve: 0.7
 --- !u!4 &1431297041
 Transform:
   m_ObjectHideFlags: 0
@@ -63470,6 +63494,214 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d2b6568820d4946eb9d686b5307abf02, type: 3}
   m_PrefabInstance: {fileID: 1439539991}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1440267214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1440267216}
+  - component: {fileID: 1440267215}
+  m_Layer: 0
+  m_Name: Narrative
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1440267215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440267214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e104cc8e7a1a245a87f2b3f743a1d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeManager
+  panda: {fileID: 725808051}
+  pandaPathMover: {fileID: 725808057}
+  dilemmaManager: {fileID: 1410872503}
+  dilemmaUI: {fileID: 1927953439}
+  panel: {fileID: 1539525340}
+  lineText: {fileID: 141545504}
+  minShowTime: 5
+  secondsPerWord: 0.3
+  fadeTime: 0.3
+  gapBetweenLines: 20
+  quietAtStart: 10
+  voiceVolume: 1
+  voiceMixerGroup: {fileID: 0}
+  lines:
+  - label: Hot - low health
+    text: 'Oh no! The heat is making your panda feel sick! '
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: 25
+    temperatureMax: 100
+    checkHealth: 1
+    healthBelow: 80
+    requireHeatDamage: 1
+    checkBamboo: 0
+    bambooAtOrBelow: 0
+    checkDisturbance: 0
+    disturbanceMin: 0
+    disturbanceMax: 100
+    disturbanceTrend: 0
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 3
+  - label: Hot - disturbance rising
+    text: Human disturbance increases when the temperature rises.
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: 25
+    temperatureMax: 100
+    checkHealth: 0
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 0
+    bambooAtOrBelow: 2
+    checkDisturbance: 1
+    disturbanceMin: 15
+    disturbanceMax: 100
+    disturbanceTrend: 1
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 2
+  - label: Bamboo low
+    text: You are running low on food for the panda. Bamboo grows faster in higher
+      temperatures.
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: -100
+    temperatureMax: 25
+    checkHealth: 0
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 1
+    bambooAtOrBelow: 4
+    checkDisturbance: 0
+    disturbanceMin: 0
+    disturbanceMax: 100
+    disturbanceTrend: 0
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 2
+  - label: Cold - disturbance falling
+    text: Human disturbance decreases in low temperatures.
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: -100
+    temperatureMax: 15
+    checkHealth: 0
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 0
+    bambooAtOrBelow: 2
+    checkDisturbance: 1
+    disturbanceMin: 0
+    disturbanceMax: 100
+    disturbanceTrend: 2
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  - label: Cold - Low Bamboo
+    text: 'Brrr! It''s too cold for the bamboo to grow! '
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: -100
+    temperatureMax: 0
+    checkHealth: 0
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 1
+    bambooAtOrBelow: 3
+    checkDisturbance: 0
+    disturbanceMin: 0
+    disturbanceMax: 100
+    disturbanceTrend: 2
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  - label: High disturbance + low health
+    text: 'All the noise from the city is stressing your panda! '
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 0
+    temperatureMin: -100
+    temperatureMax: 0
+    checkHealth: 1
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 1
+    bambooAtOrBelow: 3
+    checkDisturbance: 1
+    disturbanceMin: 25
+    disturbanceMax: 100
+    disturbanceTrend: 0
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  - label: Low health
+    text: 'Your panda is getting weaker! It needs more bamboo! '
+    voice: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 0
+    temperatureMin: -100
+    temperatureMax: 0
+    checkHealth: 1
+    healthBelow: 40
+    requireHeatDamage: 0
+    checkBamboo: 0
+    bambooAtOrBelow: 2
+    checkDisturbance: 0
+    disturbanceMin: 25
+    disturbanceMax: 100
+    disturbanceTrend: 0
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  currentLine: 
+  disturbanceTrendNow: 0
+--- !u!4 &1440267216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440267214}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1564.883, y: 0, z: 5052.9478}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1440385869
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63684,6 +63916,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 536004376}
@@ -63830,6 +64066,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1026562024}
@@ -63885,6 +64125,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1684097534}
@@ -63912,15 +64156,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.44
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.47
+      value: -1.15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.88
+      value: -1.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2cb65292e05934041bac57e082186a82, type: 3}
       propertyPath: m_LocalRotation.w
@@ -64477,7 +64721,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a5633a3d2300048559381a70d31011a2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca1d2469f249e4c448d03f99208227a7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -64787,6 +65031,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1068827779}
@@ -71013,6 +71261,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 812500361}
@@ -71166,6 +71418,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -72375,6 +72631,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1669494542}
@@ -72653,6 +72913,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1182199522}
@@ -72758,7 +73022,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1726763581
 RectTransform:
   m_ObjectHideFlags: 0
@@ -73714,42 +73978,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d2b6568820d4946eb9d686b5307abf02, type: 3}
   m_PrefabInstance: {fileID: 1765740286}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1768031069
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1768031070}
-  m_Layer: 5
-  m_Name: Handle Slide Area
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1768031070
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768031069}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1784890875}
-  m_Father: {fileID: 377163656}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5.9000015, y: 3.3}
-  m_SizeDelta: {x: -55.6, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1773304993
 GameObject:
   m_ObjectHideFlags: 0
@@ -73826,7 +74054,7 @@ GameObject:
   - component: {fileID: 1784890877}
   - component: {fileID: 1784890876}
   m_Layer: 5
-  m_Name: Handle
+  m_Name: PollutionNeedle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73839,17 +74067,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1784890874}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 3.91, y: 4.56, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1768031070}
+  m_Father: {fileID: 2033208196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 334.69995, y: -129.96445}
+  m_SizeDelta: {x: 20, y: 19.808899}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1784890876
 MonoBehaviour:
@@ -73871,7 +74099,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: f5dbe3319380c42e9ac511a640e6358e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -74568,6 +74796,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -74894,6 +75126,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 743416523}
@@ -75015,6 +75251,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -75368,6 +75608,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -76146,7 +76390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1878688207
 RectTransform:
   m_ObjectHideFlags: 0
@@ -76156,15 +76400,15 @@ RectTransform:
   m_GameObject: {fileID: 1878688206}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 3.5, z: 1}
+  m_LocalScale: {x: 0.48, y: 7.98, z: 3.04}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 377163656}
+  m_Father: {fileID: 2033208196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 334.5, y: -123.2}
+  m_SizeDelta: {x: -43.080017, y: -25.09555}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1878688208
 MonoBehaviour:
@@ -76186,7 +76430,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 49a2702b9a83149dfb4aaf42126cd8a1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 53f101da5b4444222877574807b35ff9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -76678,6 +76922,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -82763,6 +83011,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 103745400}
@@ -83703,12 +83955,15 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 377163656}
+  - {fileID: 932857013}
+  - {fileID: 1878688207}
+  - {fileID: 1784890875}
+  - {fileID: 901206170}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -55, y: -401}
+  m_AnchoredPosition: {x: -45, y: -230.7}
   m_SizeDelta: {x: 203.08002, y: 69.1911}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2033208197
@@ -84310,6 +84565,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -84721,6 +84980,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 0
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds:
   - {fileID: 8300000, guid: 289919290b6ee42458e4b2b38a1645ec, type: 3}
@@ -84808,6 +85073,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1318687697}
@@ -85087,6 +85356,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 879542185}
@@ -85689,6 +85962,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 2
+  maxPoopDelay: 10
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 379122033}
@@ -86461,3 +86738,4 @@ SceneRoots:
   - {fileID: 1261443033}
   - {fileID: 59449190}
   - {fileID: 1215938108}
+  - {fileID: 1440267216}

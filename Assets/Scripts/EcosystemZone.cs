@@ -163,9 +163,40 @@ public class EcosystemZone : MonoBehaviour
     // POLLUTION
     // =========================================================
 
-    [Header("Pollution")]
+    [Header("Human Disturbance (Pollution)")]
+    [Tooltip("Human disturbance (%) when the temperature is at or above 'Hot From'.")]
+    [Range(0f, 100f)] public float disturbanceHot = 20f;
+
+    [Tooltip("Human disturbance (%) between 'Mild From' and 'Hot From'.")]
+    [Range(0f, 100f)] public float disturbanceMild = 10f;
+
+    [Tooltip("Human disturbance (%) below 'Mild From'.")]
+    [Range(0f, 100f)] public float disturbanceCold = 0f;
+
+    [Tooltip("From this temperature the 'Hot' value is used (25 = 25-40°C).")]
+    public float disturbanceHotFrom = 25f;
+
+    [Tooltip("From this temperature the 'Mild' value is used (15 = 15-24°C). Below it: 'Cold'.")]
+    public float disturbanceMildFrom = 15f;
+
+    [Tooltip("Extra disturbance (%) added on top, e.g. by dilemma choices " +
+             "(a GameEvent's Pollution Change). Changes during play.")]
+    [Range(-100f, 100f)] public float disturbanceFromEvents = 0f;
+
+    [Tooltip("Current pollution (0-1) of this zone. Saved when the panda leaves.")]
     [Range(0f, 1f)]
     public float pollution = 0f;
+
+    /// <summary>Target pollution (0-1) for a given temperature, incl. event extra.</summary>
+    public float GetTargetPollution(float temperature)
+    {
+        float baseline =
+            temperature >= disturbanceHotFrom ? disturbanceHot :
+            temperature >= disturbanceMildFrom ? disturbanceMild :
+            disturbanceCold;
+
+        return Mathf.Clamp01((baseline + disturbanceFromEvents) / 100f);
+    }
 
     // =========================================================
     // ENTER SOUND

@@ -191,7 +191,8 @@ public class TemperatureAmbience : MonoBehaviour
     // Duck the ambience while a narration plays, so the voice is clear.
     private void UpdateNarration()
     {
-        narrating = dilemmaManager != null && dilemmaManager.IsNarrating;
+        narrating = (dilemmaManager != null && dilemmaManager.IsNarrating) ||
+                    NarrativeManager.IsSpeaking;
 
         float target = narrating ? backgroundVolumeDuringNarration : 1f;
 

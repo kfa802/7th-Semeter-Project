@@ -56,6 +56,10 @@ public class SliderHintArrow : MonoBehaviour
     [Tooltip("Hide while the slider is locked (travelling, dilemma open).")]
     [SerializeField] private bool hideWhenSliderLocked = true;
 
+    [Tooltip("On: the arrows only show (1) before the player has touched the slider, " +
+             "and (2) while a hint/narrative asks the player to adjust the temperature.")]
+    [SerializeField] private bool onlyAtStartAndWhenPrompted = true;
+
     [Tooltip("On: the arrow disappears for good once the player has used the slider.")]
     [SerializeField] private bool hideAfterFirstUse = false;
 
@@ -80,6 +84,11 @@ public class SliderHintArrow : MonoBehaviour
     private bool used;
     private bool dragging;
 
+    // A prompt asked the player to adjust the temperature, and they
+    // haven't touched the slider since.
+    private bool waitingForTouch;
+    private bool promptWasActive;
+
     private void Awake()
     {
         arrow = GetComponent<Image>();
@@ -102,7 +111,14 @@ public class SliderHintArrow : MonoBehaviour
             if (trigger == null)
                 trigger = slider.gameObject.AddComponent<EventTrigger>();
 
-            AddEvent(trigger, EventTriggerType.PointerDown, () => { dragging = true; MarkUsed(); });
+            AddEvent(trigger, EventTriggerType.PointerDown, () =>
+            {
+                dragging = true;
+                MarkUsed();
+
+                if (slider.interactable)
+                    waitingForTouch = false;
+            });
             AddEvent(trigger, EventTriggerType.PointerUp, () => { dragging = false; MarkUsed(); });
         }
 
@@ -190,6 +206,35 @@ public class SliderHintArrow : MonoBehaviour
         SyncGlowRect();
     }
 
+    // ---------- "Adjust the temperature" requests from other scripts ----------
+    private static readonly System.Collections.Generic.HashSet<Object> prompts =
+        new System.Collections.Generic.HashSet<Object>();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetPrompts() => prompts.Clear();
+
+    /// <summary>
+    /// Call with on = true while a hint/narrative tells the player to change the
+    /// temperature, and false when it stops. 'source' is the calling script.
+    /// </summary>
+    public static void SetTemperaturePrompt(Object source, bool on)
+    {
+        if (source == null)
+            return;
+
+        if (on) prompts.Add(source);
+        else prompts.Remove(source);
+    }
+
+    public static bool TemperaturePromptActive
+    {
+        get
+        {
+            prompts.RemoveWhere(p => p == null);
+            return prompts.Count > 0;
+        }
+    }
+
     private bool ShouldShow()
     {
         if (slider == null)
@@ -197,6 +242,27 @@ public class SliderHintArrow : MonoBehaviour
 
         if (hideWhenSliderLocked && !slider.interactable)
             return false;
+
+        if (onlyAtStartAndWhenPrompted)
+        {
+            // A NEW prompt appeared: show the arrows until the next touch,
+            // even after the prompt itself has disappeared.
+            bool promptNow = TemperaturePromptActive;
+
+            if (promptNow && !promptWasActive)
+                waitingForTouch = true;
+
+            promptWasActive = promptNow;
+
+            if (dragging)
+                return false;
+
+            // Before the first touch: always show.
+            if (!used)
+                return true;
+
+            return waitingForTouch;
+        }
 
         if (hideAfterFirstUse && used)
             return false;

@@ -28,7 +28,21 @@ public class BambooGrowthSpot : MonoBehaviour
     // =========================================================
 
     [Header("Timing")]
+    [Tooltip("Only used when 'Random Poop Delay' is off.")]
     [SerializeField] private float poopToBambooDelay = 5f;
+
+    [Tooltip("On: the bamboo starts growing a random number of seconds after the poop appears.")]
+    [SerializeField] private bool randomPoopDelay = true;
+
+    [Tooltip("Shortest wait (seconds) from poop to bamboo.")]
+    [SerializeField, Min(0f)] private float minPoopDelay = 5f;
+
+    [Tooltip("Longest wait (seconds) from poop to bamboo.")]
+    [SerializeField, Min(0f)] private float maxPoopDelay = 20f;
+
+    [Tooltip("On: the wait is slower when it's cold / faster when it's hot. " +
+             "Off: the wait is real seconds.")]
+    [SerializeField] private bool poopDelayFollowsTemperature = false;
     [SerializeField] private float growTime = 10f;
 
     [Tooltip("Random variation of the grow time, so bamboo don't grow " +
@@ -266,6 +280,32 @@ public class BambooGrowthSpot : MonoBehaviour
     }
 
 
+    // Right-click this component in Play mode -> grow a bamboo here right
+    // away (no poop, no waiting), so you can watch and hear ONE bamboo grow.
+    [ContextMenu("TEST: Grow bamboo here now")]
+    private void TestGrowNow()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.Log("Press Play first.", this);
+            return;
+        }
+
+        if (!IsAvailable)
+        {
+            Debug.Log("'" + name + "' already has a bamboo. Pick an empty spot.", this);
+            return;
+        }
+
+        occupied = true;
+        isGrowing = true;
+
+        // A negative extra delay cancels the poop-to-bamboo wait.
+        growthCoroutine = StartCoroutine(GrowthSequence(0f, true));
+
+        Debug.Log("TEST: growing a bamboo at '" + name + "' now.", this);
+    }
+
     // =========================================================
     // FREE SPOT
     // =========================================================
@@ -289,7 +329,7 @@ public class BambooGrowthSpot : MonoBehaviour
     // GROWTH SEQUENCE
     // =========================================================
 
-    private IEnumerator GrowthSequence(float extraDelay)
+    private IEnumerator GrowthSequence(float extraDelay, bool skipPoopDelay = false)
     {
         GameObject poop = null;
 
@@ -304,7 +344,14 @@ public class BambooGrowthSpot : MonoBehaviour
         }
 
         // Wait before creating bamboo (plus any stagger delay).
-        float totalDelay = poopToBambooDelay + extraDelay;
+        float poopDelay = randomPoopDelay
+            ? Random.Range(Mathf.Min(minPoopDelay, maxPoopDelay), Mathf.Max(minPoopDelay, maxPoopDelay))
+            : poopToBambooDelay;
+
+        if (skipPoopDelay)
+            poopDelay = 0f;
+
+        float totalDelay = Mathf.Max(0f, poopDelay + extraDelay);
         float waited = 0f;
 
         while (waited < totalDelay)
@@ -319,8 +366,12 @@ public class BambooGrowthSpot : MonoBehaviour
                     ? EnvironmentSystem.Instance.TemperatureGrowthFactor
                     : 1f;
 
+            if (!poopDelayFollowsTemperature)
+            {
+                waited += Time.deltaTime;
+            }
             // Only progress when water is available.
-            if (waterMultiplier > 0f)
+            else if (waterMultiplier > 0f)
             {
                 waited += Time.deltaTime
                           * temperatureMultiplier
