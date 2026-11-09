@@ -12,8 +12,6 @@ public class EnvironmentUI : MonoBehaviour
 
     [Header("Sliders")]
     [SerializeField] private Slider temperatureSlider;
-    [SerializeField] private Slider waterSlider;
-    [SerializeField] private Slider bambooSlider;
     [SerializeField] private Slider pandaHealthSlider;
 
     [Header("Text")]
@@ -23,19 +21,9 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text pandaHealthText;
 
     [Header("Visual Slider Speeds")]
-    [SerializeField] private float bambooSliderSpeed = 4f;
     [SerializeField] private float pandaHealthSliderSpeed = 20f;
 
-    [Tooltip("How fast the water bar slides, in % per second " +
-             "(e.g. down to 0 when travelling, up again on arrival).")]
-    [SerializeField] private float waterSliderSpeed = 15f;
-
-    private EcosystemZone lastWaterZone;
-
     private bool ignoreSliderCallback;
-
-    private bool bambooInitialized;
-    private EcosystemZone lastBambooZone;
 
     private int currentBambooCount;
     private int totalBambooCount;
@@ -92,31 +80,6 @@ public class EnvironmentUI : MonoBehaviour
             );
         }
 
-        // WATER
-        if (waterSlider != null)
-        {
-            waterSlider.minValue = 0f;
-            waterSlider.maxValue = 100f;
-            waterSlider.wholeNumbers = false;
-            waterSlider.interactable = false;
-
-            // Start at the current water level immediately
-            // (0 if the panda is not in a zone).
-            waterSlider.SetValueWithoutNotify(GetTargetWater());
-            lastWaterZone = environment.ActiveZone;
-        }
-
-        // BAMBOO
-        if (bambooSlider != null)
-        {
-            bambooSlider.minValue = 0f;
-            bambooSlider.maxValue = 100f;
-            bambooSlider.wholeNumbers = false;
-            bambooSlider.interactable = false;
-
-            bambooSlider.SetValueWithoutNotify(0f);
-        }
-
         // PANDA HEALTH
         if (pandaHealthSlider != null)
         {
@@ -128,7 +91,7 @@ public class EnvironmentUI : MonoBehaviour
             pandaHealthSlider.SetValueWithoutNotify(panda.Health);
         }
 
-        UpdateBambooDisplay();
+        UpdateBambooCount();
         UpdateText();
     }
 
@@ -141,12 +104,8 @@ public class EnvironmentUI : MonoBehaviour
         if (environment == null || panda == null)
             return;
 
-        // WATER
-        // Slides gradually towards the value from EnvironmentSystem.
-        UpdateWaterDisplay();
-
-        // BAMBOO
-        UpdateBambooDisplay();
+        // BAMBOO (count only, for the bamboo text and other scripts)
+        UpdateBambooCount();
 
         // TEMPERATURE
         UpdateTemperatureDisplay();
@@ -209,41 +168,10 @@ public class EnvironmentUI : MonoBehaviour
     }
 
     // =====================================================
-    // WATER DISPLAY
+    // WATER / BAMBOO VALUES (no sliders)
     // =====================================================
 
-    private void UpdateWaterDisplay()
-    {
-        if (environment == null || waterSlider == null)
-            return;
-
-        EcosystemZone currentZone = environment.ActiveZone;
-        float targetWater = GetTargetWater();
-
-        if (currentZone != null && currentZone != lastWaterZone)
-        {
-            // Arrived in a zone (also the first zone at game start):
-            // jump straight to that zone's water, like the bamboo bar.
-            waterSlider.SetValueWithoutNotify(targetWater);
-        }
-        else
-        {
-            // Slide gradually: down to 0 while travelling,
-            // and along with temperature changes inside a zone.
-            waterSlider.SetValueWithoutNotify(
-                Mathf.MoveTowards(
-                    waterSlider.value,
-                    targetWater,
-                    waterSliderSpeed * Time.deltaTime
-                )
-            );
-        }
-
-        lastWaterZone = currentZone;
-    }
-
     // The real water value of the active zone, or 0 while travelling.
-    // The zone's actual water is still kept in EnvironmentSystem / the zone.
     private float GetTargetWater()
     {
         if (environment == null || environment.ActiveZone == null)
@@ -252,15 +180,8 @@ public class EnvironmentUI : MonoBehaviour
         return Mathf.Clamp(environment.Water, 0f, 100f);
     }
 
-    // =====================================================
-    // BAMBOO DISPLAY
-    // =====================================================
-
-    private void UpdateBambooDisplay()
+    private void UpdateBambooCount()
     {
-        if (bambooSlider == null)
-            return;
-
         BambooManager manager = BambooManager.Instance;
 
         EcosystemZone activeZone =
@@ -270,45 +191,12 @@ public class EnvironmentUI : MonoBehaviour
         {
             currentBambooCount = 0;
             totalBambooCount = 0;
-
-            bambooSlider.SetValueWithoutNotify(0f);
-
             return;
         }
 
-        // Actual bamboo objects in this zone.
-        currentBambooCount =
-            manager.GetCurrentCountForZone(activeZone);
-
-        // Total growth spots available in this zone.
-        totalBambooCount =
-            manager.GetCapacityForZone(activeZone);
-
-        // Convert the bamboo count into a slider percentage.
-        float targetPercentage = totalBambooCount > 0
-            ? Mathf.Clamp01(
-                (float)currentBambooCount / totalBambooCount
-              ) * 100f
-            : 0f;
-
-        // Set the correct starting value immediately.
-        // Also reset immediately when entering another zone.
-        if (!bambooInitialized || lastBambooZone != activeZone)
-        {
-            bambooSlider.SetValueWithoutNotify(targetPercentage);
-
-            bambooInitialized = true;
-            lastBambooZone = activeZone;
-        }
-        else
-        {
-            // Animate bamboo changes after initialization.
-            bambooSlider.value = Mathf.MoveTowards(
-                bambooSlider.value,
-                targetPercentage,
-                bambooSliderSpeed * Time.deltaTime
-            );
-        }
+        // Fully grown bamboo in this zone / total growth spots.
+        currentBambooCount = manager.GetCurrentCountForZone(activeZone);
+        totalBambooCount = manager.GetCapacityForZone(activeZone);
     }
 
     // =====================================================
@@ -403,10 +291,8 @@ public class EnvironmentUI : MonoBehaviour
 
     public bool HasBambooZone => totalBambooCount > 0;
 
-    // What the water bar currently shows, so the warning
-    // follows the bar as it slides (0 while travelling).
-    public float WaterPercent =>
-        waterSlider != null ? waterSlider.value : GetTargetWater();
+    // The active zone's water (0 while travelling).
+    public float WaterPercent => GetTargetWater();
 
     public bool HasActiveZone =>
         environment != null && environment.ActiveZone != null;

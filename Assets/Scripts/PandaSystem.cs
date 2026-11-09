@@ -84,6 +84,15 @@ public class PandaSystem : MonoBehaviour
     // WATER
     // =========================================================
 
+    [Header("Water And Health")]
+    [Tooltip("Off: water never changes the panda's health. " +
+             "The panda can still be 'thirsty' (mood, drinking sound) below the threshold.")]
+    [SerializeField] private bool waterAffectsHealth = false;
+
+    [Tooltip("Off: the panda is never thirsty (no THIRSTY mood, no thirst " +
+             "hints, no drinking sound).")]
+    [SerializeField] private bool canBeThirsty = false;
+
     [Header("Water Threshold")]
     [SerializeField, Range(0f, 100f)]
     private float waterHealthThreshold = 30f;
@@ -185,9 +194,19 @@ public class PandaSystem : MonoBehaviour
     [SerializeField]
     private float hotTemperature = 25f;
 
-    [Tooltip("Temperature at or below which the panda becomes cold.")]
+    [Tooltip("Seconds the temperature must stay at or above 'Hot Temperature' " +
+             "before the panda becomes hot (and heat damage can start).")]
+    [SerializeField, Min(0f)]
+    private float secondsUntilHot = 6.5f;
+
+    [Tooltip("Off: the panda never gets too cold.")]
+    [SerializeField] private bool canBeCold = false;
+
+    [Tooltip("Temperature at or below which the panda becomes cold (only if Can Be Cold is on).")]
     [SerializeField]
     private float coldTemperature = 0f;
+
+    private float hotTimer;
 
 
     // =========================================================
@@ -265,7 +284,7 @@ public class PandaSystem : MonoBehaviour
     {
         get
         {
-            if (environment == null)
+            if (!canBeThirsty || environment == null)
                 return false;
 
             return environment.Water < waterHealthThreshold;
@@ -276,10 +295,8 @@ public class PandaSystem : MonoBehaviour
     {
         get
         {
-            if (environment == null)
-                return false;
-
-            return environment.Temperature >= hotTemperature;
+            // Only hot after it has been warm enough for a while.
+            return hotTimer >= secondsUntilHot;
         }
     }
 
@@ -287,7 +304,7 @@ public class PandaSystem : MonoBehaviour
     {
         get
         {
-            if (environment == null)
+            if (!canBeCold || environment == null)
                 return false;
 
             return environment.Temperature <= coldTemperature;
@@ -302,7 +319,7 @@ public class PandaSystem : MonoBehaviour
             if (environment == null)
                 return false;
 
-            return environment.Temperature > extremeHeatTemperature;
+            return IsHot && environment.Temperature > extremeHeatTemperature;
         }
     }
 
@@ -329,6 +346,7 @@ public class PandaSystem : MonoBehaviour
     private void Update()
     {
         UpdateHunger();
+        UpdateHotTimer();
         UpdateDrinkingSound();
         UpdateHeartbeat();
 
@@ -339,7 +357,9 @@ public class PandaSystem : MonoBehaviour
         if (environment == null)
             return;
 
-        UpdateHealthFromWater();
+        if (waterAffectsHealth)
+            UpdateHealthFromWater();
+
         UpdateHealthFromHunger();
         UpdateHealthFromExtremeHeat();
 
@@ -464,6 +484,18 @@ public class PandaSystem : MonoBehaviour
             heartbeatAudio.Stop();
     }
 
+
+    // =========================================================
+    // HOT TIMER
+    // =========================================================
+
+    private void UpdateHotTimer()
+    {
+        bool warm = environment != null && environment.Temperature >= hotTemperature;
+
+        // Counts up while warm; resets as soon as it cools down again.
+        hotTimer = warm ? hotTimer + Time.deltaTime : 0f;
+    }
 
     // =========================================================
     // HUNGER TIMER
@@ -662,7 +694,8 @@ public class PandaSystem : MonoBehaviour
     {
         float temperature = environment.Temperature;
 
-        if (temperature <= extremeHeatTemperature)
+        // No heat damage until the panda has actually become hot.
+        if (!IsHot || temperature <= extremeHeatTemperature)
             return;
 
         float heatSeverity = Mathf.InverseLerp(

@@ -30,6 +30,31 @@ public class EnvironmentSystem : MonoBehaviour
              "found. Seconds the change takes.")]
     [SerializeField, Min(0.1f)] private float temperatureTransitionTime = 8f;
 
+    [Header("Bamboo Growth By Temperature")]
+    [Tooltip("Overall speed of ALL bamboo growth (normal, slow and fast). " +
+             "1 = as now, 0.5 = everything twice as slow, 0.25 = four times as slow.")]
+    [SerializeField, Range(0.05f, 2f)] private float overallGrowthSpeed = 0.5f;
+
+    [Tooltip("Below this temperature bamboo grows slower (normal speed between this and 'Fast Above').")]
+    [SerializeField] private float slowBelow = 0f;
+
+    [Tooltip("Above this temperature bamboo grows faster.")]
+    [SerializeField] private float fastAbove = 25f;
+
+    [Tooltip("Growth speed at the zone's coldest temperature (0.1 = 10% of normal).")]
+    [SerializeField, Range(0.01f, 1f)] private float slowestSpeed = 0.1f;
+
+    [Tooltip("Growth speed at the zone's hottest temperature (3 = three times faster).")]
+    [SerializeField, Range(1f, 10f)] private float fastestSpeed = 3f;
+
+    [Tooltip("How quickly growth drops below 'Slow Below'. " +
+             "Below 1 = drops a lot right away, 1 = evenly, above 1 = gently at first.")]
+    [SerializeField, Range(0.2f, 3f)] private float coldDropCurve = 0.5f;
+
+    [Tooltip("How quickly growth rises above 'Fast Above'. " +
+             "Below 1 = speeds up a lot right away, 1 = evenly, above 1 = gently at first.")]
+    [SerializeField, Range(0.2f, 3f)] private float heatBoostCurve = 0.7f;
+
     private float transitionStartTemperature;
     private float transitionTimer;
     private Collider transitionTargetCollider;
@@ -98,9 +123,9 @@ public class EnvironmentSystem : MonoBehaviour
 
     // Temperature limits of the active zone (used by TemperatureFeedback).
     /// <summary>Above this, bamboo grows slower.</summary>
-    public float BambooIdealMax => idealTemperature + temperatureThreshold;
+    public float BambooIdealMax => fastAbove;
     /// <summary>Below this, bamboo grows slower.</summary>
-    public float BambooIdealMin => idealTemperature - temperatureThreshold;
+    public float BambooIdealMin => slowBelow;
     /// <summary>At or above this, water evaporates.</summary>
     public float WaterEvaporatesAbove => hotWaterStartTemperature;
     /// <summary>At or below this, water freezes.</summary>
@@ -137,11 +162,9 @@ public class EnvironmentSystem : MonoBehaviour
     {
         get
         {
-            if (temperature < idealTemperature - temperatureThreshold)
+            // Only cold slows bamboo down; heat makes it grow faster.
+            if (temperature < slowBelow)
                 return GrowthConditionType.TooCold;
-
-            if (temperature > idealTemperature + temperatureThreshold)
-                return GrowthConditionType.TooHot;
 
             return GrowthConditionType.Ideal;
         }
@@ -350,40 +373,25 @@ public class EnvironmentSystem : MonoBehaviour
         SetTemperature(temperature + amount, source);
     }
 
+    // 1 = normal speed. Below 'Slow Below' it drops (quickly) towards
+    // 'Slowest Speed'; above 'Fast Above' it rises towards 'Fastest Speed'.
     private float GetTemperatureGrowthFactor()
     {
-        float comfortableMin =
-            idealTemperature - temperatureThreshold;
+        return GetTemperatureCurve() * overallGrowthSpeed;
+    }
 
-        float comfortableMax =
-            idealTemperature + temperatureThreshold;
-
-        if (temperature < comfortableMin)
+    private float GetTemperatureCurve()
+    {
+        if (temperature < slowBelow)
         {
-            float t = Mathf.Clamp01(
-                Mathf.InverseLerp(
-                    freezingPoint,
-                    comfortableMin,
-                    temperature
-                )
-            );
-
-            return Mathf.Lerp(
-                minGrowthWhenCold,
-                1f,
-                Mathf.Pow(t, coldSlowdownPower)
-            );
+            float t = Mathf.InverseLerp(slowBelow, Mathf.Min(minTemperature, slowBelow - 0.01f), temperature);
+            return Mathf.Lerp(1f, slowestSpeed, Mathf.Pow(t, coldDropCurve));
         }
 
-        if (temperature > comfortableMax)
+        if (temperature > fastAbove)
         {
-            float t = Mathf.InverseLerp(
-                comfortableMax,
-                maxTemperature,
-                temperature
-            );
-
-            return Mathf.Lerp(1f, minGrowthWhenHot, t);
+            float t = Mathf.InverseLerp(fastAbove, Mathf.Max(maxTemperature, fastAbove + 0.01f), temperature);
+            return Mathf.Lerp(1f, fastestSpeed, Mathf.Pow(t, heatBoostCurve));
         }
 
         return 1f;

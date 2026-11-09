@@ -70,7 +70,16 @@ public class BambooManager : MonoBehaviour
     // NATURAL BAMBOO GROWTH
     // =========================================================
 
+    [Header("Water")]
+    [Tooltip("Off: water has no effect on bamboo growth at all; only the " +
+             "temperature controls it.")]
+    [SerializeField] private bool waterAffectsGrowth = false;
+
     [Header("Natural Bamboo Growth")]
+    [Tooltip("Off: bamboo never grows by itself. New bamboo only comes from the " +
+             "panda's (and the other panda's) poop.")]
+    [SerializeField] private bool naturalGrowthEnabled = false;
+
     [SerializeField, Range(0f, 100f)]
     private float naturalGrowthWaterThreshold = 80f;
 
@@ -852,6 +861,9 @@ public class BambooManager : MonoBehaviour
 
     private void UpdateNaturalBambooGrowth()
     {
+        if (!naturalGrowthEnabled)
+            return;
+
         if (environment == null ||
             EnvironmentSystem.Instance == null)
             return;
@@ -864,21 +876,20 @@ public class BambooManager : MonoBehaviour
             return;
         }
 
-        float water = environment.Water;
-
-        // Keep your existing minimum water requirement.
-        if (water < naturalGrowthWaterThreshold)
+        // Optional old water requirement.
+        if (waterAffectsGrowth && environment.Water < naturalGrowthWaterThreshold)
         {
             naturalGrowthTimer = 0f;
             return;
         }
 
-        float growthMultiplier = GetWaterGrowthMultiplier();
+        // Temperature (and optionally water) sets how fast new bamboo comes.
+        float growthMultiplier =
+            GetWaterGrowthMultiplier() * EnvironmentSystem.Instance.TemperatureGrowthFactor;
 
         if (growthMultiplier <= 0f)
             return;
 
-        // Slower growth means more time is required.
         naturalGrowthTimer += Time.deltaTime * growthMultiplier;
 
         if (naturalGrowthTimer < naturalGrowthTargetTime)
@@ -1487,6 +1498,10 @@ public class BambooManager : MonoBehaviour
 
     public float GetWaterGrowthMultiplier()
     {
+        // Water switched off: growth is never slowed by water.
+        if (!waterAffectsGrowth)
+            return 1f;
+
         if (EnvironmentSystem.Instance == null)
             return 0f;
 
