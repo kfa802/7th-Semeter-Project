@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -24,6 +23,15 @@ public class DilemmaUI : MonoBehaviour
     [Tooltip("Optional full-screen UI Image behind the dilemma content. " +
              "It should cover the screen and have Raycast Target enabled.")]
     [SerializeField] private GameObject inputBlocker;
+
+    [Header("Hide Background UI")]
+    [Tooltip("UI that is hidden while a dilemma is open (e.g. TempSlider, " +
+             "BambooPanel, PollutionPanel, MenuButton). Adding a parent hides " +
+             "everything inside it. Do NOT add the dilemma panel itself.")]
+    [SerializeField] private GameObject[] hideWhileOpen;
+
+    private CanvasGroup[] hiddenGroups;
+    private float[] hiddenAlphas;
 
     private DilemmaManager manager;
 
@@ -93,9 +101,15 @@ public class DilemmaUI : MonoBehaviour
             pausedByDilemma = true;
         }
 
-        // Block interaction with other UI.
+        // Block interaction with other UI: put the blocker on top of ALL
+        // the other UI (the dilemma panel goes on top of it below).
         if (inputBlocker != null)
+        {
             inputBlocker.SetActive(true);
+            inputBlocker.transform.SetAsLastSibling();
+        }
+
+        SetBackgroundHidden(true);
 
         // Mark the dilemma as open so EnvironmentUI can lock the slider.
         IsDilemmaOpen = true;
@@ -120,6 +134,8 @@ public class DilemmaUI : MonoBehaviour
         if (inputBlocker != null)
             inputBlocker.SetActive(false);
 
+        SetBackgroundHidden(false);
+
         // Resume gameplay.
         if (pausedByDilemma)
         {
@@ -128,6 +144,52 @@ public class DilemmaUI : MonoBehaviour
         }
 
         manager = null;
+    }
+
+    // Hides the background UI with a CanvasGroup (alpha 0, no clicks) instead
+    // of turning it off, so the scripts on it keep working.
+    private void SetBackgroundHidden(bool hide)
+    {
+        if (hideWhileOpen == null)
+            return;
+
+        if (hiddenGroups == null || hiddenGroups.Length != hideWhileOpen.Length)
+        {
+            hiddenGroups = new CanvasGroup[hideWhileOpen.Length];
+            hiddenAlphas = new float[hideWhileOpen.Length];
+        }
+
+        for (int i = 0; i < hideWhileOpen.Length; i++)
+        {
+            GameObject ui = hideWhileOpen[i];
+
+            if (ui == null)
+                continue;
+
+            if (hiddenGroups[i] == null)
+            {
+                hiddenGroups[i] = ui.GetComponent<CanvasGroup>();
+
+                if (hiddenGroups[i] == null)
+                    hiddenGroups[i] = ui.AddComponent<CanvasGroup>();
+            }
+
+            CanvasGroup g = hiddenGroups[i];
+
+            if (hide)
+            {
+                hiddenAlphas[i] = g.alpha;
+                g.alpha = 0f;
+                g.interactable = false;
+                g.blocksRaycasts = false;
+            }
+            else
+            {
+                g.alpha = hiddenAlphas[i] > 0f ? hiddenAlphas[i] : 1f;
+                g.interactable = true;
+                g.blocksRaycasts = true;
+            }
+        }
     }
 
     private void ChooseA()

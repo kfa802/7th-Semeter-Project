@@ -77360,6 +77360,13 @@ MonoBehaviour:
   choiceBButton: {fileID: 1113220689}
   choiceCButton: {fileID: 1230159246}
   inputBlocker: {fileID: 1478948345}
+  hideWhileOpen:
+  - {fileID: 1740021514}
+  - {fileID: 196287758}
+  - {fileID: 1489309915}
+  - {fileID: 184388598}
+  - {fileID: 2033208195}
+  - {fileID: 1539525340}
 --- !u!1001 &1934047367
 PrefabInstance:
   m_ObjectHideFlags: 0
