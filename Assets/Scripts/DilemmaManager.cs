@@ -162,6 +162,18 @@ public class DilemmaManager : MonoBehaviour
              "(the timer restarts every time it crosses back).")]
     [SerializeField] private bool checkTemperatureAfterWaiting = true;
 
+    [Header("'Most Time...' Dilemmas")]
+    [Tooltip("Below this temperature (°C) counts as COLD.")]
+    [SerializeField] private float coldBelow = 0f;
+
+    [Tooltip("Above this temperature (°C) counts as HOT. In between is MILD.")]
+    [SerializeField] private float hotAbove = 25f;
+
+    [Tooltip("Buffer: if the player keeps changing the temperature so no range is held " +
+             "for the dilemma's 'Delay Seconds' in a row, the dilemma for the range with " +
+             "the MOST time in total appears after this many seconds in the zone.")]
+    [SerializeField, Min(0f)] private float decideAnywayAfter = 45f;
+
     [Header("Ending Settings")]
     [SerializeField] private float endingDelay = 3f;
 
@@ -258,6 +270,14 @@ public class DilemmaManager : MonoBehaviour
     private readonly Dictionary<Dilemma, float> temperatureStartTimes = new();
 
     private Dilemma activeDilemma;
+
+    // Seconds spent hot / mild / cold since entering the zone.
+    private float secondsHot;
+    private float secondsMild;
+    private float secondsCold;
+    private DilemmaTriggerType currentRange;
+    private float inRangeSince;
+    private readonly HashSet<string> zonesWithHurtDilemma = new();
 
     private string currentZone = "";
     private float zoneEnteredTime;
@@ -357,15 +377,40 @@ public class DilemmaManager : MonoBehaviour
             currentZone = zoneName;
             zoneEnteredTime = Time.time;
 
+            // Start counting the time spent at each temperature in this zone.
+            secondsHot = 0f;
+            secondsMild = 0f;
+            secondsCold = 0f;
+            currentRange = RangeOf(environment.Temperature);
+            inRangeSince = Time.time;
+
             Debug.Log(
                 "DilemmaManager: Active zone changed to " + zoneName
             );
+        }
+
+        // Time at each temperature in this zone (for the 'Most Time' dilemmas).
+        DilemmaTriggerType range = RangeOf(environment.Temperature);
+
+        if (range == DilemmaTriggerType.MostTimeHot) secondsHot += Time.deltaTime;
+        else if (range == DilemmaTriggerType.MostTimeCold) secondsCold += Time.deltaTime;
+        else secondsMild += Time.deltaTime;
+
+        // How long has it stayed in the SAME range without a break?
+        if (range != currentRange)
+        {
+            currentRange = range;
+            inRangeSince = Time.time;
         }
 
         foreach (Dilemma dilemma in dilemmas)
         {
             if (dilemma == null ||
                 completedDilemmas.Contains(dilemma))
+                continue;
+
+            // Only ONE 'Most Time...' dilemma per zone.
+            if (IsHurtDilemma(dilemma) && zonesWithHurtDilemma.Contains(currentZone))
                 continue;
 
             // A blocking choice makes this dilemma unavailable.
@@ -400,6 +445,18 @@ public class DilemmaManager : MonoBehaviour
 
             if (isScheduled)
                 scheduledDilemmas.Remove(dilemma);
+
+            if (IsHurtDilemma(dilemma))
+                zonesWithHurtDilemma.Add(currentZone);
+
+            if (IsHurtDilemma(dilemma))
+            {
+                Debug.Log(
+                    "DilemmaManager: Time in " + currentZone +
+                    " | hot = " + secondsHot.ToString("F1") + " s" +
+                    " | mild = " + secondsMild.ToString("F1") + " s" +
+                    " | cold = " + secondsCold.ToString("F1") + " s");
+            }
 
             Debug.Log(
                 "DilemmaManager: Triggering " + dilemma.name +
@@ -532,6 +589,20 @@ public class DilemmaManager : MonoBehaviour
                     );
                 }
 
+            case DilemmaTriggerType.MostTimeHot:
+            case DilemmaTriggerType.MostTimeMild:
+            case DilemmaTriggerType.MostTimeCold:
+                {
+                    // 1. Stayed in this range for 'Delay Seconds' in a row.
+                    if (currentRange == dilemma.triggerType &&
+                        Time.time - inRangeSince >= dilemma.delaySeconds)
+                        return true;
+
+                    // 2. Buffer: kept changing it - the range with the most time wins.
+                    return Time.time - zoneEnteredTime >= decideAnywayAfter &&
+                           MostTimeAt() == dilemma.triggerType;
+                }
+
             case DilemmaTriggerType.TemperatureModerate:
                 {
                     bool isModerate =
@@ -544,6 +615,32 @@ public class DilemmaManager : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    private static bool IsHurtDilemma(Dilemma dilemma)
+    {
+        return dilemma.triggerType == DilemmaTriggerType.MostTimeHot ||
+               dilemma.triggerType == DilemmaTriggerType.MostTimeMild ||
+               dilemma.triggerType == DilemmaTriggerType.MostTimeCold;
+    }
+
+    private DilemmaTriggerType RangeOf(float temperature)
+    {
+        if (temperature > hotAbove) return DilemmaTriggerType.MostTimeHot;
+        if (temperature < coldBelow) return DilemmaTriggerType.MostTimeCold;
+        return DilemmaTriggerType.MostTimeMild;
+    }
+
+    // Which temperature did the player keep it at the longest?
+    private DilemmaTriggerType MostTimeAt()
+    {
+        if (secondsHot >= secondsMild && secondsHot >= secondsCold)
+            return DilemmaTriggerType.MostTimeHot;
+
+        if (secondsCold >= secondsMild)
+            return DilemmaTriggerType.MostTimeCold;
+
+        return DilemmaTriggerType.MostTimeMild;
     }
 
     private void DebugTemperatureCondition(

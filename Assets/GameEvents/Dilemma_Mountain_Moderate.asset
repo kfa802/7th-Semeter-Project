@@ -12,21 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Moderate
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: MODERATE TEMPATURE
-  description: High up on the mountain, the panda is searching for food. The weather
-    is mild and the water is flowing. But there is only a little bamboo on the mountain,
-    and the panda has been eating it for several days.
-  choiceA: Travel
+  title: Not enough to go around
+  description: "There\u2019s too little bamboo on the mountain and the panda is hungry.
+    The valley has plenty, but also more people."
+  choiceA: Go
   choiceB: Stay
   choiceC: 
   narrationClip: {fileID: 8300000, guid: 5cdb41cb4871443ff86c2fe53dde1e54, type: 3}
-  triggerType: 7
+  triggerType: 9
   requiredZoneName: Mountain
-  delaySeconds: 30
+  delaySeconds: 45
   threshold: 5.9
   temperatureThreshold: 0
   temperatureHighThreshold: 25
-  temperatureDurationSeconds: 30
+  temperatureDurationSeconds: 45
   prerequisiteDilemmas: []
   blockedByDilemmas:
   - dilemma: {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}

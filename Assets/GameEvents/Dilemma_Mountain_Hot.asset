@@ -12,21 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Hot
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: HIGH TEMPATURE
-  description: 'High up on the mountain, the panda is searching for food. The heat
-    has caused a drought, and the bamboo is withering. There is less and less to
-    eat. '
-  choiceA: Travel
+  title: Heat on the slope
+  description: The mountain is warm and the panda is struggling in the heat. The
+    valley has more bamboo, but also more people.
+  choiceA: Go
   choiceB: Stay
   choiceC: 
   narrationClip: {fileID: 8300000, guid: 9a64627e6bdd641ecb3ae4a3a8fc1740, type: 3}
-  triggerType: 6
+  triggerType: 8
   requiredZoneName: Mountain
-  delaySeconds: 0
+  delaySeconds: 45
   threshold: 30.9
   temperatureThreshold: 25
   temperatureHighThreshold: 0
-  temperatureDurationSeconds: 30
+  temperatureDurationSeconds: 45
   prerequisiteDilemmas: []
   blockedByDilemmas:
   - dilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}

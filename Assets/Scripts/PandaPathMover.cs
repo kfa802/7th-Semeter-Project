@@ -128,6 +128,17 @@ public class PandaPathMover : MonoBehaviour
 
     public bool HasPendingTravel => pendingZoneName != null;
 
+    [Header("Hide UI While Travelling")]
+    [Tooltip("UI to hide while the panda travels (e.g. TempSlider, BambooPanel, " +
+             "PollutionPanel, mood/health UI). Adding a parent hides everything inside it.")]
+    [SerializeField] private GameObject[] hideUIWhileTravelling;
+
+    [Tooltip("Seconds to fade that UI out / in.")]
+    [SerializeField, Min(0.01f)] private float uiFadeTime = 0.4f;
+
+    private CanvasGroup[] travelUIGroups;
+    private bool travelUIFadingIn;
+
     [Header("Cameras")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Camera cinematicCamera;
@@ -291,6 +302,23 @@ public class PandaPathMover : MonoBehaviour
             cinematicCamera.gameObject.SetActive(false);
         }
 
+        // CanvasGroups for the UI that hides while travelling.
+        int uiCount = hideUIWhileTravelling != null ? hideUIWhileTravelling.Length : 0;
+        travelUIGroups = new CanvasGroup[uiCount];
+
+        for (int i = 0; i < uiCount; i++)
+        {
+            GameObject ui = hideUIWhileTravelling[i];
+
+            if (ui == null)
+                continue;
+
+            travelUIGroups[i] = ui.GetComponent<CanvasGroup>();
+
+            if (travelUIGroups[i] == null)
+                travelUIGroups[i] = ui.AddComponent<CanvasGroup>();
+        }
+
         if (mainCamera == null)
             Debug.LogWarning("PandaPathMover: Main Camera is not assigned.");
 
@@ -373,6 +401,52 @@ public class PandaPathMover : MonoBehaviour
 
         UpdateBaseOffset();
         UpdateWalkingSound();
+        UpdateTravelUI();
+    }
+
+    // =========================================================
+    // HIDE UI WHILE TRAVELLING
+    // =========================================================
+
+    private void UpdateTravelUI()
+    {
+        if (travelUIGroups == null || travelUIGroups.Length == 0)
+            return;
+
+        if (IsTravelling || HasPendingTravel)
+        {
+            travelUIFadingIn = true;
+            FadeTravelUI(0f, false);
+        }
+        else if (travelUIFadingIn)
+        {
+            // Only touch the UI until it is fully back, so the dilemma
+            // hiding can use the same CanvasGroups afterwards.
+            if (FadeTravelUI(1f, true))
+                travelUIFadingIn = false;
+        }
+    }
+
+    // Returns true when all of the UI has reached the target.
+    private bool FadeTravelUI(float target, bool usable)
+    {
+        bool done = true;
+        float step = Time.unscaledDeltaTime / uiFadeTime;
+
+        foreach (CanvasGroup g in travelUIGroups)
+        {
+            if (g == null)
+                continue;
+
+            g.alpha = Mathf.MoveTowards(g.alpha, target, step);
+            g.interactable = usable;
+            g.blocksRaycasts = usable;
+
+            if (!Mathf.Approximately(g.alpha, target))
+                done = false;
+        }
+
+        return done;
     }
 
     // =========================================================

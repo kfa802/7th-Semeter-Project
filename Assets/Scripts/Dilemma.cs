@@ -10,7 +10,13 @@ public enum DilemmaTriggerType
     BambooBelow,
     TemperatureTooLow,
     TemperatureTooHigh,
-    TemperatureModerate
+    TemperatureModerate,
+
+    // Checked ONCE, 'Delay Seconds' after entering the zone: which temperature
+    // did the player keep it at the LONGEST? Only one of these three appears per zone.
+    MostTimeHot,     // Mostly hot: the panda gets stressed by the heat.
+    MostTimeMild,    // Mostly mild: forgot to feed / too little bamboo on the mountain.
+    MostTimeCold     // Mostly cold: the bamboo can't grow.
 }
 
 public enum PrerequisiteChoice
@@ -63,7 +69,8 @@ public class Dilemma : ScriptableObject
     public DilemmaTriggerType triggerType;
     public string requiredZoneName;
 
-    [Tooltip("Delay in seconds for ZoneDelay triggers and scheduled follow-up dilemmas.")]
+    [Tooltip("Delay in seconds for ZoneDelay and 'Most Time...' triggers, " +
+             "and for scheduled follow-up dilemmas.")]
     public float delaySeconds = 30f;
 
     [Tooltip("Threshold percentage for WaterBelow, PollutionAbove, or BambooBelow.")]

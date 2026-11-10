@@ -243,6 +243,22 @@ public class PandaSystem : MonoBehaviour
 
     public float Health => health;
 
+    [Header("Travelling")]
+    [Tooltip("Optional. Found automatically if empty.")]
+    [SerializeField] private PandaPathMover pandaPathMover;
+
+    [Tooltip("On: no damage while travelling, and the hunger/heat timers pause.")]
+    [SerializeField] private bool safeWhileTravelling = true;
+
+    private bool IsTravelling =>
+        pandaPathMover != null && pandaPathMover.IsTravelling;
+
+    /// <summary>All health ever lost to hunger (only goes up).</summary>
+    public float TotalHungerDamage { get; private set; }
+
+    /// <summary>All health ever lost to extreme heat (only goes up).</summary>
+    public float TotalHeatDamage { get; private set; }
+
     public float Stress => stress;
 
     public float HungerTimer => hungerTimer;
@@ -341,12 +357,22 @@ public class PandaSystem : MonoBehaviour
         // Remember the starting state, so no sound plays when the game starts.
         wasThirsty = IsThirsty;
         lastZone = environment != null ? environment.ActiveZone : null;
+
+        if (pandaPathMover == null)
+            pandaPathMover = FindFirstObjectByType<PandaPathMover>();
     }
 
     private void Update()
     {
-        UpdateHunger();
-        UpdateHotTimer();
+        bool safe = safeWhileTravelling && IsTravelling;
+
+        // While travelling the hunger and heat timers pause.
+        if (!safe)
+        {
+            UpdateHunger();
+            UpdateHotTimer();
+        }
+
         UpdateDrinkingSound();
         UpdateHeartbeat();
 
@@ -354,7 +380,7 @@ public class PandaSystem : MonoBehaviour
         // UpdateFeedingHistory();
         // UpdateOverfedTimer();
 
-        if (environment == null)
+        if (environment == null || safe)
             return;
 
         if (waterAffectsHealth)
@@ -587,14 +613,15 @@ public class PandaSystem : MonoBehaviour
 
     private void UpdateHealthFromHunger()
     {
+        float damage = 0f;
+
         if (IsVeryHungry)
-        {
-            health -= veryHungryHealthLossPerSecond * Time.deltaTime;
-        }
+            damage = veryHungryHealthLossPerSecond * Time.deltaTime;
         else if (IsHungry)
-        {
-            health -= hungryHealthLossPerSecond * Time.deltaTime;
-        }
+            damage = hungryHealthLossPerSecond * Time.deltaTime;
+
+        health -= damage;
+        TotalHungerDamage += damage;
     }
 
 
@@ -713,7 +740,9 @@ public class PandaSystem : MonoBehaviour
         float damagePerSecond =
             damageMultiplier * maximumExtremeHeatDamagePerSecond;
 
-        health -= damagePerSecond * Time.deltaTime;
+        float damage = damagePerSecond * Time.deltaTime;
+        health -= damage;
+        TotalHeatDamage += damage;
     }
 
 

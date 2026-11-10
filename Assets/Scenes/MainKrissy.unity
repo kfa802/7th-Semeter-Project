@@ -33726,6 +33726,8 @@ MonoBehaviour:
   environment: {fileID: 1431297040}
   extremeHeatTemperature: 35
   maximumExtremeHeatDamagePerSecond: 2
+  pandaPathMover: {fileID: 725808057}
+  safeWhileTravelling: 1
 --- !u!136 &725808052
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -33891,6 +33893,12 @@ MonoBehaviour:
   walkingMixerGroup: {fileID: 0}
   feedingZone: {fileID: 725808056}
   maxWaitForEating: 10
+  hideUIWhileTravelling:
+  - {fileID: 1740021514}
+  - {fileID: 196287758}
+  - {fileID: 1489309915}
+  - {fileID: 2033208195}
+  uiFadeTime: 0.4
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
   curvedCameraPath: 1
@@ -50162,7 +50170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -16.7}
+  m_AnchoredPosition: {x: -1, y: -17}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1080516760
@@ -50212,8 +50220,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -62400,6 +62408,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   checkTemperatureAfterWaiting: 1
+  coldBelow: 0
+  hotAbove: 25
+  decideAnywayAfter: 45
   endingDelay: 6
   choiceButtons: []
   narrationDelay: 0.3
