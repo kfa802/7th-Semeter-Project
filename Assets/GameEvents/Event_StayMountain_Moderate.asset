@@ -16,27 +16,6 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 983997e128d9f414ebe51056bf591cdf, type: 3}
+  narrationClip: {fileID: 0}
   narrationDelay: 0.5
-  subtitles:
-  - startTime: 0
-    endTime: 1.8
-    text: 'Bamboo needs water to grow, '
-  - startTime: 1.8
-    endTime: 3.5
-    text: 'and there is enough water here. '
-  - startTime: 3.5
-    endTime: 5.8
-    text: 'But a panda eats huge amounts, '
-  - startTime: 5.8
-    endTime: 8
-    text: 'and the bamboo is being eaten faster than it grows. '
-  - startTime: 8
-    endTime: 10.5
-    text: 'Pandas normally follow the bamboo '
-  - startTime: 10.5
-    endTime: 12
-    text: 'and travel down the mountain '
-  - startTime: 12
-    endTime: 13
-    text: when it becomes scarce.
+  subtitles: []

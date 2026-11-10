@@ -16,24 +16,6 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 4913fe69d67324aa7a724c717a8a89e4, type: 3}
+  narrationClip: {fileID: 0}
   narrationDelay: 0.5
-  subtitles:
-  - startTime: 0
-    endTime: 1.8
-    text: Bamboo needs water to grow,
-  - startTime: 1.8
-    endTime: 4
-    text: "and it can\u2019t use frozen water."
-  - startTime: 4
-    endTime: 6
-    text: That means there is less and less food.
-  - startTime: 6
-    endTime: 8
-    text: Pandas normally follow the bamboo
-  - startTime: 8
-    endTime: 9.5
-    text: and travel down the mountain
-  - startTime: 9.5
-    endTime: 11
-    text: when it becomes scarce.
+  subtitles: []
