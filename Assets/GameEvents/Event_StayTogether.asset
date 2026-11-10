@@ -21,10 +21,13 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 3.2
-    text: 'A panda eats huge amounts of bamboo every day.  '
+    text: 'Oh no!  '
   - startTime: 3.2
     endTime: 4.8
-    text: 'When the bamboo runs out,  '
+    text: 'The pandas are running out of bamboo!  '
   - startTime: 4.8
     endTime: 6
-    text: 'everyone grows weaker.  '
+    text: 'Without enough food, '
+  - startTime: 4.8
+    endTime: 6
+    text: 'they will slowly become weaker. '

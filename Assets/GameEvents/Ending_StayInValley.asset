@@ -26,16 +26,13 @@ MonoBehaviour:
     overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
     produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
   titleEN: Staying In The Valley
-  descriptionEN: "The panda stays in the valley, where forest and village meet. There
-    is enough bamboo and water, but also noise, traffic, and people nearby. Every
-    new disturbance makes it harder to find peace. \n\nIn the valleys, people and
-    wild animals compete for space. These are also the places with the most bamboo,
-    so human and animal needs meet here. Sharing space is possible if some areas
-    are protected and the forest stays connected, but it takes planning. \n\nWhen
-    you visit the zoo, you support the pandas. They are part of a breeding program
-    run by the China Wildlife Conservation Association, which helps secure the panda\u2019s
-    long-term survival. When buying bamboo products, look for the FSC label, which
-    guarantees that important habitats haven\u2019t been destroyed. "
+  descriptionEN: "The panda stays in the valley! \nThere's plenty of bamboo and water,
+    but also roads, people, and noise. \n\nPandas and people both need space. By
+    protecting forests and keeping them connected, we can help pandas live safely!
+    \n\nDid you know that you can help protect pandas? \nWhen you visit the zoo,
+    you support a breeding program that helps protect pandas for the future! \n\nAnd
+    when you buy bamboo products, look for the FSC label. It helps you choose products
+    made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

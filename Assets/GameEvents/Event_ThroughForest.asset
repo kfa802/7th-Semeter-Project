@@ -21,10 +21,13 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 2.5
-    text: 'The road splits the forest in two. '
+    text: 'Oh no!  '
   - startTime: 2.5
     endTime: 3.8
-    text: 'Bamboo is cleared,  '
+    text: 'The road splits the forest in two!  '
+  - startTime: 3.8
+    endTime: 7
+    text: 'Some bamboo is removed,  '
   - startTime: 3.8
     endTime: 7
     text: 'and noise and pollution reach the animals. '

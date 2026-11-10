@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THE ROAD
-  description: A nearby village needs a road. It can go straight through the forest,
-    or around it, which is longer and more expensive.
+  title: THE NEW ROAD
+  description: "A nearby village needs a new road! \n\nThe road can go through the
+    forest or around it. Going around costs more, but it protects the forest.\n\nShould
+    the road go through the forest or around it?  "
   choiceA: Through
   choiceB: Around
   choiceC: 

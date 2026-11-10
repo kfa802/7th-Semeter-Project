@@ -21,10 +21,16 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 2
-    text: 'The forest stays intact. '
+    text: 'Good choice!  '
   - startTime: 2
     endTime: 4
-    text: 'Construction noise stresses the panda, '
+    text: 'The forest stays together,  '
   - startTime: 4
     endTime: 6
-    text: 'but the bamboo is still there.  '
+    text: 'and the bamboo is safe!  '
+  - startTime: 4
+    endTime: 6
+    text: 'The construction is noisy,  '
+  - startTime: 4
+    endTime: 6
+    text: 'but the panda can still find food.  '

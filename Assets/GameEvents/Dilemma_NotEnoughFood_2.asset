@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: THERE ISN'T ENOUGH FOOD
-  description: 'Now that the pandas have been together for so long, there is no food
-    left. The pandas are stressed and will no longer get the nutrition they need
-    if they stay together. Should they each go to their own area, or stay? '
+  description: "Oh no! There's almost no bamboo left! \nThe pandas are getting hungry
+    and weak because there isn't enough food for both of them. \n\nShould they go
+    their separate ways or stay together?  "
   choiceA: Stay
   choiceB: Go
   choiceC: 
@@ -31,8 +31,8 @@ MonoBehaviour:
   blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: f67e0ea2cf8545047b097c93e8126cb3, type: 2}
   prerequisiteChoice: 1
-  choiceAEvent: {fileID: 11400000, guid: bf4054c51b7a948e492c5c79aadddc06, type: 2}
-  choiceBEvent: {fileID: 11400000, guid: 1155dc223c8ac415cb703ce8aa5e6691, type: 2}
+  choiceAEvent: {fileID: 11400000, guid: 7fe42f04957ad42e5b703aff3b480c37, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 91df6095018ed4a5794aa62fd314cbb2, type: 2}
   choiceCEvent: {fileID: 0}
   choiceAEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
   choiceBEnding: {fileID: 0}

@@ -21,10 +21,13 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 2.5
-    text: 'The two pandas share the same bamboo, '
+    text: 'Good choice!  '
   - startTime: 2.5
     endTime: 4
-    text: 'and it is quickly used up.  '
+    text: 'Pandas need lots of space and bamboo to survive.  '
   - startTime: 4
     endTime: 7.5
-    text: 'Pandas only come together for a few days a year to mate. '
+    text: 'They usually live alone  '
+  - startTime: 4
+    endTime: 7.5
+    text: 'and only meet for a few days each year to mate.  '

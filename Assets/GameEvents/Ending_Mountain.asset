@@ -25,16 +25,13 @@ MonoBehaviour:
     overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
     produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
   titleEN: On The Mountain
-  descriptionEN: "The panda is high in the mountains, where water is scarce and bamboo
-    grows slowly. It\u2019s peaceful, but the shoots are far apart, and finding enough
-    food takes a lot of time and energy.\n\nLiving in the mountains isn\u2019t necessarily
-    bad for pandas. They thrive best here in summer, when the heat is moderate. In
-    winter they find more bamboo in the valleys, which is why they travel up and
-    down the mountains through the year.\n\nWhen you visit the zoo, you support the
-    pandas. They are part of a breeding program run by the China Wildlife Conservation
-    Association, which helps secure the panda\u2019s long-term survival. When buying
-    bamboo products, look for the FSC label, which guarantees that important habitats
-    haven\u2019t been destroyed."
+  descriptionEN: "The panda stays high in the mountains! \nIt's quiet and peaceful,
+    but there's not much bamboo or water. Finding enough food takes a lot of energy!
+    \n\nPandas often move up the mountains in summer to stay cool and down to the
+    valleys in winter to find more food.\n\nDid you know that you can help protect
+    pandas? \nWhen you visit the zoo, you support a breeding program that helps protect
+    pandas for the future! \n\nAnd when you buy bamboo products, look for the FSC
+    label. It helps you choose products made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

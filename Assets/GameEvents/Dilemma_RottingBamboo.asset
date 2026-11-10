@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THE BAMBOO IS WITHERING
-  description: The bamboo in the valley has started to wither, so the panda has to
-    look for new paths and decide where to be next season.
+  title: THE BAMBOO IS DYING
+  description: "Oh no! The bamboo in the valley is starting to die! \n\nThe panda
+    needs to find a new place with enough food. \n\nWhere should the panda go next? "
   choiceA: Stay
   choiceB: Other panda
   choiceC: Mountains

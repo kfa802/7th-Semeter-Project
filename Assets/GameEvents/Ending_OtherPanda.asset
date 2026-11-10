@@ -25,15 +25,13 @@ MonoBehaviour:
     selv kigge efter FSC-m\xE6rkede produkter som garantere at vigtige levesteder
     ikke er blevet \xF8delagt. "
   titleEN: Together With The Other Panda
-  descriptionEN: "The pandas share the area. Bamboo is scarce, so they probably won\u2019t
-    stay together much longer. But for now, they have a chance of having cubs. \n\nPandas
-    mostly live alone and only meet briefly in spring to mate. When forest is divided
-    up, animals can\u2019t reach each other, and the population becomes more uniform
-    and more vulnerable. Connected forest makes a difference.\n\nWhen you visit the
-    zoo, you support the pandas. They are part of a breeding program run by the China
-    Wildlife Conservation Association, which helps secure the panda\u2019s long-term
-    survival. When buying bamboo products, look for the FSC label, which guarantees
-    that important habitats haven\u2019t been destroyed. "
+  descriptionEN: "The two pandas are still together! \nBut there's not much bamboo
+    left, so they may have to separate soon. \n\nPandas usually live alone and only
+    meet in spring to have cubs. It's important to keep forests connected so pandas
+    can find each other and have babies! \n\nDid you know that you can help protect
+    pandas? \nWhen you visit the zoo, you support a breeding program that helps protect
+    pandas for the future! \n\nAnd when you buy bamboo products, look for the FSC
+    label. It helps you choose products made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

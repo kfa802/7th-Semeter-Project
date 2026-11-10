@@ -21,13 +21,13 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 3
-    text: 'A panda eats huge amounts of bamboo every day. '
+    text: 'Good choice!  '
   - startTime: 3
     endTime: 5
-    text: 'When the bamboo runs out, '
+    text: 'Pandas eat lots of bamboo every day.  '
   - startTime: 5
     endTime: 6.5
-    text: 'the best solution is to spread out  '
+    text: 'By living apart, they have a better chance  '
   - startTime: 6.5
     endTime: 9
-    text: 'so there is enough food for each of them.  '
+    text: 'of finding enough food.  '
