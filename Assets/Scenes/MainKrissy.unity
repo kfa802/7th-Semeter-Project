@@ -36981,7 +36981,7 @@ GameObject:
   - component: {fileID: 846537407}
   - component: {fileID: 846537406}
   m_Layer: 0
-  m_Name: Car
+  m_Name: CarAround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72003,7 +72003,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1618045812}
   m_Layer: 0
-  m_Name: Waypoints
+  m_Name: WaypointsAround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
