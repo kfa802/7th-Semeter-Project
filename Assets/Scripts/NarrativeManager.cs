@@ -109,7 +109,7 @@ public class NarrativeManager : MonoBehaviour
     [Tooltip("Minimum seconds between two different lines.")]
     [SerializeField, Min(0f)] private float gapBetweenLines = 20f;
 
-    [Tooltip("No lines in the first seconds of the game.")]
+    [Tooltip("No lines in the first seconds of the game (counted from the end of the tutorial).")]
     [SerializeField, Min(0f)] private float quietAtStart = 10f;
 
     [Header("Voice")]
@@ -127,10 +127,15 @@ public class NarrativeManager : MonoBehaviour
     public static bool IsSpeaking { get; private set; }
 
     private CanvasGroup group;
+
+    // True from showing a line until it has faded out. Only then does this
+    // script touch the panel, so other scripts can share it.
+    private bool usingPanel;
     private bool currentPointsToTemperature;
     private AudioSource voiceSource;
     private float showUntil = -1f;
     private float lastLineEnded = -9999f;
+    private float introEndedAt;
 
     // Disturbance trend
     private float lastSample;
@@ -219,6 +224,10 @@ public class NarrativeManager : MonoBehaviour
 
     private void Update()
     {
+        // 'Quiet At Start' counts from when the tutorial ends.
+        if (IntroSequence.IsPlaying)
+            introEndedAt = Time.time;
+
         UpdateDisturbanceTrend();
         UpdateConditions();
         UpdateDisplay();
@@ -286,7 +295,7 @@ public class NarrativeManager : MonoBehaviour
         if (best == null || showing || busy)
             return;
 
-        if (Time.time < quietAtStart || Time.time - lastLineEnded < gapBetweenLines)
+        if (Time.time - introEndedAt < quietAtStart || Time.time - lastLineEnded < gapBetweenLines)
             return;
 
         Play(best);
@@ -338,6 +347,10 @@ public class NarrativeManager : MonoBehaviour
 
     private bool IsBusy()
     {
+        // No feedback lines while the intro/tutorial plays.
+        if (IntroSequence.IsPlaying)
+            return true;
+
         if (pandaPathMover != null && pandaPathMover.IsTravelling)
             return true;
 
@@ -382,6 +395,7 @@ public class NarrativeManager : MonoBehaviour
         if (panel != null && !panel.activeSelf)
             panel.SetActive(true);
 
+        usingPanel = true;
         showUntil = Time.time + duration;
 
         Debug.Log("Narrative: '" + line.label + "'");
@@ -392,6 +406,11 @@ public class NarrativeManager : MonoBehaviour
         bool showing = Time.time < showUntil;
 
         SliderHintArrow.SetTemperaturePrompt(this, showing && currentPointsToTemperature);
+
+        // The intro/tutorial may use the same panel for its subtitles:
+        // don't touch it until the game has started.
+        if (IntroSequence.IsPlaying)
+            return;
 
         // Hide right away if a dilemma or travel starts.
         if (showing && IsBusy())
@@ -406,15 +425,18 @@ public class NarrativeManager : MonoBehaviour
         if (!showing && showUntil > 0f && lastLineEnded < showUntil)
             lastLineEnded = Time.time;
 
-        if (group == null)
+        if (group == null || !usingPanel)
             return;
 
         group.alpha = Mathf.MoveTowards(group.alpha, showing ? 1f : 0f, Time.deltaTime / fadeTime);
 
-        if (!showing && group.alpha <= 0f && panel.activeSelf)
+        if (!showing && group.alpha <= 0f)
         {
-            panel.SetActive(false);
+            if (panel.activeSelf)
+                panel.SetActive(false);
+
             currentLine = "";
+            usingPanel = false;
         }
     }
 }

@@ -374,6 +374,10 @@ public class DilemmaManager : MonoBehaviour
         if (gameEnded || environment == null || dilemmaUI == null)
             return;
 
+        // Nothing starts (or counts down) until the intro/tutorial is over.
+        if (IntroSequence.IsPlaying)
+            return;
+
         if (activeDilemma != null)
             return;
 

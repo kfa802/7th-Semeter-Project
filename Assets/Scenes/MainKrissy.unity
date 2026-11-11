@@ -12590,14 +12590,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -12629,7 +12629,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -149.20293, y: -26.4375, z: -130.80296, w: -30.06731}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -34193,6 +34193,7 @@ MonoBehaviour:
   - {fileID: 196287758}
   - {fileID: 1489309915}
   - {fileID: 2033208195}
+  - {fileID: 184388598}
   uiFadeTime: 0.4
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
@@ -36778,6 +36779,37 @@ MonoBehaviour:
   existingBamboo: {fileID: 1434885578}
   autoDetectRadius: 0.5
   ecosystemZone: {fileID: 2079388591}
+--- !u!1 &832605267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 832605268}
+  m_Layer: 0
+  m_Name: IntroStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &832605268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832605267}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2961851, y: -0.48353976, z: 0.17647941, w: 0.8045612}
+  m_LocalPosition: {x: 26.414785, y: 54.068485, z: 25.430174}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1186569853}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832862893
 GameObject:
   m_ObjectHideFlags: 0
@@ -51232,7 +51264,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.5, y: -57.299854}
+  m_AnchoredPosition: {x: -1.5, y: -57.299805}
   m_SizeDelta: {x: 200, y: 32.6136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1095317688
@@ -58574,6 +58606,177 @@ Transform:
   - {fileID: 1934047368}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1186569851
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1186569853}
+  - component: {fileID: 1186569852}
+  m_Layer: 0
+  m_Name: Intro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1186569852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186569851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71f723660e5867b4b8a51c1d44055709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IntroSequence
+  playIntro: 1
+  mainCamera: {fileID: 2122670353}
+  cameraPath:
+  - {fileID: 832605268}
+  holdAtStart: 1.5
+  moveDuration: 15
+  matchNarrationLength: 1
+  ease:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  startFieldOfView: 0
+  narrationClip: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+  narrationDelay: 1
+  narrationVolume: 1
+  narrationMixerGroup: {fileID: 0}
+  subtitlePanel: {fileID: 1539525340}
+  subtitleText: {fileID: 141545504}
+  subtitles:
+  - startTime: 0
+    endTime: 4
+    text: mnanvdnavdnbadv
+  - startTime: 5
+    endTime: 7
+    text: ewmnenbwmevwe
+  playTutorial: 1
+  instructionPanel: {fileID: 0}
+  instructionText: {fileID: 0}
+  tutorialSteps:
+  - label: Temperature
+    instruction: Slide the thermometer to change the temperature. Warmer makes bamboo
+      grow faster - but the panda can get too hot.
+    narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+    showUI:
+    - {fileID: 196287758}
+    showUINames:
+    - TempSlider
+    highlight: []
+    highlightNames: []
+    waitFor: 3
+    degreesToChange: 1
+    pauseAfter: 1
+    subtitles:
+    - startTime: 0
+      endTime: 4
+      text: dgdgdgd
+  - label: Human Disturbance
+    instruction: Humans disturbances.
+    narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
+    showUI:
+    - {fileID: 2033208195}
+    showUINames: []
+    highlight: []
+    highlightNames: []
+    waitFor: 0
+    degreesToChange: 5
+    pauseAfter: 3
+    subtitles: []
+  - label: Feeding
+    instruction: Drag the bamboo to the panda to feed it.
+    narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+    showUI:
+    - {fileID: 1489309915}
+    showUINames: []
+    highlight: []
+    highlightNames: []
+    waitFor: 2
+    degreesToChange: 5
+    pauseAfter: 1
+    subtitles: []
+  - label: Panda Health
+    instruction: You panda has a health bar.
+    narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
+    showUI:
+    - {fileID: 1740021514}
+    showUINames: []
+    highlight: []
+    highlightNames: []
+    waitFor: 0
+    degreesToChange: 5
+    pauseAfter: 3
+    subtitles: []
+  hideDuringIntro:
+  - {fileID: 1740021514}
+  - {fileID: 196287758}
+  - {fileID: 1489309915}
+  - {fileID: 184388598}
+  - {fileID: 2033208195}
+  hideDuringIntroNames: []
+  uiFadeInTime: 0.8
+  tutorialAppear: 1
+  popUpTime: 0.5
+  popUpBounce: 1.7
+  allowSkip: 0
+  skipAllowedAfter: 2
+  onIntroFinished:
+    m_PersistentCalls:
+      m_Calls: []
+  dimAroundHighlight: 1
+  dimAmount: 0.6
+  dimColor: {r: 0, g: 0, b: 0, a: 1}
+  dimFadeTime: 0.3
+  lockOtherUIDuringStep: 1
+  pulseHighlight: 0
+  pulseAmount: 0.08
+  pulseSpeed: 1.2
+--- !u!4 &1186569853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186569851}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 832605268}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1187492829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63033,6 +63236,8 @@ MonoBehaviour:
   coldBelow: 0
   hotAbove: 25
   decideAnywayAfter: 45
+  endingDelay: 6
+  deathEndingDelay: 1
   panda: {fileID: 725808051}
   hungerEnding: {fileID: 11400000, guid: a878cfcd6b87b41c4b431e38dfb9a76b, type: 2}
   heatEnding: {fileID: 11400000, guid: 9f0c7927648dd415487e9de80630cf0d, type: 2}
@@ -63040,7 +63245,6 @@ MonoBehaviour:
   disturbanceEnding: {fileID: 11400000, guid: d74dc1c4684f145cfb67507e2f6217fc, type: 2}
   hungerAndHeatEnding: {fileID: 11400000, guid: 5f2f2fcf8e29a408dbed78a380ad612a, type: 2}
   lowHealthEnding: {fileID: 11400000, guid: db64f9adff61c4cb89bb80d87ce7023d, type: 2}
-  endingDelay: 6
   choiceButtons: []
   narrationDelay: 0.3
   unlockAfterNarration: 0.2
@@ -65922,16 +66126,16 @@ RectTransform:
   m_GameObject: {fileID: 1539525340}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.44, y: 0.44, z: 0.44}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 141545503}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10.185547, y: -196}
-  m_SizeDelta: {x: -422.2129, y: -420}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 394, y: 31.6}
+  m_SizeDelta: {x: 720, y: 97}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1539525342
 MonoBehaviour:
@@ -65953,8 +66157,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 1baa2cb7e8a6945788b3f7a31f09276a, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -78105,6 +78309,8 @@ MonoBehaviour:
   waterText: {fileID: 1279251138}
   bambooText: {fileID: 1262749804}
   pandaHealthText: {fileID: 2072902922}
+  totalAcrossAllZones: 1
+  countAcrossAllZones: 0
   pandaHealthSliderSpeed: 20
 --- !u!114 &1927953434
 MonoBehaviour:
@@ -85634,10 +85840,10 @@ RectTransform:
   - {fileID: 1230159245}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -29.00003}
-  m_SizeDelta: {x: 4133.012, y: 2010}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -5}
+  m_SizeDelta: {x: 3333.0122, y: 2010}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2075823934
 MonoBehaviour:
@@ -87656,3 +87862,4 @@ SceneRoots:
   - {fileID: 59449190}
   - {fileID: 1215938108}
   - {fileID: 1440267216}
+  - {fileID: 1186569853}
