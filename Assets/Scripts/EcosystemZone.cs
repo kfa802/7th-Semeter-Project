@@ -199,6 +199,31 @@ public class EcosystemZone : MonoBehaviour
     }
 
     // =========================================================
+    // LIVE VALUES OF THIS ZONE
+    // =========================================================
+    // Use these (e.g. for the lake/water visuals) instead of
+    // EnvironmentSystem.Instance.Temperature/Water. EnvironmentSystem only
+    // holds the zone the panda is in, so other zones would react to the
+    // wrong temperature.
+
+    /// <summary>True while the panda is in this zone.</summary>
+    public bool IsActiveZone =>
+        EnvironmentSystem.Instance != null &&
+        EnvironmentSystem.Instance.ActiveZone == this;
+
+    /// <summary>This zone's temperature right now (live if the panda is here, otherwise the saved one).</summary>
+    public float CurrentTemperature =>
+        IsActiveZone ? EnvironmentSystem.Instance.Temperature : temperature;
+
+    /// <summary>This zone's water (0-100) right now.</summary>
+    public float CurrentWater =>
+        IsActiveZone ? EnvironmentSystem.Instance.Water : water;
+
+    /// <summary>This zone's human disturbance (0-1) right now.</summary>
+    public float CurrentPollution =>
+        IsActiveZone ? EnvironmentSystem.Instance.Pollution : pollution;
+
+    // =========================================================
     // ENTER SOUND
     // =========================================================
 

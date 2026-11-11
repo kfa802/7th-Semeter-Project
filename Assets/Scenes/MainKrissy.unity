@@ -16569,6 +16569,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterEnvironmentVisuals
   environment: {fileID: 1431297040}
+  zone: {fileID: 0}
   sunLight: {fileID: 2082669484}
   coldStartTemperature: 15
   hotStartTemperature: 25
@@ -33449,6 +33450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterEnvironmentVisuals
   environment: {fileID: 1431297040}
+  zone: {fileID: 0}
   sunLight: {fileID: 2082669484}
   coldStartTemperature: 15
   hotStartTemperature: 25
@@ -58696,7 +58698,7 @@ MonoBehaviour:
     highlightNames: []
     waitFor: 3
     degreesToChange: 1
-    pauseAfter: 1
+    pauseAfter: 0
     subtitles:
     - startTime: 0
       endTime: 4
@@ -58711,7 +58713,7 @@ MonoBehaviour:
     highlightNames: []
     waitFor: 0
     degreesToChange: 5
-    pauseAfter: 3
+    pauseAfter: 0
     subtitles: []
   - label: Feeding
     instruction: Drag the bamboo to the panda to feed it.
@@ -58723,7 +58725,7 @@ MonoBehaviour:
     highlightNames: []
     waitFor: 2
     degreesToChange: 5
-    pauseAfter: 1
+    pauseAfter: 0
     subtitles: []
   - label: Panda Health
     instruction: You panda has a health bar.
@@ -58735,7 +58737,7 @@ MonoBehaviour:
     highlightNames: []
     waitFor: 0
     degreesToChange: 5
-    pauseAfter: 3
+    pauseAfter: 1
     subtitles: []
   hideDuringIntro:
   - {fileID: 1740021514}

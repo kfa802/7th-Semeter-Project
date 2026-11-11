@@ -8,6 +8,11 @@ public class WaterEnvironmentVisuals : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnvironmentSystem environment;
+
+    [Tooltip("The zone this lake belongs to. The lake only reacts to THIS zone's " +
+             "temperature, water and disturbance. Empty = the zone whose area the " +
+             "lake is inside is found automatically.")]
+    [SerializeField] private EcosystemZone zone;
     [Tooltip("Optional: the same Directional Light used by TemperatureVisuals.")]
     [SerializeField] private Light sunLight;
 
@@ -124,11 +129,16 @@ public class WaterEnvironmentVisuals : MonoBehaviour
         if (environment == null) environment = EnvironmentSystem.Instance;
         if (environment == null || runtimeMaterial == null) return;
 
+        if (zone == null)
+            zone = FindMyZone();
+
+        float temperature = Temperature;
+
         float targetCold = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(
-            coldStartTemperature, environment.MinTemperature, environment.Temperature));
+            coldStartTemperature, MinTemperature, temperature));
         float targetHot = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(
-            hotStartTemperature, environment.MaxTemperature, environment.Temperature));
-        float targetPollution = Mathf.Clamp01(environment.Pollution);
+            hotStartTemperature, MaxTemperature, temperature));
+        float targetPollution = Mathf.Clamp01(Pollution);
 
         if (!initialized)
         {
@@ -157,25 +167,30 @@ public class WaterEnvironmentVisuals : MonoBehaviour
 
     private void UpdateWaterState()
     {
-        float temperature = environment.Temperature;
-        EcosystemZone currentZone = environment.ActiveZone;
+        float temperature = Temperature;
 
-        if (!waterLevelInitialized || currentZone != previousWaterZone)
+        // Without its own zone, the old behaviour: reset the ice when the
+        // panda changes zone. With its own zone, the ice simply stays.
+        if (zone == null)
         {
-            iceAmount = 0f;
-            previousWaterZone = currentZone;
+            EcosystemZone currentZone = environment.ActiveZone;
+
+            if (!waterLevelInitialized || currentZone != previousWaterZone)
+            {
+                iceAmount = 0f;
+                previousWaterZone = currentZone;
+            }
+        }
+
+        if (!waterLevelInitialized)
+        {
+            // Start already frozen if this zone starts cold (no thaw-in at load).
+            iceAmount = zone != null ? TargetIce(temperature) : 0f;
             waterLevelInitialized = true;
         }
 
         // Temperaturen styrer frysning og optøning.
-        float targetIce = Mathf.InverseLerp(
-            freezeStartTemperature,
-            Mathf.Min(
-                fullyFrozenTemperature,
-                freezeStartTemperature - 0.01f
-            ),
-            temperature
-        );
+        float targetIce = TargetIce(temperature);
 
         iceAmount = Mathf.MoveTowards(
             iceAmount,
@@ -184,7 +199,7 @@ public class WaterEnvironmentVisuals : MonoBehaviour
         );
 
         // Vandstanden følger altid den faktiske vandmængde.
-        visibleWater = Mathf.Clamp01(environment.Water / 100f);
+        visibleWater = Mathf.Clamp01(Water / 100f);
 
         transform.localPosition = fullPosition - Vector3.up *
             (Mathf.Max(0f, dryLevelDrop) * (1f - visibleWater));
@@ -223,6 +238,50 @@ public class WaterEnvironmentVisuals : MonoBehaviour
                 originalSpecularSpeed * (1f - iceAmount)
             );
         }
+    }
+
+    // ---------- This lake's own values ----------
+
+    private float Temperature => zone != null ? zone.CurrentTemperature : environment.Temperature;
+    private float Water => zone != null ? zone.CurrentWater : environment.Water;
+    private float Pollution => zone != null ? zone.CurrentPollution : environment.Pollution;
+    private float MinTemperature => zone != null ? zone.minTemperature : environment.MinTemperature;
+    private float MaxTemperature => zone != null ? zone.maxTemperature : environment.MaxTemperature;
+
+    private float TargetIce(float temperature)
+    {
+        return Mathf.InverseLerp(
+            freezeStartTemperature,
+            Mathf.Min(fullyFrozenTemperature, freezeStartTemperature - 0.01f),
+            temperature);
+    }
+
+    // The zone whose trigger area contains this lake.
+    private EcosystemZone FindMyZone()
+    {
+        Vector3 position = waterRenderer != null ? waterRenderer.bounds.center : transform.position;
+        EcosystemZone best = null;
+        float bestDistance = float.MaxValue;
+
+        foreach (EcosystemZone z in FindObjectsByType<EcosystemZone>(FindObjectsSortMode.None))
+        {
+            Collider c = z.GetComponent<Collider>();
+            if (c == null)
+                continue;
+
+            float distance = Vector3.Distance(c.ClosestPoint(position), position);
+
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                best = z;
+            }
+        }
+
+        if (best != null)
+            Debug.Log("WaterEnvironmentVisuals: '" + name + "' belongs to zone '" + best.zoneName + "'.", this);
+
+        return best;
     }
 
     private Color GetColor(Color normal, Color cold, Color hot, Color polluted)
