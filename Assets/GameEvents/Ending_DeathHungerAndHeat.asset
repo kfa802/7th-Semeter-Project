@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99bb79ad394217b4bb00b616185b7793, type: 3}
+  m_Name: Ending_DeathHungerAndHeat
+  m_EditorClassIdentifier: Assembly-CSharp::Ending
+  endingTitle: Death_HungerAndHeat
+  titleDA: 
+  descriptionDA: 
+  titleEN: Hunger And Heat
+  descriptionEN: "Oh no! The panda was too hot and too hungry. It didn't have enough
+    energy to keep going. \n\nDid you know that you can help protect pandas? \nWhen
+    you visit the zoo, you support a breeding program that helps protect pandas for
+    the future! \n\nAnd when you buy bamboo products, look for the FSC label. It
+    helps you choose products made with care for forests and wildlife. "
+  endingImage: {fileID: 0}
+  narrationDA1: {fileID: 0}
+  narrationDA2: {fileID: 0}
+  narrationEN1: {fileID: 0}
+  narrationEN2: {fileID: 0}
+  endingDescription: 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
+public enum DeathCause { Hunger, Heat, Cold, Disturbance, HungerAndHeat, LowHealth }
+
 public class PandaSystem : MonoBehaviour
 {
     // =========================================================
@@ -11,6 +13,9 @@ public class PandaSystem : MonoBehaviour
 
     /// <summary>Normal feeding. Passes the health gained.</summary>
     public event Action<float> Fed;
+
+    /// <summary>Fired once when health reaches 0. Passes the main cause.</summary>
+    public event Action<DeathCause> Died;
 
     // OVERFEEDING DISABLED
     // /// <summary>Overfeeding. Passes the health lost.</summary>
@@ -208,6 +213,19 @@ public class PandaSystem : MonoBehaviour
 
     private float hotTimer;
 
+    [Header("Death Cause")]
+    [Tooltip("Hunger damage taken while pollution is at or above this counts as 'Human Disturbance'. " +
+         "Pollution runs from 0 to 1 (0.5 = 50%).")]
+    [SerializeField, Range(0f, 1f)] private float disturbancePollutionThreshold = 0.5f;
+
+    [Tooltip("Hunger + Heat ending: both must account for at least this share of all damage (0.3 = 30%).")]
+    [SerializeField, Range(0.05f, 0.5f)] private float combinedCauseShare = 0.3f;
+
+    [Tooltip("Otherwise one cause must account for at least this share. If none does: Low Health.")]
+    [SerializeField, Range(0.3f, 1f)] private float dominantCauseShare = 0.5f;
+
+    private float coldHungerDamage;
+    private float disturbanceHungerDamage;
 
     // =========================================================
     // STRESS
@@ -259,6 +277,24 @@ public class PandaSystem : MonoBehaviour
     /// <summary>All health ever lost to extreme heat (only goes up).</summary>
     public float TotalHeatDamage { get; private set; }
 
+    public bool IsDead { get; private set; }
+
+    public bool EndingReached { get; private set; }
+
+    private bool heartbeatSilenced;
+
+    /// <summary>Called by DilemmaManager when an ending begins.</summary>
+    public void NotifyEndingReached()
+    {
+        EndingReached = true;
+    }
+
+    /// <summary>Called by DilemmaManager when the ending screen appears.</summary>
+    public void SilenceHeartbeat()
+    {
+        heartbeatSilenced = true;
+    }
+
     public float Stress => stress;
 
     public float HungerTimer => hungerTimer;
@@ -268,21 +304,9 @@ public class PandaSystem : MonoBehaviour
     // CONDITIONS
     // =========================================================
 
-    public bool IsHungry
-    {
-        get
-        {
-            return hungerTimer >= timeUntilHungry;
-        }
-    }
+    public bool IsHungry => !EndingReached && hungerTimer >= timeUntilHungry;
 
-    public bool IsVeryHungry
-    {
-        get
-        {
-            return hungerTimer >= timeUntilVeryHungry;
-        }
-    }
+    public bool IsVeryHungry => !EndingReached && hungerTimer >= timeUntilVeryHungry;
 
     // OVERFEEDING DISABLED: always false. Kept so other scripts that
     // still check IsOverfed (e.g. status/mood UI) keep compiling.
@@ -296,56 +320,21 @@ public class PandaSystem : MonoBehaviour
     //     }
     // }
 
-    public bool IsThirsty
-    {
-        get
-        {
-            if (!canBeThirsty || environment == null)
-                return false;
+    public bool IsThirsty =>
+    !EndingReached && canBeThirsty && environment != null &&
+    environment.Water < waterHealthThreshold;
 
-            return environment.Water < waterHealthThreshold;
-        }
-    }
+    public bool IsHot => !EndingReached && hotTimer >= secondsUntilHot;
 
-    public bool IsHot
-    {
-        get
-        {
-            // Only hot after it has been warm enough for a while.
-            return hotTimer >= secondsUntilHot;
-        }
-    }
+    public bool IsCold =>
+        !EndingReached && canBeCold && environment != null &&
+        environment.Temperature <= coldTemperature;
 
-    public bool IsCold
-    {
-        get
-        {
-            if (!canBeCold || environment == null)
-                return false;
+    public bool IsInExtremeHeat =>
+        !EndingReached && environment != null && IsHot &&
+        environment.Temperature > extremeHeatTemperature;
 
-            return environment.Temperature <= coldTemperature;
-        }
-    }
-
-    /// <summary>True while extreme heat is damaging the panda.</summary>
-    public bool IsInExtremeHeat
-    {
-        get
-        {
-            if (environment == null)
-                return false;
-
-            return IsHot && environment.Temperature > extremeHeatTemperature;
-        }
-    }
-
-    public bool IsStressed
-    {
-        get
-        {
-            return stress >= stressedThreshold;
-        }
-    }
+    public bool IsStressed => !EndingReached && stress >= stressedThreshold;
 
 
     // =========================================================
@@ -366,19 +355,19 @@ public class PandaSystem : MonoBehaviour
     {
         bool safe = safeWhileTravelling && IsTravelling;
 
-        // While travelling the hunger and heat timers pause.
         if (!safe)
         {
             UpdateHunger();
             UpdateHotTimer();
         }
 
-        UpdateDrinkingSound();
+        if (!EndingReached)
+            UpdateDrinkingSound();
+            
         UpdateHeartbeat();
 
-        // OVERFEEDING DISABLED
-        // UpdateFeedingHistory();
-        // UpdateOverfedTimer();
+        if (IsDead || EndingReached)
+            return;
 
         if (environment == null || safe)
             return;
@@ -390,6 +379,7 @@ public class PandaSystem : MonoBehaviour
         UpdateHealthFromExtremeHeat();
 
         ClampHealth();
+        CheckDeath();
     }
 
 
@@ -468,10 +458,10 @@ public class PandaSystem : MonoBehaviour
             return;
 
         // 0 = health fine, 1 = health at (or below) 'Full At Health'.
-        float target = Mathf.InverseLerp(
-            heartbeatStartBelowHealth,
-            Mathf.Min(heartbeatFullAtHealth, heartbeatStartBelowHealth - 0.01f),
-            health
+        float target = heartbeatSilenced ? 0f : Mathf.InverseLerp(
+        heartbeatStartBelowHealth,
+        Mathf.Min(heartbeatFullAtHealth, heartbeatStartBelowHealth - 0.01f),
+        health
         );
 
         heartbeatIntensity = Mathf.MoveTowards(
@@ -622,6 +612,15 @@ public class PandaSystem : MonoBehaviour
 
         health -= damage;
         TotalHungerDamage += damage;
+
+        // Label the damage by what was going on at the time.
+        if (damage > 0f && environment != null)
+        {
+            if (environment.GrowthCondition == EnvironmentSystem.GrowthConditionType.TooCold)
+                coldHungerDamage += damage;
+            else if (environment.Pollution >= disturbancePollutionThreshold)
+                disturbanceHungerDamage += damage;
+        }
     }
 
 
@@ -745,6 +744,51 @@ public class PandaSystem : MonoBehaviour
         TotalHeatDamage += damage;
     }
 
+    // =========================================================
+    // DEATH CAUSE
+    // =========================================================
+    public DeathCause GetDeathCause()
+    {
+        float cold = coldHungerDamage;
+        float disturbance = disturbanceHungerDamage;
+        float hunger = Mathf.Max(0f, TotalHungerDamage - cold - disturbance);
+        float heat = TotalHeatDamage;
+
+        float total = hunger + heat + cold + disturbance;
+        if (total <= 0f)
+            return DeathCause.LowHealth;
+
+        // Hunger AND heat both play a big part.
+        if (hunger / total >= combinedCauseShare && heat / total >= combinedCauseShare)
+            return DeathCause.HungerAndHeat;
+
+        // One clear main cause.
+        float max = Mathf.Max(Mathf.Max(hunger, heat), Mathf.Max(cold, disturbance));
+        if (max / total < dominantCauseShare)
+            return DeathCause.LowHealth;
+
+        if (max == heat) return DeathCause.Heat;
+        if (max == cold) return DeathCause.Cold;
+        if (max == disturbance) return DeathCause.Disturbance;
+        return DeathCause.Hunger;
+    }
+
+    private void CheckDeath()
+    {
+        if (IsDead || health > 0f)
+            return;
+
+        IsDead = true;
+
+        float hunger = Mathf.Max(0f, TotalHungerDamage - coldHungerDamage - disturbanceHungerDamage);
+        Debug.Log(
+            "PandaSystem: Damage breakdown | hunger = " + hunger.ToString("F1") +
+            " | heat = " + TotalHeatDamage.ToString("F1") +
+            " | cold = " + coldHungerDamage.ToString("F1") +
+            " | disturbance = " + disturbanceHungerDamage.ToString("F1"));
+
+        Died?.Invoke(GetDeathCause());
+    }
 
     // =========================================================
     // HEALTH CLAMP

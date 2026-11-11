@@ -34013,6 +34013,9 @@ MonoBehaviour:
   secondsUntilHot: 6.5
   canBeCold: 0
   coldTemperature: 0
+  disturbancePollutionThreshold: 0.5
+  combinedCauseShare: 0.3
+  dominantCauseShare: 0.5
   stress: 0
   stressedThreshold: 50
   environment: {fileID: 1431297040}
@@ -63030,6 +63033,13 @@ MonoBehaviour:
   coldBelow: 0
   hotAbove: 25
   decideAnywayAfter: 45
+  panda: {fileID: 725808051}
+  hungerEnding: {fileID: 11400000, guid: a878cfcd6b87b41c4b431e38dfb9a76b, type: 2}
+  heatEnding: {fileID: 11400000, guid: 9f0c7927648dd415487e9de80630cf0d, type: 2}
+  coldEnding: {fileID: 11400000, guid: 981cf253a87dd41ccbd350993e640417, type: 2}
+  disturbanceEnding: {fileID: 11400000, guid: d74dc1c4684f145cfb67507e2f6217fc, type: 2}
+  hungerAndHeatEnding: {fileID: 11400000, guid: 5f2f2fcf8e29a408dbed78a380ad612a, type: 2}
+  lowHealthEnding: {fileID: 11400000, guid: db64f9adff61c4cb89bb80d87ce7023d, type: 2}
   endingDelay: 6
   choiceButtons: []
   narrationDelay: 0.3

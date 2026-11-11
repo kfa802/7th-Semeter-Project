@@ -176,6 +176,18 @@ public class DilemmaManager : MonoBehaviour
 
     [Header("Ending Settings")]
     [SerializeField] private float endingDelay = 3f;
+    [Tooltip("Seconds between the panda dying and the ending screen appearing.")]
+    [SerializeField] private float deathEndingDelay = 1f;
+
+    [Header("Death Endings (health reached 0)")]
+    [SerializeField] private PandaSystem panda;
+    [SerializeField] private Ending hungerEnding;
+    [SerializeField] private Ending heatEnding;
+    [SerializeField] private Ending coldEnding;
+    [SerializeField] private Ending disturbanceEnding;
+    [SerializeField] private Ending hungerAndHeatEnding;
+    [Tooltip("Low Health (General). Also used if a specific ending above is empty.")]
+    [SerializeField] private Ending lowHealthEnding;
 
     [Header("Narration")]
     // Each Dilemma asset has its own 'Narration Clip'. It plays when the
@@ -844,7 +856,7 @@ public class DilemmaManager : MonoBehaviour
 
         if (selectedEnding != null)
         {
-            BeginEnding(selectedEnding);
+            BeginEnding(selectedEnding, endingDelay);
             return;
         }
 
@@ -1393,43 +1405,43 @@ public class DilemmaManager : MonoBehaviour
         switch (change.revealStyle)
         {
             case RevealStyle.RiseFromGround:
-            {
-                // Rises past its spot a little, then settles down.
-                float rise = EaseOutBack(t, s * 0.6f);
-                position = endPosition - Vector3.up * change.riseDistance * (1f - rise);
-                break;
-            }
+                {
+                    // Rises past its spot a little, then settles down.
+                    float rise = EaseOutBack(t, s * 0.6f);
+                    position = endPosition - Vector3.up * change.riseDistance * (1f - rise);
+                    break;
+                }
 
             case RevealStyle.GrowUp:
-            {
-                // Smooth grow with a soft overshoot.
-                float grow = EaseOutBack(t, s * 0.7f);
-                scale = endScale * Mathf.Max(0.001f, grow);
-                break;
-            }
+                {
+                    // Smooth grow with a soft overshoot.
+                    float grow = EaseOutBack(t, s * 0.7f);
+                    scale = endScale * Mathf.Max(0.001f, grow);
+                    break;
+                }
 
             case RevealStyle.PopUp:
-            {
-                // Fast and bouncy: most of the growth happens early.
-                float pop = EaseOutBack(EaseOutCubic(t), s * 1.4f);
-                scale = endScale * Mathf.Max(0.001f, pop);
-                break;
-            }
+                {
+                    // Fast and bouncy: most of the growth happens early.
+                    float pop = EaseOutBack(EaseOutCubic(t), s * 1.4f);
+                    scale = endScale * Mathf.Max(0.001f, pop);
+                    break;
+                }
 
             case RevealStyle.SproutUp:
-            {
-                // Height shoots up first, width follows a little later,
-                // which reads as "growing out of the ground".
-                float height = EaseOutBack(t, s);
-                float width = EaseOutBack(Mathf.Clamp01(t * 1.15f - 0.1f), s * 0.5f);
+                {
+                    // Height shoots up first, width follows a little later,
+                    // which reads as "growing out of the ground".
+                    float height = EaseOutBack(t, s);
+                    float width = EaseOutBack(Mathf.Clamp01(t * 1.15f - 0.1f), s * 0.5f);
 
-                scale = new Vector3(
-                    endScale.x * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width)),
-                    endScale.y * Mathf.Max(0.001f, height),
-                    endScale.z * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width))
-                );
-                break;
-            }
+                    scale = new Vector3(
+                        endScale.x * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width)),
+                        endScale.y * Mathf.Max(0.001f, height),
+                        endScale.z * Mathf.Lerp(0.35f, 1f, Mathf.Max(0f, width))
+                    );
+                    break;
+                }
         }
 
         target.position = position;
@@ -1469,6 +1481,72 @@ public class DilemmaManager : MonoBehaviour
     {
         float u = 1f - t;
         return 1f - u * u * u;
+    }
+
+    private void OnEnable()
+    {
+        if (panda != null) panda.Died += OnPandaDied;
+    }
+
+    private void OnDisable()
+    {
+        if (panda != null) panda.Died -= OnPandaDied;
+    }
+
+    private void OnPandaDied(DeathCause cause)
+    {
+        // A dilemma-based ending already happened: ignore the death.
+        if (gameEnded)
+            return;
+
+        Ending ending = cause switch
+        {
+            DeathCause.Hunger => hungerEnding,
+            DeathCause.Heat => heatEnding,
+            DeathCause.Cold => coldEnding,
+            DeathCause.Disturbance => disturbanceEnding,
+            DeathCause.HungerAndHeat => hungerAndHeatEnding,
+            _ => lowHealthEnding
+        };
+
+        if (ending == null)
+            ending = lowHealthEnding;
+
+        if (ending == null)
+        {
+            Debug.LogError("DilemmaManager: Panda died (" + cause + ") but no death ending is assigned.");
+            return;
+        }
+
+        // Close whatever is on screen so nothing overlaps the ending.
+        if (activeDilemma != null)
+        {
+            activeDilemma = null;
+            dilemmaUI.HideDilemma();
+        }
+
+        StopNarration();
+        StopEventNarration();
+
+        Debug.Log("DilemmaManager: Panda died. Cause = " + cause);
+        BeginEnding(ending, deathEndingDelay);
+    }
+
+    private void StopEventNarration()
+    {
+        if (eventNarrationRoutine != null)
+        {
+            StopCoroutine(eventNarrationRoutine);
+            eventNarrationRoutine = null;
+        }
+
+        eventNarrationPlaying = false;
+
+        if (narrationSource != null && narrationSource.isPlaying)
+            narrationSource.Stop();
+
+        if (subtitleGroup != null) subtitleGroup.alpha = 0f;
+        if (subtitlePanel != null) subtitlePanel.SetActive(false);
     }
 
     // =========================================================
@@ -1517,20 +1595,23 @@ public class DilemmaManager : MonoBehaviour
                 selectedChoice == 2);
     }
 
-    private void BeginEnding(Ending ending)
+    private void BeginEnding(Ending ending, float delay)
     {
         TelemetryManager.Instance?.EndingReached(ending.endingTitle);
         gameEnded = true;
         pendingEnding = ending;
 
+        if (panda != null)
+            panda.NotifyEndingReached();
+
         Debug.Log(
             "DilemmaManager: Ending '" + ending.endingTitle +
-            "' will appear in " + endingDelay + " seconds."
+            "' will appear in " + delay + " seconds."
         );
 
         Invoke(
             nameof(ShowSelectedEnding),
-            Mathf.Max(0f, endingDelay)
+            Mathf.Max(0f, delay)
         );
     }
 
@@ -1542,6 +1623,8 @@ public class DilemmaManager : MonoBehaviour
             Debug.LogError("DilemmaManager: No ending was selected.");
             return;
         }
+        if (panda != null)
+            panda.SilenceHeartbeat();
 
         if (endingUI != null && endingPanel != null)
         {
