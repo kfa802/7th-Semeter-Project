@@ -126,6 +126,13 @@ public class TemperatureFeedback : MonoBehaviour
 
     private void Update()
     {
+        // An ending has started: clear and hide every warning.
+        if (panda != null && panda.EndingReached)
+        {
+            HideForEnding();
+            return;
+        }
+
         EnvironmentSystem env = EnvironmentSystem.Instance;
 
         string text = null;
@@ -284,6 +291,19 @@ public class TemperatureFeedback : MonoBehaviour
         return false;
     }
 
+    private void HideForEnding()
+    {
+        shownText = null;
+        candidateText = null;
+        shownBad = false;
+        goodUntil = -999f;
+        bambooProblemShown = false;
+
+        // Fade the message out, and tell the slider arrow to stop prompting.
+        UpdateVisuals();
+        SliderHintArrow.SetTemperaturePrompt(this, false);
+    }
+    
     // =========================================================
     // VISUALS
     // =========================================================
