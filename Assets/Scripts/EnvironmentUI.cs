@@ -20,6 +20,15 @@ public class EnvironmentUI : MonoBehaviour
     [SerializeField] private TMP_Text bambooText;
     [SerializeField] private TMP_Text pandaHealthText;
 
+    [Header("Bamboo Text")]
+    [Tooltip("On: the number after '/' is all growth spots in ALL zones. " +
+             "Off: only the spots in the zone the panda is in.")]
+    [SerializeField] private bool totalAcrossAllZones = true;
+
+    [Tooltip("On: the first number counts grown bamboo in ALL zones. " +
+             "Off: only the zone the panda is in.")]
+    [SerializeField] private bool countAcrossAllZones = false;
+
     [Header("Visual Slider Speeds")]
     [SerializeField] private float pandaHealthSliderSpeed = 20f;
 
@@ -27,6 +36,10 @@ public class EnvironmentUI : MonoBehaviour
 
     private int currentBambooCount;
     private int totalBambooCount;
+
+    // Always the active zone only (used for BambooPercent).
+    private int zoneBambooCount;
+    private int zoneBambooCapacity;
 
     // =====================================================
     // START
@@ -191,12 +204,23 @@ public class EnvironmentUI : MonoBehaviour
         {
             currentBambooCount = 0;
             totalBambooCount = 0;
+            zoneBambooCount = 0;
+            zoneBambooCapacity = 0;
             return;
         }
 
-        // Fully grown bamboo in this zone / total growth spots.
-        currentBambooCount = manager.GetCurrentCountForZone(activeZone);
-        totalBambooCount = manager.GetCapacityForZone(activeZone);
+        zoneBambooCount = manager.GetCurrentCountForZone(activeZone);
+        zoneBambooCapacity = manager.GetCapacityForZone(activeZone);
+
+        // Fully grown bamboo / growth spots (this zone or all zones).
+        // Growth is still limited per zone by BambooManager.
+        currentBambooCount = countAcrossAllZones
+            ? manager.ActiveCount
+            : manager.GetCurrentCountForZone(activeZone);
+
+        totalBambooCount = totalAcrossAllZones
+            ? manager.Capacity
+            : manager.GetCapacityForZone(activeZone);
     }
 
     // =====================================================
@@ -285,11 +309,11 @@ public class EnvironmentUI : MonoBehaviour
         environment != null && environment.ActiveZone == null;
 
     public float BambooPercent =>
-        totalBambooCount > 0
-            ? (float)currentBambooCount / totalBambooCount * 100f
+        zoneBambooCapacity > 0
+            ? (float)zoneBambooCount / zoneBambooCapacity * 100f
             : 0f;
 
-    public bool HasBambooZone => totalBambooCount > 0;
+    public bool HasBambooZone => zoneBambooCapacity > 0;
 
     // The active zone's water (0 while travelling).
     public float WaterPercent => GetTargetWater();
