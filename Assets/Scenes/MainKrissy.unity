@@ -38040,14 +38040,14 @@ RectTransform:
   m_GameObject: {fileID: 901206169}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.0833333, y: 0.1253133, z: 0.32894737}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2033208196}
+  m_Father: {fileID: 1878688207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 332.39996, y: -162.66444}
+  m_AnchoredPosition: {x: -4.3749695, y: -4.945404}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &901206171
@@ -50521,6 +50521,20 @@ MonoBehaviour:
   alwaysVisible: 1
   visibilityThreshold: 0.04
   fillSpeed: 0.5
+  flashGraphics: []
+  flashColor: {r: 1, g: 0.15, b: 0.1, a: 1}
+  flashWhenRisingBy: 0.1
+  flashDuration: 3
+  flashSpeed: 2
+  flashGrow: 0
+  vibrateTarget: {fileID: 1878688207}
+  vibrateStrength: 3
+  vibrateSpeed: 35
+  riseTime: 2.5
+  riseSound: {fileID: 8300000, guid: 2cca3ef2d15086f4ca760ff860eb5b39, type: 3}
+  riseSoundVolume: 0.8
+  loopRiseSound: 0
+  riseSoundMixerGroup: {fileID: 0}
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -59533,8 +59547,8 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
-  disturbanceHot: 20
-  disturbanceMild: 10
+  disturbanceHot: 30
+  disturbanceMild: 20
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
@@ -77487,7 +77501,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.48, y: 7.98, z: 3.04}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 901206170}
   m_Father: {fileID: 2033208196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
@@ -85052,7 +85067,6 @@ RectTransform:
   - {fileID: 932857013}
   - {fileID: 1878688207}
   - {fileID: 1784890875}
-  - {fileID: 901206170}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -86074,8 +86088,8 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
-  disturbanceHot: 20
-  disturbanceMild: 10
+  disturbanceHot: 25
+  disturbanceMild: 15
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0

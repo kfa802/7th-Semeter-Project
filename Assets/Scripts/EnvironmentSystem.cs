@@ -85,6 +85,9 @@ public class EnvironmentSystem : MonoBehaviour
 
     private EcosystemZone activeZone;
 
+    // The zone the panda was last in (used if a choice happens while travelling).
+    private EcosystemZone lastZone;
+
     public EcosystemZone ActiveZone => activeZone;
 
     // =========================================================
@@ -277,6 +280,7 @@ public class EnvironmentSystem : MonoBehaviour
             return;
 
         activeZone = zone;
+        lastZone = zone;
         ActiveZoneName = zone.zoneName;
 
         // Temperaturindstillinger.
@@ -590,14 +594,35 @@ public class EnvironmentSystem : MonoBehaviour
     /// </summary>
     public void ChangePollution(float amount)
     {
-        if (activeZone == null)
+        if (Mathf.Approximately(amount, 0f))
+            return;
+
+        // While travelling: the change belongs to the zone the panda just left.
+        EcosystemZone zone = activeZone != null ? activeZone : lastZone;
+
+        if (zone == null)
         {
             pollution = Mathf.Clamp01(pollution + amount);
             return;
         }
 
-        activeZone.disturbanceFromEvents = Mathf.Clamp(
-            activeZone.disturbanceFromEvents + amount * 100f, -100f, 100f);
+        zone.disturbanceFromEvents = Mathf.Clamp(
+            zone.disturbanceFromEvents + amount * 100f, -100f, 100f);
+
+        // Jump straight to the new level, so the meter clearly shoots up
+        // (instead of creeping there at the normal slow speed).
+        float newPollution = zone.GetTargetPollution(
+            zone == activeZone ? temperature : zone.temperature);
+
+        if (zone == activeZone)
+            pollution = newPollution;
+
+        zone.pollution = newPollution;
+
+        Debug.Log(
+            "EnvironmentSystem: Human disturbance in " + zone.zoneName + " " +
+            (amount >= 0f ? "+" : "") + (amount * 100f).ToString("F0") + "% -> now " +
+            (newPollution * 100f).ToString("F0") + "%.");
     }
 
     // =========================================================
