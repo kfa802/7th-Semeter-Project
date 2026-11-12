@@ -55,6 +55,10 @@ public class PandaSystem : MonoBehaviour
     [SerializeField]
     private float veryHungryHealthLossPerSecond = 6f;
 
+    [Tooltip("On: one bamboo only takes away one step of hunger. A VERY hungry " +
+             "panda becomes 'hungry' after one bamboo and needs a second to be full.")]
+    [SerializeField] private bool oneStepPerBamboo = true;
+
     private float hungerTimer;
 
 
@@ -677,8 +681,12 @@ public class PandaSystem : MonoBehaviour
         //     return;
         // }
 
-        // Normal feeding.
-        hungerTimer = 0f;
+        // Normal feeding. One bamboo takes away ONE step of hunger:
+        // very hungry -> hungry -> full. So a very hungry panda needs 2 bamboo.
+        if (oneStepPerBamboo && IsVeryHungry)
+            hungerTimer = timeUntilHungry;   // still hungry, but no longer VERY hungry
+        else
+            hungerTimer = 0f;
 
         // OVERFEEDING DISABLED
         // // Record the feeding.

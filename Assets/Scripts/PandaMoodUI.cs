@@ -26,6 +26,58 @@ public class PandaMoodUI : MonoBehaviour
     [Tooltip("Optional: hides the bubble while travelling.")]
     [SerializeField] private PandaPathMover pandaPathMover;
 
+    [Header("Icons (instead of text)")]
+    [Tooltip("On: the bubble shows images instead of words. The Mood Text is hidden.")]
+    [SerializeField] private bool useIcons = true;
+
+    [Tooltip("Shown when HUNGRY, e.g. one bamboo image.")]
+    [SerializeField] private GameObject[] hungryIcons;
+
+    [Tooltip("Shown when VERY HUNGRY, e.g. TWO bamboo images (the same bamboo twice).")]
+    [SerializeField] private GameObject[] veryHungryIcons;
+
+    [Tooltip("Shown when TOO HOT, e.g. the hot panda image.")]
+    [SerializeField] private GameObject[] hotIcons;
+
+    [Tooltip("Optional: shown when STRESSED.")]
+    [SerializeField] private GameObject[] stressedIcons;
+
+    [Tooltip("Optional: shown when THIRSTY.")]
+    [SerializeField] private GameObject[] thirstyIcons;
+
+    [Tooltip("Optional: shown when TOO COLD.")]
+    [SerializeField] private GameObject[] coldIcons;
+
+    [Header("Two Feelings At Once")]
+    [Tooltip("On: when the panda has several feelings, the bubble switches between " +
+             "their images instead of showing them on top of each other.")]
+    [SerializeField] private bool switchBetweenFeelings = true;
+
+    [Tooltip("Seconds each feeling is shown before switching to the next.")]
+    [SerializeField, Min(0.5f)] private float secondsPerFeeling = 2.5f;
+
+    [Header("Intensity (worse = more intense)")]
+    [Tooltip("How strong the pulse starts once the feeling has lasted 'Pulse After' seconds " +
+             "(it still grows from there). 0 = gentle, 1 = full pulse and glow.")]
+    [SerializeField, Range(0f, 1f)] private float hungryIntensity = 0.15f;
+    [SerializeField, Range(0f, 1f)] private float veryHungryIntensity = 0.7f;
+    [SerializeField, Range(0f, 1f)] private float hotIntensity = 0.3f;
+
+    [Tooltip("Used while the heat is actually hurting the panda.")]
+    [SerializeField, Range(0f, 1f)] private float heatDamageIntensity = 0.9f;
+
+    [Tooltip("How much bigger the image gets at full intensity (1.3 = 30% bigger).")]
+    [SerializeField, Range(1f, 2f)] private float iconMaxScale = 1.3f;
+
+    [Tooltip("Extra size swing of the image with each pulse (0.08 = 8%).")]
+    [SerializeField, Range(0f, 0.3f)] private float iconPulse = 0.08f;
+
+    private readonly List<string> shownFeelings = new List<string>();
+    private int feelingIndex;
+    private float feelingTimer;
+    private float mainSeverity;
+    private readonly Dictionary<Transform, Vector3> iconBaseScales = new Dictionary<Transform, Vector3>();
+
     [Header("Bubble")]
     [Tooltip("The bubble (or its Canvas) that pops up. Stays where you placed it.")]
     [SerializeField] private Transform bubbleRoot;
@@ -190,17 +242,26 @@ public class PandaMoodUI : MonoBehaviour
         if (panda == null) panda = FindFirstObjectByType<PandaSystem>();
         if (pandaPathMover == null) pandaPathMover = FindFirstObjectByType<PandaPathMover>();
 
-        if (moodText == null)
+        if (moodText == null && (!useIcons || bubbleRoot == null))
         {
-            Debug.LogError("PandaMoodUI: Mood Text is not assigned.");
+            Debug.LogError("PandaMoodUI: assign Mood Text, or use icons and assign Bubble Root.");
             enabled = false;
             return;
         }
 
-        moodText.richText = true;
+        if (moodText != null)
+        {
+            moodText.richText = true;
+
+            // Icons replace the words.
+            if (useIcons)
+                moodText.text = "";
+        }
 
         if (bubbleRoot == null)
             bubbleRoot = moodText.transform;
+
+        SetIcons();
 
         baseScale = bubbleRoot.localScale;
 
@@ -223,14 +284,17 @@ public class PandaMoodUI : MonoBehaviour
         if (bubbleRect != null)
             bubbleMinSize = bubbleRect.rect.size;
 
-        textMinSize = moodText.rectTransform.rect.size;
+        if (moodText != null)
+        {
+            textMinSize = moodText.rectTransform.rect.size;
 
-        // Text anchored to stretch with the bubble grows by itself.
-        RectTransform tr = moodText.rectTransform;
-        textStretchesWithBubble = bubbleRect != null && tr.IsChildOf(bubbleRect) && tr.anchorMin != tr.anchorMax;
+            // Text anchored to stretch with the bubble grows by itself.
+            RectTransform tr = moodText.rectTransform;
+            textStretchesWithBubble = bubbleRect != null && tr.IsChildOf(bubbleRect) && tr.anchorMin != tr.anchorMax;
 
-        textSeparate = !moodText.transform.IsChildOf(bubbleRoot);
-        textBaseScale = moodText.transform.localScale;
+            textSeparate = !moodText.transform.IsChildOf(bubbleRoot);
+            textBaseScale = moodText.transform.localScale;
+        }
 
         if (glowImage != null)
         {
@@ -250,8 +314,8 @@ public class PandaMoodUI : MonoBehaviour
         bubbleOn = on;
 
         // Text and glow outside the bubble: switch them off too.
-        if (textSeparate)
-            moodText.enabled = on;
+        if (textSeparate && moodText != null)
+            moodText.enabled = on && !useIcons;
 
         if (glowSeparate)
             glowImage.enabled = on;
@@ -321,6 +385,8 @@ public class PandaMoodUI : MonoBehaviour
 
         // Fully switched off while hidden.
         SetBubbleOn(wantVisible || visible > 0f);
+
+        UpdateFeelingSwitch();
     }
 
     private void LateUpdate()
@@ -341,6 +407,11 @@ public class PandaMoodUI : MonoBehaviour
             ? Mathf.Clamp01((mainMoodDuration - pulseAfter) / fullPulseAfter)
             : 0f;
 
+        // Nothing pulses until the feeling has lasted 'Pulse After' seconds.
+        // From then on, worse feelings (very hungry, heat damage) start stronger.
+        if (wantVisible && mainMoodDuration >= pulseAfter)
+            target = Mathf.Max(target, mainSeverity);
+
         pulseStrength = Mathf.MoveTowards(pulseStrength, target, Time.deltaTime * 0.5f);
 
         float speed = Mathf.Lerp(pulseSpeedStart, pulseSpeedMax, pulseStrength);
@@ -354,11 +425,13 @@ public class PandaMoodUI : MonoBehaviour
         bubbleRoot.localScale = baseScale * size;
 
         // Text and glow outside the bubble pop and pulse with it.
-        if (textSeparate)
+        if (textSeparate && moodText != null)
             moodText.transform.localScale = textBaseScale * size;
 
         if (glowSeparate)
             glowImage.transform.localScale = glowBaseScale * size;
+
+        ScaleIcons();
 
         if (glowImage != null)
         {
@@ -435,6 +508,18 @@ public class PandaMoodUI : MonoBehaviour
 
         int count = Mathf.Min(maxMoods, moods.Count);
         mainMoodDuration = count > 0 ? moods[0].duration : 0f;
+        mainSeverity = 0f;
+
+        for (int i = 0; i < count; i++)
+            mainSeverity = Mathf.Max(mainSeverity, SeverityOf(moods[i].text));
+
+        // The feelings in the bubble, most important first (kept while it shrinks away).
+        if (count > 0)
+        {
+            shownFeelings.Clear();
+            for (int i = 0; i < count; i++)
+                shownFeelings.Add(moods[i].text);
+        }
 
         // Remember for resizing (kept while the bubble shrinks away).
         if (count > 0)
@@ -507,11 +592,153 @@ public class PandaMoodUI : MonoBehaviour
 
         if (count > 0 && text != lastText)
         {
-            moodText.text = text;
+            if (moodText != null && !useIcons)
+                moodText.text = text;
+
             lastText = text;
+
+            // Show the images for the moods on screen.
+            SetIcons();
         }
 
         return count > 0;
+    }
+
+    // Turns on exactly the icons for the moods shown in the bubble.
+    // (Kept as they are while the bubble shrinks away.)
+    private void SetIcons()
+    {
+        if (!useIcons)
+            return;
+
+        // Which feelings to show: all of them, or one at a time.
+        HashSet<string> show = new HashSet<string>();
+
+        if (switchBetweenFeelings && shownFeelings.Count > 0)
+            show.Add(shownFeelings[feelingIndex % shownFeelings.Count]);
+        else
+            show.UnionWith(shownFeelings);
+
+        // Collect the images that should be on, then switch each image only once
+        // (an image can be in two lists, e.g. Bamboo1 in Hungry and Very Hungry).
+        HashSet<GameObject> on = new HashSet<GameObject>();
+
+        if (show.Contains("HUNGRY")) AddAll(on, hungryIcons);
+        if (show.Contains("VERY HUNGRY")) AddAll(on, veryHungryIcons);
+        if (show.Contains("TOO HOT")) AddAll(on, hotIcons);
+        if (show.Contains("STRESSED")) AddAll(on, stressedIcons);
+        if (show.Contains("THIRSTY")) AddAll(on, thirstyIcons);
+        if (show.Contains("TOO COLD")) AddAll(on, coldIcons);
+
+        Apply(hungryIcons, on);
+        Apply(veryHungryIcons, on);
+        Apply(hotIcons, on);
+        Apply(stressedIcons, on);
+        Apply(thirstyIcons, on);
+        Apply(coldIcons, on);
+    }
+
+    private static void AddAll(HashSet<GameObject> set, GameObject[] objects)
+    {
+        if (objects == null)
+            return;
+
+        foreach (GameObject o in objects)
+            if (o != null)
+                set.Add(o);
+    }
+
+    private static void Apply(GameObject[] objects, HashSet<GameObject> on)
+    {
+        if (objects == null)
+            return;
+
+        foreach (GameObject o in objects)
+        {
+            if (o == null)
+                continue;
+
+            bool want = on.Contains(o);
+            if (o.activeSelf != want)
+                o.SetActive(want);
+        }
+    }
+
+    private float SeverityOf(string feeling)
+    {
+        switch (feeling)
+        {
+            case "VERY HUNGRY": return veryHungryIntensity;
+            case "HUNGRY": return hungryIntensity;
+            case "TOO HOT": return panda != null && panda.IsInExtremeHeat ? heatDamageIntensity : hotIntensity;
+            default: return 0f;
+        }
+    }
+
+    // Switches to the next feeling every few seconds.
+    private void UpdateFeelingSwitch()
+    {
+        if (!useIcons || !switchBetweenFeelings || shownFeelings.Count < 2 || !wantVisible)
+        {
+            feelingTimer = 0f;
+            return;
+        }
+
+        feelingTimer += Time.deltaTime;
+
+        if (feelingTimer < secondsPerFeeling)
+            return;
+
+        feelingTimer = 0f;
+        feelingIndex = (feelingIndex + 1) % shownFeelings.Count;
+        bounceTimer = 0f;   // small bounce on each switch
+        SetIcons();
+    }
+
+    // The images on screen grow with the intensity and pulse with the bubble.
+    private void ScaleIcons()
+    {
+        if (!useIcons)
+            return;
+
+        float scale = Mathf.Lerp(1f, iconMaxScale, pulseStrength) + iconPulse * wave * pulseStrength;
+
+        ScaleGroup(hungryIcons, scale);
+        ScaleGroup(veryHungryIcons, scale);
+        ScaleGroup(hotIcons, scale);
+        ScaleGroup(stressedIcons, scale);
+        ScaleGroup(thirstyIcons, scale);
+        ScaleGroup(coldIcons, scale);
+    }
+
+    private void ScaleGroup(GameObject[] objects, float scale)
+    {
+        if (objects == null)
+            return;
+
+        foreach (GameObject o in objects)
+        {
+            if (o == null)
+                continue;
+
+            if (!iconBaseScales.TryGetValue(o.transform, out Vector3 baseScale))
+            {
+                baseScale = o.transform.localScale;
+                iconBaseScales[o.transform] = baseScale;
+            }
+
+            o.transform.localScale = baseScale * scale;
+        }
+    }
+
+    private static void SetAll(GameObject[] objects, bool on)
+    {
+        if (objects == null)
+            return;
+
+        foreach (GameObject o in objects)
+            if (o != null && o.activeSelf != on)
+                o.SetActive(on);
     }
 
     private void Add(string text, string emoji, int priority, bool urgent)
@@ -531,6 +758,10 @@ public class PandaMoodUI : MonoBehaviour
 
     private void ResizeToText()
     {
+        // With icons the bubble keeps the size you gave it.
+        if (useIcons || moodText == null)
+            return;
+
         if (!growWithText || bubbleRect == null || string.IsNullOrEmpty(moodText.text))
             return;
 
