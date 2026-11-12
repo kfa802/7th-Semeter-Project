@@ -12,43 +12,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
   m_Name: Q6
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q6
-  textDA: "Hvor enig/uenig er du i f\xF8lgende udsagn: Spillet f\xF8ltes som en f\xE6rdig
-    oplevelse "
-  textEN: 'How much do you agree/disagree with the following statement: The game
-    felt like a completed experience'
-  multiSelect: 0
-  showLetters: 0
-  horizontalLayout: 1
-  logAsNumber: 1
+  id: Q5
+  textDA: "Hvordan kan DU hj\xE6lpe med at beskytte pandaerne og deres hjem?"
+  textEN: How can YOU help protect pandas and their homes?
+  multiSelect: 1
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
   options:
-  - textDA: 
-    textEN: 
+  - textDA: "Give pandaer mad, hvis jeg m\xF8der dem i naturen."
+    textEN: 'Feed pandas if you see them in the wild. '
     correct: 0
     exclusive: 0
-    icon: {fileID: 21300000, guid: ad95c57e88a664fd8bce61f5ecc31ec5, type: 3}
-  - textDA: 
-    textEN: 
+    icon: {fileID: 0}
+  - textDA: "Bes\xF8ge zoologiske haver, der hj\xE6lper med at avle pandaer for at
+      beskytte dem."
+    textEN: 'Visit zoos that help breed pandas to protect them. '
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "K\xF8be alle de bambusprodukter, du kan finde."
+    textEN: Buy any bamboo products you can find.
     correct: 0
     exclusive: 0
-    icon: {fileID: 21300000, guid: 42cdd9faf22c84431ad14a8eae502689, type: 3}
-  - textDA: 
-    textEN: 
-    correct: 0
+    icon: {fileID: 0}
+  - textDA: "Kigge efter FSC-m\xE6rket, n\xE5r du k\xF8ber bambusprodukter."
+    textEN: 'Look for the FSC label when buying bamboo products. '
+    correct: 1
     exclusive: 0
-    icon: {fileID: 21300000, guid: 11d7ba2bdc2774c7d859090ec5f735c8, type: 3}
-  - textDA: 
-    textEN: 
+    icon: {fileID: 0}
+  - textDA: "Der er ikke noget, jeg kan g\xF8re for at hj\xE6lpe pandaer."
+    textEN: There is nothing I can do to help pandas.
     correct: 0
-    exclusive: 0
-    icon: {fileID: 21300000, guid: 21d4437761faa42648d1217611774b0a, type: 3}
-  - textDA: 
-    textEN: 
+    exclusive: 1
+    icon: {fileID: 0}
+  - textDA: Det ved jeg ikke.
+    textEN: 'I don''t know. '
     correct: 0
-    exclusive: 0
-    icon: {fileID: 21300000, guid: c69a0aabf888e405cb66d8421ccef1bc, type: 3}
+    exclusive: 1
+    icon: {fileID: 0}
   condition: 0
   dilemma: {fileID: 0}
+  dilemmas: []
   requiredChoice: 0
   ending: {fileID: 0}
   gameEvent: {fileID: 0}

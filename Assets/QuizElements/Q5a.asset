@@ -10,38 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
-  m_Name: Q4b
+  m_Name: Q5a
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4b
-  textDA: "Hvorfor er sammenh\xE6ngende skov vigtig for sm\xE5 pandabestande? "
-  textEN: Why is connected forest important for small panda populations?
+  id: Q4a
+  textDA: "Hvorfor bev\xE6ger pandaer sig op og ned ad bjergene i l\xF8bet af \xE5ret?"
+  textEN: Why do pandas move up and down the mountains during the year?
   multiSelect: 0
   showLetters: 1
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: "S\xE5 pandaer kan finde hinanden, og der er plads og bambus nok"
-    textEN: So pandas can find eachother, and there is room and bamboo enough
+  - textDA: "For at holde sig k\xF8lige om sommeren og finde mere bambus om vinteren. "
+    textEN: To stay cool in summer and find more bamboo in winter.
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "S\xE5 der er flere tr\xE6er at klatre i "
-    textEN: So there are more trees to climb
+  - textDA: "For at holde sig v\xE6k fra andre pandaer. "
+    textEN: To stay away from other pandas.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "S\xE5 pandaer kan bo sammen hele \xE5ret"
-    textEN: So pandas can live together all year around
+  - textDA: For at finde nye steder at sove.
+    textEN: To find new places to sleep.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "S\xE5 mennesker kan se pandaerne "
-    textEN: So humans can see the pandas
+  - textDA: "For at f\xF8lge andre dyr gennem bjergene. "
+    textEN: To follow other animals through the mountains.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
   condition: 3
   dilemma: {fileID: 0}
+  dilemmas: []
   requiredChoice: 0
-  ending: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
+  ending: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
   gameEvent: {fileID: 0}

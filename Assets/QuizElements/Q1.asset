@@ -13,30 +13,30 @@ MonoBehaviour:
   m_Name: Q1
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
   id: Q1
-  textDA: "Hvorfor rejser pandaer op og ned ad bjergene gennem \xE5ret?"
-  textEN: Why do pandas travel up and down the mountains during the year?
+  textDA: "Hvad spiser en k\xE6mpepanda det meste af tiden?"
+  textEN: What does a panda eat most of the time?
   multiSelect: 0
   showLetters: 1
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: For at finde en makker.
-    textEN: To find a buddy.
+  - textDA: "Gr\xE6s"
+    textEN: Grass
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "For at undg\xE5 mennesker."
-    textEN: To avoid people.
+  - textDA: "Sm\xE5 dyr"
+    textEN: Small animals
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "For at f\xF8lge bambussen, hvor der er mest mad."
-    textEN: 'To follow the bamboo, where there is the most food. '
+  - textDA: Bambus
+    textEN: 'Bamboo  '
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "Fordi de bliver kede af at v\xE6re det samme sted. "
-    textEN: Because they get sad by being in the same place.
+  - textDA: "Frugt og b\xE6r "
+    textEN: 'Fruits and berries '
     correct: 0
     exclusive: 0
     icon: {fileID: 0}

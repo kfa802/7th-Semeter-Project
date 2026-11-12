@@ -10,38 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
-  m_Name: Q4c
+  m_Name: Q5b
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4c
-  textDA: Hvad skal der til, for at mennesker og pandaer kan dele plads i dalene?
-  textEN: What is needed for humans and pandas to share the space in the valleys?
+  id: Q4b
+  textDA: 'Hvorfor er det vigtigt at holde skovene forbundet? '
+  textEN: Why is it important to keep forests connected?
   multiSelect: 0
   showLetters: 1
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: " At pandaerne v\xE6nner sig til st\xF8j."
-    textEN: That the panda gets used to noise.
-    correct: 0
-    exclusive: 0
-    icon: {fileID: 0}
-  - textDA: "At nogle omr\xE5der beskyttes, og skoven forbliver sammenh\xE6ngende."
-    textEN: 'That some areas gets protected and the forrest remains connected. '
+  - textDA: "S\xE5 pandaer kan finde hinanden og f\xE5 unger."
+    textEN: So pandas can find each other and have babies.
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: At landsbyer ikke bruger veje.
-    textEN: That villages don't use roads.
+  - textDA: "S\xE5 pandaer har flere tr\xE6er at klatre i. "
+    textEN: So pandas have more trees to climb.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "At pandaerne flytter op p\xE5 bjerget."
-    textEN: That pandas move up the mountain.
+  - textDA: "S\xE5 pandaer kan leve sammen i store grupper."
+    textEN: So pandas can live together all year around
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "S\xE5 mennesker lettere kan bes\xF8ge pandaerne. "
+    textEN: So people can visit pandas more easily.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
   condition: 3
   dilemma: {fileID: 0}
+  dilemmas: []
   requiredChoice: 0
-  ending: {fileID: 11400000, guid: 310cae3e4c3c7884da67466812a9a250, type: 2}
+  ending: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
   gameEvent: {fileID: 0}

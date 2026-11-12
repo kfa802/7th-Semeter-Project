@@ -119,6 +119,13 @@ public class QuizManager : MonoBehaviour
             case QuizCondition.GameEventTriggered:
                 return q.gameEvent != null &&
                        dilemmaManager.HasExecuted(q.gameEvent);
+
+            // NEW
+            case QuizCondition.AnyDilemmaReached:
+                foreach (Dilemma d in q.dilemmas)
+                    if (d != null && dilemmaManager.HasResolved(d))
+                        return true;
+                return false;
         }
 
         return false;

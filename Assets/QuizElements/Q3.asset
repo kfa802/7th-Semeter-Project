@@ -13,35 +13,37 @@ MonoBehaviour:
   m_Name: Q3
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
   id: Q3
-  textDA: "Hvad g\xF8r en vej gennem eller n\xE6r skoven ved pandaens levested? "
-  textEN: What does a road through or near the forest do the the pandas habitats
+  textDA: "Hvorfor kan det v\xE6re sv\xE6rt for to pandaer at leve i det samme omr\xE5de? "
+  textEN: Why can it be difficult for two pandas to live in the same area?
   multiSelect: 0
   showLetters: 1
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: "Den skaber st\xF8j og forurening."
-    textEN: It creates noise and polution.
+  - textDA: "De har brug for meget bambus og plads, s\xE5 der m\xE5ske ikke er nok
+      til dem begge. "
+    textEN: They need lots of bamboo and space, so there might not be enough for
+      both.
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "Den g\xF8r skoven st\xF8rre. "
-    textEN: It makes the forest bigger.
+  - textDA: "De sl\xE5s altid, n\xE5r de m\xF8der en anden panda. "
+    textEN: 'They always fight when they see another panda. '
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: Den giver pandaen mere vand.
-    textEN: It gives the Pandas more water.
+  - textDA: "De er n\xF8dt til at leve i grupper for at finde nok mad."
+    textEN: They need to live in groups to find enough food.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: Pandaer bekymrer sig ikke om veje
-    textEN: The pandas don't care about roads
+  - textDA: De kan ikke genkende andre pandaer i skoven.
+    textEN: They cannot recognise other pandas in the forest.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
   condition: 2
-  dilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
+  dilemma: {fileID: 11400000, guid: 0cb605a0320b23d48bfe81902b4d41bb, type: 2}
   requiredChoice: 0
   ending: {fileID: 0}
   gameEvent: {fileID: 0}

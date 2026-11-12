@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
+  m_Name: Q4
+  m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
+  id: Q1
+  textDA: Hvad kan der ske med pandaer, hvis man bygger en vej gennem en skov?
+  textEN: What can happen to pandas when a road is built through a forest?
+  multiSelect: 0
+  showLetters: 1
+  horizontalLayout: 0
+  logAsNumber: 0
+  options:
+  - textDA: "Det g\xF8r det lettere for pandaer at finde andre pandaer."
+    textEN: It makes it easier for pandas to find other pandas.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: Det giver pandaerne flere steder at finde bambus.
+    textEN: It gives pandas more places to find bamboo.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Det deler skoven i to og skaber mere st\xF8j og forurening."
+    textEN: 'It splits the forest and brings more noise and pollution. '
+    correct: 1
+    exclusive: 0
+    icon: {fileID: 0}
+  - textDA: "Det g\xF8r skoven varmere."
+    textEN: It makes the forest warmer.
+    correct: 0
+    exclusive: 0
+    icon: {fileID: 0}
+  condition: 2
+  dilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
+  dilemmas: []
+  requiredChoice: 0
+  ending: {fileID: 0}
+  gameEvent: {fileID: 0}

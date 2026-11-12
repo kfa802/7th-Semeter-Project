@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Q2
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
   id: Q2
-  textDA: "Hvorfor kan det v\xE6re sv\xE6rt for to pandaer at bo sammen i l\xE6ngere
-    tid? "
+  textDA: "Hvorfor kan meget varmt vejr v\xE6re d\xE5rligt for pandaer? "
   textEN: Why can it be difficult for pandas to live toghether for longer periods
     of time?
   multiSelect: 0
@@ -22,28 +21,31 @@ MonoBehaviour:
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: "De sk\xE6ndes hele tiden."
-    textEN: They fight all of the time.
+  - textDA: "Bambus holder op med at vokse, n\xE5r vejret bliver varmt."
+    textEN: Bamboo stops growing when the weather gets warm.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: 'De spiser forskellig slags bambus. '
-    textEN: They eat different kinds of bamboo.
+  - textDA: "De er n\xF8dt til at sove hele sommeren.  "
+    textEN: They need to sleep through the whole summer.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: De deler den samme bambus, som hurtigt bliver brugt op.
-    textEN: They share the same bamboo, which gets used up quickly.
+  - textDA: "De kan f\xE5 det for varmt og blive syge."
+    textEN: They can get too hot and become sick.
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: 'De kan ikke se hinanden i skoven. '
-    textEN: They can't see each other in the forest.
+  - textDA: 'De kan ikke finde nok skygge i bjergene. '
+    textEN: They cannot find enough shade in the mountains.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  condition: 4
+  condition: 3
   dilemma: {fileID: 0}
+  dilemmas:
+  - {fileID: 11400000, guid: 92736883ccff980469efea4ae538bac0, type: 2}
+  - {fileID: 11400000, guid: d76b42dc5732ddd44ba49faa27a38db3, type: 2}
   requiredChoice: 0
   ending: {fileID: 0}
-  gameEvent: {fileID: 11400000, guid: c05a5b464a7e4004ebe028c3910fdf98, type: 2}
+  gameEvent: {fileID: 0}

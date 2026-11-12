@@ -6,6 +6,7 @@ public enum QuizCondition
     Everyone,
     DilemmaChoice,       // dilemma resolved with a specific choice
     DilemmaReached,      // dilemma was resolved (any choice)
+    AnyDilemmaReached,       // at least one of the dilemmas below was resolved
     EndingReached,       // the player got a specific ending
     GameEventTriggered   // a specific GameEvent has been executed
 }
@@ -51,6 +52,9 @@ public class QuizQuestion : ScriptableObject
 
     [Tooltip("Used by DilemmaChoice and DilemmaReached.")]
     public Dilemma dilemma;
+
+    [Tooltip("Used by AnyDilemmaReached: shown if at least one of these was resolved.")]
+    public List<Dilemma> dilemmas = new();
 
     [Tooltip("Used by DilemmaChoice: which choice must have been made.")]
     public PrerequisiteChoice requiredChoice = PrerequisiteChoice.Either;

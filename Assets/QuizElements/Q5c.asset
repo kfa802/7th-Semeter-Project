@@ -10,38 +10,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
-  m_Name: Q4a
+  m_Name: Q5c
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4a
-  textDA: Hvorfor rejser pandaer ned i dalene om vinteren?
-  textEN: Why do pandas travel down in the valleys in winter?
+  id: Q4c
+  textDA: "Hvordan kan vi hj\xE6lpe pandaer og mennesker med at leve trygt t\xE6t
+    p\xE5 hinanden?"
+  textEN: What is needed for humans and pandas to share the space in the valleys?
   multiSelect: 0
   showLetters: 1
   horizontalLayout: 0
   logAsNumber: 0
   options:
-  - textDA: Fordi der er mere bambus nede i dalene.
-    textEN: Because there is more bamboo in the valleys.
+  - textDA: "Ved at beskytte skovene og s\xF8rge for, at de h\xE6nger sammen. "
+    textEN: By protecting forests and keeping them connected.
     correct: 1
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: 'Fordi de er bange for sne. '
-    textEN: Because they are scared of snow.
+  - textDA: "Ved at l\xE6re pandaer at ignorere h\xF8je lyde. "
+    textEN: 'By teaching pandas to ignore loud noises. '
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: Fordi de leder efter en makker
-    textEN: Because they are looking for a buddy.
+  - textDA: Ved at bygge flere veje gennem skovene.
+    textEN: 'By building more roads through forests. '
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  - textDA: "Fordi der ikke er vand p\xE5 bjerget. "
-    textEN: Because there is no water on the mountain.
+  - textDA: Ved at flytte alle pandaer op i bjergene.
+    textEN: By moving all pandas to the mountains.
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
   condition: 3
   dilemma: {fileID: 0}
+  dilemmas: []
   requiredChoice: 0
-  ending: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  ending: {fileID: 11400000, guid: 310cae3e4c3c7884da67466812a9a250, type: 2}
   gameEvent: {fileID: 0}
