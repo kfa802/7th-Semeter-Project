@@ -15,10 +15,19 @@ public class EndingUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private Image endingImage;
 
-    [Header("Continue button")]
+    [Header("Continue button (fallback)")]
+    [SerializeField] private Button continueButton;
     [SerializeField] private TMP_Text continueLabel;
     [SerializeField] private string continueTextDA = "Fortsæt";
     [SerializeField] private string continueTextEN = "Continue";
+
+    [Header("Quiz")]
+    [SerializeField] private QuizManager quizManager;
+    [Tooltip("Seconds after the last narration clip before the quiz opens.")]
+    [SerializeField, Min(0f)] private float delayBeforeQuiz = 1.5f;
+    [Tooltip("On: the Continue button is hidden while the ending is narrated and the quiz opens by itself. " +
+             "If the ending has no narration, the button is shown so nobody gets stuck.")]
+    [SerializeField] private bool hideContinueWhenNarrated = true;
 
     [Header("Narration")]
     [Tooltip("Use your boosted 'Narration' mixer group here.")]
@@ -26,10 +35,6 @@ public class EndingUI : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float narrationVolume = 1f;
     [SerializeField, Min(0f)] private float delayBeforeFirstClip = 0.5f;
     [SerializeField, Min(0f)] private float gapBetweenClips = 0.5f;
-
-    [Tooltip("Optional: the continue button to lock until the narration is done.")]
-    [SerializeField] private Button continueButton;
-    [SerializeField] private bool lockContinueUntilNarrationDone = false;
 
     private AudioSource source;
     private Coroutine narrationRoutine;
@@ -77,16 +82,22 @@ public class EndingUI : MonoBehaviour
 
         StopNarration();
         List<AudioClip> clips = ending.GetNarrations(english);
+        bool narrated = clips.Count > 0 && gameObject.activeInHierarchy;
 
-        if (clips.Count > 0 && gameObject.activeInHierarchy)
+        // Narrated endings open the quiz by themselves. Without narration
+        // the Continue button stays as the way forward.
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(!(narrated && hideContinueWhenNarrated));
+
+        if (narrated)
             narrationRoutine = StartCoroutine(PlayNarrations(clips));
+        else
+            Debug.LogWarning("EndingUI: '" + ending.name + "' has no narration for this language. " +
+                             "The Continue button is shown instead of opening the quiz automatically.");
     }
 
     private IEnumerator PlayNarrations(List<AudioClip> clips)
     {
-        if (continueButton != null && lockContinueUntilNarrationDone)
-            continueButton.interactable = false;
-
         if (delayBeforeFirstClip > 0f)
             yield return new WaitForSecondsRealtime(delayBeforeFirstClip);
 
@@ -109,10 +120,21 @@ public class EndingUI : MonoBehaviour
                 yield return new WaitForSecondsRealtime(gapBetweenClips);
         }
 
-        if (continueButton != null && lockContinueUntilNarrationDone)
-            continueButton.interactable = true;
+        if (delayBeforeQuiz > 0f)
+            yield return new WaitForSecondsRealtime(delayBeforeQuiz);
 
         narrationRoutine = null;
+
+        if (quizManager != null)
+        {
+            quizManager.ShowQuiz();
+        }
+        else
+        {
+            Debug.LogWarning("EndingUI: No QuizManager assigned. Showing the Continue button.");
+            if (continueButton != null)
+                continueButton.gameObject.SetActive(true);
+        }
     }
 
     private AudioSource GetSource()
