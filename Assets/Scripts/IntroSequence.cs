@@ -201,6 +201,10 @@ public class IntroSequence : MonoBehaviour
     [Tooltip("Skipping only works after this many seconds (so a stray tap doesn't skip it).")]
     [SerializeField, Min(0f)] private float skipAllowedAfter = 2f;
 
+    [Tooltip("Optional 'Skip tutorial' button. It is shown during the intro/tutorial " +
+             "and hidden when the game starts. Its On Click is hooked up automatically.")]
+    [SerializeField] private UnityEngine.UI.Button skipTutorialButton;
+
     [Header("When The Intro Ends")]
     [Tooltip("Hook up anything that should happen when the game starts " +
              "(e.g. later: the UI tutorial).")]
@@ -208,6 +212,10 @@ public class IntroSequence : MonoBehaviour
 
     private AudioSource narrationSource;
     private CanvasGroup[] uiGroups;
+    private Vector3 cameraEndPosition;
+    private Quaternion cameraEndRotation;
+    private float cameraEndFov;
+    private bool cameraMoving;
     private CanvasGroup subtitleGroup;
     private bool skipRequested;
     private bool tappedThisFrame;
@@ -257,6 +265,12 @@ public class IntroSequence : MonoBehaviour
             mainCamera = Camera.main;
 
         PrepareUI();
+
+        if (skipTutorialButton != null)
+        {
+            skipTutorialButton.onClick.AddListener(SkipTutorial);
+            skipTutorialButton.gameObject.SetActive(IsPlaying);
+        }
 
         panda = FindFirstObjectByType<PandaSystem>();
         if (panda != null)
@@ -355,6 +369,11 @@ public class IntroSequence : MonoBehaviour
         Vector3 endPosition = cam.position;
         Quaternion endRotation = cam.rotation;
         float endFov = mainCamera.fieldOfView;
+
+        cameraEndPosition = endPosition;
+        cameraEndRotation = endRotation;
+        cameraEndFov = endFov;
+        cameraMoving = true;
         float startFov = startFieldOfView > 0f ? startFieldOfView : endFov;
 
         // Path: the start/through points, then the normal view.
@@ -421,6 +440,7 @@ public class IntroSequence : MonoBehaviour
         // Make sure it ends exactly at the normal view.
         cam.SetPositionAndRotation(endPosition, endRotation);
         mainCamera.fieldOfView = endFov;
+        cameraMoving = false;
 
         // Let the narration finish if it's still going (unless skipped).
         while (!skipRequested && narrationSource != null && narrationSource.isPlaying)
@@ -637,6 +657,9 @@ public class IntroSequence : MonoBehaviour
 
         if (subtitlePanel != null)
             Lift(subtitlePanel, order + 1, true);
+
+        if (skipTutorialButton != null)
+            Lift(skipTutorialButton.gameObject, order + 1, true);
 
         dimWanted = true;
     }
@@ -1138,8 +1161,47 @@ public class IntroSequence : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Skips the rest of the intro and tutorial and starts the game right away.
+    /// Hook a button's On Click to this (or drag the button into 'Skip Tutorial Button').
+    /// </summary>
+    public void SkipTutorial()
+    {
+        if (!IsPlaying)
+            return;
+
+        Debug.Log("IntroSequence: Tutorial skipped.");
+
+        // Stop the camera move, narration, pop-ups and fades.
+        StopAllCoroutines();
+
+        if (narrationSource != null)
+            narrationSource.Stop();
+
+        activeSubtitles = null;
+        inTutorial = false;
+
+        // Camera straight to the normal view.
+        if (cameraMoving && mainCamera != null)
+        {
+            mainCamera.transform.SetPositionAndRotation(cameraEndPosition, cameraEndRotation);
+            mainCamera.fieldOfView = cameraEndFov;
+            cameraMoving = false;
+        }
+
+        // UI that was halfway through popping up gets its normal size back.
+        foreach (KeyValuePair<Transform, Vector3> pair in normalScales)
+            if (pair.Key != null)
+                pair.Key.localScale = pair.Value;
+
+        Finish(true);
+    }
+
     private void Finish(bool instant)
     {
+        if (skipTutorialButton != null)
+            skipTutorialButton.gameObject.SetActive(false);
+
         SpotlightOff(true);
         IsPlaying = false;
         IsNarrating = false;
