@@ -21,21 +21,17 @@ MonoBehaviour:
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 2
-    text: 'Bamboo needs water to grow, '
-  - startTime: 2
-    endTime: 4
-    text: "and it can\u2019t use frozen water. "
+    endTime: 3
+    text: 'Pandas travel a lot throughout the year '
   - startTime: 4
     endTime: 7
-    text: 'The valley is warmer, so there is more bamboo.  '
-  - startTime: 7
-    endTime: 9.8
-    text: 'Pandas follow the bamboo and travel up  '
-  - startTime: 9.8
-    endTime: 12
-    text: 'and down the mountains throughout the year. '
+    text: ' They eat 16 hours a day and are therefore constantly looking for new
+      areas with plenty of bamboo'
   subtitlesDA:
   - startTime: 0
-    endTime: 5
-    text: Dansk
+    endTime: 3
+    text: "Pandaer rejser meget i l\xF8bet af \xE5ret "
+  - startTime: 4
+    endTime: 7
+    text: De spiser 16 timer om dagen og leder derfor hele tiden efter nye steder
+      med masser af bambus

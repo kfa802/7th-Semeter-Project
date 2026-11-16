@@ -68176,29 +68176,6 @@ MonoBehaviour:
     cooldown: 60
     onlyOnce: 0
     priority: 1
-  - label: High disturbance + low health
-    text: 'All the noise from the city is stressing your panda! '
-    voice: {fileID: 0}
-    textDA: 
-    voiceDA: {fileID: 0}
-    pointsToTemperature: 1
-    checkTemperature: 0
-    temperatureMin: -100
-    temperatureMax: 0
-    checkHealth: 1
-    healthBelow: 50
-    requireHeatDamage: 0
-    checkBamboo: 1
-    bambooAtOrBelow: 3
-    checkDisturbance: 1
-    disturbanceMin: 25
-    disturbanceMax: 100
-    disturbanceTrend: 0
-    zoneName: 
-    holdFor: 2
-    cooldown: 60
-    onlyOnce: 0
-    priority: 1
   currentLine: 
   disturbanceTrendNow: 0
 --- !u!4 &1440267216

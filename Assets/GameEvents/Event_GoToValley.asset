@@ -35,4 +35,5 @@ MonoBehaviour:
   subtitlesDA:
   - startTime: 0
     endTime: 5
-    text: Dansk
+    text: "Godt valg! N\xE5r hver panda finder sit eget omr\xE5de, har de begge en
+      bedre chance for at f\xE5 mad nok. "
