@@ -21,18 +21,17 @@ MonoBehaviour:
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 2.5
-    text: 'Oh no!  '
-  - startTime: 2.5
-    endTime: 3.8
-    text: 'The road splits the forest in two!  '
-  - startTime: 3.8
+    endTime: 3
+    text: 'Oh no! The road splits the forest in two! '
+  - startTime: 4
     endTime: 7
-    text: 'Some bamboo is removed,  '
-  - startTime: 3.8
-    endTime: 7
-    text: 'and noise and pollution reach the animals. '
+    text: Some bamboo is removed, and the noise and pollution disturb the panda
   subtitlesDA:
   - startTime: 0
-    endTime: 5
-    text: Dansk
+    endTime: 3
+    text: "\xC5h nej! Vejen deler skoven i to! "
+  - startTime: 4
+    endTime: 7
+    text: "Noget af bambussen bliver fjernet, s\xE5 st\xF8jen og forureningen forstyrrer
+      pandaen"
+  pauseGameWhileSpeaking: 1

@@ -83836,6 +83836,7 @@ MonoBehaviour:
   - {fileID: 184388598}
   - {fileID: 2033208195}
   - {fileID: 1539525340}
+  - {fileID: 152361882}
   choicePopTime: 0.35
   choicePopBounce: 1.5
 --- !u!43 &1933522345

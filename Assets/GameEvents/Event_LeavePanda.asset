@@ -22,17 +22,17 @@ MonoBehaviour:
   subtitles:
   - startTime: 0
     endTime: 3
-    text: 'Good choice!  '
-  - startTime: 3
-    endTime: 5
-    text: 'Pandas eat lots of bamboo every day.  '
-  - startTime: 5
-    endTime: 6.5
-    text: 'By living apart, they have a better chance  '
-  - startTime: 6.5
-    endTime: 9
-    text: 'of finding enough food.  '
+    text: 'Good choice! '
+  - startTime: 4
+    endTime: 7
+    text: ' By finding their own areas, both pandas have a better chance of getting
+      enough food.'
   subtitlesDA:
   - startTime: 0
-    endTime: 5
-    text: Dansk
+    endTime: 3
+    text: 'Godt valg!  '
+  - startTime: 4
+    endTime: 7
+    text: "N\xE5r hver panda finder sit eget omr\xE5de, har de begge en bedre chance
+      for at f\xE5 mad nok."
+  pauseGameWhileSpeaking: 0

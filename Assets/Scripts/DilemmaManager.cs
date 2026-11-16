@@ -247,6 +247,26 @@ public class DilemmaManager : MonoBehaviour
     private AudioSource narrationSource;
     private Coroutine narrationRoutine;
     private Coroutine eventNarrationRoutine;
+
+    // Important event narration: the panda takes no damage while it plays
+    // (animations, bamboo etc. keep going).
+    public static bool IsImportantNarration { get; private set; }
+    private bool pausedForEvent;
+
+    private void PauseForEvent()
+    {
+        pausedForEvent = true;
+        IsImportantNarration = true;
+    }
+
+    private void ResumeAfterEvent()
+    {
+        if (!pausedForEvent)
+            return;
+
+        pausedForEvent = false;
+        IsImportantNarration = false;
+    }
     private bool choicesLocked;
     private bool eventNarrationPlaying;
 
@@ -367,6 +387,11 @@ public class DilemmaManager : MonoBehaviour
         }
 
         TelemetryManager.Instance?.DeclareDilemmas(dilemmas.Count);
+    }
+
+    private void OnDestroy()
+    {
+        IsImportantNarration = false;
     }
 
     private void Update()
@@ -836,7 +861,17 @@ public class DilemmaManager : MonoBehaviour
                 : resolvedDilemma.choiceCEnding;
 
         activeDilemma = null;
-        dilemmaUI.HideDilemma();
+
+        // Important narration after this choice: keep the UI hidden
+        // until it has been said.
+        bool holdForNarration = gameEvent != null &&
+                                gameEvent.pauseGameWhileSpeaking &&
+                                gameEvent.NarrationClip != null;
+
+        dilemmaUI.HideDilemma(holdForNarration);
+
+        if (holdForNarration)
+            PauseForEvent();   // no damage from the moment the choice is made
 
         TelemetryManager.Instance?.DilemmaEnded(number);
 
@@ -982,12 +1017,16 @@ public class DilemmaManager : MonoBehaviour
         narrationRoutine = null;
     }
 
-    private IEnumerator PlayEventNarration(AudioClip clip, float delay, List<SubtitleLine> subtitles)
+    private IEnumerator PlayEventNarration(AudioClip clip, float delay, List<SubtitleLine> subtitles, bool pauseGame)
     {
         eventNarrationPlaying = true;
 
         if (delay > 0f)
             yield return new WaitForSecondsRealtime(delay);
+
+        // Important information: no damage to the panda while it is said.
+        if (pauseGame)
+            PauseForEvent();
 
         AudioSource source = GetNarrationSource();
         source.clip = clip;
@@ -1007,6 +1046,9 @@ public class DilemmaManager : MonoBehaviour
             UpdateSubtitle(subtitles, source.isPlaying ? source.time : clip.length, clip.length);
             yield return null;
         }
+
+        ResumeAfterEvent();
+        dilemmaUI.ReleaseHold();
 
         // Fade the last line out.
         UpdateSubtitle(null, 0f, 0f);
@@ -1566,6 +1608,9 @@ public class DilemmaManager : MonoBehaviour
             eventNarrationRoutine = null;
         }
 
+        ResumeAfterEvent();
+        if (dilemmaUI != null && dilemmaUI.IsHolding)
+            dilemmaUI.ReleaseHold();
         eventNarrationPlaying = false;
 
         if (narrationSource != null && narrationSource.isPlaying)
@@ -1690,10 +1735,14 @@ public class DilemmaManager : MonoBehaviour
         if (eventClip != null)
         {
             if (eventNarrationRoutine != null)
+            {
                 StopCoroutine(eventNarrationRoutine);
+                ResumeAfterEvent();
+            }
 
             eventNarrationRoutine = StartCoroutine(
-                PlayEventNarration(eventClip, gameEvent.narrationDelay, gameEvent.Subtitles));
+                PlayEventNarration(eventClip, gameEvent.narrationDelay, gameEvent.Subtitles,
+                                   gameEvent.pauseGameWhileSpeaking));
         }
 
         Debug.Log(

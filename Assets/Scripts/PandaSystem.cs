@@ -359,7 +359,8 @@ public class PandaSystem : MonoBehaviour
     {
         // No damage and no hunger/heat timers while travelling,
         // or while the intro/tutorial plays.
-        bool safe = (safeWhileTravelling && IsTravelling) || IntroSequence.IsPlaying;
+        bool safe = (safeWhileTravelling && IsTravelling) || IntroSequence.IsPlaying ||
+                    DilemmaManager.IsImportantNarration;   // important choice narration playing
 
         if (!safe)
         {

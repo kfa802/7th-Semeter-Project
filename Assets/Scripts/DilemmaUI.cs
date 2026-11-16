@@ -134,7 +134,12 @@ public class DilemmaUI : MonoBehaviour
             panel.transform.SetAsLastSibling();
     }
 
-    public void HideDilemma()
+    /// <summary>
+    /// Closes the dilemma and resumes the game. holdBackground = true keeps the
+    /// background UI hidden until ReleaseHold() is called (used when the choice's
+    /// narration is important).
+    /// </summary>
+    public void HideDilemma(bool holdBackground = false)
     {
         IsDilemmaOpen = false;
 
@@ -144,8 +149,6 @@ public class DilemmaUI : MonoBehaviour
         if (inputBlocker != null)
             inputBlocker.SetActive(false);
 
-        SetBackgroundHidden(false);
-
         // Resume gameplay.
         if (pausedByDilemma)
         {
@@ -154,7 +157,26 @@ public class DilemmaUI : MonoBehaviour
         }
 
         manager = null;
+
+        holding = holdBackground;
+
+        if (!holdBackground)
+            SetBackgroundHidden(false);
     }
+
+    private bool holding;
+
+    /// <summary>Shows the background UI again.</summary>
+    public void ReleaseHold()
+    {
+        if (!holding)
+            return;
+
+        holding = false;
+        SetBackgroundHidden(false);
+    }
+
+    public bool IsHolding => holding;
 
     // Hides the background UI with a CanvasGroup (alpha 0, no clicks) instead
     // of turning it off, so the scripts on it keep working.

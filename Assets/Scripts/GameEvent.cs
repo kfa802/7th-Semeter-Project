@@ -49,6 +49,10 @@ public class GameEvent : ScriptableObject
     [Tooltip("Danish subtitles, timed to the DANISH clip. Empty = the English ones are used.")]
     public List<SubtitleLine> subtitlesDA = new List<SubtitleLine>();
 
+    [Tooltip("On: the game is paused while this narration plays, so the player " +
+             "doesn't miss important information. Off: the game keeps running.")]
+    public bool pauseGameWhileSpeaking;
+
     // The clip/subtitles in the chosen language.
     public AudioClip NarrationClip => Language.Pick(narrationClip, narrationClipDA);
     public List<SubtitleLine> Subtitles => Language.Pick(subtitles, subtitlesDA);

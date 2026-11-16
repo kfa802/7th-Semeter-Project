@@ -21,19 +21,17 @@ MonoBehaviour:
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 2
-    text: 'Good choice!  '
-  - startTime: 2
-    endTime: 4.5
-    text: 'Pandas need lots of space and bamboo to survive. '
-  - startTime: 4.5
-    endTime: 6.8
-    text: 'They usually live alone '
-  - startTime: 6.8
-    endTime: 10
-    text: and only meet for a few days each year to mate.
+    endTime: 4
+    text: 'Good choice! Pandas need lots of space and bamboo to survive '
+  - startTime: 5
+    endTime: 7
+    text: They usually live alone and only meet for a few days each year to mate
   subtitlesDA:
   - startTime: 0
-    endTime: 5
-    text: "Godt valg! N\xE5r hver panda finder sit eget omr\xE5de, har de begge en
-      bedre chance for at f\xE5 mad nok. "
+    endTime: 4
+    text: Godt valg! Pandaer har brug for masser af plads og bambus for at overleve
+  - startTime: 5
+    endTime: 7
+    text: "De lever som regel alene og m\xF8des kun nogle f\xE5 dage om \xE5ret for
+      at parre sig."
+  pauseGameWhileSpeaking: 0
