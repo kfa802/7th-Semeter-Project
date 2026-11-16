@@ -17234,17 +17234,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373344108}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1100494468}
-  m_Father: {fileID: 1200070751}
+  m_Father: {fileID: 1588769764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -575.70306, y: 366.9455}
+  m_AnchoredPosition: {x: 88.696945, y: -2.15448}
   m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &373344110
@@ -45111,17 +45111,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008637067}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1070028059}
-  m_Father: {fileID: 1200070751}
+  m_Father: {fileID: 1588769764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -753.70306, y: 366.9455}
+  m_AnchoredPosition: {x: -89.303024, y: -2.154541}
   m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1008637069
@@ -59321,6 +59321,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   startFieldOfView: 0
   narrationClip: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 1
   narrationVolume: 1
   narrationMixerGroup: {fileID: 0}
@@ -59333,6 +59334,7 @@ MonoBehaviour:
   - startTime: 5
     endTime: 7
     text: ewmnenbwmevwe
+  subtitlesDA: []
   playTutorial: 1
   instructionPanel: {fileID: 0}
   instructionText: {fileID: 0}
@@ -59354,6 +59356,9 @@ MonoBehaviour:
     - startTime: 0
       endTime: 4
       text: dgdgdgd
+    instructionDA: 
+    narrationDA: {fileID: 0}
+    subtitlesDA: []
   - label: Human Disturbance
     instruction: Humans disturbances.
     narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
@@ -59366,6 +59371,9 @@ MonoBehaviour:
     degreesToChange: 5
     pauseAfter: 0
     subtitles: []
+    instructionDA: 
+    narrationDA: {fileID: 0}
+    subtitlesDA: []
   - label: Feeding
     instruction: Drag the bamboo to the panda to feed it.
     narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
@@ -59378,6 +59386,9 @@ MonoBehaviour:
     degreesToChange: 5
     pauseAfter: 0
     subtitles: []
+    instructionDA: 
+    narrationDA: {fileID: 0}
+    subtitlesDA: []
   - label: Panda Health
     instruction: You panda has a health bar.
     narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
@@ -59390,6 +59401,9 @@ MonoBehaviour:
     degreesToChange: 5
     pauseAfter: 1
     subtitles: []
+    instructionDA: 
+    narrationDA: {fileID: 0}
+    subtitlesDA: []
   hideDuringIntro:
   - {fileID: 1740021514}
   - {fileID: 196287758}
@@ -59581,8 +59595,6 @@ RectTransform:
   - {fileID: 470481105}
   - {fileID: 1587456651}
   - {fileID: 1588769764}
-  - {fileID: 373344109}
-  - {fileID: 1008637068}
   m_Father: {fileID: 374175432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -59619,7 +59631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -64980,6 +64992,8 @@ MonoBehaviour:
   - label: Hot - low health
     text: 'Oh no! The heat is making your panda feel sick! '
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -65001,6 +65015,8 @@ MonoBehaviour:
   - label: Hot - disturbance rising
     text: Human disturbance increases when the temperature rises.
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -65023,6 +65039,8 @@ MonoBehaviour:
     text: You are running low on food for the panda. Bamboo grows faster in higher
       temperatures.
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -65044,6 +65062,8 @@ MonoBehaviour:
   - label: Cold - disturbance falling
     text: Human disturbance decreases in low temperatures.
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -65065,6 +65085,8 @@ MonoBehaviour:
   - label: Cold - Low Bamboo
     text: 'Brrr! It''s too cold for the bamboo to grow! '
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -65086,6 +65108,8 @@ MonoBehaviour:
   - label: High disturbance + low health
     text: 'All the noise from the city is stressing your panda! '
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 0
     temperatureMin: -100
@@ -65107,6 +65131,8 @@ MonoBehaviour:
   - label: Low health
     text: 'Your panda is getting weaker! It needs more bamboo! '
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 0
     temperatureMin: -100
@@ -72313,14 +72339,14 @@ RectTransform:
   m_GameObject: {fileID: 1587456650}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1200070751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 357, y: -3}
+  m_AnchoredPosition: {x: 126, y: -32}
   m_SizeDelta: {x: 420, y: 420}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1587456652
@@ -72444,14 +72470,16 @@ RectTransform:
   m_GameObject: {fileID: 1588769763}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_LocalScale: {x: 0.48, y: 0.48, z: 0.48}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 373344109}
+  - {fileID: 1008637068}
   m_Father: {fileID: 1200070751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -664.4, y: 369.1}
+  m_AnchoredPosition: {x: -284, y: 148}
   m_SizeDelta: {x: 381.4691, y: 160.691}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1588769765
