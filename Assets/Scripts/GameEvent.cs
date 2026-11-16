@@ -35,6 +35,9 @@ public class GameEvent : ScriptableObject
              "this event, explaining what the choice means. Empty = no narration.")]
     public AudioClip narrationClip;
 
+    [Tooltip("Danish voice-over. Empty = the English one is used.")]
+    public AudioClip narrationClipDA;
+
     [Tooltip("Seconds after the choice is clicked before the narration starts.")]
     [Min(0f)]
     public float narrationDelay = 0.5f;
@@ -42,4 +45,11 @@ public class GameEvent : ScriptableObject
     [Tooltip("Subtitles shown during the narration, timed to the clip. " +
              "Put them in order of Start Time.")]
     public List<SubtitleLine> subtitles = new List<SubtitleLine>();
+
+    [Tooltip("Danish subtitles, timed to the DANISH clip. Empty = the English ones are used.")]
+    public List<SubtitleLine> subtitlesDA = new List<SubtitleLine>();
+
+    // The clip/subtitles in the chosen language.
+    public AudioClip NarrationClip => Language.Pick(narrationClip, narrationClipDA);
+    public List<SubtitleLine> Subtitles => Language.Pick(subtitles, subtitlesDA);
 }

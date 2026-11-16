@@ -906,7 +906,7 @@ public class DilemmaManager : MonoBehaviour
 
     private AudioClip GetNarration(Dilemma dilemma)
     {
-        return dilemma != null ? dilemma.narrationClip : null;
+        return dilemma != null ? dilemma.NarrationClip : null;
     }
 
     private IEnumerator PlayNarration(AudioClip clip)
@@ -1663,13 +1663,15 @@ public class DilemmaManager : MonoBehaviour
         executedEvents.Add(gameEvent);
 
         // Narration explaining the choice the player made.
-        if (gameEvent.narrationClip != null)
+        AudioClip eventClip = gameEvent.NarrationClip;
+
+        if (eventClip != null)
         {
             if (eventNarrationRoutine != null)
                 StopCoroutine(eventNarrationRoutine);
 
             eventNarrationRoutine = StartCoroutine(
-                PlayEventNarration(gameEvent.narrationClip, gameEvent.narrationDelay, gameEvent.subtitles));
+                PlayEventNarration(eventClip, gameEvent.narrationDelay, gameEvent.Subtitles));
         }
 
         Debug.Log(

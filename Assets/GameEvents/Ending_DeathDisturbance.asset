@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathDisturbance
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_Disturbance
-  titleDA: 
-  descriptionDA: 
+  titleDA: Dansk
+  descriptionDA: Dansk
   titleEN: Disturbance
   descriptionEN: "Oh no! There was too much noise and activity. The panda couldn't
     find a safe and peaceful place to rest. \n\nDid you know that you can help protect

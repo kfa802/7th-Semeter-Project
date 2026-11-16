@@ -72,6 +72,12 @@ public class IntroSequence : MonoBehaviour
         [Tooltip("Subtitles for this step's narration (uses the same subtitle " +
                  "panel as the intro). Times are seconds into the clip.")]
         public List<SubtitleLine> subtitles = new List<SubtitleLine>();
+
+        [Header("Danish (empty = English is used)")]
+        [TextArea(2, 4)] public string instructionDA;
+        public AudioClip narrationDA;
+        [Tooltip("Danish subtitles, timed to the DANISH clip.")]
+        public List<SubtitleLine> subtitlesDA = new List<SubtitleLine>();
     }
 
     /// <summary>True while the intro or tutorial plays (other scripts pause gameplay).</summary>
@@ -119,6 +125,9 @@ public class IntroSequence : MonoBehaviour
     [Header("Narration")]
     [SerializeField] private AudioClip narrationClip;
 
+    [Tooltip("Danish intro narration. Empty = the English one is used.")]
+    [SerializeField] private AudioClip narrationClipDA;
+
     [Tooltip("Seconds after the intro starts before the narrator speaks.")]
     [SerializeField, Min(0f)] private float narrationDelay = 1f;
 
@@ -129,6 +138,12 @@ public class IntroSequence : MonoBehaviour
     [SerializeField] private GameObject subtitlePanel;
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private List<SubtitleLine> subtitles = new List<SubtitleLine>();
+
+    [Tooltip("Danish intro subtitles, timed to the DANISH clip. Empty = English.")]
+    [SerializeField] private List<SubtitleLine> subtitlesDA = new List<SubtitleLine>();
+
+    // The intro clip in the chosen language.
+    private AudioClip IntroClip => Language.Pick(narrationClip, narrationClipDA);
 
     [Header("Tutorial")]
     [Tooltip("Off: go straight to the game after the camera intro.")]
@@ -366,8 +381,8 @@ public class IntroSequence : MonoBehaviour
         float totalDistance = Mathf.Max(distanceAt[points.Count - 1], 0.001f);
 
         float duration = moveDuration;
-        if (matchNarrationLength && narrationClip != null)
-            duration = Mathf.Max(0.1f, narrationDelay + narrationClip.length - holdAtStart);
+        if (matchNarrationLength && IntroClip != null)
+            duration = Mathf.Max(0.1f, narrationDelay + IntroClip.length - holdAtStart);
 
         // Start position.
         cam.SetPositionAndRotation(points[0], rotations[0]);
@@ -385,7 +400,7 @@ public class IntroSequence : MonoBehaviour
             elapsed += Time.unscaledDeltaTime;
 
             // Narration.
-            if (!narrationStarted && narrationClip != null && elapsed >= narrationDelay)
+            if (!narrationStarted && IntroClip != null && elapsed >= narrationDelay)
             {
                 narrationStarted = true;
                 PlayNarration();
@@ -459,17 +474,21 @@ public class IntroSequence : MonoBehaviour
             if (dimAroundHighlight)
                 SpotlightOn(highlights);
 
-            if (instructionText != null && !string.IsNullOrWhiteSpace(step.instruction))
+            string instruction = Language.Pick(step.instruction, step.instructionDA);
+
+            if (instructionText != null && !string.IsNullOrWhiteSpace(instruction))
             {
-                instructionText.text = step.instruction;
+                instructionText.text = instruction;
                 showInstruction = true;
             }
 
             // Narration.
-            if (step.narration != null)
+            AudioClip stepClip = Language.Pick(step.narration, step.narrationDA);
+
+            if (stepClip != null)
             {
-                PlayClip(step.narration);
-                activeSubtitles = step.subtitles;
+                PlayClip(stepClip);
+                activeSubtitles = Language.Pick(step.subtitles, step.subtitlesDA);
             }
 
             float startTemperature = EnvironmentSystem.Instance != null
@@ -949,8 +968,8 @@ public class IntroSequence : MonoBehaviour
 
     private void PlayNarration()
     {
-        PlayClip(narrationClip);
-        activeSubtitles = subtitles;
+        PlayClip(IntroClip);
+        activeSubtitles = Language.Pick(subtitles, subtitlesDA);
     }
 
     // The subtitles belonging to the clip that is playing now.

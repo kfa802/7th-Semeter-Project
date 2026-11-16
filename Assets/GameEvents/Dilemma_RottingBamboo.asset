@@ -18,7 +18,13 @@ MonoBehaviour:
   choiceA: Stay
   choiceB: Other panda
   choiceC: Mountains
+  titleDA: 'dansk teks '
+  descriptionDA: Dansk
+  choiceADA: Dansk
+  choiceBDA: Dansk
+  choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 39a72621db63d4167ac6cc486843a1f3, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 0

@@ -17,6 +17,7 @@ MonoBehaviour:
   requestTravel: 1
   targetZoneName: Valley
   narrationClip: {fileID: 8300000, guid: 43ee4e51555c54dc4a1564716072a1ec, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
@@ -31,3 +32,7 @@ MonoBehaviour:
   - startTime: 6.5
     endTime: 9
     text: 'of getting enough food. '
+  subtitlesDA:
+  - startTime: 0
+    endTime: 5
+    text: Dansk

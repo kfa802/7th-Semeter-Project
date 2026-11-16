@@ -60,10 +60,31 @@ public class Dilemma : ScriptableObject
     public string choiceB;
     public string choiceC;
 
+    [Header("Danish Text (shown when Danish is chosen; empty = English)")]
+    public string titleDA;
+
+    [TextArea(3, 6)]
+    public string descriptionDA;
+
+    public string choiceADA;
+    public string choiceBDA;
+    public string choiceCDA;
+
     [Header("Narration")]
     [Tooltip("Voice-over played when this dilemma appears. " +
              "The choice buttons unlock when it has finished. Empty = no narration.")]
     public AudioClip narrationClip;
+
+    [Tooltip("Danish voice-over. Empty = the English one is used.")]
+    public AudioClip narrationClipDA;
+
+    // The text/clip in the chosen language.
+    public string Title => Language.Pick(title, titleDA);
+    public string Description => Language.Pick(description, descriptionDA);
+    public string ChoiceA => Language.Pick(choiceA, choiceADA);
+    public string ChoiceB => Language.Pick(choiceB, choiceBDA);
+    public string ChoiceC => Language.Pick(choiceC, choiceCDA);
+    public AudioClip NarrationClip => Language.Pick(narrationClip, narrationClipDA);
 
     [Header("Trigger")]
     public DilemmaTriggerType triggerType;

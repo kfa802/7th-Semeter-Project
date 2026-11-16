@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathHungerAndHeat
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_HungerAndHeat
-  titleDA: 
-  descriptionDA: 
+  titleDA: Dansk
+  descriptionDA: Dansk
   titleEN: Hunger And Heat
   descriptionEN: "Oh no! The panda was too hot and too hungry. It didn't have enough
     energy to keep going. \n\nDid you know that you can help protect pandas? \nWhen

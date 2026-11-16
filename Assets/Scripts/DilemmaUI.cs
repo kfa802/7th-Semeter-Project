@@ -70,28 +70,28 @@ public class DilemmaUI : MonoBehaviour
 
         manager = dilemmaManager;
 
-        // Update the dilemma text.
+        // Update the dilemma text (Danish or English, as chosen in the start menu).
         if (titleText != null)
-            titleText.text = dilemma.title;
+            titleText.text = dilemma.Title;
 
         if (descriptionText != null)
-            descriptionText.text = dilemma.description;
+            descriptionText.text = dilemma.Description;
 
         if (choiceAText != null)
-            choiceAText.text = dilemma.choiceA;
+            choiceAText.text = dilemma.ChoiceA;
 
         if (choiceBText != null)
-            choiceBText.text = dilemma.choiceB;
+            choiceBText.text = dilemma.ChoiceB;
 
         // Only show choice C when it has text.
         bool hasChoiceC =
-            !string.IsNullOrWhiteSpace(dilemma.choiceC);
+            !string.IsNullOrWhiteSpace(dilemma.ChoiceC);
 
         if (choiceCButton != null)
             choiceCButton.gameObject.SetActive(hasChoiceC);
 
         if (hasChoiceC && choiceCText != null)
-            choiceCText.text = dilemma.choiceC;
+            choiceCText.text = dilemma.ChoiceC;
 
         // Pause gameplay, remembering the previous time scale.
         if (!pausedByDilemma)

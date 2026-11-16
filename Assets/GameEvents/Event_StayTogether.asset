@@ -17,6 +17,7 @@ MonoBehaviour:
   requestTravel: 0
   targetZoneName: 
   narrationClip: {fileID: 8300000, guid: 6f2cf4b2e13d54666b21ce707cfcf67c, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
@@ -31,3 +32,7 @@ MonoBehaviour:
   - startTime: 4.8
     endTime: 6
     text: 'they will slowly become weaker. '
+  subtitlesDA:
+  - startTime: 0
+    endTime: 5
+    text: Dansk

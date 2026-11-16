@@ -19,7 +19,13 @@ MonoBehaviour:
   choiceA: Stay
   choiceB: Go
   choiceC: 
+  titleDA: 'dansk teks '
+  descriptionDA: Dansk
+  choiceADA: Dansk
+  choiceBDA: Dansk
+  choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 14f5f6b4fc4f844c2b756ca2d9cf5948, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
   triggerType: 0
   requiredZoneName: Midway
   delaySeconds: 10

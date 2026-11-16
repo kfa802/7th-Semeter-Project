@@ -19,7 +19,13 @@ MonoBehaviour:
   choiceA: Travel
   choiceB: Stay
   choiceC: 
+  titleDA: 'dansk teks '
+  descriptionDA: Dansk
+  choiceADA: Dansk
+  choiceBDA: Dansk
+  choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 0124fccbe52b345f6b30caa48aa7d38d, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
   triggerType: 6
   requiredZoneName: Mountain
   delaySeconds: 0

@@ -17,6 +17,7 @@ MonoBehaviour:
   requestTravel: 0
   targetZoneName: 
   narrationClip: {fileID: 8300000, guid: cf4cfd2ce169943339b7d0d67352f21b, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
@@ -31,3 +32,7 @@ MonoBehaviour:
   - startTime: 4
     endTime: 7.5
     text: 'and usually only meet for a few days each year to mate.   '
+  subtitlesDA:
+  - startTime: 0
+    endTime: 5
+    text: Dansk

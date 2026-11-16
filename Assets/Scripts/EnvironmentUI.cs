@@ -325,4 +325,4 @@ public class EnvironmentUI : MonoBehaviour
         panda != null ? Mathf.Clamp(panda.Health, 0f, 100f) : 0f;
 
     public bool HasPanda => panda != null;
-}
+}   

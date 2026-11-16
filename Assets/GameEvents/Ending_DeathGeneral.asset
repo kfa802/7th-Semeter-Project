@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathGeneral
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_General
-  titleDA: 
-  descriptionDA: 
+  titleDA: Dansk
+  descriptionDA: Dansk
   titleEN: Low heatth
   descriptionEN: "Oh no! The panda wasn't feeling well, and its health got too low
     to keep going.\n\nDid you know that you can help protect pandas? \nWhen you visit

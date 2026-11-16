@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathCold
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_ColdNoBamboo
-  titleDA: 
-  descriptionDA: 
+  titleDA: Koldt
+  descriptionDA: 'Dansk Ending '
   titleEN: Cold
   descriptionEN: "Brrr! It was so cold that the bamboo grew too slowly. The panda
     couldn't find enough food. \n\nDid you know that you can help protect pandas?

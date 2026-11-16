@@ -32,6 +32,13 @@ public class NarrativeManager : MonoBehaviour
         [Tooltip("Optional voice-over. Empty = text only.")]
         public AudioClip voice;
 
+        [Tooltip("Danish text. Empty = the English text is used.")]
+        [TextArea(2, 4)]
+        public string textDA;
+
+        [Tooltip("Danish voice-over. Empty = the English one is used.")]
+        public AudioClip voiceDA;
+
         [Tooltip("This line tells the player to change the temperature: the " +
                  "slider arrows show while it is on screen.")]
         public bool pointsToTemperature = true;
@@ -378,19 +385,23 @@ public class NarrativeManager : MonoBehaviour
 
         float duration = minShowTime;
 
-        if (!string.IsNullOrEmpty(line.text))
-            duration = Mathf.Max(minShowTime, line.text.Split(' ').Length * secondsPerWord);
+        // The text and voice in the chosen language.
+        string text = Language.Pick(line.text, line.textDA);
+        AudioClip voice = Language.Pick(line.voice, line.voiceDA);
 
-        if (line.voice != null)
+        if (!string.IsNullOrEmpty(text))
+            duration = Mathf.Max(minShowTime, text.Split(' ').Length * secondsPerWord);
+
+        if (voice != null)
         {
-            voiceSource.clip = line.voice;
+            voiceSource.clip = voice;
             voiceSource.volume = voiceVolume;
             voiceSource.Play();
-            duration = Mathf.Max(duration, line.voice.length + 0.5f);
+            duration = Mathf.Max(duration, voice.length + 0.5f);
         }
 
         if (lineText != null)
-            lineText.text = line.text;
+            lineText.text = text;
 
         if (panel != null && !panel.activeSelf)
             panel.SetActive(true);

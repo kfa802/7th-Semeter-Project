@@ -17,6 +17,7 @@ MonoBehaviour:
   requestTravel: 1
   targetZoneName: Midway
   narrationClip: {fileID: 8300000, guid: 2fb7842c352c24e11a7b25547fd74022, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
@@ -37,3 +38,7 @@ MonoBehaviour:
   - startTime: 11.5
     endTime: 14
     text: and down the mountains throughout the year.
+  subtitlesDA:
+  - startTime: 0
+    endTime: 5
+    text: Dansk

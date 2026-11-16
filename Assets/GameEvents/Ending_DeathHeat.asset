@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathHeat
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_Heat
-  titleDA: 
-  descriptionDA: 
+  titleDA: Dansk
+  descriptionDA: Dansk
   titleEN: Heat
   descriptionEN: "Oh no! It was much too hot for the panda. It needed a cooler place
     to stay healthy. \n\nDid you know that you can help protect pandas? \nWhen you

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ending_DeathHunger
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Heath_Hunger
-  titleDA: 
-  descriptionDA: 
+  titleDA: Dansk
+  descriptionDA: Dansk
   titleEN: Hunger
   descriptionEN: "Oh no! The panda couldn't find enough bamboo to eat. It got too
     hungry and weak to keep going. \n\nDid you know that you can help protect pandas?

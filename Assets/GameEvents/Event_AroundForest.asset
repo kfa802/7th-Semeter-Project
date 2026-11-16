@@ -17,6 +17,7 @@ MonoBehaviour:
   requestTravel: 0
   targetZoneName: 
   narrationClip: {fileID: 8300000, guid: 73abe953687e143f2ab2fa15b2a8e857, type: 3}
+  narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
@@ -34,3 +35,7 @@ MonoBehaviour:
   - startTime: 4
     endTime: 6
     text: 'but the panda can still find food.  '
+  subtitlesDA:
+  - startTime: 0
+    endTime: 5
+    text: Dansk
