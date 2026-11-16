@@ -8,7 +8,7 @@ public class TelemetrySampler : MonoBehaviour
 
     private float nextSample;
     private int lastHealth = int.MinValue;
-    private int lastWater = int.MinValue;
+    //private int lastWater = int.MinValue;
     private int lastBambooCount = int.MinValue;
     private int lastBambooTotal = int.MinValue;
     private string lastZone;
@@ -49,13 +49,13 @@ public class TelemetrySampler : MonoBehaviour
             t.LogMeter("Health", health.ToString());
         }
 
-        // Water
-        int water = Mathf.RoundToInt(environment.Water);
-        if (water != lastWater)
-        {
-            lastWater = water;
-            t.LogMeter("Water", water.ToString());
-        }
+        // // Water
+        // int water = Mathf.RoundToInt(environment.Water);
+        // if (water != lastWater)
+        // {
+        //     lastWater = water;
+        //     t.LogMeter("Water", water.ToString());
+        // }
 
         // Bamboo: count and total are logged separately
         int bambooCount = 0;

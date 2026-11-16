@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,9 +15,19 @@ public class TelemetryManager : MonoBehaviour
     [Tooltip("Tick for Danish/European Excel (decimal comma). Untick for English Excel.")]
     [SerializeField] private bool decimalComma = true;
 
+    [Header("Upload (Google Sheets)")]
+    [Tooltip("The Apps Script web app URL (ends with /exec). Empty = no upload.")]
+    [SerializeField] private string webAppUrl = "";
+
+    [Tooltip("Change this text to restart the ID counter at 'First Participant Number'. " +
+             "Use it before the real study, because WebGL has no context menu.")]
+    [SerializeField] private string studyId = "pilot";
+    [SerializeField, Min(1)] private int firstParticipantNumber = 1;
+
     private const string ParticipantsFile = "participants.csv";
     private const string SeriesFile = "timeseries.csv";
     private const string QuizFile = "quiz_answers.csv";
+    private const string StudyKey = "telemetry_study_id";
     private const char Sep = ';';
     private const float FlushInterval = 10f;          // append time-series rows
     private const float SaveInterval = 30f;           // rewrite participants.csv
@@ -103,8 +115,18 @@ public class TelemetryManager : MonoBehaviour
     // =====================================================
     // PARTICIPANT ID + SESSION
     // =====================================================
+    private int GetCounter()
+    {
+        if (PlayerPrefs.GetString(StudyKey, "") != studyId)
+        {
+            PlayerPrefs.SetString(StudyKey, studyId);
+            PlayerPrefs.SetInt(CounterKey, firstParticipantNumber);
+            PlayerPrefs.Save();
+        }
 
-    public string PeekNextId() => FormatId(PlayerPrefs.GetInt(CounterKey, 1));
+        return PlayerPrefs.GetInt(CounterKey, firstParticipantNumber);
+    }
+    public string PeekNextId() => FormatId(GetCounter());
 
     private static string FormatId(int n) => "P" + n.ToString("D2");
 
@@ -113,13 +135,14 @@ public class TelemetryManager : MonoBehaviour
         if (SessionActive)
             EndSession("restarted");
 
-        int n = PlayerPrefs.GetInt(CounterKey, 1);
+        int n = GetCounter();
         PlayerPrefs.SetInt(CounterKey, n + 1);
         PlayerPrefs.Save();
 
         fields.Clear();
         open.Clear();
         pendingLines.Clear();
+        webPending.Clear();
         tempTotals.Clear();
         choiceAvailableAt.Clear();
         quizShownAt.Clear();
@@ -182,6 +205,124 @@ public class TelemetryManager : MonoBehaviour
         Debug.Log("[Telemetry] Deleted telemetry files in " + Application.persistentDataPath);
     }
 
+    // =====================================================
+    // UPLOAD (Google Sheets)
+    // =====================================================
+
+    private bool UseWeb => !string.IsNullOrWhiteSpace(webAppUrl);
+    private bool WriteLocal => Application.platform != RuntimePlatform.WebGLPlayer;
+
+    private readonly List<string> webPending = new();   // time-series lines waiting
+    private readonly Queue<string> outbox = new();      // messages waiting to be sent
+    private string latestParticipants;                  // newest participants row
+    private bool sending;
+    private int messageCounter;
+
+    private string NewMessageId() =>
+        ParticipantId + "-" + DateTime.UtcNow.Ticks + "-" + (messageCounter++);
+
+    private static string J(string s)
+    {
+        if (s == null) return "";
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"")
+                .Replace("\n", "\\n").Replace("\r", "");
+    }
+
+    private void QueueRows(string sheet, string header, List<string> lines)
+    {
+        if (!UseWeb || lines.Count == 0) return;
+
+        StringBuilder sb = new();
+        sb.Append("{\"m\":\"").Append(NewMessageId())
+          .Append("\",\"sheet\":\"").Append(sheet)
+          .Append("\",\"header\":\"").Append(J(header))
+          .Append("\",\"rows\":[");
+
+        for (int i = 0; i < lines.Count; i++)
+        {
+            if (i > 0) sb.Append(',');
+            sb.Append('"').Append(J(lines[i])).Append('"');
+        }
+
+        sb.Append("]}");
+        outbox.Enqueue(sb.ToString());
+        StartSending();
+    }
+
+    private void QueueParticipants()
+    {
+        if (!UseWeb || string.IsNullOrEmpty(ParticipantId)) return;
+
+        StringBuilder sb = new();
+        sb.Append("{\"m\":\"").Append(NewMessageId())
+          .Append("\",\"sheet\":\"participants\",\"id\":\"").Append(J(ParticipantId))
+          .Append("\",\"fields\":{");
+
+        bool first = true;
+        foreach (var pair in fields)
+        {
+            if (!first) sb.Append(',');
+            first = false;
+            sb.Append('"').Append(J(pair.Key)).Append("\":\"").Append(J(pair.Value)).Append('"');
+        }
+
+        sb.Append("}}");
+        latestParticipants = sb.ToString();   // only the newest version is kept
+        StartSending();
+    }
+
+    private void FlushWeb()
+    {
+        if (webPending.Count == 0) return;
+
+        QueueRows("timeseries", string.Join(Sep.ToString(), SeriesHeader), webPending);
+        webPending.Clear();
+    }
+
+    private void StartSending()
+    {
+        if (!sending) StartCoroutine(SendLoop());
+    }
+
+    private IEnumerator SendLoop()
+    {
+        sending = true;
+
+        while (outbox.Count > 0 || latestParticipants != null)
+        {
+            bool fromOutbox = outbox.Count > 0;
+            string body = fromOutbox ? outbox.Peek() : latestParticipants;
+
+            using (UnityWebRequest request = new UnityWebRequest(webAppUrl, "POST"))
+            {
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body))
+                {
+                    // text/plain avoids a browser preflight, which Apps Script can't answer.
+                    contentType = "text/plain;charset=utf-8"
+                };
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.timeout = 20;
+
+                yield return request.SendWebRequest();
+
+                bool ok = request.result == UnityWebRequest.Result.Success &&
+                          request.downloadHandler.text.Contains("ok");
+
+                if (ok)
+                {
+                    if (fromOutbox) outbox.Dequeue();
+                    else if (ReferenceEquals(latestParticipants, body)) latestParticipants = null;
+                }
+                else
+                {
+                    Debug.LogWarning("[Telemetry] Upload failed, retrying in 5 s: " + request.error);
+                    yield return new WaitForSecondsRealtime(5f);
+                }
+            }
+        }
+
+        sending = false;
+    }
     // =====================================================
     // GENERIC API
     // =====================================================
@@ -348,37 +489,43 @@ public class TelemetryManager : MonoBehaviour
     }
 
     /// <summary>Writes one row per chosen option for a question.</summary>
-public void QuizAnswerRows(string questionId,
+    public void QuizAnswerRows(string questionId,
                            IEnumerable<(string answer, string optionCorrect)> answers,
                            string questionCorrect, float seconds)
-{
-    if (!SessionActive) return;
-
-    try
     {
-        if (!File.Exists(QuizPath))
-        {
-            File.WriteAllText(QuizPath,
-                string.Join(Sep.ToString(), QuizHeader) + Environment.NewLine,
-                new UTF8Encoding(true));
-        }
+        if (!SessionActive) return;
 
-        StringBuilder sb = new();
+        List<string> lines = new();
 
         foreach (var a in answers)
         {
-            sb.AppendLine(string.Join(Sep.ToString(),
+            lines.Add(string.Join(Sep.ToString(),
                 ParticipantId, questionId, a.answer,
                 a.optionCorrect, questionCorrect, Num(seconds)));
         }
 
-        File.AppendAllText(QuizPath, sb.ToString(), new UTF8Encoding(false));
+        QueueRows("quiz_answers", string.Join(Sep.ToString(), QuizHeader), lines);
+
+        if (!WriteLocal) return;
+
+        try
+        {
+            if (!File.Exists(QuizPath))
+            {
+                File.WriteAllText(QuizPath,
+                    string.Join(Sep.ToString(), QuizHeader) + Environment.NewLine,
+                    new UTF8Encoding(true));
+            }
+
+            File.AppendAllText(QuizPath,
+                string.Join(Environment.NewLine, lines) + Environment.NewLine,
+                new UTF8Encoding(false));
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("[Telemetry] Could not write quiz_answers.csv: " + e.Message);
+        }
     }
-    catch (Exception e)
-    {
-        Debug.LogError("[Telemetry] Could not write quiz_answers.csv: " + e.Message);
-    }
-}
 
     // =====================================================
     // TIME SERIES (timeseries.csv)
@@ -410,13 +557,16 @@ public void QuizAnswerRows(string questionId,
     {
         float duration = Mathf.Max(0f, endTime - entry.time);
 
-        pendingLines.Add(string.Join(Sep.ToString(),
+        string line = string.Join(Sep.ToString(),
             ParticipantId,
             Num(entry.time),
             type,
             Escape(entry.value),
             entry.source,
-            Num(duration)));
+            Num(duration));
+
+        pendingLines.Add(line);
+        if (UseWeb) webPending.Add(line);
     }
 
     public void LogMeter(string meter, string valueText)
@@ -479,8 +629,16 @@ public void QuizAnswerRows(string questionId,
 
     private void FlushLines()
     {
+        FlushWeb();
+
         if (pendingLines.Count == 0)
             return;
+
+        if (!WriteLocal)
+        {
+            pendingLines.Clear();
+            return;
+        }
 
         try
         {
@@ -555,6 +713,8 @@ public void QuizAnswerRows(string questionId,
     {
         if (string.IsNullOrEmpty(ParticipantId))
             return;
+        QueueParticipants();
+        if (!WriteLocal) return;
 
         try
         {
