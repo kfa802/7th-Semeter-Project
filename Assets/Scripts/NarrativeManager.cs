@@ -204,6 +204,7 @@ public class NarrativeManager : MonoBehaviour
         if (panda == null) panda = FindFirstObjectByType<PandaSystem>();
         if (pandaPathMover == null) pandaPathMover = FindFirstObjectByType<PandaPathMover>();
         if (dilemmaManager == null) dilemmaManager = FindFirstObjectByType<DilemmaManager>();
+        if (dilemmaUI == null) dilemmaUI = FindFirstObjectByType<DilemmaUI>();
 
         if (panel != null)
         {

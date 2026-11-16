@@ -12,20 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Cold2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: LOW TEMPATURE
-  description: "The amount of bamboo has dropped drastically. Only a few scattered
-    bamboo shoots remain on the mountain, and there don\u2019t seem to be any more
-    coming. "
-  choiceA: Travel
+  title: Frozen Bamboo
+  description: "Oh no! The cold weather has stopped the bamboo from growing! \r\n\r\nAlmost
+    all the food is gone. If it stays much longer, it might starve! There may be
+    more food further down the mountain. \r\n\r\nShould the panda move somewhere
+    else or stay on the mountain? "
+  choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: hej du uu
-  choiceADA: "g\xE5"
-  choiceBDA: bliv
+  titleDA: Frossen
+  descriptionDA: "\xC5h nej! Kulden har f\xE5et bambussen til at stoppe med at vokse!
+    \r\n\r\nN\xE6sten alt mad er v\xE6k. Hvis pandaen bliver meget l\xE6ngere, kan
+    den sulte ihjel! M\xE5ske er der mere mad l\xE6ngere nede ad bjerget. \r\n\r\nSkal
+    pandaen flytte et andet sted hen eller blive p\xE5 bjerget? "
+  choiceADA: Flyt
+  choiceBDA: Bliv
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 8ad03c61764fa45769e20c8a06c8a0e6, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 5
   requiredZoneName: Mountain
   delaySeconds: 0

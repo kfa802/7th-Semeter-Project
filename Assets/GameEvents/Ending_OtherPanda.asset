@@ -13,25 +13,23 @@ MonoBehaviour:
   m_Name: Ending_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Panda
-  titleDA: 'Sammen Med Den Anden Panda '
-  descriptionDA: "Pandaerne deler omr\xE5det. Bambussen er knap, og de holder sandsynligvis
-    ikke sammen l\xE6nge endnu, Men mens de er sammen, har de en chance for at f\xE5
-    unger. \n\nPandaer lever for det meste alene og m\xF8des kun kort om for\xE5ret
-    for at parre sig. N\xE5r skoven bliver delt op, kan dyrene ikke n\xE5 hinanden,
-    og bestanden bliver mere ensartet og mere s\xE5rbar. Sammenh\xE6ngende skov g\xF8r
-    en forskel.\n\nN\xE5r du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et
-    avls program af China Wildlife Conservation Association som er del i at sikre
-    pandaens langsigtede overlevelse. Hvis du skal k\xF8be bambus produkter kan du
-    selv kigge efter FSC-m\xE6rkede produkter som garantere at vigtige levesteder
-    ikke er blevet \xF8delagt. "
-  titleEN: Together With The Other Panda
-  descriptionEN: "The two pandas are still together! \nBut there's not much bamboo
-    left, so they may have to separate soon. \n\nPandas usually live alone and only
-    meet in spring to have cubs. It's important to keep forests connected so pandas
-    can find each other and have babies! \n\nDid you know that you can help protect
-    pandas? \nWhen you visit the zoo, you support a breeding program that helps protect
-    pandas for the future! \n\nAnd when you buy bamboo products, look for the FSC
-    label. It helps you choose products made with care for forests and wildlife.  "
+  titleDA: Sammen
+  descriptionDA: "De to pandaer er sammen! \r\n\r\nDer er ikke meget bambus tilbage,
+    s\xE5 de bliver m\xE5ske n\xF8dt til at skilles snart. \r\n\r\nK\xE6mpepandaer
+    lever som regel alene og m\xF8des kun om for\xE5ret for at f\xE5 unger. \r\n\r\nDet
+    er vigtigt at holde skovene forbundet, s\xE5 pandaerne kan finde hinanden og
+    parre sig!\n\nN\xE5r du bes\xF8ger zoologisk have, st\xF8tter du et avlsprogram,
+    der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg n\xE5r du k\xF8ber bambusprodukter,
+    s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper dig med at v\xE6lge produkter,
+    der er lavet med omtanke for skovene og dyrelivet.  "
+  titleEN: "Staying Together\_"
+  descriptionEN: "The two pandas are together! \r\n\r\nThere's not much bamboo left,
+    so they may have to separate soon. \r\n\r\nGiant pandas usually live alone and
+    only meet in spring to have cubs. \r\n\r\nIt's important to keep forests connected
+    so pandas can find each other and have babies!\n\nWhen you visit the zoo, you
+    support a breeding program that helps protect giant pandas! \r\n\r\nAnd when
+    you buy bamboo products, look for the FSC label. It helps you choose products
+    made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

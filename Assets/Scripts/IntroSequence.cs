@@ -574,10 +574,14 @@ public class IntroSequence : MonoBehaviour
         public bool added;
         public bool oldOverride;
         public int oldOrder;
-        public UnityEngine.UI.GraphicRaycaster raycaster;
+        public bool keepUntilEnd;   // instruction + subtitle panels stay on top the whole tutorial
     }
 
     private readonly List<Lifted> lifted = new List<Lifted>();
+
+    // Canvases this script added. They are kept (not destroyed) between steps,
+    // because destroying and re-adding in the same frame made UI fall under the darkening.
+    private readonly HashSet<Canvas> addedCanvases = new HashSet<Canvas>();
 
     private void SpotlightOn(GameObject[] targets)
     {
@@ -629,63 +633,84 @@ public class IntroSequence : MonoBehaviour
             Lift(t, order);
 
         if (instructionPanel != null)
-            Lift(instructionPanel, order + 1);
+            Lift(instructionPanel, order + 1, true);
 
         if (subtitlePanel != null)
-            Lift(subtitlePanel, order + 1);
+            Lift(subtitlePanel, order + 1, true);
 
         dimWanted = true;
     }
 
-    private void Lift(GameObject obj, int order)
+    private void Lift(GameObject obj, int order, bool keepUntilEnd = false)
     {
         if (obj == null)
             return;
 
+        Canvas canvas = obj.GetComponent<Canvas>();
+
+        // Already lifted? Just update the order.
+        foreach (Lifted existing in lifted)
+        {
+            if (existing.canvas == canvas && canvas != null)
+            {
+                canvas.overrideSorting = true;
+                canvas.sortingOrder = order;
+                return;
+            }
+        }
+
         Lifted l = new Lifted();
-        l.canvas = obj.GetComponent<Canvas>();
+        l.keepUntilEnd = keepUntilEnd;
 
-        if (l.canvas == null)
+        if (canvas == null)
         {
-            l.canvas = obj.AddComponent<Canvas>();
-            l.added = true;
-            l.raycaster = obj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
-        }
-        else
-        {
-            l.oldOverride = l.canvas.overrideSorting;
-            l.oldOrder = l.canvas.sortingOrder;
+            canvas = obj.AddComponent<Canvas>();
+            obj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            addedCanvases.Add(canvas);
         }
 
-        l.canvas.overrideSorting = true;
-        l.canvas.sortingOrder = order;
+        l.canvas = canvas;
+        l.added = addedCanvases.Contains(canvas);
+
+        if (!l.added)
+        {
+            l.oldOverride = canvas.overrideSorting;
+            l.oldOrder = canvas.sortingOrder;
+        }
+
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = order;
         lifted.Add(l);
     }
 
-    private void SpotlightOff()
+    /// <summary>Puts lifted UI back. The instruction/subtitle panels stay on top until the intro ends.</summary>
+    private void SpotlightOff(bool everything = false)
     {
         dimWanted = false;
 
-        foreach (Lifted l in lifted)
+        for (int i = lifted.Count - 1; i >= 0; i--)
         {
-            if (l.canvas == null)
+            Lifted l = lifted[i];
+
+            if (l.keepUntilEnd && !everything)
                 continue;
 
-            if (l.added)
+            if (l.canvas != null)
             {
-                if (l.raycaster != null)
-                    Destroy(l.raycaster);
+                if (l.added)
+                {
+                    // Keep the component; it just stops sorting on its own.
+                    l.canvas.overrideSorting = false;
+                }
+                else
+                {
+                    l.canvas.overrideSorting = l.oldOverride;
+                    l.canvas.sortingOrder = l.oldOrder;
+                }
+            }
 
-                Destroy(l.canvas);
-            }
-            else
-            {
-                l.canvas.overrideSorting = l.oldOverride;
-                l.canvas.sortingOrder = l.oldOrder;
-            }
+            lifted.RemoveAt(i);
         }
-
-        lifted.Clear();
     }
 
     private void UpdateDim()
@@ -1115,6 +1140,7 @@ public class IntroSequence : MonoBehaviour
 
     private void Finish(bool instant)
     {
+        SpotlightOff(true);
         IsPlaying = false;
         IsNarrating = false;
 

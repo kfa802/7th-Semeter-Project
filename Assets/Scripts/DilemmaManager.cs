@@ -727,6 +727,13 @@ public class DilemmaManager : MonoBehaviour
         if (narrationRoutine != null)
             StopCoroutine(narrationRoutine);
 
+        // Choice buttons with an 'Appear At' time wait for their moment in the narration.
+        bool[] hideChoice = new bool[3];
+        for (int i = 0; i < 3; i++)
+            hideChoice[i] = narration != null && dilemma.ChoiceAppearAt(i) > 0f;
+
+        dilemmaUI.HideChoicesUntilTheirTime(hideChoice);
+
         if (narration != null)
         {
             narrationRoutine = StartCoroutine(PlayNarration(narration));
@@ -940,8 +947,23 @@ public class DilemmaManager : MonoBehaviour
         {
             played += Time.unscaledDeltaTime;
             SetChoicesLocked(true);
+
+            // Pop each choice up at its time in the clip.
+            float clipTime = narrationSource.isPlaying ? narrationSource.time : clip.length;
+
+            if (activeDilemma != null)
+            {
+                for (int i = 0; i < 3; i++)
+                    if (clipTime >= activeDilemma.ChoiceAppearAt(i))
+                        dilemmaUI.RevealChoice(i);
+            }
+
             yield return null;
         }
+
+        // Anything still hidden appears now.
+        for (int i = 0; i < 3; i++)
+            dilemmaUI.RevealChoice(i);
 
         LogNarrationEnded();
 

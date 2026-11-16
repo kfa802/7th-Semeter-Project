@@ -13,26 +13,21 @@ MonoBehaviour:
   m_Name: Ending_StayInValley
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Valley
-  titleDA: Bliver I Dalen
-  descriptionDA: "Pandaen bliver i dalen, hvor skov og landsby m\xF8des. Der er bambus
-    og vand nok til at klare sig, men der er ogs\xE5 st\xF8j, trafik og mennesker
-    t\xE6t p\xE5. Hver ny forstyrrelse g\xF8r det sv\xE6rere at finde ro. \n\n \nI
-    dalene konkurrerer mennesker og vilde dyr om pladsen. Det er ogs\xE5 de steder,
-    hvor der er mest bambus, s\xE5 her m\xF8des dyrenes behov og menneskers behov.
-    Det kan lade sig g\xF8re at dele plads, hvis nogle omr\xE5der beskyttes, og skoven
-    forbliver sammenh\xE6ngende, men det kr\xE6ver, at man planl\xE6gger for det.\n\nN\xE5r
-    du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et avls program af China
-    Wildlife Conservation Association som er del i at sikre pandaens langsigtede
-    overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
-    produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
-  titleEN: Staying In The Valley
-  descriptionEN: "The panda stays in the valley! \nThere's plenty of bamboo and water,
-    but also roads, people, and noise. \n\nPandas and people both need space. By
-    protecting forests and keeping them connected, we can help pandas live safely!
-    \n\nDid you know that you can help protect pandas? \nWhen you visit the zoo,
-    you support a breeding program that helps protect pandas for the future! \n\nAnd
-    when you buy bamboo products, look for the FSC label. It helps you choose products
-    made with care for forests and wildlife.  "
+  titleDA: Livet i dalen
+  descriptionDA: "Pandaen bliver i dalen! \r\n\r\nHer er masser af bambus, men ogs\xE5
+    mange mennesker, st\xF8j og veje. \r\n\r\nB\xE5de pandaer og mennesker har brug
+    for plads. Ved at beskytte skovene og holde dem intakte kan vi hj\xE6lpe k\xE6mpepandaerne
+    med at leve trygt! \n\nN\xE5r du bes\xF8ger zoologisk have, st\xF8tter du et
+    avlsprogram, der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg n\xE5r du
+    k\xF8ber bambusprodukter, s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper dig med
+    at v\xE6lge produkter, der er lavet med omtanke for skovene og dyrelivet.  "
+  titleEN: "Staying in the Valley\_"
+  descriptionEN: "The panda stays in the valley! \r\n\r\nThere's plenty of bamboo,
+    but also a lot of people, noise and roads. \r\n\r\nPandas and people both need
+    space. By protecting forests and keeping them intact, we can help giant pandas
+    live safely! \n\nWhen you visit the zoo, you support a breeding program that
+    helps protect giant pandas! \r\n\r\nAnd when you buy bamboo products, look for
+    the FSC label. It helps you choose products made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

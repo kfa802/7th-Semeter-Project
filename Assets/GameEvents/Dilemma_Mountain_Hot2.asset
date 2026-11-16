@@ -12,20 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Hot2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: HIGH TEMPATURE
-  description: "The amount of bamboo has dropped drastically. Only a few scattered
-    bamboo shoots remain on the mountain, and there don\u2019t seem to be any more
-    coming. "
+  title: Overskrift
+  description: "Oh no! It\u2019s too hot for the panda! \r\n\r\nThe panda feels weak
+    and can\u2019t stay cool. If it stays, it might not survive! Even though bamboo
+    grows fast in the heat there isn't enough here on the mountain. Maybe there\u2019s
+    more further down. \r\n\r\nShould the panda move somewhere else or stay on the
+    mountain? "
   choiceA: Travel
   choiceB: Stay
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
+  titleDA: Overskrift
+  descriptionDA: "\xC5h nej! Det er for varmt for pandaen! \r\n\r\nPandaen f\xF8ler
+    sig svag og kan ikke holde sig k\xF8lig. Hvis den bliver, overlever den m\xE5ske
+    ikke! Selvom bambus vokser hurtigt i varmen, er der ikke nok her p\xE5 bjerget.
+    M\xE5ske er der mere l\xE6ngere nede. \r\n\r\nSkal pandaen flytte et andet sted
+    hen eller blive p\xE5 bjerget? "
+  choiceADA: Flyt
+  choiceBDA: Bliv
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 0124fccbe52b345f6b30caa48aa7d38d, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 6
   requiredZoneName: Mountain
   delaySeconds: 0

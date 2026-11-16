@@ -12,20 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood_2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THERE ISN'T ENOUGH FOOD
-  description: "Oh no! There's almost no bamboo left! \nThe pandas are getting hungry
-    and weak because there isn't enough food for both of them. \n\nShould they go
-    their separate ways or stay together?  "
+  title: Fjernet
+  description: ' '
   choiceA: Stay
   choiceB: Go
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
+  titleDA: Fjernet
+  descriptionDA: 
   choiceADA: Dansk
   choiceBDA: Dansk
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 209d53f3bdcb640e7ae89f491aa91ca1, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 4
   requiredZoneName: Midway
   delaySeconds: 10

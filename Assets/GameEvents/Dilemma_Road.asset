@@ -12,20 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THE NEW ROAD
-  description: "A nearby village needs a new road! \n\nThe road can go through the
-    forest or around it. Going around costs more, but it protects the forest.\n\nShould
-    the road go through the forest or around it?  "
+  title: Overskrift
+  description: "A nearby village needs a new road! \r\n\r\nShould the road go through
+    the forest or around it?  "
   choiceA: Through
   choiceB: Around
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
+  titleDA: Overskrift
+  descriptionDA: "En landsby i n\xE6rheden har brug for en ny vej! \r\n\r\nSkal vejen
+    g\xE5 gennem skoven eller rundt om den? "
+  choiceADA: Gennem
+  choiceBDA: Rundt
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 1bbae97586fca47a784198080fe3b6d5, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 0
   requiredZoneName: Valley
   delaySeconds: 10

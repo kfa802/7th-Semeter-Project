@@ -61674,6 +61674,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   startFieldOfView: 0
   narrationClip: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 2b11a0bd592904f0092048f33bbdf1e2, type: 3}
   narrationDelay: 1
   narrationVolume: 1
   narrationMixerGroup: {fileID: 0}
@@ -61681,18 +61682,25 @@ MonoBehaviour:
   subtitleText: {fileID: 141545504}
   subtitles:
   - startTime: 0
-    endTime: 4
-    text: mnanvdnavdnbadv
-  - startTime: 5
+    endTime: 3
+    text: 'We are in China, the home of giant pandas! '
+  - startTime: 4
     endTime: 7
-    text: ewmnenbwmevwe
+    text: 'Today, we need your help to make some important decisions for our panda. '
+  subtitlesDA:
+  - startTime: 0
+    endTime: 3
+    text: "Vi er i Kina, hvor k\xE6mpepandaerne bor! "
+  - startTime: 4
+    endTime: 7
+    text: "I dag har vi brug for din hj\xE6lp til at tr\xE6ffe nogle vigtige beslutninger
+      for pandaen. "
   playTutorial: 1
   instructionPanel: {fileID: 0}
   instructionText: {fileID: 0}
   tutorialSteps:
   - label: Temperature
-    instruction: Slide the thermometer to change the temperature. Warmer makes bamboo
-      grow faster - but the panda can get too hot.
+    instruction: Tempature
     narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
     showUI:
     - {fileID: 196287758}
@@ -61705,10 +61713,16 @@ MonoBehaviour:
     pauseAfter: 0
     subtitles:
     - startTime: 0
-      endTime: 4
-      text: dgdgdgd
+      endTime: 3
+      text: 'Try changing the temperature and see how the weather changes! '
+    instructionDA: Temperatur
+    narrationDA: {fileID: 0}
+    subtitlesDA:
+    - startTime: 0
+      endTime: 3
+      text: "Pr\xF8v at \xE6ndre temperaturen og se hvordan vejret skifter.  "
   - label: Human Disturbance
-    instruction: Humans disturbances.
+    instruction: Humans Disturbance
     narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
     showUI:
     - {fileID: 2033208195}
@@ -61718,7 +61732,31 @@ MonoBehaviour:
     waitFor: 0
     degreesToChange: 5
     pauseAfter: 0
-    subtitles: []
+    subtitles:
+    - startTime: 0
+      endTime: 3
+      text: 'This meter shows how noise, pollution, and human activity affect the
+        panda '
+    - startTime: 4
+      endTime: 6
+      text: When it's cold, fewer people are outside, so there's less noise and pollution
+    - startTime: 7
+      endTime: 10
+      text: Humans affect wildlife differently in different places.
+    instructionDA: "St\xF8jm\xE5ler"
+    narrationDA: {fileID: 8300000, guid: a9a7e5b27f2194378aa54b0367956f03, type: 3}
+    subtitlesDA:
+    - startTime: 0
+      endTime: 3
+      text: "Denne m\xE5ler viser hvordan st\xF8j, forurening og menneskelig aktivitet
+        p\xE5virker pandaen "
+    - startTime: 4
+      endTime: 6
+      text: "N\xE5r det er koldt, er der f\xE6rre mennesker udenfor, s\xE5 der er
+        mindre st\xF8j og forurening "
+    - startTime: 7
+      endTime: 9
+      text: "Mennesker p\xE5virker dyrelivet forskelligt fra sted til sted "
   - label: Feeding
     instruction: Drag the bamboo to the panda to feed it.
     narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
@@ -61730,7 +61768,16 @@ MonoBehaviour:
     waitFor: 2
     degreesToChange: 5
     pauseAfter: 0
-    subtitles: []
+    subtitles:
+    - startTime: 0
+      endTime: 3
+      text: 'Now, try feeding the panda some bamboo! '
+    instructionDA: 
+    narrationDA: {fileID: 8300000, guid: d48a1ffe729d24997bcc0dcf81f3c481, type: 3}
+    subtitlesDA:
+    - startTime: 0
+      endTime: 3
+      text: "Pr\xF8v nu at fodre pandaen med lidt bambus! "
   - label: Panda Health
     instruction: You panda has a health bar.
     narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
@@ -61742,7 +61789,22 @@ MonoBehaviour:
     waitFor: 0
     degreesToChange: 5
     pauseAfter: 1
-    subtitles: []
+    subtitles:
+    - startTime: 0
+      endTime: 3
+      text: 'Keep an eye on the panda''s health! '
+    - startTime: 4
+      endTime: 6
+      text: The panda's health depends on the temperature and how hungry it is
+    instructionDA: 
+    narrationDA: {fileID: 8300000, guid: e7b4d9cbc036c422abba4669fe73afac, type: 3}
+    subtitlesDA:
+    - startTime: 0
+      endTime: 3
+      text: "Hold \xF8je med pandaens helbred!  "
+    - startTime: 4
+      endTime: 6
+      text: "Pandaens helbred afh\xE6nger af temperaturen, og hvor sulten den er."
   hideDuringIntro:
   - {fileID: 1740021514}
   - {fileID: 196287758}
@@ -67975,8 +68037,10 @@ MonoBehaviour:
   voiceMixerGroup: {fileID: 0}
   lines:
   - label: Hot - low health
-    text: 'Oh no! The heat is making your panda feel sick! '
+    text: 'Oh no! The heat is making the panda feel weak! '
     voice: {fileID: 0}
+    textDA: "\xC5h nej! Varmen g\xF8r pandaen svag! "
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -67995,9 +68059,34 @@ MonoBehaviour:
     cooldown: 60
     onlyOnce: 0
     priority: 3
-  - label: Hot - disturbance rising
-    text: Human disturbance increases when the temperature rises.
+  - label: Cold - Low Bamboo
+    text: 'It''s too cold for the bamboo to grow! '
     voice: {fileID: 0}
+    textDA: 'Det er for koldt til, at bambussen kan vokse! '
+    voiceDA: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 1
+    temperatureMin: -100
+    temperatureMax: 0
+    checkHealth: 0
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 1
+    bambooAtOrBelow: 3
+    checkDisturbance: 0
+    disturbanceMin: 0
+    disturbanceMax: 100
+    disturbanceTrend: 2
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  - label: Hot - disturbance rising
+    text: 'Human disturbance increases when the temperature rises. '
+    voice: {fileID: 0}
+    textDA: "Menneskelig forstyrrelse stiger, n\xE5r temperaturen stiger. "
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -68017,9 +68106,12 @@ MonoBehaviour:
     onlyOnce: 0
     priority: 2
   - label: Bamboo low
-    text: You are running low on food for the panda. Bamboo grows faster in higher
-      temperatures.
+    text: 'You are running low on food for the panda. Bamboo grows faster in higher
+      temperatures. '
     voice: {fileID: 0}
+    textDA: "Du er ved at l\xF8be t\xF8r for mad til pandaen. Bambus vokser hurtigere,
+      n\xE5r temperaturen er h\xF8jere. "
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -68039,8 +68131,10 @@ MonoBehaviour:
     onlyOnce: 0
     priority: 2
   - label: Cold - disturbance falling
-    text: Human disturbance decreases in low temperatures.
+    text: 'Human disturbance decreases in low temperatures. '
     voice: {fileID: 0}
+    textDA: "Menneskelig forstyrrelse falder, n\xE5r temperaturen er lav. "
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -68059,51 +68153,11 @@ MonoBehaviour:
     cooldown: 60
     onlyOnce: 0
     priority: 1
-  - label: Cold - Low Bamboo
-    text: 'Brrr! It''s too cold for the bamboo to grow! '
-    voice: {fileID: 0}
-    pointsToTemperature: 1
-    checkTemperature: 1
-    temperatureMin: -100
-    temperatureMax: 0
-    checkHealth: 0
-    healthBelow: 50
-    requireHeatDamage: 0
-    checkBamboo: 1
-    bambooAtOrBelow: 3
-    checkDisturbance: 0
-    disturbanceMin: 0
-    disturbanceMax: 100
-    disturbanceTrend: 2
-    zoneName: 
-    holdFor: 2
-    cooldown: 60
-    onlyOnce: 0
-    priority: 1
-  - label: High disturbance + low health
-    text: 'All the noise from the city is stressing your panda! '
-    voice: {fileID: 0}
-    pointsToTemperature: 1
-    checkTemperature: 0
-    temperatureMin: -100
-    temperatureMax: 0
-    checkHealth: 1
-    healthBelow: 50
-    requireHeatDamage: 0
-    checkBamboo: 1
-    bambooAtOrBelow: 3
-    checkDisturbance: 1
-    disturbanceMin: 25
-    disturbanceMax: 100
-    disturbanceTrend: 0
-    zoneName: 
-    holdFor: 2
-    cooldown: 60
-    onlyOnce: 0
-    priority: 1
   - label: Low health
     text: 'Your panda is getting weaker! It needs more bamboo! '
     voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
     pointsToTemperature: 1
     checkTemperature: 0
     temperatureMin: -100
@@ -68114,6 +68168,29 @@ MonoBehaviour:
     checkBamboo: 0
     bambooAtOrBelow: 2
     checkDisturbance: 0
+    disturbanceMin: 25
+    disturbanceMax: 100
+    disturbanceTrend: 0
+    zoneName: 
+    holdFor: 2
+    cooldown: 60
+    onlyOnce: 0
+    priority: 1
+  - label: High disturbance + low health
+    text: 'All the noise from the city is stressing your panda! '
+    voice: {fileID: 0}
+    textDA: 
+    voiceDA: {fileID: 0}
+    pointsToTemperature: 1
+    checkTemperature: 0
+    temperatureMin: -100
+    temperatureMax: 0
+    checkHealth: 1
+    healthBelow: 50
+    requireHeatDamage: 0
+    checkBamboo: 1
+    bambooAtOrBelow: 3
+    checkDisturbance: 1
     disturbanceMin: 25
     disturbanceMax: 100
     disturbanceTrend: 0
@@ -83782,6 +83859,8 @@ MonoBehaviour:
   - {fileID: 184388598}
   - {fileID: 2033208195}
   - {fileID: 1539525340}
+  choicePopTime: 0.35
+  choicePopBounce: 1.5
 --- !u!43 &1933522345
 Mesh:
   m_ObjectHideFlags: 0

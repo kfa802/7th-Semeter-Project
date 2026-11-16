@@ -12,19 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Moderate
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Not enough to go around
-  description: "There\u2019s too little bamboo on the mountain and the panda is hungry.
-    The valley has plenty, but also more people."
-  choiceA: Go
+  title: Overskrift
+  description: "Vejret er dejligt her p\xE5 bjerget! \r\n\r\nTemperaturen er helt
+    perfekt for pandaen, men der er et problem. Pandaen spiser masser af bambus,
+    og der er ikke nok til den her. \r\n\r\nSkal pandaen flytte et andet sted hen
+    eller blive p\xE5 bjerget? "
+  choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
+  titleDA: Overskrift
+  descriptionDA: "The weather is nice here on the mountain! \r\n\r\nThe temperature
+    is just right for the panda, but there's a problem. The panda eats a lot of bamboo,
+    and there is not enough for the panda here. \r\n\r\nShould the panda move somewhere
+    else or stay on the mountain? "
+  choiceADA: Flyt
+  choiceBDA: Bliv
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 5cdb41cb4871443ff86c2fe53dde1e54, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 9
   requiredZoneName: Mountain
   delaySeconds: 45

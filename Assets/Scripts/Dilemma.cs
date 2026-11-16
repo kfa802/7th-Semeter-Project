@@ -78,6 +78,26 @@ public class Dilemma : ScriptableObject
     [Tooltip("Danish voice-over. Empty = the English one is used.")]
     public AudioClip narrationClipDA;
 
+    [Header("Choice Buttons Appear (seconds into the narration)")]
+    [Tooltip("When choice A pops up, in seconds after the narration clip starts. " +
+             "0 = visible right away.")]
+    [Min(0f)] public float choiceAAppearAt;
+    [Min(0f)] public float choiceBAppearAt;
+    [Min(0f)] public float choiceCAppearAt;
+
+    [Tooltip("Same, for the DANISH narration clip. 0 = use the English time.")]
+    [Min(0f)] public float choiceAAppearAtDA;
+    [Min(0f)] public float choiceBAppearAtDA;
+    [Min(0f)] public float choiceCAppearAtDA;
+
+    /// <summary>Seconds into the narration when choice 0/1/2 appears (chosen language).</summary>
+    public float ChoiceAppearAt(int choice)
+    {
+        float en = choice == 0 ? choiceAAppearAt : choice == 1 ? choiceBAppearAt : choiceCAppearAt;
+        float da = choice == 0 ? choiceAAppearAtDA : choice == 1 ? choiceBAppearAtDA : choiceCAppearAtDA;
+        return Language.IsDanish && da > 0f ? da : en;
+    }
+
     // The text/clip in the chosen language.
     public string Title => Language.Pick(title, titleDA);
     public string Description => Language.Pick(description, descriptionDA);

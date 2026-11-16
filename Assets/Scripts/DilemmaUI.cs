@@ -33,6 +33,16 @@ public class DilemmaUI : MonoBehaviour
     private CanvasGroup[] hiddenGroups;
     private float[] hiddenAlphas;
 
+    [Header("Choice Pop-Up")]
+    [Tooltip("Seconds a choice button takes to pop up.")]
+    [SerializeField, Min(0.05f)] private float choicePopTime = 0.35f;
+
+    [Tooltip("How much it overshoots when popping up (0 = no bounce).")]
+    [SerializeField, Range(0f, 3f)] private float choicePopBounce = 1.5f;
+
+    private Vector3[] choiceBaseScales;
+    private bool[] choiceShown = new bool[3];
+
     private DilemmaManager manager;
 
     private float previousTimeScale = 1f;
@@ -190,6 +200,66 @@ public class DilemmaUI : MonoBehaviour
                 g.blocksRaycasts = true;
             }
         }
+    }
+
+    // =========================================================
+    // CHOICE BUTTONS POPPING UP ONE BY ONE
+    // =========================================================
+
+    private Button ChoiceButton(int i) =>
+        i == 0 ? choiceAButton : i == 1 ? choiceBButton : choiceCButton;
+
+    /// <summary>Hides the choice buttons that should pop up later.</summary>
+    public void HideChoicesUntilTheirTime(bool[] hide)
+    {
+        if (choiceBaseScales == null)
+        {
+            choiceBaseScales = new Vector3[3];
+            for (int i = 0; i < 3; i++)
+                if (ChoiceButton(i) != null)
+                    choiceBaseScales[i] = ChoiceButton(i).transform.localScale;
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            Button b = ChoiceButton(i);
+            if (b == null)
+                continue;
+
+            choiceShown[i] = !hide[i];
+            b.transform.localScale = hide[i] ? Vector3.zero : choiceBaseScales[i];
+        }
+    }
+
+    /// <summary>Pops choice 0/1/2 up (if it isn't already shown).</summary>
+    public void RevealChoice(int i)
+    {
+        Button b = ChoiceButton(i);
+
+        if (b == null || choiceShown[i] || !b.gameObject.activeInHierarchy)
+            return;
+
+        choiceShown[i] = true;
+        StartCoroutine(PopIn(b.transform, choiceBaseScales != null ? choiceBaseScales[i] : Vector3.one));
+    }
+
+    private System.Collections.IEnumerator PopIn(Transform t, Vector3 baseScale)
+    {
+        float time = 0f;
+
+        while (time < 1f)
+        {
+            // Unscaled: the game is paused while a dilemma is open.
+            time = Mathf.MoveTowards(time, 1f, Time.unscaledDeltaTime / choicePopTime);
+
+            float u = time - 1f;
+            float size = 1f + (choicePopBounce + 1f) * u * u * u + choicePopBounce * u * u;
+
+            t.localScale = baseScale * Mathf.Max(0f, size);
+            yield return null;
+        }
+
+        t.localScale = baseScale;
     }
 
     private void ChooseA()

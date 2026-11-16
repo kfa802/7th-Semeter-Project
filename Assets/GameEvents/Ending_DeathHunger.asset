@@ -13,14 +13,18 @@ MonoBehaviour:
   m_Name: Ending_DeathHunger
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Heath_Hunger
-  titleDA: Dansk
-  descriptionDA: Dansk
+  titleDA: Sult
+  descriptionDA: "\xC5h nej! Pandaen kunne ikke finde bambus nok at spise. Den blev
+    for sulten og svag til at forts\xE6tte.\n\nN\xE5r du bes\xF8ger zoologisk have,
+    st\xF8tter du et avlsprogram, der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg
+    n\xE5r du k\xF8ber bambusprodukter, s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper
+    dig med at v\xE6lge produkter, der er lavet med omtanke for skovene og dyrelivet.  "
   titleEN: Hunger
   descriptionEN: "Oh no! The panda couldn't find enough bamboo to eat. It got too
-    hungry and weak to keep going. \n\nDid you know that you can help protect pandas?
-    \nWhen you visit the zoo, you support a breeding program that helps protect pandas
-    for the future! \n\nAnd when you buy bamboo products, look for the FSC label.
-    It helps you choose products made with care for forests and wildlife. "
+    hungry and weak to keep going.\n\nWhen you visit the zoo, you support a breeding
+    program that helps protect giant pandas! \r\n\r\nAnd when you buy bamboo products,
+    look for the FSC label. It helps you choose products made with care for forests
+    and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

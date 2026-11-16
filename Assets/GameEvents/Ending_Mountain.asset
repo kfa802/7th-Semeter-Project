@@ -13,25 +13,23 @@ MonoBehaviour:
   m_Name: Ending_Mountain
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Mountain
-  titleDA: "P\xE5 Bjerget"
-  descriptionDA: "Pandaen er i bjergene, hvor vandet er knapt, og bambussen vokser
-    langsomt. Her er der fredeligt, men der er langt mellem bambusskuddene, og pandaen
-    m\xE5 bruge meget tid og energi p\xE5 at finde nok at spise. \n\nDet er ikke
-    n\xF8dvendigvis en d\xE5rlig ting for pandaer at leve i bjergene. Om sommeren,
-    n\xE5r varmen er moderat, trives de bedst heroppe. Om vinteren finder de mere
-    bambus nede i dalene, og derfor rejser pandaer op og ned ad bjergene gennem \xE5ret.\n\nN\xE5r
-    du g\xE5r i zoo st\xF8tter du pandaerne, de er med i et avls program af China
-    Wildlife Conservation Association som er del i at sikre pandaens langsigtede
-    overlevelse. Hvis du skal k\xF8be bambus produkter kan du selv kigge efter FSC-m\xE6rkede
-    produkter som garantere at vigtige levesteder ikke er blevet \xF8delagt. "
-  titleEN: On The Mountain
-  descriptionEN: "The panda stays high in the mountains! \nIt's quiet and peaceful,
-    but there's not much bamboo or water. Finding enough food takes a lot of energy!
-    \n\nPandas often move up the mountains in summer to stay cool and down to the
-    valleys in winter to find more food.\n\nDid you know that you can help protect
-    pandas? \nWhen you visit the zoo, you support a breeding program that helps protect
-    pandas for the future! \n\nAnd when you buy bamboo products, look for the FSC
-    label. It helps you choose products made with care for forests and wildlife.  "
+  titleDA: Livet i bjergene
+  descriptionDA: "K\xE6mpepandaen er h\xF8jt oppe i bjergene! \r\n\r\nHer er stille
+    og fredeligt, men der er ikke meget bambus. Det kr\xE6ver masser af energi at
+    finde mad nok! \r\n\r\nPandaer flytter ofte op i bjergene om sommeren for at
+    holde sig k\xF8lige og ned i dalen om vinteren for at finde mere mad. \n\nN\xE5r
+    du bes\xF8ger zoologisk have, st\xF8tter du et avlsprogram, der er med til at
+    beskytte k\xE6mpepandaer! \r\n\r\nOg n\xE5r du k\xF8ber bambusprodukter, s\xE5
+    kig efter FSC-m\xE6rket. Det hj\xE6lper dig med at v\xE6lge produkter, der er
+    lavet med omtanke for skovene og dyrelivet.  "
+  titleEN: "Life in the Mountains\_"
+  descriptionEN: "The giant panda stays high in the mountains! \r\n\r\nIt's quiet
+    and peaceful, but there's not much bamboo. Finding enough food takes a lot of
+    energy! \r\n\r\nPandas often move up the mountains in summer to stay cool, and
+    down to the valley in winter to find more food. \n\nWhen you visit the zoo, you
+    support a breeding program that helps protect giant pandas! \r\n\r\nAnd when
+    you buy bamboo products, look for the FSC label. It helps you choose products
+    made with care for forests and wildlife.  "
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 0}
   narrationDA2: {fileID: 0}

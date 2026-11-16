@@ -12,20 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: A NEW PANDA
-  description: "On the way down to the valley, our panda meets another panda! \nBut
-    pandas usually like to live alone. \n\nShould the pandas stay together or go
-    their separate ways?  "
+  title: Another Panda
+  description: "Oh another panda! \r\n\r\nShould the pandas stay together or go their
+    separate ways?  "
   choiceA: Stay
   choiceB: Go
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
+  titleDA: 'En anden panda '
+  descriptionDA: "\xC5h, en anden panda! \r\n\r\nSkal pandaerne blive sammen eller
+    g\xE5 hver til sit? "
+  choiceADA: Bliv
+  choiceBDA: "G\xE5"
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 14f5f6b4fc4f844c2b756ca2d9cf5948, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 0
   requiredZoneName: Midway
   delaySeconds: 10

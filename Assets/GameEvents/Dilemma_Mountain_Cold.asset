@@ -12,19 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Cold
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Frozen bamboo
-  description: "It\u2019s too cold for bamboo to grow and the panda is hungry. The
-    warmer valley has food, but also more people."
-  choiceA: Go
+  title: Frozen Bamboo
+  description: "It's very cold here on the mountain! \r\n\r\nPandas eat a lot of
+    bamboo, but it grows very slowly in cold weather. This means there might not
+    be enough food for the panda. \r\n\r\nShould the panda move somewhere else or
+    stay on the mountain? "
+  choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: hej du uu
-  choiceADA: "g\xE5"
-  choiceBDA: bliv
+  titleDA: Frosen Bambus
+  descriptionDA: "Det er meget koldt her p\xE5 bjerget! \r\n\r\nPandaer spiser masser
+    af bambus, men det vokser meget langsomt, n\xE5r det er koldt. Det betyder, at
+    der m\xE5ske ikke er mad nok til pandaen. \r\n\r\nSkal pandaen flytte et andet
+    sted hen eller blive p\xE5 bjerget? "
+  choiceADA: Flyt
+  choiceBDA: Bliv
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 5e7f7074bbda048a192a7cd58de07eb4, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 10
   requiredZoneName: Mountain
   delaySeconds: 45

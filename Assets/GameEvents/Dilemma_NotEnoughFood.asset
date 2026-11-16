@@ -12,20 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THERE ISN'T ENOUGH FOOD
-  description: "The two pandas have been together for a long time! \nBut there's
-    a problem. They're eating the bamboo faster than it can grow! \n\nShould they
-    go their separate ways or stay together?  "
+  title: Overskrift
+  description: "Almost all the bamboo is gone! \r\n\r\nIf the pandas both stay here,
+    they won't have enough food to survive. \r\n\r\nShould our panda stay here or
+    move down to the valley?  "
   choiceA: Stay
-  choiceB: Go
+  choiceB: Move
   choiceC: 
-  titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
+  titleDA: Overskrift
+  descriptionDA: "N\xE6sten al bambussen er v\xE6k! \r\n\r\nHvis begge pandaer bliver
+    her, er der ikke nok mad til, at de kan overleve. \r\n\r\nSkal vores panda blive
+    her eller flytte ned i dalen? "
+  choiceADA: Bliv
+  choiceBDA: Flyt
   choiceCDA: 
   narrationClip: {fileID: 8300000, guid: 23ca9765e4d9843a3a62f01f5a00dacc, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 0
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 0
   triggerType: 4
   requiredZoneName: Midway
   delaySeconds: 0
@@ -40,6 +48,6 @@ MonoBehaviour:
   choiceAEvent: {fileID: 11400000, guid: bf4054c51b7a948e492c5c79aadddc06, type: 2}
   choiceBEvent: {fileID: 11400000, guid: 1155dc223c8ac415cb703ce8aa5e6691, type: 2}
   choiceCEvent: {fileID: 0}
-  choiceAEnding: {fileID: 0}
+  choiceAEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
   choiceBEnding: {fileID: 0}
   choiceCEnding: {fileID: 0}

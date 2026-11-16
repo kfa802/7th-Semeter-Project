@@ -12,19 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: THE BAMBOO IS DYING
-  description: "Oh no! The bamboo in the valley is starting to die! \n\nThe panda
-    needs to find a new place with enough food. \n\nWhere should the panda go next? "
-  choiceA: Stay
-  choiceB: Other panda
-  choiceC: Mountains
+  title: Overskrift
+  description: "The human disturbances are making the bamboo die here!  \r\n\r\nIt\u2019s
+    time to decide. Sould the panda stay in the valley, return to the mountain, or
+    join the other panda? "
+  choiceA: Valley
+  choiceB: Mountain
+  choiceC: Panda
   titleDA: 'dansk teks '
-  descriptionDA: Dansk
-  choiceADA: Dansk
-  choiceBDA: Dansk
-  choiceCDA: 
+  descriptionDA: "Menneskernes forstyrrelser f\xE5r bambussen til at d\xF8 her! \r\n\r\nNu
+    skal du bestemme. Skal pandaen blive i dalen, vende tilbage til bjerget eller
+    g\xE5 til den anden panda? "
+  choiceADA: Dalen
+  choiceBDA: Bjerget
+  choiceCDA: Panda
   narrationClip: {fileID: 8300000, guid: 39a72621db63d4167ac6cc486843a1f3, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 45030f3d32630bc43b60d416744c5e85, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
+  choiceAAppearAt: 3
+  choiceBAppearAt: 7
+  choiceCAppearAt: 11
+  choiceAAppearAtDA: 3
+  choiceBAppearAtDA: 7
+  choiceCAppearAtDA: 11
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 0
@@ -37,8 +46,8 @@ MonoBehaviour:
   prerequisiteDilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
   prerequisiteChoice: 0
   choiceAEvent: {fileID: 11400000, guid: 82827fe770e2eee41bb123ecd2f6e6f6, type: 2}
-  choiceBEvent: {fileID: 11400000, guid: 818c4d36c339b4c49864a92716242899, type: 2}
-  choiceCEvent: {fileID: 11400000, guid: 31a9ebf7233b9f746b9ff30ead41ac2b, type: 2}
+  choiceBEvent: {fileID: 11400000, guid: 31a9ebf7233b9f746b9ff30ead41ac2b, type: 2}
+  choiceCEvent: {fileID: 11400000, guid: 818c4d36c339b4c49864a92716242899, type: 2}
   choiceAEnding: {fileID: 11400000, guid: 310cae3e4c3c7884da67466812a9a250, type: 2}
-  choiceBEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
-  choiceCEnding: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  choiceBEnding: {fileID: 11400000, guid: 4e4d9c104d3f48c4da77beda9fd986ab, type: 2}
+  choiceCEnding: {fileID: 11400000, guid: 09344ea92bb1c474d9406bb96176180e, type: 2}
