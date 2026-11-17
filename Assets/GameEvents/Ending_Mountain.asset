@@ -35,4 +35,8 @@ MonoBehaviour:
   narrationDA2: {fileID: 0}
   narrationEN1: {fileID: 8300000, guid: 923e66d4a4d7844c9aceab860462accc, type: 3}
   narrationEN2: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
+  endingMusic: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
+  loopMusic: 1
+  musicVolume: 0.4
+  musicFadeIn: 3
   endingDescription: mbsdmbsdb

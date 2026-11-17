@@ -179,6 +179,12 @@ public class DilemmaManager : MonoBehaviour
     [Tooltip("Seconds between the panda dying and the ending screen appearing.")]
     [SerializeField] private float deathEndingDelay = 1f;
 
+    [Tooltip("On: the game stops (freezes) when the ending card appears.")]
+    [SerializeField] private bool stopGameAtEnding = true;
+
+    [Tooltip("Seconds to fade out the game's music and sounds when the ending card appears.")]
+    [SerializeField, Min(0f)] private float gameAudioFadeOut = 1.5f;
+
     [Header("Death Endings (health reached 0)")]
     [SerializeField] private PandaSystem panda;
     [SerializeField] private Ending hungerEnding;
@@ -1697,6 +1703,9 @@ public class DilemmaManager : MonoBehaviour
         if (panda != null)
             panda.SilenceHeartbeat();
 
+        // The game ends: stop gameplay and fade out all its music/sounds.
+        StopGameForEnding();
+
         if (endingUI != null && endingPanel != null)
         {
             endingPanel.SetActive(true);
@@ -1709,10 +1718,105 @@ public class DilemmaManager : MonoBehaviour
             );
         }
 
+        // The ending's own music.
+        PlayEndingMusic(pendingEnding);
+
         Debug.Log(
             "DilemmaManager: Displaying ending " +
             pendingEnding.endingTitle
         );
+    }
+
+    // =========================================================
+    // ENDING: STOP THE GAME + MUSIC
+    // =========================================================
+
+    private AudioSource endingMusicSource;
+
+    private void StopGameForEnding()
+    {
+        StopEventNarration();
+        StopNarration();
+
+        // Fade out every sound that is playing now (game music, ambience, voices).
+        // The ending narration/music start after this, so they are not affected.
+        AudioSource[] playing = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+        StartCoroutine(FadeOutAudio(playing, gameAudioFadeOut));
+
+        if (stopGameAtEnding)
+            Time.timeScale = 0f;
+    }
+
+    private IEnumerator FadeOutAudio(AudioSource[] sources, float time)
+    {
+        List<AudioSource> fading = new List<AudioSource>();
+        List<float> startVolumes = new List<float>();
+
+        foreach (AudioSource a in sources)
+        {
+            if (a == null || !a.isPlaying)
+                continue;
+
+            fading.Add(a);
+            startVolumes.Add(a.volume);
+        }
+
+        float t = 0f;
+
+        while (t < 1f && time > 0f)
+        {
+            t = Mathf.MoveTowards(t, 1f, Time.unscaledDeltaTime / time);
+
+            for (int i = 0; i < fading.Count; i++)
+                if (fading[i] != null)
+                    fading[i].volume = startVolumes[i] * (1f - t);
+
+            yield return null;
+        }
+
+        for (int i = 0; i < fading.Count; i++)
+        {
+            if (fading[i] == null)
+                continue;
+
+            fading[i].Stop();
+            fading[i].volume = startVolumes[i];
+        }
+    }
+
+    private void PlayEndingMusic(Ending ending)
+    {
+        if (ending == null || ending.endingMusic == null)
+            return;
+
+        if (endingMusicSource == null)
+        {
+            endingMusicSource = gameObject.AddComponent<AudioSource>();
+            endingMusicSource.playOnAwake = false;
+            endingMusicSource.spatialBlend = 0f;
+            endingMusicSource.ignoreListenerPause = true;
+        }
+
+        endingMusicSource.clip = ending.endingMusic;
+        endingMusicSource.loop = ending.loopMusic;
+        endingMusicSource.volume = 0f;
+        endingMusicSource.Play();
+
+        StartCoroutine(FadeInMusic(endingMusicSource, ending.musicVolume, ending.musicFadeIn));
+    }
+
+    private IEnumerator FadeInMusic(AudioSource source, float volume, float time)
+    {
+        float t = 0f;
+
+        while (t < 1f && time > 0f)
+        {
+            t = Mathf.MoveTowards(t, 1f, Time.unscaledDeltaTime / time);
+            source.volume = volume * t;
+            yield return null;
+        }
+
+        source.volume = volume;
     }
 
     private void ExecuteEvent(GameEvent gameEvent)

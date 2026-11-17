@@ -26,6 +26,18 @@ public class Ending : ScriptableObject
     public AudioClip narrationEN1;
     public AudioClip narrationEN2;
 
+    [Header("Music (plays when the ending card appears)")]
+    [Tooltip("Music for this ending. Empty = silence after the game music stops.")]
+    public AudioClip endingMusic;
+
+    [Tooltip("On: the music keeps repeating. Off: it plays once.")]
+    public bool loopMusic = true;
+
+    [Range(0f, 1f)] public float musicVolume = 0.5f;
+
+    [Tooltip("Seconds to fade the music in.")]
+    [Min(0f)] public float musicFadeIn = 1.5f;
+
     public List<AudioClip> GetNarrations(bool english)
     {
         var clips = new List<AudioClip>();

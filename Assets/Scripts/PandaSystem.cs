@@ -471,10 +471,11 @@ public class PandaSystem : MonoBehaviour
         health
         );
 
+        // Unscaled: the game is frozen at the ending, but the heartbeat must still fade out.
         heartbeatIntensity = Mathf.MoveTowards(
             heartbeatIntensity,
             target,
-            heartbeatSmoothSpeed * Time.deltaTime
+            heartbeatSmoothSpeed * Time.unscaledDeltaTime
         );
 
         float volume = Mathf.Pow(heartbeatIntensity, heartbeatVolumeCurve) * heartbeatMaxVolume;

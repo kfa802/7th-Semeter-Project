@@ -66965,6 +66965,8 @@ MonoBehaviour:
   decideAnywayAfter: 45
   endingDelay: 6
   deathEndingDelay: 1
+  stopGameAtEnding: 1
+  gameAudioFadeOut: 1.5
   panda: {fileID: 725808051}
   hungerEnding: {fileID: 11400000, guid: a878cfcd6b87b41c4b431e38dfb9a76b, type: 2}
   heatEnding: {fileID: 11400000, guid: 9f0c7927648dd415487e9de80630cf0d, type: 2}
@@ -92746,7 +92748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40, y: -25}
+  m_AnchoredPosition: {x: -34.2, y: -17.1}
   m_SizeDelta: {x: 260, y: 80}
   m_Pivot: {x: 1, y: 1}
 --- !u!43 &2098485888
