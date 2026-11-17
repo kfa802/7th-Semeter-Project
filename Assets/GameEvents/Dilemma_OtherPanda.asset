@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Another Panda
+  title: ANOTHER PANDA!
   description: "Oh another panda! \nShould the pandas stay together or go their separate
     ways? "
   choiceA: Stay
   choiceB: Go
   choiceC: 
-  titleDA: 'En anden panda '
+  titleDA: 'EN ANDEN PANDA! '
   descriptionDA: "\xC5h, en anden panda! \r\nSkal pandaerne blive sammen eller g\xE5
     hver til sit? "
   choiceADA: Bliv

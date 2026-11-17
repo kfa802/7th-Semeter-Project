@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Moderate2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Overskrift
+  title: NOT ENOUGH BAMBOO!
   description: "Oh no! The panda has eaten almost all the bamboo! \nThere is barely
     any food left. If it stays here, it might starve! There may be more food further
     down the mountain. \nShould the panda move somewhere else or stay on the mountain? "
   choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: Overskrift
+  titleDA: IKKE NOK BAMBUS!
   descriptionDA: "\xC5h nej! Pandaen har spist n\xE6sten al bambussen! \nDer er n\xE6sten
     ingen mad tilbage. Hvis pandaen bliver her, kan den sulte ihjel! M\xE5ske er
     der mere mad l\xE6ngere nede ad bjerget. \nSkal pandaen flytte et andet sted

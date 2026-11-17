@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Hot
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Overskrift
+  title: IT IS TOO HOT!
   description: "It's really hot here on the mountain! \nBamboo grows quickly in warm
     weather, so there's plenty of food. That's great! But there's a problem. The
     panda feels too hot and uncomfortable in this weather. \nShould the panda move
@@ -20,7 +20,7 @@ MonoBehaviour:
   choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: Overskrift
+  titleDA: DET ER FOR VARMT!
   descriptionDA: "Det er virkelig varmt her p\xE5 bjerget! \nBambus vokser hurtigt,
     n\xE5r det er varmt, s\xE5 der er masser af mad. Det er godt! Men der er et problem.
     Pandaen har det alt for varmt og f\xF8ler sig utilpas i det her vejr. \nSkal

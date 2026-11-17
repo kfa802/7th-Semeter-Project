@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Cold
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Frozen Bamboo
+  title: IT IS TOO COLD!
   description: "It's very cold here on the mountain! \nPandas eat a lot of bamboo,
     but it grows very slowly in cold weather. This means there might not be enough
     food for the panda. \nShould the panda move somewhere else or stay on the mountain? "
   choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: Frosen Bambus
+  titleDA: DET ER FOR KOLDT!
   descriptionDA: "Det er meget koldt her p\xE5 bjerget! \nPandaer spiser masser af
     bambus, men det vokser meget langsomt, n\xE5r det er koldt. Det betyder, at der
     m\xE5ske ikke er mad nok til pandaen. \nSkal pandaen flytte et andet sted hen

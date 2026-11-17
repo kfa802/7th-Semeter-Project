@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_Mountain_Moderate
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Overskrift
+  title: NOT ENOUGH BAMBOO!
   description: "The weather is nice here on the mountain! \nThe temperature is just
     right for the panda, but there's a problem. The panda eats a lot of bamboo, and
     there is not enough for the panda here. \nShould the panda move somewhere else
@@ -20,7 +20,7 @@ MonoBehaviour:
   choiceA: Move
   choiceB: Stay
   choiceC: 
-  titleDA: Overskrift
+  titleDA: IKKE NOK BAMBUS!
   descriptionDA: "Vejret er dejligt her p\xE5 bjerget! \nTemperaturen er helt perfekt
     for pandaen, men der er et problem. Pandaen spiser masser af bambus, og der er
     ikke nok til den her. \nSkal pandaen flytte et andet sted hen eller blive p\xE5

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02154d84d94708341a2697e7299ccea2, type: 3}
   m_Name: Dilemma_NotEnoughFood
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
-  title: Overskrift
+  title: TOO MANY PANDAS!
   description: "Almost all the bamboo is gone! \nIf the pandas both stay here, they
     won't have enough food to survive. \nShould our panda stay here or move down
     to the valley? "
   choiceA: Stay
   choiceB: Move
   choiceC: 
-  titleDA: Overskrift
+  titleDA: FOR MANGE PANDAER!
   descriptionDA: "N\xE6sten al bambussen er v\xE6k! \nHvis begge pandaer bliver her,
     er der ikke nok mad til, at de kan overleve. \nSkal vores panda blive her eller
     flytte ned i dalen? "
