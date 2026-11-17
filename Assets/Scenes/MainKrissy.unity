@@ -36449,6 +36449,8 @@ MonoBehaviour:
   warningText: {fileID: 2025338115}
   blockPrefab: {fileID: 2999089190777625934, guid: f9d4d40c95cd840e7b807ecbe957f36c, type: 3}
   optionPrefab: {fileID: 5223736800294556133, guid: 6e23acb282ea640a3917dcd059216334, type: 3}
+  useQuiz: 1
+  returnDelay: 3
   requireAllAnswers: 1
   startSceneName: NewStartScene
   missingTextDA: "Besvar alle sp\xF8rgsm\xE5l (mangler: {0})"
@@ -92748,7 +92750,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -34.2, y: -17.1}
+  m_AnchoredPosition: {x: -34.200012, y: -17.099976}
   m_SizeDelta: {x: 260, y: 80}
   m_Pivot: {x: 1, y: 1}
 --- !u!43 &2098485888

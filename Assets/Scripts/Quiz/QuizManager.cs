@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,15 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private TMP_Text warningText;
     [SerializeField] private QuizQuestionBlock blockPrefab;
     [SerializeField] private QuizOptionButton optionPrefab;
+
+    [Header("Quiz On/Off")]
+    [Tooltip("On: the quiz is shown after the ending (for testing). " +
+             "Off: the game goes back to the start scene instead.")]
+    [SerializeField] private bool useQuiz = true;
+
+    [Tooltip("Seconds to wait on the ending screen before going back " +
+             "to the start scene (only when there is no quiz).")]
+    [SerializeField, Min(0f)] private float returnDelay = 3f;
 
     [Header("Behaviour")]
     [SerializeField] private bool requireAllAnswers = true;
@@ -49,6 +59,13 @@ public class QuizManager : MonoBehaviour
         if (shown) return;
         shown = true;
 
+        // No quiz: back to the start scene.
+        if (!useQuiz)
+        {
+            StartCoroutine(ReturnAfterDelay());
+            return;
+        }
+
         foreach (QuizQuestionBlock old in blocks)
             if (old != null) Destroy(old.gameObject);
         blocks.Clear();
@@ -70,7 +87,7 @@ public class QuizManager : MonoBehaviour
 
         if (blocks.Count == 0)
         {
-            EndAndReturn();
+            StartCoroutine(ReturnAfterDelay());
             return;
         }
 
@@ -189,6 +206,13 @@ public class QuizManager : MonoBehaviour
             t.QuizSubmitted();
         }
 
+        EndAndReturn();
+    }
+
+    private IEnumerator ReturnAfterDelay()
+    {
+        // Realtime: the game is frozen on the ending screen.
+        yield return new WaitForSecondsRealtime(returnDelay);
         EndAndReturn();
     }
 
