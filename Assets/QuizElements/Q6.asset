@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
   m_Name: Q6
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q5
+  id: Q6
   textDA: "Hvordan kan DU hj\xE6lpe med at beskytte pandaerne og deres hjem?"
   textEN: How can YOU help protect pandas and their homes?
   multiSelect: 1

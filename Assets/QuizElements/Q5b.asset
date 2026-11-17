@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
   m_Name: Q5b
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4b
+  id: Q5b
   textDA: 'Hvorfor er det vigtigt at holde skovene forbundet? '
   textEN: Why is it important to keep forests connected?
   multiSelect: 0

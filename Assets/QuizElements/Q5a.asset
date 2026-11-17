@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
   m_Name: Q5a
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4a
+  id: Q5a
   textDA: "Hvorfor bev\xE6ger pandaer sig op og ned ad bjergene i l\xF8bet af \xE5ret?"
   textEN: Why do pandas move up and down the mountains during the year?
   multiSelect: 0

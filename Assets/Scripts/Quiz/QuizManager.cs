@@ -218,10 +218,26 @@ public class QuizManager : MonoBehaviour
 
     private void EndAndReturn()
     {
-        // Writes both CSV files, then returns to the start screen.
+        // Saves the files and queues the final upload.
         TelemetryManager.Instance?.EndSession("quiz submitted");
 
         Time.timeScale = 1f;
+        StartCoroutine(WaitForUploadThenLoad());
+    }
+
+    private IEnumerator WaitForUploadThenLoad()
+    {
+        float waited = 0f;
+
+        // Wait up to 20 s for the data to reach the sheet.
+        while (TelemetryManager.Instance != null &&
+               TelemetryManager.Instance.UploadsPending &&
+               waited < 20f)
+        {
+            waited += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
         SceneManager.LoadScene(startSceneName);
     }
 }

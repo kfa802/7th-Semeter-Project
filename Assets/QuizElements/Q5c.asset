@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4009c2ac4ce9d4a538b75ec927c050c7, type: 3}
   m_Name: Q5c
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
-  id: Q4c
+  id: Q5c
   textDA: "Hvordan kan vi hj\xE6lpe pandaer og mennesker med at leve trygt t\xE6t
     p\xE5 hinanden?"
   textEN: What is needed for humans and pandas to share the space in the valleys?

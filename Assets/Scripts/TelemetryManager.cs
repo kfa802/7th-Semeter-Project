@@ -143,6 +143,7 @@ public class TelemetryManager : MonoBehaviour
         open.Clear();
         pendingLines.Clear();
         webPending.Clear();
+        webQuizPending.Clear();
         tempTotals.Clear();
         choiceAvailableAt.Clear();
         quizShownAt.Clear();
@@ -213,10 +214,14 @@ public class TelemetryManager : MonoBehaviour
     private bool WriteLocal => Application.platform != RuntimePlatform.WebGLPlayer;
 
     private readonly List<string> webPending = new();   // time-series lines waiting
+    private readonly List<string> webQuizPending = new();
     private readonly Queue<string> outbox = new();      // messages waiting to be sent
     private string latestParticipants;                  // newest participants row
     private bool sending;
     private int messageCounter;
+    public bool UploadsPending =>
+    UseWeb && (sending || outbox.Count > 0 || latestParticipants != null ||
+               webPending.Count > 0 || webQuizPending.Count > 0);
 
     private string NewMessageId() =>
         ParticipantId + "-" + DateTime.UtcNow.Ticks + "-" + (messageCounter++);
@@ -273,10 +278,17 @@ public class TelemetryManager : MonoBehaviour
 
     private void FlushWeb()
     {
-        if (webPending.Count == 0) return;
+        if (webPending.Count > 0)
+        {
+            QueueRows("timeseries", string.Join(Sep.ToString(), SeriesHeader), webPending);
+            webPending.Clear();
+        }
 
-        QueueRows("timeseries", string.Join(Sep.ToString(), SeriesHeader), webPending);
-        webPending.Clear();
+        if (webQuizPending.Count > 0)
+        {
+            QueueRows("quiz_answers", string.Join(Sep.ToString(), QuizHeader), webQuizPending);
+            webQuizPending.Clear();
+        }
     }
 
     private void StartSending()
@@ -287,6 +299,7 @@ public class TelemetryManager : MonoBehaviour
     private IEnumerator SendLoop()
     {
         sending = true;
+        int failures = 0;
 
         while (outbox.Count > 0 || latestParticipants != null)
         {
@@ -297,7 +310,6 @@ public class TelemetryManager : MonoBehaviour
             {
                 request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body))
                 {
-                    // text/plain avoids a browser preflight, which Apps Script can't answer.
                     contentType = "text/plain;charset=utf-8"
                 };
                 request.downloadHandler = new DownloadHandlerBuffer();
@@ -305,17 +317,30 @@ public class TelemetryManager : MonoBehaviour
 
                 yield return request.SendWebRequest();
 
+                string response = request.downloadHandler.text ?? "";
                 bool ok = request.result == UnityWebRequest.Result.Success &&
-                          request.downloadHandler.text.Contains("ok");
+                          response.Trim() == "ok";
 
                 if (ok)
                 {
+                    failures = 0;
                     if (fromOutbox) outbox.Dequeue();
                     else if (ReferenceEquals(latestParticipants, body)) latestParticipants = null;
                 }
                 else
                 {
-                    Debug.LogWarning("[Telemetry] Upload failed, retrying in 5 s: " + request.error);
+                    failures++;
+                    string shortResponse = response.Length > 300 ? response.Substring(0, 300) : response;
+                    Debug.LogWarning("[Telemetry] Upload failed (" + request.responseCode + "): " +
+                                     request.error + " | " + shortResponse);
+
+                    if (failures >= 5)
+                    {
+                        Debug.LogError("[Telemetry] Giving up on one message after 5 tries.");
+                        if (fromOutbox) outbox.Dequeue(); else latestParticipants = null;
+                        failures = 0;
+                    }
+
                     yield return new WaitForSecondsRealtime(5f);
                 }
             }
@@ -323,6 +348,7 @@ public class TelemetryManager : MonoBehaviour
 
         sending = false;
     }
+
     // =====================================================
     // GENERIC API
     // =====================================================
@@ -504,7 +530,7 @@ public class TelemetryManager : MonoBehaviour
                 a.optionCorrect, questionCorrect, Num(seconds)));
         }
 
-        QueueRows("quiz_answers", string.Join(Sep.ToString(), QuizHeader), lines);
+        if (UseWeb) webQuizPending.AddRange(lines);
 
         if (!WriteLocal) return;
 
