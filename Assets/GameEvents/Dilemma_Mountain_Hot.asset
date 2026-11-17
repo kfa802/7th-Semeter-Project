@@ -13,27 +13,28 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Hot
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Overskrift
-  description: "It's really hot here on the mountain! \r\n\r\nBamboo grows quickly
-    in warm weather, so there's plenty of food. That's great! \r\n\r\nBut there's
-    a problem. The panda feels too hot and uncomfortable in this weather. "
+  description: "It's really hot here on the mountain! \nBamboo grows quickly in warm
+    weather, so there's plenty of food. That's great! But there's a problem. The
+    panda feels too hot and uncomfortable in this weather. \nShould the panda move
+    somewhere else or stay on the mountain?  "
   choiceA: Move
   choiceB: Stay
   choiceC: 
   titleDA: Overskrift
-  descriptionDA: "Det er virkelig varmt her p\xE5 bjerget! \r\n\r\nBambus vokser
-    hurtigt, n\xE5r det er varmt, s\xE5 der er masser af mad. Det er godt! \r\n\r\nMen
-    der er et problem. Pandaen har det alt for varmt og f\xF8ler sig utilpas i det
-    her vejr. \r\n\r\nSkal pandaen flytte et andet sted hen eller blive p\xE5 bjerget? "
+  descriptionDA: "Det er virkelig varmt her p\xE5 bjerget! \nBambus vokser hurtigt,
+    n\xE5r det er varmt, s\xE5 der er masser af mad. Det er godt! Men der er et problem.
+    Pandaen har det alt for varmt og f\xF8ler sig utilpas i det her vejr. \nSkal
+    pandaen flytte et andet sted hen eller blive p\xE5 bjerget?  "
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 9a64627e6bdd641ecb3ae4a3a8fc1740, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: c31eb3eda86df42cca9d711d7d63e0ce, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: fdfd9bf17c6824d738f1ed18b740fda0, type: 3}
+  choiceAAppearAt: 13
+  choiceBAppearAt: 14.5
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 13
+  choiceBAppearAtDA: 14
   choiceCAppearAtDA: 0
   triggerType: 8
   requiredZoneName: Mountain

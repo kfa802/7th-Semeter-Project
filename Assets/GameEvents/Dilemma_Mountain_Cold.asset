@@ -13,28 +13,27 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Cold
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Frozen Bamboo
-  description: "It's very cold here on the mountain! \r\n\r\nPandas eat a lot of
-    bamboo, but it grows very slowly in cold weather. This means there might not
-    be enough food for the panda. \r\n\r\nShould the panda move somewhere else or
-    stay on the mountain? "
+  description: "It's very cold here on the mountain! \nPandas eat a lot of bamboo,
+    but it grows very slowly in cold weather. This means there might not be enough
+    food for the panda. \nShould the panda move somewhere else or stay on the mountain? "
   choiceA: Move
   choiceB: Stay
   choiceC: 
   titleDA: Frosen Bambus
-  descriptionDA: "Det er meget koldt her p\xE5 bjerget! \r\n\r\nPandaer spiser masser
-    af bambus, men det vokser meget langsomt, n\xE5r det er koldt. Det betyder, at
-    der m\xE5ske ikke er mad nok til pandaen. \r\n\r\nSkal pandaen flytte et andet
-    sted hen eller blive p\xE5 bjerget? "
+  descriptionDA: "Det er meget koldt her p\xE5 bjerget! \nPandaer spiser masser af
+    bambus, men det vokser meget langsomt, n\xE5r det er koldt. Det betyder, at der
+    m\xE5ske ikke er mad nok til pandaen. \nSkal pandaen flytte et andet sted hen
+    eller blive p\xE5 bjerget?  "
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 5e7f7074bbda048a192a7cd58de07eb4, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: dbdf38b2b5a2e49498c639ca3e1a1158, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: aaea3fb73a5ce45ca91532c4524fbff9, type: 3}
+  choiceAAppearAt: 11.5
+  choiceBAppearAt: 13
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 11
+  choiceBAppearAtDA: 13
   choiceCAppearAtDA: 0
   triggerType: 10
   requiredZoneName: Mountain
