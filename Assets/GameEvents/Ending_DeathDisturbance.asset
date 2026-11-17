@@ -13,14 +13,10 @@ MonoBehaviour:
   m_Name: Ending_DeathDisturbance
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_Disturbance
-  titleDA: Dansk
+  titleDA: fjern
   descriptionDA: Dansk
-  titleEN: Disturbance
-  descriptionEN: "Oh no! There was too much noise and activity. The panda couldn't
-    find a safe and peaceful place to rest. \n\nDid you know that you can help protect
-    pandas? \nWhen you visit the zoo, you support a breeding program that helps protect
-    pandas for the future! \n\nAnd when you buy bamboo products, look for the FSC
-    label. It helps you choose products made with care for forests and wildlife. "
+  titleEN: fjern
+  descriptionEN: ' '
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
   narrationDA2: {fileID: 0}

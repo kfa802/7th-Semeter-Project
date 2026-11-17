@@ -16,23 +16,9 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Valley
-  narrationClip: {fileID: 8300000, guid: 43ee4e51555c54dc4a1564716072a1ec, type: 3}
+  narrationClip: {fileID: 0}
   narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
-  subtitles:
-  - startTime: 0
-    endTime: 3
-    text: 'Good choice!  '
-  - startTime: 3
-    endTime: 5
-    text: 'By finding their own areas,  '
-  - startTime: 5
-    endTime: 6.5
-    text: 'both pandas have a better chance  '
-  - startTime: 6.5
-    endTime: 9
-    text: 'of getting enough food. '
-  subtitlesDA:
-  - startTime: 0
-    endTime: 5
-    text: Dansk
+  subtitles: []
+  subtitlesDA: []
+  pauseGameWhileSpeaking: 0

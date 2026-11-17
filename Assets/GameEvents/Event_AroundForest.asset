@@ -16,22 +16,27 @@ MonoBehaviour:
   pollutionChange: 0.55
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 73abe953687e143f2ab2fa15b2a8e857, type: 3}
-  narrationClipDA: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 2841f3bac6f1b4ede8122c5eeee8bf69, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 7f0542cba93a2454393929b93134f3db, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 3
-    text: 'Good Choice! Building the road around keeps the pandas home intact! '
-  - startTime: 4
-    endTime: 7
+    endTime: 1.7
+    text: 'Good Choice! '
+  - startTime: 1.7
+    endTime: 5.5
+    text: 'Building the road around the forrest keeps the pandas home intact! '
+  - startTime: 5.5
+    endTime: 10
     text: 'But the noise and humans still disturb the panda, and hurts the bamboo. '
   subtitlesDA:
   - startTime: 0
-    endTime: 3
-    text: "Godt valg! N\xE5r vejen bygges rundt om skoven, forbliver pandaens hjem
-      intakt! "
-  - startTime: 4
-    endTime: 7
+    endTime: 1.7
+    text: 'Godt valg! '
+  - startTime: 1.7
+    endTime: 5
+    text: "N\xE5r vejen bygges rundt om skoven, forbliver pandaens hjem intakt!  "
+  - startTime: 5
+    endTime: 10
     text: "Men st\xF8jen og menneskene forstyrrer stadig pandaen og skader bambussen. "
   pauseGameWhileSpeaking: 1

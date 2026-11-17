@@ -16,21 +16,27 @@ MonoBehaviour:
   pollutionChange: 1
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 61d2a73c3526f4459a6a142d94bc1a8d, type: 3}
-  narrationClipDA: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: ccd1b8957c4c24eeca3d6fd178b1b077, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: a859b99a80169485593b1dc8dc66c5a8, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 3
-    text: 'Oh no! The road splits the forest in two! '
-  - startTime: 4
-    endTime: 7
+    endTime: 1
+    text: 'Oh no! '
+  - startTime: 1
+    endTime: 3.7
+    text: 'The road splits the forest into two! '
+  - startTime: 3.7
+    endTime: 8
     text: Some bamboo is removed, and the noise and pollution disturb the panda
   subtitlesDA:
   - startTime: 0
+    endTime: 1.5
+    text: "\xC5h nej! "
+  - startTime: 1.5
     endTime: 3
-    text: "\xC5h nej! Vejen deler skoven i to! "
-  - startTime: 4
+    text: 'Vejen deler skoven i to! '
+  - startTime: 3
     endTime: 7
     text: "Noget af bambussen bliver fjernet, s\xE5 st\xF8jen og forureningen forstyrrer
       pandaen"

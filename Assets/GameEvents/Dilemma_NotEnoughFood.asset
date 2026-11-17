@@ -13,26 +13,26 @@ MonoBehaviour:
   m_Name: Dilemma_NotEnoughFood
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Overskrift
-  description: "Almost all the bamboo is gone! \r\n\r\nIf the pandas both stay here,
-    they won't have enough food to survive. \r\n\r\nShould our panda stay here or
-    move down to the valley?  "
+  description: "Almost all the bamboo is gone! \nIf the pandas both stay here, they
+    won't have enough food to survive. \nShould our panda stay here or move down
+    to the valley? "
   choiceA: Stay
   choiceB: Move
   choiceC: 
   titleDA: Overskrift
-  descriptionDA: "N\xE6sten al bambussen er v\xE6k! \r\n\r\nHvis begge pandaer bliver
-    her, er der ikke nok mad til, at de kan overleve. \r\n\r\nSkal vores panda blive
-    her eller flytte ned i dalen? "
+  descriptionDA: "N\xE6sten al bambussen er v\xE6k! \nHvis begge pandaer bliver her,
+    er der ikke nok mad til, at de kan overleve. \nSkal vores panda blive her eller
+    flytte ned i dalen? "
   choiceADA: Bliv
   choiceBDA: Flyt
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 23ca9765e4d9843a3a62f01f5a00dacc, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: 99b4da0ff6a8249ffb53a3aeb94be25b, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 41885f930b10e41cf8fba95d7f6affc6, type: 3}
+  choiceAAppearAt: 7.5
+  choiceBAppearAt: 8.5
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 7.8
+  choiceBAppearAtDA: 8.8
   choiceCAppearAtDA: 0
   triggerType: 4
   requiredZoneName: Midway

@@ -16,20 +16,9 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: 6f2cf4b2e13d54666b21ce707cfcf67c, type: 3}
+  narrationClip: {fileID: 0}
   narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
-  subtitles:
-  - startTime: 0
-    endTime: 3.2
-    text: 'Oh no!  '
-  - startTime: 3.2
-    endTime: 4.8
-    text: 'There''s no bamboo left for the pandas to eat!  '
-  - startTime: 4.8
-    endTime: 6
-    text: 'Without food, they become weaker and weaker.  '
-  subtitlesDA:
-  - startTime: 0
-    endTime: 5
-    text: Dansk
+  subtitles: []
+  subtitlesDA: []
+  pauseGameWhileSpeaking: 0

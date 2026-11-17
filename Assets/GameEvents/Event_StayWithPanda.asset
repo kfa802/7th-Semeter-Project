@@ -16,23 +16,9 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 0
   targetZoneName: 
-  narrationClip: {fileID: 8300000, guid: cf4cfd2ce169943339b7d0d67352f21b, type: 3}
+  narrationClip: {fileID: 0}
   narrationClipDA: {fileID: 0}
   narrationDelay: 0.5
-  subtitles:
-  - startTime: 0
-    endTime: 2.5
-    text: 'Oh no!  '
-  - startTime: 2.5
-    endTime: 4
-    text: 'The two pandas are eating all the bamboo!  '
-  - startTime: 4
-    endTime: 7.5
-    text: 'Pandas need lots of food '
-  - startTime: 4
-    endTime: 7.5
-    text: 'and usually only meet for a few days each year to mate.   '
-  subtitlesDA:
-  - startTime: 0
-    endTime: 5
-    text: Dansk
+  subtitles: []
+  subtitlesDA: []
+  pauseGameWhileSpeaking: 0

@@ -14,25 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Valley
   titleDA: Livet i dalen
-  descriptionDA: "Pandaen bliver i dalen! \r\n\r\nHer er masser af bambus, men ogs\xE5
-    mange mennesker, st\xF8j og veje. \r\n\r\nB\xE5de pandaer og mennesker har brug
-    for plads. Ved at beskytte skovene og holde dem intakte kan vi hj\xE6lpe k\xE6mpepandaerne
+  descriptionDA: "Pandaen bliver i dalen! \n\nHer er masser af bambus, men ogs\xE5
+    mange mennesker, st\xF8j og veje. \n\nB\xE5de pandaer og mennesker har brug for
+    plads. Ved at beskytte skovene og holde dem intakte kan vi hj\xE6lpe k\xE6mpepandaerne
     med at leve trygt! \n\nN\xE5r du bes\xF8ger zoologisk have, st\xF8tter du et
-    avlsprogram, der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg n\xE5r du
-    k\xF8ber bambusprodukter, s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper dig med
-    at v\xE6lge produkter, der er lavet med omtanke for skovene og dyrelivet.  "
+    avlsprogram, der er med til at beskytte k\xE6mpepandaer! \nOg n\xE5r du k\xF8ber
+    bambusprodukter, s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper dig med at v\xE6lge
+    produkter, der er lavet med omtanke for skovene og dyrelivet. "
   titleEN: "Staying in the Valley\_"
-  descriptionEN: "The panda stays in the valley! \r\n\r\nThere's plenty of bamboo,
-    but also a lot of people, noise and roads. \r\n\r\nPandas and people both need
-    space. By protecting forests and keeping them intact, we can help giant pandas
-    live safely! \n\nWhen you visit the zoo, you support a breeding program that
-    helps protect giant pandas! \r\n\r\nAnd when you buy bamboo products, look for
-    the FSC label. It helps you choose products made with care for forests and wildlife.  "
+  descriptionEN: "The panda stays in the valley! \n\nThere's plenty of bamboo, but
+    also a lot of people, noise and roads. \n\nPandas and people both need space.
+    By protecting forests and keeping them intact, we can help giant pandas live
+    safely! \n\nWhen you visit the zoo, you support a breeding program that helps
+    protect giant pandas! \nAnd when you buy bamboo products, look for the FSC label.
+    It helps you choose products made with care for forests and wildlife. "
   endingImage: {fileID: 0}
-  narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationDA2: {fileID: 0}
-  narrationEN1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationEN2: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
+  narrationDA1: {fileID: 8300000, guid: a064c9c5998df4ec184c3aabb9b100ab, type: 3}
+  narrationDA2: {fileID: 8300000, guid: bf21cc3c000034b4aaca35bb81f3142d, type: 3}
+  narrationEN1: {fileID: 8300000, guid: 54c6f9518616b4941b13d0fd203fae1e, type: 3}
+  narrationEN2: {fileID: 8300000, guid: a06a36fd40aff4cfd9b58b909ee7ee57, type: 3}
   endingMusic: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
   loopMusic: 1
   musicVolume: 0.4

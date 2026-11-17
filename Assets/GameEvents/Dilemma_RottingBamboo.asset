@@ -13,27 +13,27 @@ MonoBehaviour:
   m_Name: Dilemma_RottingBamboo
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Overskrift
-  description: "The human disturbances are making the bamboo die here!  \r\n\r\nIt\u2019s
+  description: "The human disturbances are making the bamboo die here!  \r\nIt\u2019s
     time to decide. Sould the panda stay in the valley, return to the mountain, or
     join the other panda? "
   choiceA: Valley
   choiceB: Mountain
   choiceC: Panda
   titleDA: 'dansk teks '
-  descriptionDA: "Menneskernes forstyrrelser f\xE5r bambussen til at d\xF8 her! \r\n\r\nNu
+  descriptionDA: "Menneskernes forstyrrelser f\xE5r bambussen til at d\xF8 her! \r\nNu
     skal du bestemme. Skal pandaen blive i dalen, vende tilbage til bjerget eller
     g\xE5 til den anden panda? "
   choiceADA: Dalen
   choiceBDA: Bjerget
   choiceCDA: Panda
-  narrationClip: {fileID: 8300000, guid: 39a72621db63d4167ac6cc486843a1f3, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
-  choiceCAppearAt: 11
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
-  choiceCAppearAtDA: 11
+  narrationClip: {fileID: 8300000, guid: e6d2816d6c7bf44feae74ced124eed9e, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 9370d15dc66304f3e92985729e29e1ef, type: 3}
+  choiceAAppearAt: 6.5
+  choiceBAppearAt: 8
+  choiceCAppearAt: 10
+  choiceAAppearAtDA: 6
+  choiceBAppearAtDA: 7.3
+  choiceCAppearAtDA: 9
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 0

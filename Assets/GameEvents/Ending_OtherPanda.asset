@@ -14,27 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Panda
   titleDA: Sammen
-  descriptionDA: "De to pandaer er sammen! \r\n\r\nDer er ikke meget bambus tilbage,
-    s\xE5 de bliver m\xE5ske n\xF8dt til at skilles snart. \r\n\r\nK\xE6mpepandaer
-    lever som regel alene og m\xF8des kun om for\xE5ret for at f\xE5 unger. \r\n\r\nDet
-    er vigtigt at holde skovene forbundet, s\xE5 pandaerne kan finde hinanden og
-    parre sig!\n\nN\xE5r du bes\xF8ger zoologisk have, st\xF8tter du et avlsprogram,
-    der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg n\xE5r du k\xF8ber bambusprodukter,
+  descriptionDA: "De to pandaer er sammen! \n\nDer er ikke meget bambus tilbage,
+    s\xE5 de bliver m\xE5ske n\xF8dt til at skilles snart. \n\nK\xE6mpepandaer lever
+    som regel alene og m\xF8des kun om for\xE5ret for at f\xE5 unger. \n\nDet er
+    vigtigt at holde skovene forbundet, s\xE5 pandaerne kan finde hinanden og parre
+    sig!\n\nN\xE5r du bes\xF8ger zoologisk have, st\xF8tter du et avlsprogram, der
+    er med til at beskytte k\xE6mpepandaer! \nOg n\xE5r du k\xF8ber bambusprodukter,
     s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper dig med at v\xE6lge produkter,
     der er lavet med omtanke for skovene og dyrelivet.  "
   titleEN: "Staying Together\_"
-  descriptionEN: "The two pandas are together! \r\n\r\nThere's not much bamboo left,
-    so they may have to separate soon. \r\n\r\nGiant pandas usually live alone and
-    only meet in spring to have cubs. \r\n\r\nIt's important to keep forests connected
-    so pandas can find each other and have babies!\n\nWhen you visit the zoo, you
-    support a breeding program that helps protect giant pandas! \r\n\r\nAnd when
-    you buy bamboo products, look for the FSC label. It helps you choose products
-    made with care for forests and wildlife.  "
+  descriptionEN: "The two pandas are together! \n\nThere's not much bamboo left,
+    so they may have to separate soon. \n\nGiant pandas usually live alone and only
+    meet in spring to have cubs. \n\nIt's important to keep forests connected so
+    pandas can find each other and have babies! \n\nWhen you visit the zoo, you support
+    a breeding program that helps protect giant pandas! \nAnd when you buy bamboo
+    products, look for the FSC label. It helps you choose products made with care
+    for forests and wildlife.  "
   endingImage: {fileID: 0}
-  narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationDA2: {fileID: 0}
-  narrationEN1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationEN2: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
+  narrationDA1: {fileID: 8300000, guid: 2c7b9ab34a9174ef1a96fffb73a11396, type: 3}
+  narrationDA2: {fileID: 8300000, guid: bf21cc3c000034b4aaca35bb81f3142d, type: 3}
+  narrationEN1: {fileID: 8300000, guid: 82b327ddecf4b41249c2f536f02f105e, type: 3}
+  narrationEN2: {fileID: 8300000, guid: a06a36fd40aff4cfd9b58b909ee7ee57, type: 3}
   endingMusic: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
   loopMusic: 1
   musicVolume: 0.4

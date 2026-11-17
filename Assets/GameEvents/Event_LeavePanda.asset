@@ -16,23 +16,23 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Valley
-  narrationClip: {fileID: 8300000, guid: 43ee4e51555c54dc4a1564716072a1ec, type: 3}
-  narrationClipDA: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 9ccbd58ecc7ab4d47a5603d4e8b61281, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 2f47f5f194b22461fba0be4db485e9af, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 3
+    endTime: 1.7
     text: 'Good choice! '
-  - startTime: 4
-    endTime: 7
+  - startTime: 1.7
+    endTime: 6
     text: ' By finding their own areas, both pandas have a better chance of getting
       enough food.'
   subtitlesDA:
   - startTime: 0
-    endTime: 3
+    endTime: 1.7
     text: 'Godt valg!  '
-  - startTime: 4
-    endTime: 7
+  - startTime: 1.7
+    endTime: 6
     text: "N\xE5r hver panda finder sit eget omr\xE5de, har de begge en bedre chance
       for at f\xE5 mad nok."
   pauseGameWhileSpeaking: 0

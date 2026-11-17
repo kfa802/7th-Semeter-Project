@@ -13,28 +13,28 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Moderate
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Overskrift
-  description: "Vejret er dejligt her p\xE5 bjerget! \r\n\r\nTemperaturen er helt
-    perfekt for pandaen, men der er et problem. Pandaen spiser masser af bambus,
-    og der er ikke nok til den her. \r\n\r\nSkal pandaen flytte et andet sted hen
-    eller blive p\xE5 bjerget? "
+  description: "The weather is nice here on the mountain! \nThe temperature is just
+    right for the panda, but there's a problem. The panda eats a lot of bamboo, and
+    there is not enough for the panda here. \nShould the panda move somewhere else
+    or stay on the mountain?  "
   choiceA: Move
   choiceB: Stay
   choiceC: 
   titleDA: Overskrift
-  descriptionDA: "The weather is nice here on the mountain! \r\n\r\nThe temperature
-    is just right for the panda, but there's a problem. The panda eats a lot of bamboo,
-    and there is not enough for the panda here. \r\n\r\nShould the panda move somewhere
-    else or stay on the mountain? "
+  descriptionDA: "Vejret er dejligt her p\xE5 bjerget! \nTemperaturen er helt perfekt
+    for pandaen, men der er et problem. Pandaen spiser masser af bambus, og der er
+    ikke nok til den her. \nSkal pandaen flytte et andet sted hen eller blive p\xE5
+    bjerget?  "
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 5cdb41cb4871443ff86c2fe53dde1e54, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: fa9fc41e4f3b34b7fb648fe3788accef, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 34369ab51e94b41ca852102de28f307b, type: 3}
+  choiceAAppearAt: 12.2
+  choiceBAppearAt: 13.8
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 10.8
+  choiceBAppearAtDA: 12
   choiceCAppearAtDA: 0
   triggerType: 9
   requiredZoneName: Mountain

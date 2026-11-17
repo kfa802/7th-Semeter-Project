@@ -13,28 +13,27 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Moderate2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Overskrift
-  description: "Oh no! The panda has eaten almost all the bamboo! \r\n\r\nThere is
-    barely any food left. If it stays here, it might starve! There may be more food
-    further down the mountain. \r\n\r\nShould the panda move somewhere else or stay
-    on the mountain? "
+  description: "Oh no! The panda has eaten almost all the bamboo! \nThere is barely
+    any food left. If it stays here, it might starve! There may be more food further
+    down the mountain. \nShould the panda move somewhere else or stay on the mountain? "
   choiceA: Move
   choiceB: Stay
   choiceC: 
   titleDA: Overskrift
-  descriptionDA: "\xC5h nej! Pandaen har spist n\xE6sten al bambussen! \r\n\r\nDer
-    er n\xE6sten ingen mad tilbage. Hvis pandaen bliver her, kan den sulte ihjel!
-    M\xE5ske er der mere mad l\xE6ngere nede ad bjerget. \r\n\r\nSkal pandaen flytte
-    et andet sted hen eller blive p\xE5 bjerget? "
+  descriptionDA: "\xC5h nej! Pandaen har spist n\xE6sten al bambussen! \nDer er n\xE6sten
+    ingen mad tilbage. Hvis pandaen bliver her, kan den sulte ihjel! M\xE5ske er
+    der mere mad l\xE6ngere nede ad bjerget. \nSkal pandaen flytte et andet sted
+    hen eller blive p\xE5 bjerget? "
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 9130de6e1ff5641ad80eec422a33a69a, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: f6cc7da60a7614c74a164c34829eb630, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 1a6fa692f51af446ea2098a24e7a1e7e, type: 3}
+  choiceAAppearAt: 12.8
+  choiceBAppearAt: 14.5
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 12
+  choiceBAppearAtDA: 13.5
   choiceCAppearAtDA: 0
   triggerType: 7
   requiredZoneName: Mountain

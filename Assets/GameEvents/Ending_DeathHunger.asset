@@ -16,20 +16,20 @@ MonoBehaviour:
   titleDA: Sult
   descriptionDA: "\xC5h nej! Pandaen kunne ikke finde bambus nok at spise. Den blev
     for sulten og svag til at forts\xE6tte.\n\nN\xE5r du bes\xF8ger zoologisk have,
-    st\xF8tter du et avlsprogram, der er med til at beskytte k\xE6mpepandaer! \r\n\r\nOg
+    st\xF8tter du et avlsprogram, der er med til at beskytte k\xE6mpepandaer! \nOg
     n\xE5r du k\xF8ber bambusprodukter, s\xE5 kig efter FSC-m\xE6rket. Det hj\xE6lper
     dig med at v\xE6lge produkter, der er lavet med omtanke for skovene og dyrelivet.  "
   titleEN: Hunger
   descriptionEN: "Oh no! The panda couldn't find enough bamboo to eat. It got too
-    hungry and weak to keep going.\n\nWhen you visit the zoo, you support a breeding
-    program that helps protect giant pandas! \r\n\r\nAnd when you buy bamboo products,
+    hungry and weak to keep going. \n\nWhen you visit the zoo, you support a breeding
+    program that helps protect giant pandas! \nAnd when you buy bamboo products,
     look for the FSC label. It helps you choose products made with care for forests
     and wildlife.  "
   endingImage: {fileID: 0}
-  narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationDA2: {fileID: 0}
-  narrationEN1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationEN2: {fileID: 0}
+  narrationDA1: {fileID: 8300000, guid: ae00a333b8731452b9d6f3a2d1364e0a, type: 3}
+  narrationDA2: {fileID: 8300000, guid: bf21cc3c000034b4aaca35bb81f3142d, type: 3}
+  narrationEN1: {fileID: 8300000, guid: 77c6173a363e24590a1bf98aeee78bd1, type: 3}
+  narrationEN2: {fileID: 8300000, guid: a06a36fd40aff4cfd9b58b909ee7ee57, type: 3}
   endingMusic: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
   loopMusic: 1
   musicVolume: 0.4

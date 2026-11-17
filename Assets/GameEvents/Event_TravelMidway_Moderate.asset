@@ -16,22 +16,27 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Midway
-  narrationClip: {fileID: 8300000, guid: 2fb7842c352c24e11a7b25547fd74022, type: 3}
-  narrationClipDA: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: d74473a0a8228410586766f5a4ced797, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: cca4e6bfa0d8046428a2377c7fe0375b, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 3
+    endTime: 2.8
     text: 'Pandas travel a lot throughout the year '
-  - startTime: 4
-    endTime: 7
-    text: ' They eat 16 hours a day and are therefore constantly looking for new
-      areas with plenty of bamboo'
+  - startTime: 2.8
+    endTime: 5.5
+    text: 'They eat 16 hours a day and are therefore '
+  - startTime: 5.5
+    endTime: 9
+    text: 'constantly looking for new areas with plenty of bamboo. '
   subtitlesDA:
   - startTime: 0
     endTime: 3
     text: "Pandaer rejser meget i l\xF8bet af \xE5ret "
-  - startTime: 4
-    endTime: 7
-    text: De spiser 16 timer om dagen og leder derfor hele tiden efter nye steder
-      med masser af bambus
+  - startTime: 3
+    endTime: 6
+    text: 'De spiser 16 timer om dagen og leder derfor '
+  - startTime: 6
+    endTime: 9
+    text: hele tiden efter nye steder med masser af bambus.
+  pauseGameWhileSpeaking: 0

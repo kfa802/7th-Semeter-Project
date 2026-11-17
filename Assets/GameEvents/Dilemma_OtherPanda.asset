@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: Another Panda
-  description: "Oh another panda! \r\n\r\nShould the pandas stay together or go their
-    separate ways?  "
+  description: "Oh another panda! \nShould the pandas stay together or go their separate
+    ways? "
   choiceA: Stay
   choiceB: Go
   choiceC: 
   titleDA: 'En anden panda '
-  descriptionDA: "\xC5h, en anden panda! \r\n\r\nSkal pandaerne blive sammen eller
-    g\xE5 hver til sit? "
+  descriptionDA: "\xC5h, en anden panda! \r\nSkal pandaerne blive sammen eller g\xE5
+    hver til sit? "
   choiceADA: Bliv
   choiceBDA: "G\xE5"
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 14f5f6b4fc4f844c2b756ca2d9cf5948, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
-  choiceAAppearAt: 3
-  choiceBAppearAt: 7
+  narrationClip: {fileID: 8300000, guid: 846826b1f02d94fe79355c259a8c0dfd, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 19c37e2b8bdfb427c85c712bf035abac, type: 3}
+  choiceAAppearAt: 3.3
+  choiceBAppearAt: 4.5
   choiceCAppearAt: 0
-  choiceAAppearAtDA: 3
-  choiceBAppearAtDA: 7
+  choiceAAppearAtDA: 3.3
+  choiceBAppearAtDA: 4.2
   choiceCAppearAtDA: 0
   triggerType: 0
   requiredZoneName: Midway

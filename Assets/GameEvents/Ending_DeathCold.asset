@@ -13,14 +13,10 @@ MonoBehaviour:
   m_Name: Ending_DeathCold
   m_EditorClassIdentifier: Assembly-CSharp::Ending
   endingTitle: Death_ColdNoBamboo
-  titleDA: Koldt
+  titleDA: fjern
   descriptionDA: 'Dansk Ending '
-  titleEN: Cold
-  descriptionEN: "Brrr! It was so cold that the bamboo grew too slowly. The panda
-    couldn't find enough food. \n\nDid you know that you can help protect pandas?
-    \nWhen you visit the zoo, you support a breeding program that helps protect pandas
-    for the future! \n\nAnd when you buy bamboo products, look for the FSC label.
-    It helps you choose products made with care for forests and wildlife. "
+  titleEN: fjern
+  descriptionEN: ' '
   endingImage: {fileID: 0}
   narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
   narrationDA2: {fileID: 0}

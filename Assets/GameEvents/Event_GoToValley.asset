@@ -16,22 +16,28 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Valley
-  narrationClip: {fileID: 8300000, guid: 5b0c51c863faa4aa3acd80f864b2c31c, type: 3}
-  narrationClipDA: {fileID: 0}
+  narrationClip: {fileID: 8300000, guid: 02febe97731314af88074cc4a27fec51, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: c28c8a5dac01046a185881787bc7bd88, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
-    endTime: 4
-    text: 'Good choice! Pandas need lots of space and bamboo to survive '
-  - startTime: 5
-    endTime: 7
+    endTime: 1.7
+    text: 'Good choice!  '
+  - startTime: 1.7
+    endTime: 4.7
+    text: Pandas need lots of space and bamboo to survive
+  - startTime: 4.7
+    endTime: 10
     text: They usually live alone and only meet for a few days each year to mate
   subtitlesDA:
   - startTime: 0
-    endTime: 4
-    text: Godt valg! Pandaer har brug for masser af plads og bambus for at overleve
-  - startTime: 5
-    endTime: 7
+    endTime: 1.5
+    text: 'Godt valg! '
+  - startTime: 1.5
+    endTime: 4.5
+    text: Pandaer har brug for masser af plads og bambus for at overleve.
+  - startTime: 4.5
+    endTime: 10
     text: "De lever som regel alene og m\xF8des kun nogle f\xE5 dage om \xE5ret for
       at parre sig."
   pauseGameWhileSpeaking: 0
