@@ -62512,8 +62512,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   startFieldOfView: 0
-  narrationClip: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 2b11a0bd592904f0092048f33bbdf1e2, type: 3}
+  narrationClip: {fileID: 8300000, guid: 3942c09a5ec9c4c3faa045b5b910ca10, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: e016da35909ee42d3b8d1c49bc39787d, type: 3}
   narrationDelay: 1
   narrationVolume: 1
   narrationMixerGroup: {fileID: 0}
@@ -62521,17 +62521,17 @@ MonoBehaviour:
   subtitleText: {fileID: 141545504}
   subtitles:
   - startTime: 0
-    endTime: 3
+    endTime: 3.8
     text: 'We are in China, the home of giant pandas! '
-  - startTime: 4
-    endTime: 7
+  - startTime: 3.8
+    endTime: 8
     text: 'Today, we need your help to make some important decisions for our panda. '
   subtitlesDA:
   - startTime: 0
-    endTime: 3
+    endTime: 3.5
     text: "Vi er i Kina, hvor k\xE6mpepandaerne bor! "
-  - startTime: 4
-    endTime: 7
+  - startTime: 3.5
+    endTime: 8
     text: "I dag har vi brug for din hj\xE6lp til at tr\xE6ffe nogle vigtige beslutninger
       for pandaen. "
   playTutorial: 1
@@ -62540,7 +62540,7 @@ MonoBehaviour:
   tutorialSteps:
   - label: Temperature
     instruction: Tempature
-    narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+    narration: {fileID: 8300000, guid: 127eccbcc78c648dd81ef47a023849f9, type: 3}
     showUI:
     - {fileID: 196287758}
     showUINames:
@@ -62552,17 +62552,17 @@ MonoBehaviour:
     pauseAfter: 0
     subtitles:
     - startTime: 0
-      endTime: 3
+      endTime: 4
       text: 'Try changing the temperature and see how the weather changes! '
     instructionDA: Temperatur
-    narrationDA: {fileID: 0}
+    narrationDA: {fileID: 8300000, guid: 258f5556a0e7842b998d1014f0a1a251, type: 3}
     subtitlesDA:
     - startTime: 0
-      endTime: 3
+      endTime: 4
       text: "Pr\xF8v at \xE6ndre temperaturen og se hvordan vejret skifter.  "
   - label: Human Disturbance
     instruction: Humans Disturbance
-    narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
+    narration: {fileID: 8300000, guid: 4ac6452af27fd434dacabf9e2b6d3535, type: 3}
     showUI:
     - {fileID: 2033208195}
     showUINames: []
@@ -62573,32 +62573,32 @@ MonoBehaviour:
     pauseAfter: 0
     subtitles:
     - startTime: 0
-      endTime: 3
+      endTime: 6
       text: 'This meter shows how noise, pollution, and human activity affect the
         panda '
-    - startTime: 4
-      endTime: 6
+    - startTime: 6
+      endTime: 11
       text: When it's cold, fewer people are outside, so there's less noise and pollution
-    - startTime: 7
-      endTime: 10
+    - startTime: 11
+      endTime: 14
       text: Humans affect wildlife differently in different places.
     instructionDA: "St\xF8jm\xE5ler"
-    narrationDA: {fileID: 8300000, guid: a9a7e5b27f2194378aa54b0367956f03, type: 3}
+    narrationDA: {fileID: 8300000, guid: 5f9ece49b00364d1cb21a04026567f5f, type: 3}
     subtitlesDA:
     - startTime: 0
-      endTime: 3
+      endTime: 6
       text: "Denne m\xE5ler viser hvordan st\xF8j, forurening og menneskelig aktivitet
         p\xE5virker pandaen "
-    - startTime: 4
-      endTime: 6
+    - startTime: 6
+      endTime: 10.5
       text: "N\xE5r det er koldt, er der f\xE6rre mennesker udenfor, s\xE5 der er
         mindre st\xF8j og forurening "
-    - startTime: 7
-      endTime: 9
+    - startTime: 10.5
+      endTime: 14
       text: "Mennesker p\xE5virker dyrelivet forskelligt fra sted til sted "
   - label: Feeding
     instruction: Drag the bamboo to the panda to feed it.
-    narration: {fileID: 8300000, guid: a1d498d2a4d7d427eb5250764a9dde6f, type: 3}
+    narration: {fileID: 8300000, guid: a315c06d51afe40729b0383481e63601, type: 3}
     showUI:
     - {fileID: 1489309915}
     showUINames: []
@@ -62612,14 +62612,14 @@ MonoBehaviour:
       endTime: 3
       text: 'Now, try feeding the panda some bamboo! '
     instructionDA: 
-    narrationDA: {fileID: 8300000, guid: d48a1ffe729d24997bcc0dcf81f3c481, type: 3}
+    narrationDA: {fileID: 8300000, guid: a5561f2619a044cf0adb694c05ea417d, type: 3}
     subtitlesDA:
     - startTime: 0
       endTime: 3
       text: "Pr\xF8v nu at fodre pandaen med lidt bambus! "
   - label: Panda Health
     instruction: You panda has a health bar.
-    narration: {fileID: 8300000, guid: 78f4c301e64b148ae8d9a0fcaf8ac0e0, type: 3}
+    narration: {fileID: 8300000, guid: 01b631f6f20154acaa2f24840fb5f8ee, type: 3}
     showUI:
     - {fileID: 1740021514}
     showUINames: []
@@ -62630,19 +62630,19 @@ MonoBehaviour:
     pauseAfter: 1
     subtitles:
     - startTime: 0
-      endTime: 3
+      endTime: 2.5
       text: 'Keep an eye on the panda''s health! '
-    - startTime: 4
-      endTime: 6
+    - startTime: 2.5
+      endTime: 6.5
       text: The panda's health depends on the temperature and how hungry it is
     instructionDA: 
-    narrationDA: {fileID: 8300000, guid: e7b4d9cbc036c422abba4669fe73afac, type: 3}
+    narrationDA: {fileID: 8300000, guid: 08ae877fac13546d2904568653f7f878, type: 3}
     subtitlesDA:
     - startTime: 0
-      endTime: 3
+      endTime: 2.5
       text: "Hold \xF8je med pandaens helbred!  "
-    - startTime: 4
-      endTime: 6
+    - startTime: 2.5
+      endTime: 5.7
       text: "Pandaens helbred afh\xE6nger af temperaturen, og hvor sulten den er."
   hideDuringIntro:
   - {fileID: 1740021514}
