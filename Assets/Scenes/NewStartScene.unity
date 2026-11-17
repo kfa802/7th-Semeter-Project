@@ -15306,6 +15306,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TelemetryManager
   decimalComma: 1
+  webAppUrl: https://script.google.com/macros/s/AKfycby5OCmGoiHKSp3XL-mx68t_x_mdqjjnMfmO0CzAXNVgbTcCqUgP4iVRtydAZjOQd08p/exec
+  studyId: testy1
+  firstParticipantNumber: 1
 --- !u!4 &277732397
 Transform:
   m_ObjectHideFlags: 0
@@ -79188,6 +79191,8 @@ MonoBehaviour:
   - {fileID: 184388598}
   - {fileID: 2033208195}
   - {fileID: 1539525340}
+  choicePopTime: 0.35
+  choicePopBounce: 1.5
 --- !u!1001 &1934047367
 PrefabInstance:
   m_ObjectHideFlags: 0
