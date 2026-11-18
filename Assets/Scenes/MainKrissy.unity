@@ -36844,7 +36844,7 @@ MonoBehaviour:
   heartbeatLoop: {fileID: 8300000, guid: 65ff13a6c2132b44194b600aa063bb04, type: 3}
   heartbeatStartBelowHealth: 40
   heartbeatFullAtHealth: 5
-  heartbeatMaxVolume: 0.9
+  heartbeatMaxVolume: 0.5
   heartbeatVolumeCurve: 1.5
   heartbeatSpeedUp: 1
   heartbeatMaxSpeed: 1.4
@@ -38166,7 +38166,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ed93665c8c76c014a89c411010610847, type: 3}
   - {fileID: 8300000, guid: 7596ee3c8f7f7d24793d08d315428b56, type: 3}
   breakSoundDelay: 0
-  breakSoundVolume: 0.8
+  breakSoundVolume: 0.3
   soundVolume: 0.1
   pitchVariation: 0.1
   spatialBlend: 0.5
@@ -63340,7 +63340,7 @@ MonoBehaviour:
   rainParticles: {fileID: 1157284846}
   extraWaterPerSecond: 5
   rainLoop: {fileID: 8300000, guid: 8ff353cab2037584284ca541ea9ab4d6, type: 3}
-  rainVolume: 0.5
+  rainVolume: 0.05
   rainFadeIn: 3
   rainFadeOut: 4
   thunderSounds: []
@@ -68194,9 +68194,9 @@ MonoBehaviour:
   coldGoneAt: 8
   heatStartsAt: 28
   heatFullAt: 36
-  windVolume: 0.7
-  birdsVolume: 0.4
-  heatVolume: 0.7
+  windVolume: 0.2
+  birdsVolume: 0.2
+  heatVolume: 0.2
   blendSpeed: 0.6
   startFadeIn: 2
   mixerGroup: {fileID: 0}
@@ -83758,7 +83758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1830591900
 RectTransform:
   m_ObjectHideFlags: 0
@@ -93939,8 +93939,8 @@ MonoBehaviour:
   rainDuration: 20
   rainParticles: {fileID: 1157284846}
   extraWaterPerSecond: 5
-  rainLoop: {fileID: 0}
-  rainVolume: 0.7
+  rainLoop: {fileID: 8300000, guid: 8ff353cab2037584284ca541ea9ab4d6, type: 3}
+  rainVolume: 0.05
   rainFadeIn: 3
   rainFadeOut: 4
   thunderSounds: []
