@@ -487,8 +487,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
-  m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6814,6 +6814,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1159956426}
@@ -6882,6 +6886,7 @@ MonoBehaviour:
   bobDirection: {x: 0, y: -1}
   reverseDirection: 0
   hideWhenSliderLocked: 1
+  onlyAtStartAndWhenPrompted: 1
   hideAfterFirstUse: 0
   hideWhileUsing: 1
   showAgainAfter: 5
@@ -13091,6 +13096,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1811299578}
@@ -13721,6 +13730,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 878965563}
@@ -13851,6 +13864,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 465312413}
@@ -14260,6 +14277,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -14585,6 +14606,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -14879,6 +14904,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -16275,6 +16304,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 346005704}
@@ -16543,6 +16576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterEnvironmentVisuals
   environment: {fileID: 1431297040}
+  zone: {fileID: 0}
   sunLight: {fileID: 2082669484}
   coldStartTemperature: 15
   hotStartTemperature: 25
@@ -17581,6 +17615,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -17710,6 +17748,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 981375680}
@@ -17822,6 +17864,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 15
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
   enterSoundVolume: 0.8
@@ -18292,6 +18340,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -19573,6 +19625,7 @@ MonoBehaviour:
   bobDirection: {x: 0, y: 1}
   reverseDirection: 0
   hideWhenSliderLocked: 1
+  onlyAtStartAndWhenPrompted: 1
   hideAfterFirstUse: 0
   hideWhileUsing: 1
   showAgainAfter: 5
@@ -24605,6 +24658,21 @@ MonoBehaviour:
   panda: {fileID: 725808051}
   moodText: {fileID: 1119414953}
   pandaPathMover: {fileID: 725808057}
+  useIcons: 1
+  hungryIcons: []
+  veryHungryIcons: []
+  hotIcons: []
+  stressedIcons: []
+  thirstyIcons: []
+  coldIcons: []
+  switchBetweenFeelings: 1
+  secondsPerFeeling: 2.5
+  hungryIntensity: 0.15
+  veryHungryIntensity: 0.7
+  hotIntensity: 0.3
+  heatDamageIntensity: 0.9
+  iconMaxScale: 1.3
+  iconPulse: 0.08
   bubbleRoot: {fileID: 152361883}
   growWithText: 1
   bubbleRect: {fileID: 0}
@@ -25359,6 +25427,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1555685248}
@@ -26331,6 +26403,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 184346167}
@@ -32696,6 +32772,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1509108731}
@@ -33326,6 +33406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterEnvironmentVisuals
   environment: {fileID: 1431297040}
+  zone: {fileID: 0}
   sunLight: {fileID: 2082669484}
   coldStartTemperature: 15
   hotStartTemperature: 25
@@ -33467,6 +33548,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 783751337}
@@ -33829,6 +33914,9 @@ MonoBehaviour:
   timeUntilVeryHungry: 12
   hungryHealthLossPerSecond: 1
   veryHungryHealthLossPerSecond: 3
+  oneStepPerBamboo: 1
+  waterAffectsHealth: 0
+  canBeThirsty: 0
   waterHealthThreshold: 15
   maximumHealthLossPerSecond: 2
   waterDamagePower: 3
@@ -33850,12 +33938,19 @@ MonoBehaviour:
   heartbeatSmoothSpeed: 1.5
   heartbeatMixerGroup: {fileID: 0}
   hotTemperature: 25
+  secondsUntilHot: 6.5
+  canBeCold: 0
   coldTemperature: 0
+  disturbancePollutionThreshold: 0.5
+  combinedCauseShare: 0.3
+  dominantCauseShare: 0.5
   stress: 0
   stressedThreshold: 50
   environment: {fileID: 1431297040}
   extremeHeatTemperature: 35
   maximumExtremeHeatDamagePerSecond: 2
+  pandaPathMover: {fileID: 0}
+  safeWhileTravelling: 1
 --- !u!136 &725808052
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -34021,6 +34116,8 @@ MonoBehaviour:
   walkingMixerGroup: {fileID: 0}
   feedingZone: {fileID: 725808056}
   maxWaitForEating: 10
+  hideUIWhileTravelling: []
+  uiFadeTime: 0.4
   mainCamera: {fileID: 2122670353}
   cinematicCamera: {fileID: 1966459872}
   curvedCameraPath: 1
@@ -34807,6 +34904,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 100241671}
@@ -34911,6 +35012,8 @@ MonoBehaviour:
   autoFindSpots: 1
   autoFindBamboo: 1
   bambooTag: Bamboo
+  waterAffectsGrowth: 0
+  naturalGrowthEnabled: 0
   naturalGrowthWaterThreshold: 15
   minimumNaturalGrowthInterval: 10
   maximumNaturalGrowthInterval: 30
@@ -36109,6 +36212,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -36164,6 +36271,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 223310763}
@@ -36515,6 +36626,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1434885578}
@@ -37675,8 +37790,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Pollution: 100%'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
-  m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -37803,6 +37918,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -37858,6 +37977,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -49971,9 +50094,28 @@ MonoBehaviour:
   pollutionPanel: {fileID: 2033208195}
   pollutionSlider: {fileID: 377163657}
   pollutionText: {fileID: 901206171}
+  needle: {fileID: 0}
+  angleAtZero: 120
+  angleAtFull: -120
   environment: {fileID: 1431297040}
+  prefix: 
+  alwaysVisible: 1
   visibilityThreshold: 0.04
   fillSpeed: 0.5
+  flashGraphics: []
+  flashColor: {r: 1, g: 0.15, b: 0.1, a: 1}
+  flashWhenRisingBy: 0.1
+  flashDuration: 3
+  flashSpeed: 2
+  flashGrow: 0
+  vibrateTarget: {fileID: 0}
+  vibrateStrength: 3
+  vibrateSpeed: 35
+  riseTime: 2.5
+  riseSound: {fileID: 0}
+  riseSoundVolume: 0.8
+  loopRiseSound: 0
+  riseSoundMixerGroup: {fileID: 0}
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -50004,10 +50146,40 @@ MonoBehaviour:
   environment: {fileID: 1431297040}
   thisZone: {fileID: 1231037625}
   pollutionParticles: {fileID: 538238533}
+  useTrigger: 0
+  pandaTag: Player
   pollutionThreshold: 0.01
   maximumEmission: 80
+  maximumParticles: 300
+  minStrength: 0.15
+  maxStrength: 0.45
+  strengthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   fadeInDuration: 2
   fadeOutDuration: 2
+  pollutionSmoothing: 1.5
 --- !u!1001 &1079321088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50186,7 +50358,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -17.9}
+  m_AnchoredPosition: {x: 0, y: -15}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1080516760
@@ -50209,10 +50381,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MOUNTAIN
+  m_text: Mountain
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 78104ab004745476dac5ad3fda2654c1, type: 2}
-  m_sharedMaterial: {fileID: -141008162320865714, guid: 78104ab004745476dac5ad3fda2654c1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f613553269e9d4c70bc5019ea0fbedc7, type: 2}
+  m_sharedMaterial: {fileID: 3365032981814216689, guid: f613553269e9d4c70bc5019ea0fbedc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -50242,7 +50414,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -50845,6 +51017,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -57650,6 +57826,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1797190664}
@@ -57705,6 +57885,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -58154,6 +58338,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 540722184}
@@ -58738,6 +58926,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 15
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
   enterSoundVolume: 0.8
@@ -60394,6 +60588,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1546074941}
@@ -61092,6 +61290,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -61839,6 +62041,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1264384120}
@@ -62391,7 +62597,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   checkTemperatureAfterWaiting: 1
+  coldBelow: 0
+  hotAbove: 25
+  decideAnywayAfter: 45
   endingDelay: 6
+  deathEndingDelay: 1
+  stopGameAtEnding: 1
+  gameAudioFadeOut: 1.5
+  panda: {fileID: 0}
+  hungerEnding: {fileID: 0}
+  heatEnding: {fileID: 0}
+  coldEnding: {fileID: 0}
+  disturbanceEnding: {fileID: 0}
+  hungerAndHeatEnding: {fileID: 0}
+  lowHealthEnding: {fileID: 0}
   choiceButtons: []
   narrationDelay: 0.3
   unlockAfterNarration: 0.2
@@ -62749,6 +62968,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -62811,6 +63034,17 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   temperatureTransitionTime: 8
+  pollutionChangeSpeed: 0.5
+  calmTemperature: 20
+  extremeTemperatureSpeed: 4
+  currentPollutionSpeed: 0
+  overallGrowthSpeed: 0.5
+  slowBelow: 0
+  fastAbove: 25
+  slowestSpeed: 0.1
+  fastestSpeed: 3
+  coldDropCurve: 0.5
+  heatBoostCurve: 0.7
 --- !u!4 &1431297041
 Transform:
   m_ObjectHideFlags: 0
@@ -63684,6 +63918,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 536004376}
@@ -63830,6 +64068,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1026562024}
@@ -63885,6 +64127,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1684097534}
@@ -64787,6 +65033,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1068827779}
@@ -71013,6 +71263,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 812500361}
@@ -71166,6 +71420,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -72375,6 +72633,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1669494542}
@@ -72653,6 +72915,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1182199522}
@@ -74568,6 +74834,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -74894,6 +75164,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 743416523}
@@ -75015,6 +75289,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -75271,15 +75549,17 @@ MonoBehaviour:
   titleText: {fileID: 192774269}
   descriptionText: {fileID: 1699057411}
   endingImage: {fileID: 0}
+  continueButton: {fileID: 0}
   continueLabel: {fileID: 0}
   continueTextDA: "Forts\xE6t"
   continueTextEN: Continue
+  quizManager: {fileID: 0}
+  delayBeforeQuiz: 1.5
+  hideContinueWhenNarrated: 1
   narrationMixerGroup: {fileID: -340433604882751907, guid: a3324b4d8bba841209aa949f4bef45a1, type: 2}
   narrationVolume: 1
   delayBeforeFirstClip: 0.5
   gapBetweenClips: 0.5
-  continueButton: {fileID: 0}
-  lockContinueUntilNarrationDone: 0
 --- !u!114 &1830591902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75368,6 +75648,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -76678,6 +76962,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -76973,16 +77261,14 @@ MonoBehaviour:
   pandaPathMover: {fileID: 725808057}
   dilemmaUI: {fileID: 1927953439}
   temperatureSlider: {fileID: 196287759}
-  waterSlider: {fileID: 1235136938}
-  bambooSlider: {fileID: 1084733768}
   pandaHealthSlider: {fileID: 1740021515}
   temperatureText: {fileID: 666714659}
   waterText: {fileID: 1279251138}
   bambooText: {fileID: 1262749804}
   pandaHealthText: {fileID: 2072902922}
-  bambooSliderSpeed: 5
+  totalAcrossAllZones: 1
+  countAcrossAllZones: 0
   pandaHealthSliderSpeed: 20
-  waterSliderSpeed: 15
 --- !u!114 &1927953434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77115,6 +77401,9 @@ MonoBehaviour:
   choiceBButton: {fileID: 1113220689}
   choiceCButton: {fileID: 1230159246}
   inputBlocker: {fileID: 1478948345}
+  hideWhileOpen: []
+  choicePopTime: 0.35
+  choicePopBounce: 1.5
 --- !u!1001 &1934047367
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82766,6 +83055,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 103745400}
@@ -84313,6 +84606,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 0}
@@ -84724,6 +85021,12 @@ MonoBehaviour:
   coldWaterLossStartTemperature: 0
   coldWaterLossSpeed: 5
   coldWaterLossPower: 1
+  disturbanceHot: 20
+  disturbanceMild: 10
+  disturbanceCold: 0
+  disturbanceHotFrom: 25
+  disturbanceMildFrom: 15
+  disturbanceFromEvents: 0
   pollution: 0
   enterSounds:
   - {fileID: 8300000, guid: 289919290b6ee42458e4b2b38a1645ec, type: 3}
@@ -84811,6 +85114,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 1318687697}
@@ -85090,6 +85397,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 10
   growTimeVariation: 0.15
   existingBamboo: {fileID: 879542185}
@@ -85692,6 +86003,10 @@ MonoBehaviour:
   minSize: 1
   maxSize: 1.5
   poopToBambooDelay: 5
+  randomPoopDelay: 1
+  minPoopDelay: 5
+  maxPoopDelay: 20
+  poopDelayFollowsTemperature: 0
   growTime: 5
   growTimeVariation: 0.15
   existingBamboo: {fileID: 379122033}
