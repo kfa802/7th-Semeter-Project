@@ -68888,9 +68888,9 @@ MonoBehaviour:
   lines:
   - label: Hot - low health
     text: 'Oh no! The heat is making the panda feel weak! '
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 6f923624a517143e7b0c43406224cde2, type: 3}
     textDA: "\xC5h nej! Varmen g\xF8r pandaen svag! "
-    voiceDA: {fileID: 0}
+    voiceDA: {fileID: 8300000, guid: 7e8fe571a7d144798824a72d295fd5b3, type: 3}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -68911,9 +68911,9 @@ MonoBehaviour:
     priority: 3
   - label: Cold - Low Bamboo
     text: 'It''s too cold for the bamboo to grow! '
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 6b396bec9bbc248d2931dc76ae6930db, type: 3}
     textDA: 'Det er for koldt til, at bambussen kan vokse! '
-    voiceDA: {fileID: 0}
+    voiceDA: {fileID: 8300000, guid: 6558d1f66caf14b12946d15ce18d7bd6, type: 3}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -68934,9 +68934,9 @@ MonoBehaviour:
     priority: 1
   - label: Hot - disturbance rising
     text: 'Human disturbance increases when the temperature rises. '
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 6951e51961c65494682eade13930b900, type: 3}
     textDA: "Menneskelig forstyrrelse stiger, n\xE5r temperaturen stiger. "
-    voiceDA: {fileID: 0}
+    voiceDA: {fileID: 8300000, guid: 71532bc52fffa4a9da995bbadac4e5e1, type: 3}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: 25
@@ -68958,10 +68958,10 @@ MonoBehaviour:
   - label: Bamboo low
     text: 'You are running low on food for the panda. Bamboo grows faster in higher
       temperatures. '
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 786e14aefc57a4c99b4e2a0e22a1ab31, type: 3}
     textDA: "Du er ved at l\xF8be t\xF8r for mad til pandaen. Bambus vokser hurtigere,
-      n\xE5r temperaturen er h\xF8jere. "
-    voiceDA: {fileID: 0}
+      n\xE5r temperaturen er h\xF8jere.  "
+    voiceDA: {fileID: 8300000, guid: ade456d7c669c4c48a0f3644cd12ae7a, type: 3}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -68981,10 +68981,10 @@ MonoBehaviour:
     onlyOnce: 0
     priority: 2
   - label: Cold - disturbance falling
-    text: 'Human disturbance decreases in low temperatures. '
-    voice: {fileID: 0}
+    text: 'Human disturbance decreases in low temperatures.  '
+    voice: {fileID: 8300000, guid: 78f448d24958d4b2c989c3325c578310, type: 3}
     textDA: "Menneskelig forstyrrelse falder, n\xE5r temperaturen er lav. "
-    voiceDA: {fileID: 0}
+    voiceDA: {fileID: 8300000, guid: 1ba4dca2da2c640dcb2dd55229608381, type: 3}
     pointsToTemperature: 1
     checkTemperature: 1
     temperatureMin: -100
@@ -69004,10 +69004,10 @@ MonoBehaviour:
     onlyOnce: 0
     priority: 1
   - label: Low health
-    text: 'Your panda is getting weaker! It needs more bamboo! '
-    voice: {fileID: 0}
-    textDA: 
-    voiceDA: {fileID: 0}
+    text: 'The panda is getting weaker! It needs more bamboo! '
+    voice: {fileID: 8300000, guid: 0e3f3b9acee964fddad12183a051cd10, type: 3}
+    textDA: 'Pandaen bliver svagere! Den har brug for mere bambus! '
+    voiceDA: {fileID: 8300000, guid: 4469bed41210d4e07b29cab5f7f5f208, type: 3}
     pointsToTemperature: 1
     checkTemperature: 0
     temperatureMin: -100
