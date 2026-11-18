@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: Dilemma_Road
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: NEW ROAD!
-  description: "A nearby village needs a new road! \r\nShould the road go through
-    the forest or around it?  "
+  description: 'A nearby village needs a new road!
+
+
+    Should the road go through
+    the forest or around it?  '
   choiceA: Through
   choiceB: Around
   choiceC: 
   titleDA: NY VEJ!
-  descriptionDA: "En landsby i n\xE6rheden har brug for en ny vej! \r\nSkal vejen
+  descriptionDA: "En landsby i n\xE6rheden har brug for en ny vej!\n\r\nSkal vejen
     g\xE5 gennem skoven eller rundt om den? "
   choiceADA: Gennem
   choiceBDA: Rundt

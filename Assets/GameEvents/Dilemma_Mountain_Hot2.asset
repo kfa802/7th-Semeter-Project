@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Hot2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: IT IS TOO HOT!
-  description: "Oh no! It\u2019s too hot for the panda! \nThe panda feels weak and
-    can\u2019t stay cool. If it stays, it might not survive! Even though bamboo grows
-    fast in the heat there isn't enough here on the mountain. Maybe there\u2019s
-    more further down. \nShould the panda move somewhere else or stay on the mountain?  "
+  description: "Oh no! It\u2019s too hot for the panda! \n\nThe panda feels weak
+    and can\u2019t stay cool. If it stays, it might not survive! Even though bamboo
+    grows fast in the heat there isn't enough here on the mountain. Maybe there\u2019s
+    more further down. \n\nShould the panda move somewhere else or stay on the mountain?  "
   choiceA: Travel
   choiceB: Stay
   choiceC: 
   titleDA: DET ER FOR VARMT!
-  descriptionDA: "\xC5h nej! Det er for varmt for pandaen! \nPandaen f\xF8ler sig
+  descriptionDA: "\xC5h nej! Det er for varmt for pandaen! \n\nPandaen f\xF8ler sig
     svag og kan ikke holde sig k\xF8lig. Hvis den bliver, overlever den m\xE5ske
     ikke! Selvom bambus vokser hurtigt i varmen, er der ikke nok her p\xE5 bjerget.
     M\xE5ske er der mere l\xE6ngere nede. \r\n\r\nSkal pandaen flytte et andet sted

@@ -13,17 +13,23 @@ MonoBehaviour:
   m_Name: Dilemma_Mountain_Cold2
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: IT IS TOO COLD!
-  description: "Oh no! The cold weather has stopped the bamboo from growing! \nAlmost
+  description: 'Oh no! The cold weather has stopped the bamboo from growing!
+
+
+    Almost
     all the food is gone. If it stays much longer, it might starve! There may be
-    more food further down the mountain. \nShould the panda move somewhere else or
-    stay on the mountain? "
+    more food further down the mountain.
+
+
+    Should the panda move somewhere else
+    or stay on the mountain? '
   choiceA: Move
   choiceB: Stay
   choiceC: 
   titleDA: DET ER FOR KOLDT!
   descriptionDA: "\xC5h nej! Kulden har f\xE5et bambussen til at stoppe med at vokse!
-    \nN\xE6sten alt mad er v\xE6k. Hvis pandaen bliver meget l\xE6ngere, kan den
-    sulte ihjel! M\xE5ske er der mere mad l\xE6ngere nede ad bjerget. \nSkal pandaen
+    \n\nN\xE6sten alt mad er v\xE6k. Hvis pandaen bliver meget l\xE6ngere, kan den
+    sulte ihjel! M\xE5ske er der mere mad l\xE6ngere nede ad bjerget. \n\nSkal pandaen
     flytte et andet sted hen eller blive p\xE5 bjerget? "
   choiceADA: Flyt
   choiceBDA: Bliv

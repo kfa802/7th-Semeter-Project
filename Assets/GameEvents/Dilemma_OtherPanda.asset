@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: Dilemma_OtherPanda
   m_EditorClassIdentifier: Assembly-CSharp::Dilemma
   title: ANOTHER PANDA!
-  description: "Oh another panda! \nShould the pandas stay together or go their separate
-    ways? "
+  description: 'Oh another panda!
+
+
+    Should the pandas stay together or go their
+    separate ways? '
   choiceA: Stay
   choiceB: Go
   choiceC: 
   titleDA: 'EN ANDEN PANDA! '
-  descriptionDA: "\xC5h, en anden panda! \r\nSkal pandaerne blive sammen eller g\xE5
+  descriptionDA: "\xC5h, en anden panda!\n\nSkal pandaerne blive sammen eller g\xE5
     hver til sit? "
   choiceADA: Bliv
   choiceBDA: "G\xE5"
