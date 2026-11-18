@@ -37,7 +37,7 @@ MonoBehaviour:
   triggerType: 4
   requiredZoneName: Midway
   delaySeconds: 0
-  threshold: 40
+  threshold: 30
   temperatureThreshold: 30
   temperatureHighThreshold: 25
   temperatureDurationSeconds: 20

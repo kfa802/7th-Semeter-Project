@@ -37,7 +37,7 @@ MonoBehaviour:
   choiceCAppearAtDA: 0
   triggerType: 10
   requiredZoneName: Mountain
-  delaySeconds: 45
+  delaySeconds: 30
   threshold: 5.9
   temperatureThreshold: 0
   temperatureHighThreshold: 0

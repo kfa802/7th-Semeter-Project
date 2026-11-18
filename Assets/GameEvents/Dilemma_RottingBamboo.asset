@@ -37,7 +37,7 @@ MonoBehaviour:
   triggerType: 4
   requiredZoneName: Valley
   delaySeconds: 0
-  threshold: 20
+  threshold: 10
   temperatureThreshold: 30
   temperatureHighThreshold: 25
   temperatureDurationSeconds: 20
