@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using TMPro;
 
@@ -7,8 +6,7 @@ public class ZoneStatusUI : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TMP_Text zoneText;
 
-    [Header("Display")]
-    [SerializeField] private string travellingText = "Travelling";
+    private const string LanguageKey = "language";
 
     private void Start()
     {
@@ -32,24 +30,49 @@ public class ZoneStatusUI : MonoBehaviour
 
     private void UpdateZoneDisplay()
     {
+        // Get selected language
+        string language = PlayerPrefs.GetString(LanguageKey, "da");
+
+        bool isDanish = language == "da";
+
+        // Check if EnvironmentSystem exists
         if (EnvironmentSystem.Instance == null)
         {
-            zoneText.text = travellingText;
+            zoneText.text = isDanish ? "På vej" : "Travelling";
             return;
         }
 
-        string activeZone =
-            EnvironmentSystem.Instance.ActiveZoneName;
+        // Get current zone
+        string activeZone = EnvironmentSystem.Instance.ActiveZoneName;
 
+        // Travelling or no active zone
         if (string.IsNullOrEmpty(activeZone) ||
             activeZone == "None" ||
             activeZone == "Travelling")
         {
-            zoneText.text = travellingText;
+            zoneText.text = isDanish ? "På vej" : "Travelling";
+            return;
         }
-        else
+
+        // Translate zone names
+        switch (activeZone)
         {
-            zoneText.text = activeZone;
+            case "Mountain":
+                zoneText.text = isDanish ? "Bjerget" : "Mountain";
+                break;
+
+            case "Midway":
+                zoneText.text = isDanish ? "Bjergsiden" : "Midway";
+                break;
+
+            case "Valley":
+                zoneText.text = isDanish ? "Dalen" : "Valley";
+                break;
+
+            default:
+                // If a zone has no translation, show its original name
+                zoneText.text = activeZone;
+                break;
         }
     }
 }
