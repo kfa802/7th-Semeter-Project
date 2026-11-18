@@ -20,13 +20,12 @@ MonoBehaviour:
   choiceA: Travel
   choiceB: Stay
   choiceC: 
-  titleDA: DET ERFOR VARMT!
+  titleDA: DET ER FOR VARMT!
   descriptionDA: "\xC5h nej! Det er for varmt for pandaen! \nPandaen f\xF8ler sig
     svag og kan ikke holde sig k\xF8lig. Hvis den bliver, overlever den m\xE5ske
     ikke! Selvom bambus vokser hurtigt i varmen, er der ikke nok her p\xE5 bjerget.
-    M\xE5ske er der mere l\xE6ngere nede. \nSkal pandaen flytte et andet sted hen
-    eller blive p\xE5 bjerget? \r\n\r\nSkal pandaen flytte et andet sted hen eller
-    blive p\xE5 bjerget? "
+    M\xE5ske er der mere l\xE6ngere nede. \r\n\r\nSkal pandaen flytte et andet sted
+    hen eller blive p\xE5 bjerget? "
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 

@@ -41,7 +41,9 @@ MonoBehaviour:
   temperatureThreshold: 30
   temperatureHighThreshold: 25
   temperatureDurationSeconds: 20
-  prerequisiteDilemmas: []
+  prerequisiteDilemmas:
+  - dilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
+    requiredChoice: 0
   blockedByDilemmas: []
   prerequisiteDilemma: {fileID: 11400000, guid: 2e191db4ac816dc4288f650ca8b10946, type: 2}
   prerequisiteChoice: 0
