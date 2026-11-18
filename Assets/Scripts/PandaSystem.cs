@@ -370,7 +370,7 @@ public class PandaSystem : MonoBehaviour
 
         if (!EndingReached)
             UpdateDrinkingSound();
-            
+
         UpdateHeartbeat();
 
         if (IsDead || EndingReached)
@@ -761,28 +761,27 @@ public class PandaSystem : MonoBehaviour
     // =========================================================
     public DeathCause GetDeathCause()
     {
-        float cold = coldHungerDamage;
-        float disturbance = disturbanceHungerDamage;
-        float hunger = Mathf.Max(0f, TotalHungerDamage - cold - disturbance);
+        float hunger = TotalHungerDamage;
         float heat = TotalHeatDamage;
 
-        float total = hunger + heat + cold + disturbance;
+        float total = hunger + heat;
+
+        // If neither hunger nor heat has caused damage,
+        // use hunger as the fallback ending.
         if (total <= 0f)
-            return DeathCause.LowHealth;
+            return DeathCause.Hunger;
 
-        // Hunger AND heat both play a big part.
-        if (hunger / total >= combinedCauseShare && heat / total >= combinedCauseShare)
+        // Both hunger and heat contributed significantly.
+        if (hunger / total >= combinedCauseShare &&
+            heat / total >= combinedCauseShare)
+        {
             return DeathCause.HungerAndHeat;
+        }
 
-        // One clear main cause.
-        float max = Mathf.Max(Mathf.Max(hunger, heat), Mathf.Max(cold, disturbance));
-        if (max / total < dominantCauseShare)
-            return DeathCause.LowHealth;
-
-        if (max == heat) return DeathCause.Heat;
-        if (max == cold) return DeathCause.Cold;
-        if (max == disturbance) return DeathCause.Disturbance;
-        return DeathCause.Hunger;
+        // Otherwise, choose whichever caused the most damage.
+        return hunger >= heat
+            ? DeathCause.Hunger
+            : DeathCause.Heat;
     }
 
     private void CheckDeath()

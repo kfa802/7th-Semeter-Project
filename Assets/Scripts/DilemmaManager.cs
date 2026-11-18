@@ -189,11 +189,12 @@ public class DilemmaManager : MonoBehaviour
     [SerializeField] private PandaSystem panda;
     [SerializeField] private Ending hungerEnding;
     [SerializeField] private Ending heatEnding;
-    [SerializeField] private Ending coldEnding;
-    [SerializeField] private Ending disturbanceEnding;
     [SerializeField] private Ending hungerAndHeatEnding;
-    [Tooltip("Low Health (General). Also used if a specific ending above is empty.")]
-    [SerializeField] private Ending lowHealthEnding;
+
+    // Disabled endings:
+    // [SerializeField] private Ending coldEnding;
+    // [SerializeField] private Ending disturbanceEnding;
+    // [SerializeField] private Ending lowHealthEnding;
 
     [Header("Narration")]
     // Each Dilemma asset has its own 'Narration Clip'. It plays when the
@@ -1569,30 +1570,22 @@ public class DilemmaManager : MonoBehaviour
 
     private void OnPandaDied(DeathCause cause)
     {
-        // A dilemma-based ending already happened: ignore the death.
-        if (gameEnded)
-            return;
+        if (gameEnded) return;
 
         Ending ending = cause switch
         {
             DeathCause.Hunger => hungerEnding,
             DeathCause.Heat => heatEnding,
-            DeathCause.Cold => coldEnding,
-            DeathCause.Disturbance => disturbanceEnding,
             DeathCause.HungerAndHeat => hungerAndHeatEnding,
-            _ => lowHealthEnding
+            _ => hungerEnding
         };
 
         if (ending == null)
-            ending = lowHealthEnding;
-
-        if (ending == null)
         {
-            Debug.LogError("DilemmaManager: Panda died (" + cause + ") but no death ending is assigned.");
+            Debug.LogError("DilemmaManager: No death ending assigned!");
             return;
         }
 
-        // Close whatever is on screen so nothing overlaps the ending.
         if (activeDilemma != null)
         {
             activeDilemma = null;
