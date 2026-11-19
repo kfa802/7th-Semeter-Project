@@ -141,7 +141,7 @@ MonoBehaviour:
   label: {fileID: 1884490612065548580}
   icon: {fileID: 7782840987778391393}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  selectedColor: {r: 0.58348167, g: 0.8301887, b: 0.58348167, a: 1}
+  selectedColor: {r: 1, g: 0.80029684, b: 0.25943398, a: 1}
 --- !u!114 &3844270968844429505
 MonoBehaviour:
   m_ObjectHideFlags: 0

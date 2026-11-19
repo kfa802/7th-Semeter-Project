@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Q6
   m_EditorClassIdentifier: Assembly-CSharp::QuizQuestion
   id: Q6
-  textDA: "Hvordan kan DU hj\xE6lpe med at beskytte pandaerne og deres hjem?"
-  textEN: How can YOU help protect pandas and their homes?
+  textDA: "Hvordan kan DU hj\xE6lpe med at beskytte pandaerne og deres hjem?\n(Du
+    kan v\xE6lge mere end et svar)"
+  textEN: 'How can YOU help protect pandas and their homes?
+
+    (You can select
+    more than one answer)'
   multiSelect: 1
   showLetters: 1
   horizontalLayout: 0
