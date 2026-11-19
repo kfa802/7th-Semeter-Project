@@ -15307,7 +15307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TelemetryManager
   decimalComma: 1
   webAppUrl: https://script.google.com/macros/s/AKfycby5OCmGoiHKSp3XL-mx68t_x_mdqjjnMfmO0CzAXNVgbTcCqUgP4iVRtydAZjOQd08p/exec
-  studyId: testy1
+  studyId: Pilot
   firstParticipantNumber: 1
 --- !u!4 &277732397
 Transform:
@@ -51136,10 +51136,40 @@ MonoBehaviour:
   environment: {fileID: 1431297040}
   thisZone: {fileID: 1231037625}
   pollutionParticles: {fileID: 538238533}
+  useTrigger: 0
+  pandaTag: Player
   pollutionThreshold: 0.01
   maximumEmission: 80
+  maximumParticles: 300
+  minStrength: 0.15
+  maxStrength: 0.45
+  strengthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   fadeInDuration: 2
   fadeOutDuration: 2
+  pollutionSmoothing: 1.5
 --- !u!1001 &1079321088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63855,10 +63885,7 @@ MonoBehaviour:
   panda: {fileID: 725808051}
   hungerEnding: {fileID: 11400000, guid: a878cfcd6b87b41c4b431e38dfb9a76b, type: 2}
   heatEnding: {fileID: 11400000, guid: 9f0c7927648dd415487e9de80630cf0d, type: 2}
-  coldEnding: {fileID: 0}
-  disturbanceEnding: {fileID: 0}
   hungerAndHeatEnding: {fileID: 11400000, guid: 5f2f2fcf8e29a408dbed78a380ad612a, type: 2}
-  lowHealthEnding: {fileID: 0}
   choiceButtons: []
   narrationDelay: 0.3
   unlockAfterNarration: 0.2
@@ -79164,7 +79191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneStatusUI
   zoneText: {fileID: 1080516760}
-  travellingText: Travelling
 --- !u!114 &1927953439
 MonoBehaviour:
   m_ObjectHideFlags: 0
