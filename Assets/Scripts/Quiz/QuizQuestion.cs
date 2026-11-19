@@ -42,6 +42,8 @@ public class QuizQuestion : ScriptableObject
     public bool showLetters = true;
     [Tooltip("Place the options in a row (for the smiley scale).")]
     public bool horizontalLayout;
+    [Tooltip("Show the text under the icon instead of on top of it (for the smiley scale).")]
+    public bool labelBelowIcon;
     [Tooltip("Log 1, 2, 3... instead of A, B, C... (for scales).")]
     public bool logAsNumber;
 

@@ -20,6 +20,7 @@ MonoBehaviour:
   multiSelect: 0
   showLetters: 0
   horizontalLayout: 1
+  labelBelowIcon: 1
   logAsNumber: 1
   options:
   - textDA: Helt uenig

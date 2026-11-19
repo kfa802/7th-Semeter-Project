@@ -58,7 +58,7 @@ public class QuizQuestionBlock : MonoBehaviour
                 if (element != null) element.minHeight = horizontalOptionHeight;
             }
 
-            button.Setup(text, option.icon, () => OnOptionClicked(optionIndex));
+            button.Setup(text, option.icon, () => OnOptionClicked(optionIndex), q.labelBelowIcon);
             buttons.Add(button);
         }
     }
