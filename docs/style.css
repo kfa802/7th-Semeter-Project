@@ -1,0 +1,372 @@
+:root {
+  color-scheme: light;
+  --ink: #172b38;
+  --muted: #4a5f67;
+  --paper: #f7f5ef;
+  --surface: #fffefa;
+  --rule: #d0d8d5;
+  --accent: #075949;
+  --wash: #e8f0eb;
+  --measure: 68ch;
+  font-family: system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3, p, figure {
+  margin: 0;
+}
+
+h1, h2, h3 {
+  line-height: 1.13;
+  text-wrap: balance;
+}
+
+p {
+  max-inline-size: var(--measure);
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
+}
+
+a:hover {
+  text-decoration-thickness: 0.15em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.page-width {
+  width: min(100% - 2.5rem, 900px);
+  margin-inline: auto;
+  padding-block: 1.875rem;
+}
+
+.skip-link {
+  position: absolute;
+  transform: translateY(-200%);
+  z-index: 1;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  padding: 0.5rem 0.8rem;
+  background: var(--surface);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-block-start: 0.85rem;
+}
+
+.print-button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.25rem;
+  background: var(--wash);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.print-button:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.lead {
+  margin-block-start: 0.7rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.hero .figure-grid {
+  margin-block-start: 1.5rem;
+}
+
+.hero figure:only-child {
+  max-inline-size: none;
+}
+
+.portfolio-section {
+  margin-block: 2.125rem 0;
+  padding-block-start: 1.2rem;
+  border-block-start: 1px solid var(--rule);
+}
+
+.portfolio-section h2 {
+  margin-block-end: 0.7rem;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: -0.02em;
+}
+
+.portfolio-section p + p {
+  margin-block-start: 0.85rem;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+.table-wrap {
+  margin-block: 1.35rem 0.15rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+}
+
+table {
+  width: 100%;
+  min-width: 29rem;
+  border-collapse: collapse;
+  background: var(--surface);
+  text-align: start;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.7rem 0.85rem;
+  border-block-end: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+th {
+  text-align: start;
+}
+
+thead th {
+  background: var(--wash);
+  color: var(--accent);
+}
+
+tbody tr:last-child > * {
+  border-block-end: 0;
+}
+
+.milestones {
+  margin-block-start: 1.35rem;
+}
+
+.milestone {
+  padding-block: 1.4rem;
+  border-block-start: 1px solid var(--rule);
+}
+
+.milestone:last-child {
+  padding-block-end: 0;
+}
+
+.portfolio-section h3 {
+  margin-block-end: 0.6rem;
+  color: var(--accent);
+  font-size: 1.15rem;
+}
+
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin-block-start: 1rem;
+}
+
+figure {
+  padding: 0.65rem;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+figure:only-child {
+  max-inline-size: 42rem;
+}
+
+figure img {
+  display: block;
+  inline-size: auto;
+  block-size: auto;
+  max-inline-size: 100%;
+  max-block-size: 32rem;
+  margin-inline: auto;
+  border-radius: 0.75rem;
+  object-fit: contain;
+}
+
+figcaption {
+  padding: 0.6rem 0.2rem 0.1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 36rem) {
+  .page-width {
+    width: calc(100% - 2rem);
+  }
+}
+
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+@media print {
+  :root {
+    --ink: #111;
+    --muted: #333;
+    --paper: #fff;
+    --surface: #fff;
+    --rule: #a5a5a5;
+    --accent: #111;
+    --wash: #fff;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .page-width {
+    width: 100%;
+    padding-block: 0;
+  }
+
+  .skip-link, .print-button {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 29pt;
+  }
+
+  .lead {
+    margin-block-start: 2.5mm;
+    font-size: 12pt;
+  }
+
+  .portfolio-section {
+    margin-block-start: 5mm;
+    padding-block-start: 4mm;
+  }
+
+  .portfolio-section h2 {
+    margin-block-end: 2.5mm;
+    font-size: 18pt;
+  }
+
+  h1, h2, h3 {
+    break-after: avoid-page;
+  }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .table-wrap {
+    margin-block-start: 3mm;
+    overflow: visible;
+  }
+
+  table {
+    min-width: 0;
+    table-layout: fixed;
+    font-size: 9.5pt;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    break-inside: avoid-page;
+  }
+
+  th, td {
+    padding: 2mm;
+    overflow-wrap: anywhere;
+  }
+
+  .milestones {
+    margin-block-start: 3mm;
+  }
+
+  .milestone {
+    padding-block: 4mm;
+  }
+
+  .portfolio-section h3 {
+    font-size: 12pt;
+  }
+
+  .figure-grid {
+    display: block;
+    margin-block-start: 3mm;
+  }
+
+  .hero .figure-grid {
+    margin-block-start: 4mm;
+  }
+
+  figure, figure:only-child {
+    max-inline-size: 150mm;
+    margin-block: 0 3mm;
+    padding: 2mm;
+    break-inside: avoid-page;
+  }
+
+  .hero figure:only-child {
+    max-inline-size: 160mm;
+  }
+
+  .figure-grid > figure:not(:only-child) {
+    display: inline-block;
+    inline-size: 48%;
+    margin-inline-end: 1%;
+    vertical-align: top;
+  }
+
+  figure img {
+    max-block-size: 100mm;
+  }
+
+  figcaption {
+    padding: 2mm 0 0;
+    font-size: 9pt;
+  }
+
+  main a[href^="https://"]::after,
+  main a[href^="http://"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.9em;
+  }
+}

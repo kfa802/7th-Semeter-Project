@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portfolio for panda-projektet på 7. semester med planlægning og dokumentation af spillets udvikling.">
+  <title>Panda-projektet | Semesterportfolio</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <a class="skip-link" href="#indhold">Spring til indhold</a>
+
+  <main class="page-width" id="indhold">
+    <header class="hero">
+      <h1>Panda-projektet</h1>
+      <p class="lead">Vi udviklede et interaktivt Unity-spil, hvor spilleren passer en panda og tager stilling til dilemmaer i dens levested.</p>
+      <div class="hero-actions">
+        <a href="https://github.com/kfa802/7th-Semeter-Project">Unity-projektets kode på GitHub</a>
+        <button class="print-button" type="button" onclick="window.print()">Udskriv eller gem som PDF</button>
+      </div>
+      <div class="figure-grid">
+        <figure>
+          <img src="./billeder/spilvisning-bjerg.webp" width="1660" height="950" alt="Panda i et bjergområde med helbred, bambus og temperatur vist omkring spilfeltet">
+          <figcaption>Bjergområdet i Unity-versionen fra 16. november 2026. Spilleren kan følge pandaens tilstand og regulere temperaturen under spillet.</figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <section class="portfolio-section" id="overblik" aria-labelledby="overblik-overskrift">
+      <h2 id="overblik-overskrift">Overblik</h2>
+      <p>Projektet undersøger, hvordan zoogæster spiller, hvad de forstår om pandaens levested bagefter, og om de oplever spillet som en afsluttet fortælling.</p>
+    </section>
+
+    <section class="portfolio-section" id="bidrag" aria-labelledby="bidrag-overskrift">
+      <h2 id="bidrag-overskrift">Det byggede vi</h2>
+      <p>Gruppen skitserede brugerfladen og spillets systemer i Figma og byggede en spilbar prototype i Unity. Prototypen kombinerer pasning af pandaen med valg, som påvirker, hvilke hændelser og slutninger spilleren møder.</p>
+      <p>Gruppen byggede blandt andet en temperaturkontrol, indikatorer for pandaens behov og dialogbokse med valg i fortællingen.</p>
+    </section>
+
+    <section class="portfolio-section" id="udvikling" aria-labelledby="proces-overskrift">
+      <h2 id="proces-overskrift">Metode og udviklingsforløb</h2>
+
+      <section id="planlaegning" aria-labelledby="plan-overskrift">
+        <h3 id="plan-overskrift">Planlægning og milepæle</h3>
+        <p>Gruppen brugte Trello til blandt andet at planlægge design, implementering og evaluering. Datoerne i oversigten følger den tilgængelige projektdokumentation.</p>
+        <div class="table-wrap" role="region" aria-label="Oversigt over udviklingsfaser" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Dato</th>
+                <th scope="col">Fokus</th>
+                <th scope="col">Dokumentation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><time datetime="2026-10-13">13. oktober</time></td><td>Tidlig spilvisning i Unity</td><td>Prototypeskærme samlet i <cite>Development Pictures</cite></td></tr>
+              <tr><td><time datetime="2026-11-05">5. november</time></td><td>Design og testforberedelse</td><td>Gennemgang af Figma-prototype og Trello-opgaver om blandt andet brugerflade, telemetri og evaluering</td></tr>
+              <tr><td><time datetime="2026-11-16">16. november</time></td><td>Spillets forløb og feedback</td><td>Screenshots af intro, temperatur, områdeskift og et dilemma</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="milestones">
+        <article class="milestone">
+          <h3>Koncept og prototyper i Figma</h3>
+          <p>I Figma skitserede gruppen brugerfladen, dilemmaerne og sammenhængen mellem spillets systemer. Skitserne viser blandt andet temperaturkontrol, status for vand og bambus samt valgskærme.</p>
+        </article>
+        <article class="milestone">
+          <h3>Statusbeskeder i Unity-prototypen</h3>
+          <p>I en tidlig prototypevisning står der stadig “New Text” i beskedfeltet. En anden visning giver spilleren en forklaring på, hvorfor bambussen er holdt op med at vokse. Det gør forbindelsen mellem vand og bambusvækst synlig i brugerfladen.</p>
+          <div class="figure-grid">
+            <figure>
+              <img src="./billeder/tidlig-brugerflade.webp" width="1329" height="741" alt="Unity-prototype med panda og et beskedfelt med teksten New Text">
+              <figcaption>Bjergscenen med statusfelter og midlertidig tekst.</figcaption>
+            </figure>
+            <figure>
+              <img src="./billeder/tidlig-statusbesked.webp" width="1131" height="637" alt="Statusvisning med besked om, at bambusvæksten er sat på pause på grund af manglende vand">
+              <figcaption>En statusbesked forklarer, at bambusvæksten er sat på pause på grund af manglende vand.</figcaption>
+            </figure>
+          </div>
+        </article>
+        <article class="milestone">
+          <h3>Temperatur som visuel feedback</h3>
+          <p>Temperaturslideren giver spilleren en direkte måde at påvirke miljøet på. I novemberversionen kan man se tilstanden på slideren og i scenens farver. I den kolde visning får spilleren også en besked om sammenhængen mellem temperatur og bambusvækst.</p>
+          <div class="figure-grid">
+            <figure>
+              <img src="./billeder/lav-temperatur.webp" width="1660" height="949" alt="Bjergområdet med kølige blå farver og slideren tæt på den kolde ende">
+              <figcaption>Ved lav temperatur skifter miljøet til kølige farver, og en tekstbesked forklarer temperaturens betydning for bambus.</figcaption>
+            </figure>
+            <figure>
+              <img src="./billeder/hoej-temperatur.webp" width="1660" height="951" alt="Bjergområdet med varme orange farver og slideren i den varme ende">
+              <figcaption>Ved høj temperatur vises samme område med varmere lys og en anden placering på slideren.</figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="portfolio-section" id="produkt" aria-labelledby="produkt-overskrift">
+      <h2 id="produkt-overskrift">Resultater</h2>
+      <p>Den spilbare prototype går fra en kort introduktion til pasning af pandaen og valg undervejs. Billeder fra en gennemspilning den 16. november viser, hvordan spillet skifter mellem fortælling, områdeovergange og interaktive valg.</p>
+      <div class="figure-grid">
+        <figure>
+          <img src="./billeder/intro.webp" width="1660" height="966" alt="Introduktion med et tåget bjerglandskab og en knap til at springe introen over">
+          <figcaption>Introen præsenterer det kinesiske bjerglandskab, før spilleren får kontrol.</figcaption>
+        </figure>
+        <figure>
+          <img src="./billeder/overgang.webp" width="1660" height="969" alt="Kameraet følger pandaen på afstand gennem bjerglandskabet med fortællertekst nederst">
+          <figcaption>En sekvens følger pandaen gennem landskabet, mens fortællingen beskriver dens søgen efter bambus.</figcaption>
+        </figure>
+        <figure>
+          <img src="./billeder/dilemma.webp" width="1660" height="959" alt="Valgskærmen En anden panda med knapperne Bliv og Gå">
+          <figcaption>I dilemmaet “En anden panda” skal spilleren vælge, om pandaerne skal blive sammen eller gå hver til sit.</figcaption>
+        </figure>
+        <figure>
+          <img src="./billeder/spilvisning-dal.webp" width="1660" height="951" alt="Panda i dalområdet med behovsindikatorer og temperaturkontrol">
+          <figcaption>I dalområdet er styringen genkendelig fra bjergområdet, mens miljøet omkring pandaen har ændret sig.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="portfolio-section" id="reproduktion" aria-labelledby="reproduktion-overskrift">
+      <h2 id="reproduktion-overskrift">Sådan køres projektet</h2>
+      <p>Hent Unity-projektet fra linket øverst på siden. Åbn projektet i Unity Hub med den version, der står i <code>ProjectSettings/ProjectVersion.txt</code>. Åbn <code>Assets/Scenes/StartMenu.unity</code> i editoren, og tryk <strong>Play</strong> for at starte fra spillets menu.</p>
+    </section>
+
+    <section class="portfolio-section" id="begraensninger" aria-labelledby="begraensninger-overskrift">
+      <h2 id="begraensninger-overskrift">Begrænsninger</h2>
+      <p>Spillerens valg påvirker, hvilke dilemmaer og slutninger der vises. Spillere kan derfor have set forskelligt indhold, når de besvarer spørgsmål efter spillet.</p>
+    </section>
+  </main>
+</body>
+</html>
