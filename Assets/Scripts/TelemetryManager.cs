@@ -27,6 +27,7 @@ public class TelemetryManager : MonoBehaviour
     private const string ParticipantsFile = "participants.csv";
     private const string SeriesFile = "timeseries.csv";
     private const string QuizFile = "quiz_answers.csv";
+    private const string DilemmaFile = "dilemmas.csv";
     private const string StudyKey = "telemetry_study_id";
     private const char Sep = ';';
     private const float FlushInterval = 10f;          // append time-series rows
@@ -35,13 +36,21 @@ public class TelemetryManager : MonoBehaviour
     private const string CounterKey = "telemetry_next_participant";
     private float quizPageShownAt;
 
+    private static readonly string[] DilemmaHeader =
+    {
+        "ParticipantID", "DilemmaNumber", "DilemmaName", "Order", "ShownSec",
+        "NarrationStartSec", "NarrationEndSec", "ChoiceAvailableSec",
+        "TimeToChoiceSec", "Choice", "ChoiceLetter", "EndSec"
+    };
     private static readonly string[] CoreColumns =
     {
         "ParticipantID", "NarrationLanguage", "SessionStartUTC",
         "SessionEndUTC", "SessionDurationSec",
-        "Ending", "EndingReachedSec",
-        "Temp_Start"
+        "Ending", "EndingReachedSec"
     };
+
+    private string DilemmaPath =>
+        Path.Combine(Application.persistentDataPath, DilemmaFile);
 
     private static readonly string[] SeriesHeader =
         { "ParticipantID", "TimeSec", "Type", "Value", "Source", "DurationSec" };
@@ -130,12 +139,12 @@ public class TelemetryManager : MonoBehaviour
 
     private static string FormatId(int n) => "P" + n.ToString("D2");
 
-    public void BeginSession(string language)
+    public void BeginSession(string language, int forcedNumber = -1)
     {
         if (SessionActive)
             EndSession("restarted");
 
-        int n = GetCounter();
+        int n = forcedNumber > 0 ? forcedNumber : GetCounter();
         PlayerPrefs.SetInt(CounterKey, n + 1);
         PlayerPrefs.Save();
 
@@ -144,6 +153,8 @@ public class TelemetryManager : MonoBehaviour
         pendingLines.Clear();
         webPending.Clear();
         webQuizPending.Clear();
+        dilemmaRecords.Clear();
+        webDilemmaPending.Clear();
         tempTotals.Clear();
         choiceAvailableAt.Clear();
         quizShownAt.Clear();
@@ -164,6 +175,34 @@ public class TelemetryManager : MonoBehaviour
         Debug.Log($"[Telemetry] Session started: {ParticipantId}. Folder: {Application.persistentDataPath}");
     }
 
+    /// <summary>Asks the sheet for the next participant number, then starts the session.</summary>
+    public IEnumerator BeginSessionOnline(string language)
+    {
+        int number = -1;
+
+        if (UseWeb)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(webAppUrl))
+            {
+                request.timeout = 8;
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success &&
+                    int.TryParse(request.downloadHandler.text.Trim(), out int n) && n > 0)
+                {
+                    number = n;
+                }
+                else
+                {
+                    Debug.LogWarning("[Telemetry] Could not get an ID from the sheet, " +
+                                     "using the local counter: " + request.error);
+                }
+            }
+        }
+
+        BeginSession(language, number);
+    }
+
     public void EndSession(string reason = "")
     {
         if (!SessionActive)
@@ -181,6 +220,9 @@ public class TelemetryManager : MonoBehaviour
 
         Set("SessionEndUTC", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
         Set("SessionDurationSec", Num(sessionEndTime, 1));
+
+        foreach (DilemmaRecord r in new List<DilemmaRecord>(dilemmaRecords.Values))
+            WriteDilemma(r);
 
         SessionActive = false;
         FlushLines();
@@ -203,6 +245,7 @@ public class TelemetryManager : MonoBehaviour
         if (File.Exists(ParticipantsPath)) File.Delete(ParticipantsPath);
         if (File.Exists(SeriesPath)) File.Delete(SeriesPath);
         if (File.Exists(QuizPath)) File.Delete(QuizPath);
+        if (File.Exists(DilemmaPath)) File.Delete(DilemmaPath);
         Debug.Log("[Telemetry] Deleted telemetry files in " + Application.persistentDataPath);
     }
 
@@ -215,13 +258,32 @@ public class TelemetryManager : MonoBehaviour
 
     private readonly List<string> webPending = new();   // time-series lines waiting
     private readonly List<string> webQuizPending = new();
+    private class DilemmaRecord
+    {
+        public int number;
+        public string name = "";
+        public int order;
+        public float shown = float.NaN;
+        public float narrationStart = float.NaN;
+        public float narrationEnd = float.NaN;
+        public float choiceAvailable = float.NaN;
+        public float timeToChoice = float.NaN;
+        public string choice = "";
+        public string letter = "";
+        public float end = float.NaN;
+        public bool written;
+    }
+
+    private readonly Dictionary<int, DilemmaRecord> dilemmaRecords = new();
+    private readonly List<string> webDilemmaPending = new();
     private readonly Queue<string> outbox = new();      // messages waiting to be sent
     private string latestParticipants;                  // newest participants row
     private bool sending;
     private int messageCounter;
     public bool UploadsPending =>
     UseWeb && (sending || outbox.Count > 0 || latestParticipants != null ||
-               webPending.Count > 0 || webQuizPending.Count > 0);
+               webPending.Count > 0 || webQuizPending.Count > 0 ||
+               webDilemmaPending.Count > 0);
 
     private string NewMessageId() =>
         ParticipantId + "-" + DateTime.UtcNow.Ticks + "-" + (messageCounter++);
@@ -288,6 +350,12 @@ public class TelemetryManager : MonoBehaviour
         {
             QueueRows("quiz_answers", string.Join(Sep.ToString(), QuizHeader), webQuizPending);
             webQuizPending.Clear();
+        }
+
+        if (webDilemmaPending.Count > 0)
+        {
+            QueueRows("dilemmas", string.Join(Sep.ToString(), DilemmaHeader), webDilemmaPending);
+            webDilemmaPending.Clear();
         }
     }
 
@@ -372,74 +440,110 @@ public class TelemetryManager : MonoBehaviour
     }
 
     // =====================================================
-    // DILEMMAS (participants.csv)
+    // DILEMMAS (dilemmas.csv, one row per dilemma shown)
     // =====================================================
 
-    public void DeclareDilemmas(int count)
+    /// <summary>Kept so DilemmaManager still compiles. No columns are needed any more.</summary>
+    public void DeclareDilemmas(int count) { }
+
+    private DilemmaRecord GetRecord(int number)
     {
-        List<string> cols = new();
-
-        for (int n = 1; n <= count; n++)
+        if (!dilemmaRecords.TryGetValue(number, out DilemmaRecord r))
         {
-            string p = $"Dil{n}_";
-            cols.Add(p + "Name");
-            cols.Add(p + "Order");
-            cols.Add(p + "Shown");
-            cols.Add(p + "NarrationStart");
-            cols.Add(p + "NarrationEnd");
-            cols.Add(p + "ChoiceAvailable");
-            cols.Add(p + "TimeToChoice");
-            cols.Add(p + "Choice");
-            cols.Add(p + "End");
+            r = new DilemmaRecord { number = number };
+            dilemmaRecords[number] = r;
         }
-
-        DeclareColumns(cols);
+        return r;
     }
+
+    private string N(float value) => float.IsNaN(value) ? "" : Num(value);
 
     public void DilemmaShown(int number, string assetName)
     {
         if (!SessionActive) return;
 
         dilemmaCounter++;
-        Set($"Dil{number}_Name", assetName);
-        Set($"Dil{number}_Order", dilemmaCounter.ToString());
-        Set($"Dil{number}_Shown", Num(Now));
+        DilemmaRecord r = GetRecord(number);
+        r.name = assetName;
+        r.order = dilemmaCounter;
+        r.shown = Now;
     }
 
     public void DilemmaNarrationStart(int number)
     {
-        if (SessionActive) Set($"Dil{number}_NarrationStart", Num(Now));
+        if (SessionActive) GetRecord(number).narrationStart = Now;
     }
 
     public void DilemmaNarrationEnd(int number)
     {
-        if (SessionActive) Set($"Dil{number}_NarrationEnd", Num(Now));
+        if (SessionActive) GetRecord(number).narrationEnd = Now;
     }
 
     public void DilemmaChoiceAvailable(int number)
     {
-        if (!SessionActive) return;
-
-        choiceAvailableAt[number] = Now;
-        Set($"Dil{number}_ChoiceAvailable", Num(Now));
+        if (SessionActive) GetRecord(number).choiceAvailable = Now;
     }
 
-    public void DilemmaChoice(int number, string choice)
+    public void DilemmaChoice(int number, string choice, string letter = "")
     {
         if (!SessionActive) return;
 
-        if (choiceAvailableAt.TryGetValue(number, out float available))
-            Set($"Dil{number}_TimeToChoice", Num(Now - available));
+        DilemmaRecord r = GetRecord(number);
+        r.choice = choice ?? "";
+        r.letter = letter ?? "";
 
-        Set($"Dil{number}_Choice", choice);
+        if (!float.IsNaN(r.choiceAvailable))
+            r.timeToChoice = Now - r.choiceAvailable;
     }
 
     public void DilemmaEnded(int number)
     {
         if (!SessionActive) return;
 
-        Set($"Dil{number}_End", Num(Now));
-        SaveParticipants();
+        DilemmaRecord r = GetRecord(number);
+        r.end = Now;
+        WriteDilemma(r);
+    }
+
+    private void WriteDilemma(DilemmaRecord r)
+    {
+        if (r.written || r.order == 0) return;   // never shown = no row
+        r.written = true;
+
+        string line = string.Join(Sep.ToString(),
+            ParticipantId,
+            r.number.ToString(),
+            Escape(r.name),
+            r.order.ToString(),
+            N(r.shown),
+            N(r.narrationStart),
+            N(r.narrationEnd),
+            N(r.choiceAvailable),
+            N(r.timeToChoice),
+            Escape(r.choice),
+            r.letter,
+            N(r.end));
+
+        if (UseWeb) webDilemmaPending.Add(line);
+
+        if (!WriteLocal) return;
+
+        try
+        {
+            if (!File.Exists(DilemmaPath))
+            {
+                File.WriteAllText(DilemmaPath,
+                    string.Join(Sep.ToString(), DilemmaHeader) + Environment.NewLine,
+                    new UTF8Encoding(true));
+            }
+
+            File.AppendAllText(DilemmaPath, line + Environment.NewLine,
+                               new UTF8Encoding(false));
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("[Telemetry] Could not write dilemmas.csv: " + e.Message);
+        }
     }
 
     // =====================================================
@@ -512,6 +616,7 @@ public class TelemetryManager : MonoBehaviour
         if (!SessionActive) return;
 
         Set("Quiz_TotalSec", Num(Now - quizPageShownAt));
+        Set("QuizCompleted", "1");
     }
 
     /// <summary>Writes one row per chosen option for a question.</summary>
@@ -615,7 +720,6 @@ public class TelemetryManager : MonoBehaviour
     {
         if (!SessionActive) return;
 
-        Set("Temp_Start", Num(value, 1));
         LogSeries("Temperature", Num(value, 1), value, "start", Now);
     }
 

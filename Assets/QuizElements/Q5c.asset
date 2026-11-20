@@ -41,7 +41,7 @@ MonoBehaviour:
     correct: 0
     exclusive: 0
     icon: {fileID: 0}
-  condition: 3
+  condition: 4
   dilemma: {fileID: 0}
   dilemmas: []
   requiredChoice: 0

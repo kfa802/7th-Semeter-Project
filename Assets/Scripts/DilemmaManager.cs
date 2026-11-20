@@ -843,11 +843,16 @@ public class DilemmaManager : MonoBehaviour
         );
 
         int number = activeDilemmaNumber;
-        string choiceText = choice == 0 ? resolvedDilemma.choiceA
-                  : choice == 1 ? resolvedDilemma.choiceB
-                  : resolvedDilemma.choiceC;
+        
+        // Lowercase fields = the English text, whatever language is being played.
+        string choiceLabel = choice == 0 ? resolvedDilemma.choiceA
+                           : choice == 1 ? resolvedDilemma.choiceB
+                           : resolvedDilemma.choiceC;
 
-        TelemetryManager.Instance?.DilemmaChoice(number, choiceText);
+        if (string.IsNullOrWhiteSpace(choiceLabel))
+            choiceLabel = choiceName;   // falls back to A, B or C
+
+        TelemetryManager.Instance?.DilemmaChoice(number, choiceLabel, choiceName);
 
         completedDilemmas.Add(resolvedDilemma);
         resolvedChoices[resolvedDilemma] = choice;

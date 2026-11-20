@@ -37,10 +37,19 @@ public class StartMenu : MonoBehaviour
     public void SelectDanish() => Select("da");
     public void SelectEnglish() => Select("en");
 
+    private bool starting;
+
     public void StartGame()
     {
+        if (starting) return;
+        starting = true;
+        StartCoroutine(StartRoutine());
+    }
+
+    private System.Collections.IEnumerator StartRoutine()
+    {
         if (TelemetryManager.Instance != null)
-            TelemetryManager.Instance.BeginSession(Current);
+            yield return TelemetryManager.Instance.BeginSessionOnline(Current);
         else
             Debug.LogError("[StartMenu] No TelemetryManager in the scene. Nothing will be logged.");
 
