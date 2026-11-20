@@ -205,6 +205,10 @@ public class IntroSequence : MonoBehaviour
              "and hidden when the game starts. Its On Click is hooked up automatically.")]
     [SerializeField] private UnityEngine.UI.Button skipTutorialButton;
 
+    [Tooltip("Off: the skip button is hidden, so players must watch the whole " +
+             "intro and tutorial (e.g. for user tests).")]
+    [SerializeField] private bool showSkipButton = true;
+
     [Header("When The Intro Ends")]
     [Tooltip("Hook up anything that should happen when the game starts " +
              "(e.g. later: the UI tutorial).")]
@@ -269,7 +273,7 @@ public class IntroSequence : MonoBehaviour
         if (skipTutorialButton != null)
         {
             skipTutorialButton.onClick.AddListener(SkipTutorial);
-            skipTutorialButton.gameObject.SetActive(IsPlaying);
+            skipTutorialButton.gameObject.SetActive(IsPlaying && showSkipButton);
         }
 
         panda = FindFirstObjectByType<PandaSystem>();

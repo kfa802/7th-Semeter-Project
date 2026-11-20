@@ -18506,6 +18506,7 @@ MonoBehaviour:
   pandaDetectionRadius: 0.5
   pandaFeedingZone: {fileID: 725808056}
   dragHeight: 0.5
+  pullTowardsCamera: 0.6
   availableAnimator: {fileID: 358437395}
   clickSound: {fileID: 8300000, guid: 52199e515bbab9442a852dbb13ae8eab, type: 3}
   cantFeedSound: {fileID: 0}
@@ -63191,9 +63192,10 @@ MonoBehaviour:
   tutorialAppear: 1
   popUpTime: 0.5
   popUpBounce: 1.7
-  allowSkip: 0
+  allowSkip: 1
   skipAllowedAfter: 2
   skipTutorialButton: {fileID: 2097908254}
+  showSkipButton: 0
   onIntroFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -68169,7 +68171,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 1184080810}
       delay: 0
-      volume: 1
+      volume: 0.5
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68179,7 +68181,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 2052093885}
       delay: 0
-      volume: 1
+      volume: 0.5
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -94771,7 +94773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2097908254
 MonoBehaviour:
   m_ObjectHideFlags: 0

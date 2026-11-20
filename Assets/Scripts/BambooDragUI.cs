@@ -20,6 +20,10 @@ public class BambooDragUI : MonoBehaviour,
     [Header("Drag Settings")]
     [SerializeField] private float dragHeight = 0.5f;
 
+    [Tooltip("Moves the dragged bamboo this far towards the camera, so it stays in " +
+             "front of the panda instead of going into its head. 0 = off.")]
+    [SerializeField, Min(0f)] private float pullTowardsCamera = 0.6f;
+
     [Header("Available Animation")]
     [Tooltip("Animator that plays the 'you can feed' animation.")]
     [SerializeField] private Animator availableAnimator;
@@ -485,7 +489,7 @@ public class BambooDragUI : MonoBehaviour,
         if (overPanda)
         {
             Collider[] colliders = Physics.OverlapSphere(
-                draggedBamboo.transform.position,
+                lastPointedPosition,
                 pandaDetectionRadius,
                 pandaLayer,
                 QueryTriggerInteraction.Collide
@@ -515,6 +519,9 @@ public class BambooDragUI : MonoBehaviour,
         dragAllowed = false;
     }
 
+    // Where the finger points (before pulling the bamboo towards the camera).
+    private Vector3 lastPointedPosition;
+
     private void UpdateBambooPosition(PointerEventData eventData)
     {
         Ray ray = worldCamera.ScreenPointToRay(eventData.position);
@@ -539,7 +546,10 @@ public class BambooDragUI : MonoBehaviour,
             return;
         }
 
-        draggedBamboo.transform.position = worldPosition;
+        // Shown a little in front of what the finger points at (so it doesn't
+        // go through the panda), but the panda check uses the real point.
+        lastPointedPosition = worldPosition;
+        draggedBamboo.transform.position = worldPosition - ray.direction * pullTowardsCamera;
 
         Collider[] colliders = Physics.OverlapSphere(
             worldPosition,
