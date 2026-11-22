@@ -30,6 +30,12 @@ public class DilemmaUI : MonoBehaviour
              "everything inside it. Do NOT add the dilemma panel itself.")]
     [SerializeField] private GameObject[] hideWhileOpen;
 
+    [Tooltip("UI from the list above that comes BACK during an important narration " +
+             "after a choice ('Pause Game While Speaking'), so the player can watch it " +
+             "change (e.g. PollutionPanel, TempSlider). Empty = anything with 'Pollution' " +
+             "or 'Temp' in its name.")]
+    [SerializeField] private GameObject[] showDuringImportantNarration;
+
     private CanvasGroup[] hiddenGroups;
     private float[] hiddenAlphas;
 
@@ -52,6 +58,10 @@ public class DilemmaUI : MonoBehaviour
 
     private void Awake()
     {
+        // Remember the buttons' normal size right away, before anything
+        // (pop-up, animations) can change it.
+        CaptureChoiceScales();
+
         if (panel != null)
             panel.SetActive(false);
 
@@ -160,6 +170,10 @@ public class DilemmaUI : MonoBehaviour
 
         holding = holdBackground;
 
+        // Important narration: keep most UI hidden, but show e.g. the pollution meter.
+        if (holdBackground)
+            ShowDuringNarration();
+
         if (!holdBackground)
             SetBackgroundHidden(false);
     }
@@ -177,6 +191,35 @@ public class DilemmaUI : MonoBehaviour
     }
 
     public bool IsHolding => holding;
+
+    private bool ShouldShowDuringNarration(GameObject ui)
+    {
+        if (showDuringImportantNarration != null && showDuringImportantNarration.Length > 0)
+            return System.Array.IndexOf(showDuringImportantNarration, ui) >= 0;
+
+        string n = ui.name.ToLower();
+        return n.Contains("pollution") || n.Contains("temp");
+    }
+
+    private void ShowDuringNarration()
+    {
+        if (hideWhileOpen == null || hiddenGroups == null)
+            return;
+
+        for (int i = 0; i < hideWhileOpen.Length && i < hiddenGroups.Length; i++)
+        {
+            if (hideWhileOpen[i] == null || hiddenGroups[i] == null)
+                continue;
+
+            if (!ShouldShowDuringNarration(hideWhileOpen[i]))
+                continue;
+
+            // Visible, but can't be used until the narration is over.
+            hiddenGroups[i].alpha = hiddenAlphas[i] > 0f ? hiddenAlphas[i] : 1f;
+            hiddenGroups[i].interactable = false;
+            hiddenGroups[i].blocksRaycasts = false;
+        }
+    }
 
     // Hides the background UI with a CanvasGroup (alpha 0, no clicks) instead
     // of turning it off, so the scripts on it keep working.
@@ -228,6 +271,23 @@ public class DilemmaUI : MonoBehaviour
     // CHOICE BUTTONS POPPING UP ONE BY ONE
     // =========================================================
 
+    private void CaptureChoiceScales()
+    {
+        choiceBaseScales = new Vector3[3];
+
+        for (int i = 0; i < 3; i++)
+        {
+            Button b = ChoiceButton(i);
+            Vector3 scale = b != null ? b.transform.localScale : Vector3.one;
+
+            // Never remember a squashed/hidden size as the 'normal' one.
+            if (scale.x < 0.05f || scale.y < 0.05f)
+                scale = Vector3.one;
+
+            choiceBaseScales[i] = scale;
+        }
+    }
+
     private Button ChoiceButton(int i) =>
         i == 0 ? choiceAButton : i == 1 ? choiceBButton : choiceCButton;
 
@@ -235,12 +295,7 @@ public class DilemmaUI : MonoBehaviour
     public void HideChoicesUntilTheirTime(bool[] hide)
     {
         if (choiceBaseScales == null)
-        {
-            choiceBaseScales = new Vector3[3];
-            for (int i = 0; i < 3; i++)
-                if (ChoiceButton(i) != null)
-                    choiceBaseScales[i] = ChoiceButton(i).transform.localScale;
-        }
+            CaptureChoiceScales();
 
         for (int i = 0; i < 3; i++)
         {

@@ -44,11 +44,11 @@ MonoBehaviour:
   choiceCAppearAtDA: 0
   triggerType: 7
   requiredZoneName: Mountain
-  delaySeconds: 20
+  delaySeconds: 15
   threshold: 5.9
   temperatureThreshold: 0
   temperatureHighThreshold: 25
-  temperatureDurationSeconds: 30
+  temperatureDurationSeconds: 20
   prerequisiteDilemmas:
   - dilemma: {fileID: 11400000, guid: da9a61393e47f754aa9ebd8f10a92e4c, type: 2}
     requiredChoice: 2

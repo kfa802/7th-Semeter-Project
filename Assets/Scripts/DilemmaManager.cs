@@ -209,6 +209,11 @@ public class DilemmaManager : MonoBehaviour
     [Tooltip("Extra seconds after the narration ends before the buttons unlock.")]
     [SerializeField, Min(0f)] private float unlockAfterNarration = 0.2f;
 
+    [Tooltip("On: the buttons can be pressed as soon as the LAST choice button has " +
+             "popped up (its 'Appear At' time), even if the clip is still playing " +
+             "(e.g. silence at the end). Off: only when the whole clip has finished.")]
+    [SerializeField] private bool unlockWhenLastChoiceAppears = true;
+
     [SerializeField, Range(0f, 1f)] private float narrationVolume = 1f;
 
     [Tooltip("Optional: send the narration through a group in your Audio Mixer.")]
@@ -989,11 +994,25 @@ public class DilemmaManager : MonoBehaviour
         // Wait for the clip to finish (with a time limit, in case audio is muted/paused).
         float played = 0f;
 
+        // When does the last choice button appear? (0 = no 'Appear At' times set.)
+        float lastAppear = 0f;
+        if (activeDilemma != null)
+        {
+            string[] texts = { activeDilemma.ChoiceA, activeDilemma.ChoiceB, activeDilemma.ChoiceC };
+            for (int i = 0; i < 3; i++)
+                if (!string.IsNullOrWhiteSpace(texts[i]))
+                    lastAppear = Mathf.Max(lastAppear, activeDilemma.ChoiceAppearAt(i));
+        }
+
+        bool unlockedEarly = false;
+
         while (played < clip.length + 1f &&
                (narrationSource.isPlaying || played < 0.1f))
         {
             played += Time.unscaledDeltaTime;
-            SetChoicesLocked(true);
+
+            if (!unlockedEarly)
+                SetChoicesLocked(true);
 
             // Pop each choice up at its time in the clip.
             float clipTime = narrationSource.isPlaying ? narrationSource.time : clip.length;
@@ -1005,7 +1024,24 @@ public class DilemmaManager : MonoBehaviour
                         dilemmaUI.RevealChoice(i);
             }
 
+            // All buttons are up: let the player choose, even if the clip still plays.
+            if (!unlockedEarly && unlockWhenLastChoiceAppears && lastAppear > 0f &&
+                clipTime >= lastAppear + unlockAfterNarration)
+            {
+                unlockedEarly = true;
+                SetChoicesLocked(false);
+                LogChoicesAvailable();
+                Debug.Log("DilemmaManager: Last choice shown. Choices unlocked.");
+            }
+
             yield return null;
+        }
+
+        if (unlockedEarly)
+        {
+            LogNarrationEnded();
+            narrationRoutine = null;
+            yield break;
         }
 
         // Anything still hidden appears now.

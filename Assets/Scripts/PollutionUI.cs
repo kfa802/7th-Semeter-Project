@@ -82,6 +82,51 @@ public class PollutionUI : MonoBehaviour
 
     [SerializeField] private UnityEngine.Audio.AudioMixerGroup riseSoundMixerGroup;
 
+    [Header("Light Up While Moving")]
+    [Tooltip("On: the gauge lights up whenever the needle moves (up or down), " +
+             "so the player notices the change.")]
+    [SerializeField] private bool lightUpWhileMoving = true;
+
+    [Tooltip("Colour while disturbance goes UP.")]
+    [SerializeField] private Color risingColor = new Color(1f, 0.75f, 0.2f, 1f);
+
+    [Tooltip("Colour while disturbance goes DOWN.")]
+    [SerializeField] private Color fallingColor = new Color(0.45f, 0.9f, 0.45f, 1f);
+
+    [Tooltip("How strongly the gauge is tinted (0 = not at all, 1 = fully the colour).")]
+    [SerializeField, Range(0f, 1f)] private float tintStrength = 0.45f;
+
+    [Tooltip("Optional glow image behind the gauge (e.g. a soft circle). It fades in " +
+             "in the rising/falling colour while the needle moves.")]
+    [SerializeField] private Graphic glowImage;
+
+    [SerializeField, Range(0f, 1f)] private float glowMaxAlpha = 0.8f;
+
+    [Tooltip("The gauge gently pulses while moving (0 = off). 0.05 = 5% bigger.")]
+    [SerializeField, Range(0f, 0.2f)] private float pulseWhileMoving = 0.05f;
+
+    [Tooltip("The gauge only pulses (grows/shrinks) when the needle moves at least this " +
+             "fast, in % per second. Small changes only light up, without pulsing.")]
+    [SerializeField, Min(0f)] private float pulseOnlyAbovePercentPerSecond = 3f;
+
+    [Tooltip("How fast the colour pulses while disturbance goes UP (pulses per second).")]
+    [SerializeField, Min(0.1f)] private float colorPulseSpeed = 2.5f;
+
+    [Tooltip("How fast the colour pulses while disturbance goes DOWN (slower = calmer).")]
+    [SerializeField, Min(0.1f)] private float colorPulseSpeedDown = 0.8f;
+
+    [Tooltip("Seconds it stays lit after the needle stops, so even a tiny move is visible.")]
+    [SerializeField, Min(0f)] private float stayLitFor = 0.6f;
+
+    [Tooltip("Seconds to fade the light in/out.")]
+    [SerializeField, Min(0.05f)] private float lightFadeTime = 0.4f;
+
+    private float moveLight;            // 0..1 how lit up it is now
+    private bool lastMoveWasUp = true;
+    private float lastShownPollution = -1f;
+    private float litUntil;
+    private float bigMove;              // 0..1 how much it pulses (only for faster changes)
+
     private float riseSpeed;          // pollution per second while rising
     private bool rising;
     private AudioSource riseSource;
@@ -143,6 +188,15 @@ public class PollutionUI : MonoBehaviour
             vibrateStartPosition = vibrateTarget.anchoredPosition;
 
         lastTarget = displayedPollution;
+
+        // The glow starts invisible.
+        if (glowImage != null)
+        {
+            Color g = glowImage.color;
+            g.a = 0f;
+            glowImage.color = g;
+            glowImage.raycastTarget = false;
+        }
     }
 
     private void Update()
@@ -201,6 +255,7 @@ public class PollutionUI : MonoBehaviour
         }
 
         UpdateFlash();
+        UpdateMoveLight();
 
         if (pollutionSlider != null)
             pollutionSlider.value = displayedPollution;
@@ -249,7 +304,8 @@ public class PollutionUI : MonoBehaviour
         {
             for (int i = 0; i < flashGraphics.Length; i++)
             {
-                if (flashGraphics[i] == null || flashGraphics[i] == pollutionText)
+                if (flashGraphics[i] == null || flashGraphics[i] == pollutionText ||
+                    flashGraphics[i] == glowImage)
                     continue;
 
                 Color c = Color.Lerp(flashOriginalColors[i], flashColor, amount);
@@ -274,6 +330,77 @@ public class PollutionUI : MonoBehaviour
 
             vibrateTarget.anchoredPosition = vibrateStartPosition + offset;
         }
+    }
+
+    private void UpdateMoveLight()
+    {
+        if (!lightUpWhileMoving)
+            return;
+
+        // Did the needle move at all since the last frame?
+        if (lastShownPollution < 0f)
+            lastShownPollution = displayedPollution;
+
+        float change = displayedPollution - lastShownPollution;
+        lastShownPollution = displayedPollution;
+
+        if (Mathf.Abs(change) > 0.0000001f)
+        {
+            lastMoveWasUp = change > 0f;
+            litUntil = Time.unscaledTime + stayLitFor;
+        }
+
+        bool moving = Time.unscaledTime < litUntil;
+
+        // Pulse only for a clear change, not for small drifts.
+        float percentPerSecond = Time.deltaTime > 0f ? Mathf.Abs(change) * 100f / Time.deltaTime : 0f;
+        bool fast = percentPerSecond >= pulseOnlyAbovePercentPerSecond;
+        bigMove = Mathf.MoveTowards(bigMove, fast ? 1f : 0f, Time.unscaledDeltaTime / lightFadeTime);
+
+        moveLight = Mathf.MoveTowards(moveLight, moving ? 1f : 0f, Time.unscaledDeltaTime / lightFadeTime);
+
+        Color color = lastMoveWasUp ? risingColor : fallingColor;
+
+        // The colour pulses (stronger, weaker, stronger...) while it moves.
+        float pulseSpeed = lastMoveWasUp ? colorPulseSpeed : colorPulseSpeedDown;
+        float colorPulse = 0.35f + 0.65f * (0.5f - 0.5f * Mathf.Cos(Time.unscaledTime * pulseSpeed * Mathf.PI * 2f));
+        float light = moveLight * colorPulse;
+
+        // Glow image behind the gauge.
+        if (glowImage != null)
+        {
+            Color g = color;
+            g.a = glowMaxAlpha * light;
+            glowImage.color = g;
+        }
+
+        // The big red flash takes over the colours and size while it runs.
+        if (flashTimer > 0f)
+            return;
+
+        // Gentle pulse while moving.
+        float pulse = 0.5f - 0.5f * Mathf.Cos(Time.unscaledTime * 3f * Mathf.PI * 2f);
+
+        if (pollutionPanel != null)
+            pollutionPanel.transform.localScale = panelScale * (1f + pulseWhileMoving * pulse * bigMove);
+
+        // Tint the gauge.
+        if (flashGraphics != null && flashOriginalColors != null)
+        {
+            for (int i = 0; i < flashGraphics.Length; i++)
+            {
+                if (flashGraphics[i] == null || flashGraphics[i] == pollutionText ||
+                    flashGraphics[i] == glowImage)
+                    continue;
+
+                Color c = Color.Lerp(flashOriginalColors[i], color, tintStrength * light);
+                c.a = flashOriginalColors[i].a;
+                flashGraphics[i].color = c;
+            }
+        }
+
+        if (pollutionText != null)
+            pollutionText.color = Color.Lerp(textOriginalColor, color, tintStrength * light);
     }
 
     private void UpdateNeedle()

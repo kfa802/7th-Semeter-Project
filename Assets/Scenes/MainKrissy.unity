@@ -19364,7 +19364,7 @@ Transform:
   m_GameObject: {fileID: 407422329}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -18.2, y: 6.75, z: 36.84}
+  m_LocalPosition: {x: -16.51, y: 6.75, z: 36.84}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19540,6 +19540,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
@@ -21714,7 +21715,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.2
+      value: -20.680729
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21722,7 +21723,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 33.71
+      value: 33.097202
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29250,8 +29251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &629904224
@@ -35093,8 +35094,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &662267421
@@ -38098,7 +38099,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.91
+      value: -21.73073
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.y
@@ -38106,7 +38107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 32.31
+      value: 31.837204
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalRotation.w
@@ -40630,6 +40631,15 @@ MonoBehaviour:
   loop: 1
   hideAndRestart: 1
   restartDelay: 3
+  startDelay: 3
+  randomExtraStart: 5
+  trafficFollowsTemperature: 1
+  zone: {fileID: 1231037625}
+  coldTemperature: 0
+  hotTemperature: 30
+  waitWhenCold: 10
+  waitWhenHot: 2
+  waitRandomness: 0.3
   speed: 3
   turnSpeed: 4
   reachDistance: 0.5
@@ -48403,7 +48413,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.23073
+      value: -16.54073
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.y
@@ -48730,8 +48740,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1016820254
@@ -54945,6 +54955,18 @@ MonoBehaviour:
   riseSoundVolume: 0.8
   loopRiseSound: 0
   riseSoundMixerGroup: {fileID: 0}
+  lightUpWhileMoving: 1
+  risingColor: {r: 1, g: 0.75, b: 0.2, a: 1}
+  fallingColor: {r: 0.45, g: 0.9, b: 0.45, a: 1}
+  tintStrength: 0.45
+  glowImage: {fileID: 0}
+  glowMaxAlpha: 0.8
+  pulseWhileMoving: 0.05
+  pulseOnlyAbovePercentPerSecond: 3
+  colorPulseSpeed: 2.5
+  colorPulseSpeedDown: 0.8
+  stayLitFor: 0.6
+  lightFadeTime: 0.4
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -63195,7 +63217,7 @@ MonoBehaviour:
   allowSkip: 1
   skipAllowedAfter: 2
   skipTutorialButton: {fileID: 2097908254}
-  showSkipButton: 0
+  showSkipButton: 1
   onIntroFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -63804,6 +63826,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
@@ -68171,7 +68194,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 1184080810}
       delay: 0
-      volume: 0.5
+      volume: 0.35
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68213,7 +68236,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 1184080810}
       delay: 0
-      volume: 1
+      volume: 0.5
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68223,7 +68246,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 601088496}
       delay: 0
-      volume: 1
+      volume: 0.5
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68257,7 +68280,8 @@ MonoBehaviour:
   hungerAndHeatEnding: {fileID: 11400000, guid: 5f2f2fcf8e29a408dbed78a380ad612a, type: 2}
   choiceButtons: []
   narrationDelay: 0.3
-  unlockAfterNarration: 0.2
+  unlockAfterNarration: 0.7
+  unlockWhenLastChoiceAppears: 1
   narrationVolume: 1
   narrationMixerGroup: {fileID: -340433604882751907, guid: a3324b4d8bba841209aa949f4bef45a1, type: 2}
   listeningIndicator: {fileID: 0}
@@ -68734,6 +68758,15 @@ MonoBehaviour:
   loop: 1
   hideAndRestart: 1
   restartDelay: 3
+  startDelay: 3
+  randomExtraStart: 5
+  trafficFollowsTemperature: 1
+  zone: {fileID: 1231037625}
+  coldTemperature: 0
+  hotTemperature: 30
+  waitWhenCold: 10
+  waitWhenHot: 2
+  waitRandomness: 0.3
   speed: 2
   turnSpeed: 4
   reachDistance: 0.5
@@ -68942,6 +68975,11 @@ MonoBehaviour:
   calmTemperature: 20
   extremeTemperatureSpeed: 4
   currentPollutionSpeed: 0
+  coolingLowersEventDisturbance: 1
+  coolBelowTemperature: 10
+  coolForSeconds: 5
+  maxReduction: 20
+  reductionSpeed: 1
   overallGrowthSpeed: 0.25
   slowBelow: 0
   fastAbove: 25
@@ -70075,7 +70113,7 @@ Transform:
   m_GameObject: {fileID: 1452677335}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -21.169271, y: 6.0993795, z: 33.782795}
+  m_LocalPosition: {x: -20.65, y: 6.0993795, z: 33.17}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -70315,7 +70353,7 @@ Transform:
   m_GameObject: {fileID: 1460295281}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -20.4, y: 6.02, z: 36.51}
+  m_LocalPosition: {x: -20.55, y: 6.02, z: 37.25}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -71799,8 +71837,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1518726453
@@ -79049,8 +79087,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1649372010
@@ -79488,8 +79526,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.917
-  flickerSpeed: 6
+  flickerAmount: 0.55
+  flickerSpeed: 4
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!1001 &1665281814
@@ -80049,7 +80087,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -20.430729
+      value: -20.580729
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.y
@@ -80057,7 +80095,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 36.437202
+      value: 37.177204
       objectReference: {fileID: 0}
     - target: {fileID: 7367872409844139432, guid: 988dc41d4d16b7d4db86e0e989cb1a19, type: 3}
       propertyPath: m_LocalRotation.w
@@ -83523,7 +83561,7 @@ Transform:
   m_GameObject: {fileID: 1818220402}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -21.87927, y: 6.54938, z: 32.382797}
+  m_LocalPosition: {x: -21.7, y: 6.54938, z: 31.91}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -85836,6 +85874,7 @@ MonoBehaviour:
   - {fileID: 2033208195}
   - {fileID: 1539525340}
   - {fileID: 152361882}
+  showDuringImportantNarration: []
   choicePopTime: 0.35
   choicePopBounce: 1.5
 --- !u!43 &1928499616
@@ -94434,6 +94473,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds:

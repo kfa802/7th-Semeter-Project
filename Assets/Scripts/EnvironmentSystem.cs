@@ -46,6 +46,27 @@ public class EnvironmentSystem : MonoBehaviour
     [Tooltip("Live: current pollution change speed in % per second (read only).")]
     [SerializeField] private float currentPollutionSpeed;
 
+    [Header("Cooling Lowers Extra Disturbance (e.g. after the road)")]
+    [Tooltip("On: keeping the temperature low for a while slowly lowers the extra " +
+             "disturbance that events added (e.g. the road).")]
+    [SerializeField] private bool coolingLowersEventDisturbance = true;
+
+    [Tooltip("At or below this temperature (°C) it counts as 'cooled down'.")]
+    [SerializeField] private float coolBelowTemperature = 10f;
+
+    [Tooltip("Seconds the temperature must stay cool before it starts going down.")]
+    [SerializeField, Min(0f)] private float coolForSeconds = 5f;
+
+    [Tooltip("How much it can go down in total per zone, in % (20 = at most 20% lower).")]
+    [SerializeField, Range(0f, 100f)] private float maxReduction = 20f;
+
+    [Tooltip("How fast it goes down while cool, in % per second.")]
+    [SerializeField, Min(0.01f)] private float reductionSpeed = 1f;
+
+    private float coolSince = -1f;
+    private readonly System.Collections.Generic.Dictionary<EcosystemZone, float> reducedSoFar =
+        new System.Collections.Generic.Dictionary<EcosystemZone, float>();
+
     [Header("Bamboo Growth By Temperature")]
     [Tooltip("Overall speed of ALL bamboo growth (normal, slow and fast). " +
              "1 = as now, 0.5 = everything twice as slow, 0.25 = four times as slow.")]
@@ -556,6 +577,8 @@ public class EnvironmentSystem : MonoBehaviour
         if (activeZone == null)
             return;
 
+        UpdateCoolingReduction();
+
         float target = activeZone.GetTargetPollution(temperature);
 
         // How extreme is the temperature? 0 at the calm temperature,
@@ -571,6 +594,39 @@ public class EnvironmentSystem : MonoBehaviour
             pollution,
             target,
             currentPollutionSpeed / 100f * Time.deltaTime);
+    }
+
+    // Keeping it cool for a while slowly takes back some of the event disturbance.
+    private void UpdateCoolingReduction()
+    {
+        if (!coolingLowersEventDisturbance || activeZone.disturbanceFromEvents <= 0f)
+        {
+            coolSince = -1f;
+            return;
+        }
+
+        if (temperature > coolBelowTemperature)
+        {
+            coolSince = -1f;
+            return;
+        }
+
+        if (coolSince < 0f)
+            coolSince = Time.time;
+
+        if (Time.time - coolSince < coolForSeconds)
+            return;
+
+        reducedSoFar.TryGetValue(activeZone, out float done);
+
+        float room = Mathf.Min(maxReduction - done, activeZone.disturbanceFromEvents);
+        if (room <= 0f)
+            return;
+
+        float step = Mathf.Min(room, reductionSpeed * Time.deltaTime);
+
+        activeZone.disturbanceFromEvents -= step;
+        reducedSoFar[activeZone] = done + step;
     }
 
     /// <summary>Sets the extra disturbance so the current pollution becomes 'value' (0-1).</summary>

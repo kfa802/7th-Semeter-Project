@@ -179,6 +179,10 @@ public class EcosystemZone : MonoBehaviour
     [Tooltip("From this temperature the 'Mild' value is used (15 = 15-24°C). Below it: 'Cold'.")]
     public float disturbanceMildFrom = 15f;
 
+    [Tooltip("On: disturbance changes gradually with every degree (between the " +
+             "cold, mild and hot values). Off: it jumps in three steps.")]
+    public bool smoothDisturbance = true;
+
     [Tooltip("Extra disturbance (%) added on top, e.g. by dilemma choices " +
              "(a GameEvent's Pollution Change). Changes during play.")]
     [Range(-100f, 100f)] public float disturbanceFromEvents = 0f;
@@ -190,10 +194,29 @@ public class EcosystemZone : MonoBehaviour
     /// <summary>Target pollution (0-1) for a given temperature, incl. event extra.</summary>
     public float GetTargetPollution(float temperature)
     {
-        float baseline =
-            temperature >= disturbanceHotFrom ? disturbanceHot :
-            temperature >= disturbanceMildFrom ? disturbanceMild :
-            disturbanceCold;
+        float baseline;
+
+        if (smoothDisturbance)
+        {
+            // Changes a little with every degree, so the player SEES the slider
+            // affect the meter: cold at the zone's lowest temperature, mild at
+            // 'Mild From', hot at 'Hot From' (and above).
+            if (temperature >= disturbanceHotFrom)
+                baseline = disturbanceHot;
+            else if (temperature >= disturbanceMildFrom)
+                baseline = Mathf.Lerp(disturbanceMild, disturbanceHot,
+                    Mathf.InverseLerp(disturbanceMildFrom, disturbanceHotFrom, temperature));
+            else
+                baseline = Mathf.Lerp(disturbanceCold, disturbanceMild,
+                    Mathf.InverseLerp(minTemperature, disturbanceMildFrom, temperature));
+        }
+        else
+        {
+            baseline =
+                temperature >= disturbanceHotFrom ? disturbanceHot :
+                temperature >= disturbanceMildFrom ? disturbanceMild :
+                disturbanceCold;
+        }
 
         return Mathf.Clamp01((baseline + disturbanceFromEvents) / 100f);
     }

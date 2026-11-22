@@ -12,8 +12,39 @@ public class WaypointCar : MonoBehaviour
     public bool loop = true;
     [Tooltip("When looping: hide the car at the last waypoint, wait, then let it appear at the first waypoint again.")]
     public bool hideAndRestart = true;
-    [Tooltip("Seconds the car stays hidden before it drives again.")]
+    [Tooltip("Seconds the car stays hidden before it drives again " +
+             "(only used when 'Traffic Follows Temperature' is off).")]
     public float restartDelay = 3f;
+
+    [Header("Start")]
+    [Tooltip("Seconds after the car is switched on (when the road appears) before it " +
+             "starts driving. The car is hidden until then.")]
+    public float startDelay = 15f;
+
+    [Tooltip("Extra random seconds added to the start, so several cars don't start together.")]
+    public float randomExtraStart = 5f;
+
+    [Header("Traffic Follows Temperature")]
+    [Tooltip("On: the warmer it is, the shorter the wait between cars (more traffic).")]
+    public bool trafficFollowsTemperature = true;
+
+    [Tooltip("Optional: the zone whose temperature counts. Empty = the zone the panda is in.")]
+    public EcosystemZone zone;
+
+    [Tooltip("At or below this temperature (°C) there is the least traffic.")]
+    public float coldTemperature = 0f;
+
+    [Tooltip("At or above this temperature (°C) there is the most traffic.")]
+    public float hotTemperature = 30f;
+
+    [Tooltip("Seconds between cars when it is cold (little traffic).")]
+    public float waitWhenCold = 25f;
+
+    [Tooltip("Seconds between cars when it is hot (lots of traffic).")]
+    public float waitWhenHot = 2f;
+
+    [Tooltip("Random variation of the wait, so the traffic doesn't look like a clock. 0.3 = ±30%.")]
+    [Range(0f, 0.8f)] public float waitRandomness = 0.3f;
 
     [Header("Driving")]
     public float speed = 5f;            // metres per second
@@ -45,6 +76,44 @@ public class WaypointCar : MonoBehaviour
             Debug.LogWarning(name + ": the game is paused (Time.timeScale = 0). Tick 'Ignore Pause' if the car should drive anyway.", this);
 
         PlaceAtStart();
+
+        // Don't drive straight away: wait until a bit after the road dilemma.
+        float firstWait = startDelay + Random.Range(0f, Mathf.Max(0f, randomExtraStart));
+        if (firstWait > 0f)
+            StartCoroutine(WaitHidden(firstWait));
+    }
+
+    // Hidden at the start of the route until the wait is over.
+    IEnumerator WaitHidden(float seconds)
+    {
+        waiting = true;
+        SetVisible(false);
+
+        if (ignorePause) yield return new WaitForSecondsRealtime(seconds);
+        else yield return new WaitForSeconds(seconds);
+
+        PlaceAtStart();
+        SetVisible(true);
+        waiting = false;
+    }
+
+    // Seconds until the next car: shorter when it's warmer.
+    float NextWait()
+    {
+        if (!trafficFollowsTemperature)
+            return restartDelay;
+
+        float temperature = coldTemperature;
+
+        if (zone != null)
+            temperature = zone.CurrentTemperature;
+        else if (EnvironmentSystem.Instance != null)
+            temperature = EnvironmentSystem.Instance.Temperature;
+
+        float warmth = Mathf.InverseLerp(coldTemperature, hotTemperature, temperature);
+        float wait = Mathf.Lerp(waitWhenCold, waitWhenHot, warmth);
+
+        return Mathf.Max(0f, wait * Random.Range(1f - waitRandomness, 1f + waitRandomness));
     }
 
     // Puts the car on the first waypoint, facing the second
@@ -69,8 +138,10 @@ public class WaypointCar : MonoBehaviour
         waiting = true;
         SetVisible(false);
 
-        if (ignorePause) yield return new WaitForSecondsRealtime(restartDelay);
-        else yield return new WaitForSeconds(restartDelay);
+        float wait = NextWait();
+
+        if (ignorePause) yield return new WaitForSecondsRealtime(wait);
+        else yield return new WaitForSeconds(wait);
 
         PlaceAtStart();
         SetVisible(true);
