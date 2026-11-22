@@ -345,8 +345,25 @@ public class PandaSystem : MonoBehaviour
     // UPDATE
     // =========================================================
 
+    [Header("Start Menu")]
+    [Tooltip("In these scenes the panda is only decoration: no hunger, no damage, " +
+             "no heartbeat (e.g. the start menu that shows the game in the background).")]
+    [SerializeField] private string[] menuSceneNames = { "NewStartScene", "StartScene", "StartMenu" };
+
     private void Start()
     {
+        // Start menu: the panda is just decoration here.
+        string scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        if (menuSceneNames != null && System.Array.IndexOf(menuSceneNames, scene) >= 0)
+        {
+            if (heartbeatAudio != null)
+                heartbeatAudio.Stop();
+
+            enabled = false;
+            return;
+        }
+
         // Remember the starting state, so no sound plays when the game starts.
         wasThirsty = IsThirsty;
         lastZone = environment != null ? environment.ActiveZone : null;
@@ -370,7 +387,7 @@ public class PandaSystem : MonoBehaviour
 
         if (!EndingReached)
             UpdateDrinkingSound();
-
+            
         UpdateHeartbeat();
 
         if (IsDead || EndingReached)
@@ -761,27 +778,28 @@ public class PandaSystem : MonoBehaviour
     // =========================================================
     public DeathCause GetDeathCause()
     {
-        float hunger = TotalHungerDamage;
+        float cold = coldHungerDamage;
+        float disturbance = disturbanceHungerDamage;
+        float hunger = Mathf.Max(0f, TotalHungerDamage - cold - disturbance);
         float heat = TotalHeatDamage;
 
-        float total = hunger + heat;
-
-        // If neither hunger nor heat has caused damage,
-        // use hunger as the fallback ending.
+        float total = hunger + heat + cold + disturbance;
         if (total <= 0f)
-            return DeathCause.Hunger;
+            return DeathCause.LowHealth;
 
-        // Both hunger and heat contributed significantly.
-        if (hunger / total >= combinedCauseShare &&
-            heat / total >= combinedCauseShare)
-        {
+        // Hunger AND heat both play a big part.
+        if (hunger / total >= combinedCauseShare && heat / total >= combinedCauseShare)
             return DeathCause.HungerAndHeat;
-        }
 
-        // Otherwise, choose whichever caused the most damage.
-        return hunger >= heat
-            ? DeathCause.Hunger
-            : DeathCause.Heat;
+        // One clear main cause.
+        float max = Mathf.Max(Mathf.Max(hunger, heat), Mathf.Max(cold, disturbance));
+        if (max / total < dominantCauseShare)
+            return DeathCause.LowHealth;
+
+        if (max == heat) return DeathCause.Heat;
+        if (max == cold) return DeathCause.Cold;
+        if (max == disturbance) return DeathCause.Disturbance;
+        return DeathCause.Hunger;
     }
 
     private void CheckDeath()

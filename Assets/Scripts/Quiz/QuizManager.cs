@@ -221,8 +221,22 @@ public class QuizManager : MonoBehaviour
         // Saves the files and queues the final upload.
         TelemetryManager.Instance?.EndSession("quiz submitted");
 
-        Time.timeScale = 1f;
+        // The game stays frozen and silent while the data uploads
+        // (before, it started running again behind the quiz).
+        Time.timeScale = 0f;
+        StopAllGameSounds();
+
         StartCoroutine(WaitForUploadThenLoad());
+    }
+
+    // Stops every sound, also on objects that survive a scene change.
+    private static void StopAllGameSounds()
+    {
+        foreach (AudioSource a in FindObjectsByType<AudioSource>(
+                     FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            a.Stop();
+        }
     }
 
     private IEnumerator WaitForUploadThenLoad()
@@ -238,6 +252,11 @@ public class QuizManager : MonoBehaviour
             yield return null;
         }
 
-        SceneManager.LoadScene(startSceneName);
+        StopAllGameSounds();
+
+        // Back to normal speed only now, as the menu opens.
+        AudioListener.pause = false;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(startSceneName, LoadSceneMode.Single);
     }
 }

@@ -82,6 +82,16 @@ public class PollutionUI : MonoBehaviour
 
     [SerializeField] private UnityEngine.Audio.AudioMixerGroup riseSoundMixerGroup;
 
+    [Tooltip("Seconds to fade the rise sound out (instead of stopping abruptly).")]
+    [SerializeField, Min(0.01f)] private float riseSoundFadeOut = 0.8f;
+
+    [Tooltip("How loud the rise sound is while a narration plays (0 = silent, " +
+             "1 = no change). It fades down smoothly.")]
+    [SerializeField, Range(0f, 1f)] private float riseSoundDuringNarration = 0.2f;
+
+    private DilemmaManager dilemmaManager;
+    private bool riseSoundStopping;
+
     [Header("Light Up While Moving")]
     [Tooltip("On: the gauge lights up whenever the needle moves (up or down), " +
              "so the player notices the change.")]
@@ -251,11 +261,12 @@ public class PollutionUI : MonoBehaviour
             rising = false;
 
             if (loopRiseSound && riseSource != null && riseSource.isPlaying)
-                riseSource.Stop();
+                riseSoundStopping = true;   // fades out in UpdateRiseSoundVolume
         }
 
         UpdateFlash();
         UpdateMoveLight();
+        UpdateRiseSoundVolume();
 
         if (pollutionSlider != null)
             pollutionSlider.value = displayedPollution;
@@ -281,6 +292,7 @@ public class PollutionUI : MonoBehaviour
         riseSource.volume = riseSoundVolume;
         riseSource.outputAudioMixerGroup = riseSoundMixerGroup;
         riseSource.Play();
+        riseSoundStopping = false;
     }
 
     private void UpdateFlash()
@@ -329,6 +341,38 @@ public class PollutionUI : MonoBehaviour
                 (Mathf.PerlinNoise(0f, t) - 0.5f) * 2f) * vibrateStrength * fade;
 
             vibrateTarget.anchoredPosition = vibrateStartPosition + offset;
+        }
+    }
+
+    // Fades the rise sound smoothly: down while a narration plays, out when it stops.
+    private void UpdateRiseSoundVolume()
+    {
+        if (riseSource == null || !riseSource.isPlaying)
+            return;
+
+        if (dilemmaManager == null)
+            dilemmaManager = FindFirstObjectByType<DilemmaManager>();
+
+        bool narrating = (dilemmaManager != null && dilemmaManager.IsNarrating) ||
+                         IntroSequence.IsNarrating;
+
+        // A one-shot sound also fades out over its last moments.
+        if (!riseSource.loop && riseSource.clip != null &&
+            riseSource.clip.length - riseSource.time <= riseSoundFadeOut)
+            riseSoundStopping = true;
+
+        float target = riseSoundStopping ? 0f
+                     : riseSoundVolume * (narrating ? riseSoundDuringNarration : 1f);
+
+        riseSource.volume = Mathf.MoveTowards(
+            riseSource.volume, target,
+            riseSoundVolume / riseSoundFadeOut * Time.unscaledDeltaTime);
+
+        if (riseSoundStopping && riseSource.volume <= 0.001f)
+        {
+            riseSource.Stop();
+            riseSource.volume = riseSoundVolume;
+            riseSoundStopping = false;
         }
     }
 
