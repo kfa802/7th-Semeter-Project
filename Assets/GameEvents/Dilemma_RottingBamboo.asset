@@ -26,8 +26,8 @@ MonoBehaviour:
   choiceADA: Dalen
   choiceBDA: Bjerget
   choiceCDA: Panda
-  narrationClip: {fileID: 8300000, guid: e6d2816d6c7bf44feae74ced124eed9e, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 9370d15dc66304f3e92985729e29e1ef, type: 3}
+  narrationClip: {fileID: 8300000, guid: e87457c1236c44fb7b0db9d581757186, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: ad3ec87d53c5f4681b339408166b4c35, type: 3}
   choiceAAppearAt: 6.5
   choiceBAppearAt: 8
   choiceCAppearAt: 10

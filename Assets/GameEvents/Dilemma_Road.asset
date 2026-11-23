@@ -27,8 +27,8 @@ MonoBehaviour:
   choiceADA: Gennem
   choiceBDA: Rundt
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 43100260fe73045bb8ea18b4c4ba5c28, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 7ef881f62bbe640e4a48caea28ed9d90, type: 3}
+  narrationClip: {fileID: 8300000, guid: 651576ff104404cb5a88906f1ecdbbeb, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: b711eb776b4c24b9cb7c547a08419a34, type: 3}
   choiceAAppearAt: 4.3
   choiceBAppearAt: 5.5
   choiceCAppearAt: 0
