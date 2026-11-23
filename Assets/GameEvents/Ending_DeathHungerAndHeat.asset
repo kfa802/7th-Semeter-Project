@@ -26,10 +26,10 @@ MonoBehaviour:
     products, look for the FSC label. It helps you choose products made with care
     for forests and wildlife.  "
   endingImage: {fileID: 0}
-  narrationDA1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationDA2: {fileID: 0}
-  narrationEN1: {fileID: 8300000, guid: c2cc28ba02c9a4e9db69a14b2163599c, type: 3}
-  narrationEN2: {fileID: 0}
+  narrationDA1: {fileID: 8300000, guid: 6aff9cd587fca471f8d71684992f8159, type: 3}
+  narrationDA2: {fileID: 8300000, guid: bf21cc3c000034b4aaca35bb81f3142d, type: 3}
+  narrationEN1: {fileID: 8300000, guid: cdfa00bb4f91f4e90a879948735b1597, type: 3}
+  narrationEN2: {fileID: 8300000, guid: a06a36fd40aff4cfd9b58b909ee7ee57, type: 3}
   endingMusic: {fileID: 8300000, guid: e4ee6da328ed07641bd3efe1ea76e26d, type: 3}
   loopMusic: 1
   musicVolume: 0.4
