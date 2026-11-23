@@ -13795,9 +13795,9 @@ RectTransform:
   - {fileID: 1080516759}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 181.29999}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -43.700012}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &185978102
@@ -14301,9 +14301,9 @@ RectTransform:
   - {fileID: 1956284978}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 378.6, y: -8}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -21.400024, y: 217}
   m_SizeDelta: {x: 20, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &199028894
@@ -29422,8 +29422,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &629904224
@@ -35265,8 +35265,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &662267421
@@ -49011,8 +49011,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1016820254
@@ -72290,8 +72290,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1518726453
@@ -79540,8 +79540,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!114 &1649372010
@@ -79979,8 +79979,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanternFlicker
   baseIntensity: 30
-  flickerAmount: 0.55
-  flickerSpeed: 4
+  flickerAmount: 0.4
+  flickerSpeed: 3
   makeLanternGlow: 1
   glowColor: {r: 1.5, g: 0.75, b: 0.22500001, a: 1.5}
 --- !u!1001 &1665281814
@@ -81808,10 +81808,10 @@ RectTransform:
   - {fileID: 221514772}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -276, y: 186}
-  m_SizeDelta: {x: 117.1466, y: 20}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 124, y: -39}
+  m_SizeDelta: {x: 117.14661, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1740021517
 MonoBehaviour:
@@ -92157,7 +92157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.9, y: 0}
+  m_AnchoredPosition: {x: -3.899994, y: 0}
   m_SizeDelta: {x: 0, y: -0.00000023841858}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1966459868
@@ -93595,9 +93595,9 @@ RectTransform:
   - {fileID: 1784890875}
   m_Father: {fileID: 1927953437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -45, y: -230.7}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -445, y: 219.3}
   m_SizeDelta: {x: 203.08002, y: 69.1911}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2033208197
