@@ -17066,6 +17066,7 @@ MonoBehaviour:
   pandaDetectionRadius: 0.5
   pandaFeedingZone: {fileID: 725808056}
   dragHeight: 0.5
+  pullTowardsCamera: 0.6
   availableAnimator: {fileID: 358437395}
   clickSound: {fileID: 8300000, guid: 52199e515bbab9442a852dbb13ae8eab, type: 3}
   cantFeedSound: {fileID: 0}
@@ -18131,6 +18132,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
@@ -34567,6 +34569,10 @@ MonoBehaviour:
   maximumExtremeHeatDamagePerSecond: 2
   pandaPathMover: {fileID: 725808057}
   safeWhileTravelling: 1
+  menuSceneNames:
+  - NewStartScene
+  - StartScene
+  - StartMenu
 --- !u!136 &725808052
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -37509,6 +37515,15 @@ MonoBehaviour:
   loop: 0
   hideAndRestart: 1
   restartDelay: 3
+  startDelay: 15
+  randomExtraStart: 5
+  trafficFollowsTemperature: 1
+  zone: {fileID: 0}
+  coldTemperature: 0
+  hotTemperature: 30
+  waitWhenCold: 25
+  waitWhenHot: 2
+  waitRandomness: 0.3
   speed: 2
   turnSpeed: 4
   reachDistance: 0.5
@@ -51106,6 +51121,20 @@ MonoBehaviour:
   riseSoundVolume: 0.8
   loopRiseSound: 0
   riseSoundMixerGroup: {fileID: 0}
+  riseSoundFadeOut: 0.8
+  riseSoundDuringNarration: 0.2
+  lightUpWhileMoving: 1
+  risingColor: {r: 1, g: 0.75, b: 0.2, a: 1}
+  fallingColor: {r: 0.45, g: 0.9, b: 0.45, a: 1}
+  tintStrength: 0.45
+  glowImage: {fileID: 0}
+  glowMaxAlpha: 0.8
+  pulseWhileMoving: 0.05
+  pulseOnlyAbovePercentPerSecond: 3
+  colorPulseSpeed: 2.5
+  colorPulseSpeedDown: 0.8
+  stayLitFor: 0.6
+  lightFadeTime: 0.4
 --- !u!4 &1074660712
 Transform:
   m_ObjectHideFlags: 0
@@ -59451,6 +59480,7 @@ MonoBehaviour:
   allowSkip: 0
   skipAllowedAfter: 2
   skipTutorialButton: {fileID: 0}
+  showSkipButton: 1
   onIntroFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -60342,6 +60372,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds: []
@@ -63889,6 +63920,7 @@ MonoBehaviour:
   choiceButtons: []
   narrationDelay: 0.3
   unlockAfterNarration: 0.2
+  unlockWhenLastChoiceAppears: 1
   narrationVolume: 1
   narrationMixerGroup: {fileID: -340433604882751907, guid: a3324b4d8bba841209aa949f4bef45a1, type: 2}
   listeningIndicator: {fileID: 0}
@@ -64313,6 +64345,11 @@ MonoBehaviour:
   calmTemperature: 20
   extremeTemperatureSpeed: 4
   currentPollutionSpeed: 0
+  coolingLowersEventDisturbance: 1
+  coolBelowTemperature: 10
+  coolForSeconds: 5
+  maxReduction: 20
+  reductionSpeed: 1
   overallGrowthSpeed: 0.25
   slowBelow: 0
   fastAbove: 25
@@ -72510,10 +72547,10 @@ RectTransform:
   - {fileID: 1008637068}
   m_Father: {fileID: 1200070751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -284, y: 148}
-  m_SizeDelta: {x: 381.4691, y: 160.691}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 116, y: -77}
+  m_SizeDelta: {x: 381.4691, y: 160.69098}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1588769765
 MonoBehaviour:
@@ -79220,6 +79257,7 @@ MonoBehaviour:
   - {fileID: 184388598}
   - {fileID: 2033208195}
   - {fileID: 1539525340}
+  showDuringImportantNarration: []
   choicePopTime: 0.35
   choicePopBounce: 1.5
 --- !u!1001 &1934047367
@@ -86682,6 +86720,7 @@ MonoBehaviour:
   disturbanceCold: 0
   disturbanceHotFrom: 25
   disturbanceMildFrom: 0
+  smoothDisturbance: 1
   disturbanceFromEvents: 0
   pollution: 0
   enterSounds:
