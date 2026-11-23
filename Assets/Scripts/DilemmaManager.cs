@@ -243,6 +243,8 @@ public class DilemmaManager : MonoBehaviour
 
     private readonly List<PlayingSceneSound> playingSceneSounds = new();
     private float sceneSoundsDuck = 1f;
+    private float sceneSoundsEndFade = 1f;   // 1 = normal, fades to 0 at the ending
+    private bool sceneSoundsEnding;
 
     [Header("Subtitles")]
     [Tooltip("The subtitle bar (hidden when no line is showing).")]
@@ -1392,13 +1394,29 @@ public class DilemmaManager : MonoBehaviour
     // City/road sounds get quieter while any narration plays.
     private void LateUpdate()
     {
-        float target = IsNarrating ? sceneSoundsDuringNarration : 1f;
+        if (sceneSoundsEnding)
+        {
+            // Ending: fade the city/road smoothly down to silence, then stop them.
+            sceneSoundsEndFade = Mathf.MoveTowards(
+                sceneSoundsEndFade, 0f,
+                Time.unscaledDeltaTime / Mathf.Max(gameAudioFadeOut, 0.01f));
 
-        sceneSoundsDuck = Mathf.MoveTowards(
-            sceneSoundsDuck,
-            target,
-            Mathf.Max(1f - sceneSoundsDuringNarration, 0.01f) / sceneSoundsFadeTime * Time.unscaledDeltaTime
-        );
+            if (sceneSoundsEndFade <= 0f)
+            {
+                foreach (PlayingSceneSound s in playingSceneSounds)
+                    if (s.source != null) s.source.Stop();
+            }
+        }
+        else
+        {
+            float target = IsNarrating ? sceneSoundsDuringNarration : 1f;
+
+            sceneSoundsDuck = Mathf.MoveTowards(
+                sceneSoundsDuck,
+                target,
+                Mathf.Max(1f - sceneSoundsDuringNarration, 0.01f) / sceneSoundsFadeTime * Time.unscaledDeltaTime
+            );
+        }
 
         for (int i = playingSceneSounds.Count - 1; i >= 0; i--)
         {
@@ -1410,7 +1428,7 @@ public class DilemmaManager : MonoBehaviour
                 continue;
             }
 
-            s.source.volume = s.volume * sceneSoundsDuck;
+            s.source.volume = s.volume * sceneSoundsDuck * sceneSoundsEndFade;
         }
     }
 
@@ -1769,13 +1787,22 @@ public class DilemmaManager : MonoBehaviour
 
     private void StopGameForEnding()
     {
+        // City/road sounds fade out from their current (quiet) volume.
+        // Set before the narration stops, so they don't get loud first.
+        sceneSoundsEnding = true;
+
         StopEventNarration();
         StopNarration();
 
-        // Fade out every sound that is playing now (game music, ambience, voices).
+        // Fade out every other sound that is playing now (game music, ambience, voices).
         // The ending narration/music start after this, so they are not affected.
-        AudioSource[] playing = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-        StartCoroutine(FadeOutAudio(playing, gameAudioFadeOut));
+        List<AudioSource> playing = new List<AudioSource>(
+            FindObjectsByType<AudioSource>(FindObjectsSortMode.None));
+
+        foreach (PlayingSceneSound s in playingSceneSounds)
+            playing.Remove(s.source);   // handled in LateUpdate
+
+        StartCoroutine(FadeOutAudio(playing.ToArray(), gameAudioFadeOut));
 
         if (stopGameAtEnding)
             Time.timeScale = 0f;
