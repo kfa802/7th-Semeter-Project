@@ -34,8 +34,8 @@ MonoBehaviour:
   choiceADA: Flyt
   choiceBDA: Bliv
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: f6cc7da60a7614c74a164c34829eb630, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 1a6fa692f51af446ea2098a24e7a1e7e, type: 3}
+  narrationClip: {fileID: 8300000, guid: c4df08c2f1fe647a3bbe4249b7879b4d, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 03cb84ddcec5f45409de3cfe5d8625bc, type: 3}
   choiceAAppearAt: 12.8
   choiceBAppearAt: 14.5
   choiceCAppearAt: 0

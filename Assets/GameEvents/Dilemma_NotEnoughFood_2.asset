@@ -22,7 +22,7 @@ MonoBehaviour:
   choiceADA: Dansk
   choiceBDA: Dansk
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 209d53f3bdcb640e7ae89f491aa91ca1, type: 3}
+  narrationClip: {fileID: 8300000, guid: abb40fcd587d540398ee300ddd5500b0, type: 3}
   narrationClipDA: {fileID: 8300000, guid: 6c5804cb327ba4c92bb1dd87d702f966, type: 3}
   choiceAAppearAt: 3
   choiceBAppearAt: 7

@@ -27,8 +27,8 @@ MonoBehaviour:
   choiceADA: Bliv
   choiceBDA: "G\xE5"
   choiceCDA: 
-  narrationClip: {fileID: 8300000, guid: 846826b1f02d94fe79355c259a8c0dfd, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: 19c37e2b8bdfb427c85c712bf035abac, type: 3}
+  narrationClip: {fileID: 8300000, guid: abb40fcd587d540398ee300ddd5500b0, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: 7e65dcebe28bb47ca99bdb3862fe7527, type: 3}
   choiceAAppearAt: 3.3
   choiceBAppearAt: 4.5
   choiceCAppearAt: 0
