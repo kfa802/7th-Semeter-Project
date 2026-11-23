@@ -68477,7 +68477,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 2052093885}
       delay: 0
-      volume: 0.5
+      volume: 0.35
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68509,7 +68509,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 1184080810}
       delay: 0
-      volume: 0.5
+      volume: 0.35
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
@@ -68519,7 +68519,7 @@ MonoBehaviour:
       loop: 1
       playAt: {fileID: 601088496}
       delay: 0
-      volume: 0.5
+      volume: 0.35
       fadeInTime: 0
       spatialBlend: 0
       maxDistance: 120
