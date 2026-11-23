@@ -16,27 +16,39 @@ MonoBehaviour:
   pollutionChange: 0
   requestTravel: 1
   targetZoneName: Midway
-  narrationClip: {fileID: 8300000, guid: d74473a0a8228410586766f5a4ced797, type: 3}
-  narrationClipDA: {fileID: 8300000, guid: cca4e6bfa0d8046428a2377c7fe0375b, type: 3}
+  narrationClip: {fileID: 8300000, guid: eb3e1fc02ad0f4274b9c4eeec0863225, type: 3}
+  narrationClipDA: {fileID: 8300000, guid: d42ff878fd587432bb11ca69e1f8cbe5, type: 3}
   narrationDelay: 0.5
   subtitles:
   - startTime: 0
     endTime: 2.8
     text: 'Pandas travel a lot throughout the year '
   - startTime: 2.8
-    endTime: 5.5
+    endTime: 5.3
     text: 'They eat 16 hours a day and are therefore '
-  - startTime: 5.5
+  - startTime: 5.3
     endTime: 9
     text: 'constantly looking for new areas with plenty of bamboo. '
+  - startTime: 9
+    endTime: 11.8
+    text: 'When a panda poops, it helps new bamboo grow!  '
+  - startTime: 11.8
+    endTime: 15.3
+    text: "That\u2019s why you see new bamboo shoot up after the panda has eaten.  "
   subtitlesDA:
   - startTime: 0
-    endTime: 3
+    endTime: 2.8
     text: "Pandaer rejser meget i l\xF8bet af \xE5ret "
-  - startTime: 3
-    endTime: 6
+  - startTime: 2.8
+    endTime: 5.5
     text: 'De spiser 16 timer om dagen og leder derfor '
-  - startTime: 6
-    endTime: 9
+  - startTime: 5.5
+    endTime: 8.5
     text: hele tiden efter nye steder med masser af bambus.
+  - startTime: 8.5
+    endTime: 12
+    text: "N\xE5r en panda skider, hj\xE6lper af\xF8ringen ny bambus med at vokse!  "
+  - startTime: 12
+    endTime: 15.3
+    text: 'Derfor ser du ny bambus vokse, efter pandaen har spist. '
   pauseGameWhileSpeaking: 0
