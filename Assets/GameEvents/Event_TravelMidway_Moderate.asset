@@ -47,8 +47,8 @@ MonoBehaviour:
     text: hele tiden efter nye steder med masser af bambus.
   - startTime: 8.5
     endTime: 12
-    text: hele tiden efter nye steder med masser af bambus.
+    text: "N\xE5r en panda skider, hj\xE6lper af\xF8ringen ny bambus med at vokse! "
   - startTime: 12
     endTime: 15.3
-    text: hele tiden efter nye steder med masser af bambus.
+    text: Derfor ser du ny bambus vokse, efter pandaen har spist.
   pauseGameWhileSpeaking: 0
